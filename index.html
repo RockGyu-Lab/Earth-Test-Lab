@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<!-- 시험용 사이트: 검색 엔진에 싣지 않음. 정식 사이트로 옮길 때 이 줄을 지울 것 -->
+<meta name="robots" content="noindex">
+<title>Earth Test Lab</title>
+<style>
+/* 정식 사이트(지구과학 World) index.html과 같은 디자인 규칙 */
+:root{--bg:#f3f4f8;--fg:#1b1f2a;--muted:#5a6070;--card:#fff;--line:#e3e6ee;--blue:#5468d4;--acc-bg:#eef0fc}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14161d;--fg:#e8eaf2;--muted:#a3a9bb;--card:#1f222c;--line:#2c3247;--blue:#8f9cf0;--acc-bg:#1e2340}}
+:root[data-theme="dark"]{--bg:#14161d;--fg:#e8eaf2;--muted:#a3a9bb;--card:#1f222c;--line:#2c3247;--blue:#8f9cf0;--acc-bg:#1e2340}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Pretendard Variable",Pretendard,"Noto Sans KR",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.6;word-break:keep-all}
+header{background:radial-gradient(1px 1px at 12% 30%,#dfe5ffaa,transparent),radial-gradient(1.2px 1.2px at 28% 72%,#dfe5ff77,transparent),radial-gradient(1px 1px at 64% 22%,#dfe5ff99,transparent),radial-gradient(1.3px 1.3px at 82% 64%,#dfe5ff88,transparent),radial-gradient(1px 1px at 92% 18%,#dfe5ff66,transparent),linear-gradient(135deg,#141a36,#2d3a86);color:white;padding:48px 20px 42px;text-align:center}
+header .eyebrow{font-size:.9rem;letter-spacing:.12em;opacity:.82}
+header h1{margin:8px 0;font-size:clamp(2rem,5vw,3rem)}
+header p{margin:0;color:#e0edf7}
+main{max-width:1000px;margin:0 auto;padding:28px 18px 48px}
+h2{font-size:1.35rem;margin:0 0 14px}
+.notice{background:var(--acc-bg);border-radius:14px;padding:14px 18px;margin:0 0 22px;color:var(--muted)}
+.subject-list{display:grid;gap:16px}
+.subject{display:flex;align-items:center;gap:18px;background:var(--card);border:1px solid transparent;border-radius:14px;padding:22px;text-decoration:none;color:inherit;box-shadow:0 1px 3px rgba(20,25,45,.06),0 6px 20px rgba(20,25,45,.05);transition:transform .15s,box-shadow .15s}
+.subject:hover{transform:translateY(-2px);border-color:var(--blue);box-shadow:0 2px 6px rgba(20,25,45,.08),0 12px 28px rgba(20,25,45,.09)}
+.subject:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.symbol{display:grid;place-items:center;flex:0 0 64px;width:64px;height:64px;border-radius:12px;background:var(--acc-bg);font-size:2rem}
+.subject h3{margin:0 0 4px;font-size:1.2rem}
+.subject p{margin:0;color:var(--muted)}
+.arrow{margin-left:auto;font-size:1.6rem;color:var(--blue);flex:0 0 auto}
+.empty{color:var(--muted);text-align:center;padding:32px 0;border:1px dashed var(--line);border-radius:14px}
+footer{text-align:center;color:var(--muted);font-size:.88rem;padding:0 18px 24px}
+@media(max-width:520px){
+  header{padding:38px 18px 34px}
+  .subject{gap:13px;padding:17px}
+  .symbol{flex-basis:52px;width:52px;height:52px;border-radius:13px;font-size:1.7rem}
+  .subject h3{font-size:1.08rem}
+  .subject p{font-size:.94rem}
+}
+</style>
+<!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+</head>
+<body>
+<header>
+  <div class="eyebrow">EARTH SCIENCE TEST LAB</div>
+  <h1>Earth Test Lab</h1>
+  <p>지구과학 World에 넣기 전에 새 학습 자료를 시험하는 곳</p>
+</header>
+<main>
+  <p class="notice">이곳은 개발 중인 자료를 시험하는 페이지입니다. 완성된 자료는 정식 사이트 <b>지구과학 World</b>로 옮겨집니다.</p>
+  <h2>시험 중인 학습실</h2>
+  <div class="subject-list">
+    <!-- 학습실 카드 예시:
+    <a class="subject" href="./폴더/폴더_index.html">
+      <div class="symbol" aria-hidden="true">🌍</div>
+      <div>
+        <h3>학습실 이름</h3>
+        <p>학습실 설명</p>
+      </div>
+      <span class="arrow" aria-hidden="true">›</span>
+    </a>
+    -->
+    <p class="empty">아직 시험 중인 학습실이 없습니다.</p>
+  </div>
+</main>
+<footer>Earth Test Lab · 지구과학 World 시험용 페이지</footer>
+</body>
+</html>
