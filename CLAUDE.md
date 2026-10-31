@@ -15,7 +15,8 @@
 
 ## 폴더 구조
 ```
-index.html                 시험용 메인 화면 (시험 중인 학습실 카드 목록)
+index.html                 시험용 메인 화면 (시험 중인 자료 카드 목록)
+spectral_type.html         별의 분광형 (위치 미정, 돌아가기 링크는 ./index.html)
 README.md                  사용자용 설명서 (게시 방법, 정식 사이트로 옮기는 방법)
 CLAUDE.md                  이 파일
 ```
