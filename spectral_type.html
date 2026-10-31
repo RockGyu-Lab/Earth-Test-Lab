@@ -25,6 +25,11 @@ main{max-width:960px;margin:0 auto;padding:14px}
 .note .nh{font-weight:700;color:var(--acc)}
 .note p{margin:4px 0 0}
 .note .en{color:var(--en);font-weight:700}
+/* 고른 분광형 설명: 왼쪽에 별의 색 (밤하늘 바탕) */
+#info{display:flex;gap:14px;align-items:center}
+.istar{flex:none;width:80px;align-self:stretch;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-radius:10px;background:#0b1026;color:#e8eaf2;padding:6px 0}
+.istar .dot{width:56px;height:56px}
+.istar b{font-size:.85rem}
 .story{margin-top:8px;padding:6px 12px;border:1px solid var(--acc-bd);border-radius:10px;background:var(--acc-bg);color:var(--acc);font-size:.86rem;font-weight:700;cursor:pointer}
 .story:hover{border-color:var(--acc)}
 
@@ -76,8 +81,6 @@ dialog li{margin:4px 0}
 .abc span{width:30px;height:30px;display:grid;place-items:center;border-radius:8px;background:var(--card);font-weight:800;opacity:.35}
 .abc span.keep{opacity:1;color:#1b1f2a}
 .down{margin:2px 0 2px 4px;font-size:.84rem;font-weight:700;color:var(--acc)}
-dialog details{margin-top:10px;padding:8px 12px;border-radius:10px;background:var(--card);font-size:.9rem}
-dialog summary{cursor:pointer;font-weight:700;color:var(--acc)}
 .close{display:block;margin:14px 0 0 auto;padding:8px 18px;border:0;border-radius:10px;background:var(--acc);color:var(--on-acc);font-weight:700;cursor:pointer}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
@@ -114,10 +117,6 @@ dialog summary{cursor:pointer;font-weight:700;color:var(--acc)}
   <li>그 뒤 <b>애니 점프 캐넌</b>은 흡수선의 변화가 자연스럽게 이어지도록 별들을 다시 배열하고, 필요 없는 문자는 빼거나 합쳤습니다. 이렇게 정리된 순서가 <b>O, B, A, F, G, K, M</b>입니다.</li>
   <li>1920년대에 이 순서가 바로 <b>별의 표면 온도 순서</b>라는 것이 밝혀졌습니다(세실리아 페인 등). 흡수선의 모습을 정하는 것은 주로 별의 성분이 아니라 표면 온도였던 것입니다.</li>
  </ol>
- <details><summary>더 알아보기: 수소 흡수선이 A형에서 가장 강한 까닭</summary>
-  <p>가시광선 영역의 수소 흡수선은 수소 원자가 에너지를 조금 얻은 상태(들뜬 상태)에 있을 때 생깁니다. 표면 온도가 약 10,000 K인 A형 별에서 이런 수소 원자가 가장 많아 흡수선이 가장 강합니다.</p>
-  <p>이보다 뜨거운 별에서는 수소가 대부분 이온화되어 흡수선이 약해지고, 이보다 차가운 별에서는 수소 원자가 대부분 바닥상태에 있어 가시광선을 잘 흡수하지 못하기 때문에 흡수선이 약해집니다.</p>
- </details>
  <button class="close" id="closeStory">닫기</button>
 </div></dialog>
 
@@ -195,7 +194,7 @@ function draw(){rows.querySelectorAll('.srow').forEach(b=>{const c=+b.dataset.c,
  for(let l=400;l<=700;l+=50){const x=(l-L0)/(L1-L0)*W;g.beginPath();g.moveTo(x,0);g.lineTo(x,5);g.stroke();g.fillText(l==700?'700 nm':l,Math.min(x,W-20),7)}}
 function update(){const k=CLS[sel];
  rows.querySelectorAll('.srow').forEach(b=>b.classList.toggle('on',+b.dataset.c==sel));
- info.innerHTML=`<div class="nh">${k}형 · ${INFO[k].col} · <span class="en">${INFO[k].rng}</span></div><p>${INFO[k].ln}</p><p>대표적인 별: ${INFO[k].st}</p>`;
+ info.innerHTML=`<div class="istar"><div class="dot" style="background:${glowBg(sel+.5)}"></div><b>${k}형</b></div><div><div class="nh">${k}형 · ${INFO[k].col} · <span class="en">${INFO[k].rng}</span></div><p>${INFO[k].ln}</p><p>대표적인 별: ${INFO[k].st}</p></div>`;
  draw()}
 
 // 순서 외우기 문장과 순서 맞추기
