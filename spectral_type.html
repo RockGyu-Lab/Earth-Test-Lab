@@ -27,9 +27,8 @@ main{max-width:960px;margin:0 auto;padding:14px}
 .note .en{color:var(--en);font-weight:700}
 /* 고른 분광형 설명: 왼쪽에 별의 색 (밤하늘 바탕) */
 #info{display:flex;gap:14px;align-items:center}
-.istar{flex:none;width:80px;align-self:stretch;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-radius:10px;background:#0b1026;color:#e8eaf2;padding:6px 0}
-.istar .dot{width:56px;height:56px}
-.istar b{font-size:.85rem}
+.istar{flex:none;width:80px;align-self:stretch;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;background:#0b1026;padding:2px 0}
+.istar .dot{width:78px;height:78px}
 .story{margin-top:8px;padding:6px 12px;border:1px solid var(--acc-bd);border-radius:10px;background:var(--acc-bg);color:var(--acc);font-size:.86rem;font-weight:700;cursor:pointer}
 .story:hover{border-color:var(--acc)}
 
@@ -194,7 +193,7 @@ function draw(){rows.querySelectorAll('.srow').forEach(b=>{const c=+b.dataset.c,
  for(let l=400;l<=700;l+=50){const x=(l-L0)/(L1-L0)*W;g.beginPath();g.moveTo(x,0);g.lineTo(x,5);g.stroke();g.fillText(l==700?'700 nm':l,Math.min(x,W-20),7)}}
 function update(){const k=CLS[sel];
  rows.querySelectorAll('.srow').forEach(b=>b.classList.toggle('on',+b.dataset.c==sel));
- info.innerHTML=`<div class="istar"><div class="dot" style="background:${glowBg(sel+.5)}"></div><b>${k}형</b></div><div><div class="nh">${k}형 · ${INFO[k].col} · <span class="en">${INFO[k].rng}</span></div><p>${INFO[k].ln}</p><p>대표적인 별: ${INFO[k].st}</p></div>`;
+ info.innerHTML=`<div class="istar"><div class="dot" style="background:${glowBg(sel+.5)}"></div></div><div><div class="nh">${k}형 · ${INFO[k].col} · <span class="en">${INFO[k].rng}</span></div><p>${INFO[k].ln}</p><p>대표적인 별: ${INFO[k].st}</p></div>`;
  draw()}
 
 // 순서 외우기 문장과 순서 맞추기
