@@ -11,207 +11,145 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14161d;--fg:#e8eaf2;--card:#1f222c;--bd:#3a3f50;--bline:#3a3a38;--bcard:#262625;--bfg:#eee;--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--en:#f5b942;--frame:#2c3247;--bad:#ff6b6f}}
 :root[data-theme="dark"]{--bg:#14161d;--fg:#e8eaf2;--card:#1f222c;--bd:#3a3f50;--bline:#3a3a38;--bcard:#262625;--bfg:#eee;--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--en:#f5b942;--frame:#2c3247;--bad:#ff6b6f}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font-family:"Pretendard Variable",Pretendard,system-ui,-apple-system,"Noto Sans KR",sans-serif;line-height:1.6;word-break:keep-all}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Pretendard Variable",Pretendard,system-ui,-apple-system,"Noto Sans KR",sans-serif;line-height:1.5;word-break:keep-all}
 button,input{font-family:inherit}
 main{max-width:960px;margin:0 auto;padding:14px}
-/* 제목 줄: [꼬리표] 제목 …… [← 메뉴로 돌아가기] (좁은 화면에서는 줄바꿈) */
-.titlebar{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:0 0 12px}
+/* 제목 줄: [탐구 NN] 제목 …… [← 메뉴로 돌아가기] (좁은 화면에서는 줄바꿈) */
+.titlebar{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:0 0 10px}
 .pnum{margin:0;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.04em}
-.titlebar h1{font-size:1.35rem;font-weight:800;line-height:1.35;margin:0}
+.titlebar h1{font-size:1.35rem;font-weight:800;line-height:1.35;margin:0;text-wrap:balance}
 .back{margin:0 0 0 auto;flex:none;display:inline-block;padding:8px 14px;border:1px solid var(--bline);border-radius:999px;background:var(--bcard);color:var(--bfg);font-size:.9rem;font-weight:700;text-decoration:none}
 .back:hover{background:var(--bline)}
-.sec{background:var(--card);border-radius:14px;padding:16px 18px;margin:0 0 16px}
-.sec h2{font-size:1.12rem;margin:0 0 6px;color:var(--acc)}
-.sec h3{font-size:1rem;margin:14px 0 4px}
-.sec p{margin:6px 0}
-.sm{font-size:.84rem;opacity:.78}
-.en{color:var(--en)}
-.night{background:#0b1026;border-radius:14px;padding:10px 12px;color:#e8eaf2;box-shadow:0 0 0 1px var(--frame)}
-.ask{margin-top:10px;padding:10px 14px;border-radius:10px;background:var(--acc-bg);border:1px solid var(--acc-bd);font-size:.93rem}
-.ask b{color:var(--acc)}
+.note{margin-bottom:10px;background:var(--card);border-radius:14px;padding:10px 14px;font-size:.92rem}
+.note .nh{font-weight:700;color:var(--acc)}
+.note p{margin:4px 0 0}
+.note .en{color:var(--en);font-weight:700}
+.story{margin-top:8px;padding:6px 12px;border:1px solid var(--acc-bd);border-radius:10px;background:var(--acc-bg);color:var(--acc);font-size:.86rem;font-weight:700;cursor:pointer}
+.story:hover{border-color:var(--acc)}
 
-/* 분광형별 스펙트럼 줄 */
-.srow{display:grid;grid-template-columns:104px 1fr;gap:10px;align-items:center;width:100%;padding:4px 6px;margin:0;border:2px solid transparent;border-radius:10px;background:none;color:inherit;cursor:pointer;text-align:left;font:inherit}
+/* 분광형별 스펙트럼 (밤하늘 그림판) */
+.fig{background:#0b1026;border-radius:14px;box-shadow:0 0 0 1px var(--frame);padding:8px 10px 6px;color:#e8eaf2}
+.srow{display:grid;grid-template-columns:150px 1fr;gap:10px;align-items:end;width:100%;padding:3px 6px;margin:0;border:2px solid transparent;border-radius:10px;background:none;color:inherit;cursor:pointer;text-align:left;font:inherit}
 .srow:hover{background:#ffffff0a}
 .srow.on{border-color:#8f9cf0;background:#ffffff12}
-.srow canvas{width:100%;height:34px;display:block;border-radius:4px}
-.slab{display:flex;align-items:center;gap:8px;line-height:1.2}
-.chip{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:1.1rem;color:#1b1f2a}
-.slab small{display:block;font-size:.7rem;opacity:.75}
-.axisrow{display:grid;grid-template-columns:104px 1fr;gap:10px;padding:0 8px}
+.srow canvas{width:100%;height:26px;display:block}
+.srow.on canvas{height:44px}
+.slab{display:flex;align-items:center;gap:8px;line-height:1.15;align-self:center}
+.dot{flex:none;width:30px;height:30px;border-radius:50%}
+.slab b{font-size:1.02rem}
+.slab small{display:block;font-size:.72rem;opacity:.75;white-space:nowrap}
+.slab small.cn{display:inline;font-size:.8rem;opacity:.9}
+.axisrow{display:grid;grid-template-columns:150px 1fr;gap:10px;padding:0 8px}
 .axisrow canvas{width:100%;height:20px;display:block}
-.hint{font-size:.78rem;opacity:.7;text-align:right;margin:2px 4px 0}
-
-/* 고른 분광형 자세히 보기 */
-.detail{display:grid;grid-template-columns:190px 1fr;gap:14px;margin-top:14px}
-.starbox{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:14px 10px}
-.glow{width:120px;height:120px;border-radius:50%}
-.code{font-size:2.2rem;font-weight:800;line-height:1}
-.info{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0;align-content:center}
-.info dt{font-weight:700;opacity:.7;white-space:nowrap}
-.info dd{margin:0}
-#dspec{width:100%;height:132px;display:block}
-.ctlrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px;padding:10px 14px;border-radius:10px;background:var(--bg)}
-.ctlrow .qmsg{font-weight:600;font-size:.93rem}
-.ctlrow input{flex:1;min-width:140px;max-width:340px;accent-color:var(--acc)}
-.ctlrow .tend{font-size:.8rem;opacity:.7}
-#chart{width:100%;height:240px;display:block}
-.legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.84rem;margin-top:6px}
-.legend i{display:inline-block;width:16px;height:4px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.cap{display:flex;justify-content:space-between;font-size:.74rem;opacity:.7;margin:0 8px}
+.sm{font-size:.8rem;opacity:.75;margin:6px 2px 0}
 @media (max-width:640px){
- .srow,.axisrow{grid-template-columns:78px 1fr;gap:6px}
- .chip{width:28px;height:28px;font-size:.95rem}
- .slab{gap:5px}.slab small{font-size:.62rem}
- .detail{grid-template-columns:1fr}
- .starbox{flex-direction:row;gap:14px}
- .glow{width:84px;height:84px}
- #chart{height:210px}
+ .srow,.axisrow{grid-template-columns:92px 1fr;gap:6px}
+ .dot{width:22px;height:22px}.slab{gap:5px}
+ .slab b{font-size:.92rem}.slab small{font-size:.6rem}.slab small.cn{display:block;font-size:.66rem}
 }
 
-/* 분광형 이름에 숨은 이야기 */
-.abc{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 4px}
-.abc span{width:34px;height:34px;display:grid;place-items:center;border-radius:8px;background:var(--bg);font-weight:800;opacity:.35}
-.abc span.keep{opacity:1;color:#1b1f2a}
-.down{margin:4px 0 4px 6px;font-size:.88rem;font-weight:700;color:var(--acc)}
-.steps{margin:8px 0 0;padding-left:1.3em}
-.steps li{margin:4px 0}
-details{margin-top:10px;padding:8px 14px;border-radius:10px;background:var(--bg)}
-summary{cursor:pointer;font-weight:700;color:var(--acc)}
-
 /* 순서 외우기 */
-.mn{font-size:clamp(1.15rem,4.2vw,1.6rem);font-weight:700;text-align:center;margin:12px 0;line-height:1.9}
-.mn span{display:inline-block;margin:0 .12em}
-.mn b{display:inline-block;min-width:1.35em;padding:0 .18em;border-radius:8px;color:#1b1f2a;text-align:center}
-.slots,.tiles{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:10px 0}
-.slots span,.tiles button{width:46px;height:46px;display:grid;place-items:center;border-radius:10px;font-size:1.3rem;font-weight:800}
-.slots span{border:2px dashed var(--bd);color:#1b1f2a}
-.tiles button{border:1px solid var(--bd);background:var(--bg);color:var(--fg);cursor:pointer;box-shadow:0 1px 2px rgba(20,25,45,.12)}
+.mn b{display:inline-block;min-width:1.3em;padding:0 .15em;border-radius:6px;color:#1b1f2a;text-align:center;box-shadow:inset 0 0 0 1px rgba(20,25,45,.18)}
+#qrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0 0;padding:12px 14px;border-radius:14px;background:var(--card)}
+#qrow .qmsg{font-size:.93rem;font-weight:600}
+.tiles{display:flex;gap:6px;flex-wrap:wrap}
+.tiles button{width:40px;height:40px;border-radius:10px;border:1px solid transparent;background:var(--bg);color:var(--fg);font-size:1.15rem;font-weight:800;cursor:pointer;box-shadow:0 1px 2px rgba(20,25,45,.12)}
 .tiles button:hover{border-color:var(--acc)}
-.tiles button:disabled{opacity:.18;cursor:default;box-shadow:none}
+.tiles button.ok{color:#1b1f2a;cursor:default;box-shadow:inset 0 0 0 1px rgba(20,25,45,.18)}
 .tiles button.bad{border-color:var(--bad);color:var(--bad);animation:shake .35s}
 @keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 @media (prefers-reduced-motion:reduce){.tiles button.bad{animation:none}}
-.gmsg{text-align:center;min-height:1.6em;font-weight:600}
-.gctl{text-align:center}
-.gctl button{padding:8px 18px;border:1px solid var(--acc);border-radius:10px;background:var(--acc);color:var(--on-acc);font-weight:700;cursor:pointer}
+#shuf{padding:8px 14px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--fg);font-size:.88rem;cursor:pointer}
+#gmsg{font-size:.9rem;font-weight:600;color:var(--acc)}
+@media (max-width:640px){#qrow .qmsg{flex-basis:100%}}
 
-/* 분광형에 따른 별의 색깔 */
-.cgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;padding:10px 2px 4px}
-.cstar{width:min(76px,100%);aspect-ratio:1;margin:0 auto;border-radius:50%}
-.cgrid b{display:block;font-size:1.35rem;line-height:1.2}
-.cgrid small{display:block;font-size:.74rem;opacity:.85;line-height:1.35}
-.cbar{height:12px;border-radius:6px;margin:12px 6px 4px}
-.cbl{display:flex;justify-content:space-between;font-size:.8rem;margin:0 6px;opacity:.85}
-@media (max-width:640px){.cgrid small{font-size:.6rem}.cgrid b{font-size:1.05rem}}
+/* 분광형 이름에 숨은 이야기 (팝업) */
+dialog{max-width:min(560px,calc(100vw - 32px));border:0;border-radius:14px;padding:0;background:var(--bg);color:var(--fg);box-shadow:0 12px 40px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(10,14,30,.55)}
+dialog h2{font-size:1.1rem;margin:0 0 8px;color:var(--acc)}
+dialog p,dialog li{font-size:.92rem}
+dialog ol{margin:8px 0 0;padding-left:1.3em}
+dialog li{margin:4px 0}
+.abc{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 2px}
+.abc span{width:30px;height:30px;display:grid;place-items:center;border-radius:8px;background:var(--card);font-weight:800;opacity:.35}
+.abc span.keep{opacity:1;color:#1b1f2a}
+.down{margin:2px 0 2px 4px;font-size:.84rem;font-weight:700;color:var(--acc)}
+dialog details{margin-top:10px;padding:8px 12px;border-radius:10px;background:var(--card);font-size:.9rem}
+dialog summary{cursor:pointer;font-weight:700;color:var(--acc)}
+.close{display:block;margin:14px 0 0 auto;padding:8px 18px;border:0;border-radius:10px;background:var(--acc);color:var(--on-acc);font-weight:700;cursor:pointer}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
-<div class="titlebar"><p class="pnum">시험 자료</p><h1>별의 분광형</h1><a class="back" href="./index.html">← [Earth Test Lab] 메뉴로 돌아가기</a></div>
+<div class="titlebar"><p class="pnum">탐구 03</p><h1>별의 분광형</h1><a class="back" href="./index.html">← [Earth Test Lab] 메뉴로 돌아가기</a></div>
 
-<section class="sec">
-<h2>분광형이란?</h2>
-<p>별빛을 분광기로 나누어 보면 무지개색 띠 위에 검은 <b>흡수선</b>이 나타납니다. 어떤 원소의 흡수선이 얼마나 진하게 나타나는지는 주로 별의 <b>표면 온도</b>에 따라 달라집니다.</p>
-<p>그래서 천문학자들은 흡수선의 특징에 따라 별을 <b>O, B, A, F, G, K, M</b>의 7가지 <b>분광형</b>으로 나눕니다. O형에서 M형으로 갈수록 표면 온도가 낮아지고, 별의 색은 파란색에서 붉은색으로 바뀝니다.</p>
-<p>각 분광형은 다시 0~9로 세분하며, <b>숫자가 작을수록 온도가 높습니다.</b> 예를 들어 태양은 <b>G2형</b>입니다.</p>
-</section>
-
-<section class="sec">
-<h2>분광형에 따른 스펙트럼</h2>
-<p>줄을 눌러 분광형을 고르면 아래에서 자세히 볼 수 있습니다. 각 줄은 분광형의 가운데(5번)에 해당하는 별의 스펙트럼입니다.</p>
-<div class="night" id="rows"></div>
-<p class="sm">스펙트럼은 이해를 돕기 위한 모식도입니다. 흡수선의 위치는 실제 파장이지만, 진하기와 굵기는 대략적인 경향만 나타냈습니다. 파장에 따른 밝기는 흑체 복사(플랑크 법칙)로 계산했습니다.</p>
-
-<div class="detail">
- <div class="night starbox"><div class="glow" id="dglow"></div><div><div class="code" id="dcode">G2</div><div class="sm" style="text-align:center">분광형</div></div></div>
- <dl class="info">
-  <dt>표면 온도</dt><dd><b class="en" id="dtemp"></b> <span class="sm">(주계열성 기준 대략값)</span></dd>
-  <dt>별의 색</dt><dd id="dcol"></dd>
-  <dt>흡수선 특징</dt><dd id="dline"></dd>
-  <dt>대표적인 별</dt><dd id="dstar"></dd>
- </dl>
+<div class="note">
+ <div class="nh">분광형</div>
+ <p>별의 스펙트럼에 나타나는 흡수선은 주로 별의 <b>표면 온도</b>에 따라 달라집니다. 이를 기준으로 별을 표면 온도가 높은 것부터 <b>O, B, A, F, G, K, M</b>형으로 나눈 것이 <b>분광형</b>입니다. 각 분광형은 다시 0~9로 나누며, 태양은 G2형입니다.</p>
+ <button class="story" id="openStory">분광형 이름에 숨은 이야기 ›</button>
 </div>
-<div class="night" style="margin-top:12px"><canvas id="dspec"></canvas></div>
-<div class="ctlrow"><span class="qmsg">세분 번호를 바꿔 보세요.</span><span class="tend" id="smin">0 (고온)</span><input id="sub" type="range" min="0" max="9" step="1" value="2"><span class="tend">9 (저온)</span><b id="subv">G2</b></div>
 
-<h3>분광형에 따른 흡수선의 세기</h3>
-<canvas id="chart"></canvas>
-<div class="legend" id="legend"></div>
-<p class="sm">흡수선 세기는 대략적인 경향을 나타낸 모식도입니다. 세로 막대는 지금 고른 분광형입니다.</p>
-<div class="ask"><b>생각해 보기</b> 수소 흡수선은 어느 분광형에서 가장 강한가요? 가장 뜨거운 O형에서 가장 강하지 않은 까닭은 무엇일까요?</div>
-</section>
+<div class="fig" id="rows"></div>
+<p class="sm">스펙트럼은 모식도입니다. 흡수선의 위치는 실제 파장이고, 진하기와 굵기는 대략적인 경향만 나타냈습니다. 별의 색은 구분하기 쉽도록 실제보다 조금 진하게 나타냈습니다.</p>
 
-<!-- 분광형 이름의 역사: 필요 없으면 이 section 전체를 지워도 다른 기능에는 영향 없음 -->
-<section class="sec" id="history">
-<h2>분광형 이름에 숨은 이야기</h2>
-<p>분광형의 알파벳은 왜 A, B, C 순서가 아닐까요?</p>
-<div class="abc" id="abc"></div>
-<div class="down">↓ 흡수선의 변화가 이어지도록 다시 배열하고, 일부 문자는 빼거나 합침</div>
-<div class="abc" id="obafgkm"></div>
-<ol class="steps">
- <li>19세기 말 미국 하버드 대학 천문대에서는 수많은 별의 스펙트럼을 사진으로 찍어 분류했습니다. 처음에는 <b>수소 흡수선이 강한 별부터 A, B, C, …</b> 순서로 이름을 붙였습니다.</li>
- <li>그 뒤 <b>애니 점프 캐넌</b>은 흡수선의 변화가 자연스럽게 이어지도록 별들을 다시 배열하고, 필요 없는 문자는 빼거나 합쳤습니다. 이렇게 정리된 순서가 <b>O, B, A, F, G, K, M</b>입니다.</li>
- <li>1920년대에 이 순서가 바로 <b>별의 표면 온도 순서</b>라는 것이 밝혀졌습니다(세실리아 페인 등). 흡수선의 모습을 정하는 것은 주로 별의 성분이 아니라 표면 온도였던 것입니다.</li>
-</ol>
-<details><summary>더 알아보기: 수소 흡수선이 A형에서 가장 강한 까닭</summary>
-<p>가시광선 영역의 수소 흡수선은 수소 원자가 에너지를 조금 얻은 상태(들뜬 상태)에 있을 때 생깁니다. 표면 온도가 약 10,000 K인 A형 별에서 이런 수소 원자가 가장 많아 흡수선이 가장 강합니다.</p>
-<p>이보다 뜨거운 별에서는 수소가 대부분 이온화되어 흡수선이 약해지고, 이보다 차가운 별에서는 수소 원자가 대부분 바닥상태에 있어 가시광선을 잘 흡수하지 못하기 때문에 흡수선이 약해집니다.</p>
-</details>
-</section>
+<div class="note" id="info" style="margin-top:10px"></div>
 
-<section class="sec">
-<h2>분광형 순서 외우기</h2>
-<p>분광형의 순서는 각 단어의 첫 글자를 따서 이렇게 외웁니다.</p>
-<div class="mn" id="mn"></div>
-<p>첫 글자가 O, B, A, F, G, K, M인 <b>나만의 문장</b>을 만들어 보면 더 오래 기억에 남습니다. 세분 번호는 0이 가장 뜨거우므로 <b>B9 다음은 A0</b>입니다.</p>
-<h3>순서 맞추기</h3>
-<p class="sm">표면 온도가 높은 분광형부터 차례로 눌러 보세요.</p>
-<div class="slots" id="slots"></div>
-<div class="tiles" id="tiles"></div>
-<div class="gmsg" id="gmsg"></div>
-<div class="gctl"><button id="shuf">다시 섞기</button></div>
-</section>
-
-<section class="sec">
-<h2>분광형에 따른 별의 색깔</h2>
-<p>표면 온도가 높은 별일수록 파장이 짧은 파란빛을 상대적으로 많이 내므로 파랗게 보이고, 온도가 낮은 별일수록 붉게 보입니다.</p>
-<div class="night">
- <div class="cgrid" id="cgrid"></div>
- <div class="cbar" id="cbar"></div>
- <div class="cbl"><span>← 고온</span><span>저온 →</span></div>
+<div id="qrow">
+ <span class="qmsg mn" id="mn"></span>
+ <span class="qmsg">표면 온도가 높은 순서대로 눌러 보세요.</span>
+ <div class="tiles" id="tiles"></div>
+ <button id="shuf">다시 섞기</button>
+ <span id="gmsg"></span>
 </div>
-<p class="sm">색을 구분하기 쉽도록 조금 진하게 나타냈습니다. 실제 밤하늘에서 별의 색은 이보다 옅게 보입니다. 별의 크기는 모두 같게 그렸으며 실제 크기와는 관계없습니다.</p>
-</section>
+
+<dialog id="story"><div style="padding:18px 20px">
+ <h2>분광형 이름에 숨은 이야기</h2>
+ <p>분광형의 알파벳은 왜 A, B, C 순서가 아닐까요?</p>
+ <div class="abc" id="abc"></div>
+ <div class="down">↓ 흡수선의 변화가 이어지도록 다시 배열하고, 일부 문자는 빼거나 합침</div>
+ <div class="abc" id="obafgkm"></div>
+ <ol>
+  <li>19세기 말 미국 하버드 대학 천문대에서는 수많은 별의 스펙트럼을 사진으로 찍어 분류했습니다. 처음에는 <b>수소 흡수선이 강한 별부터 A, B, C, …</b> 순서로 이름을 붙였습니다.</li>
+  <li>그 뒤 <b>애니 점프 캐넌</b>은 흡수선의 변화가 자연스럽게 이어지도록 별들을 다시 배열하고, 필요 없는 문자는 빼거나 합쳤습니다. 이렇게 정리된 순서가 <b>O, B, A, F, G, K, M</b>입니다.</li>
+  <li>1920년대에 이 순서가 바로 <b>별의 표면 온도 순서</b>라는 것이 밝혀졌습니다(세실리아 페인 등). 흡수선의 모습을 정하는 것은 주로 별의 성분이 아니라 표면 온도였던 것입니다.</li>
+ </ol>
+ <details><summary>더 알아보기: 수소 흡수선이 A형에서 가장 강한 까닭</summary>
+  <p>가시광선 영역의 수소 흡수선은 수소 원자가 에너지를 조금 얻은 상태(들뜬 상태)에 있을 때 생깁니다. 표면 온도가 약 10,000 K인 A형 별에서 이런 수소 원자가 가장 많아 흡수선이 가장 강합니다.</p>
+  <p>이보다 뜨거운 별에서는 수소가 대부분 이온화되어 흡수선이 약해지고, 이보다 차가운 별에서는 수소 원자가 대부분 바닥상태에 있어 가시광선을 잘 흡수하지 못하기 때문에 흡수선이 약해집니다.</p>
+ </details>
+ <button class="close" id="closeStory">닫기</button>
+</div></dialog>
 
 <script>
 const L0=390,L1=700,CLS=['O','B','A','F','G','K','M'];
 const INFO={
 O:{col:'파란색',rng:'30,000 K 이상',ln:'이온화된 헬륨(He II) 흡수선이 나타납니다. 수소 흡수선은 약합니다.',st:'나오스 (O4)'},
-B:{col:'청백색',rng:'10,000 ~ 30,000 K',ln:'중성 헬륨(He I) 흡수선이 강하고(B2 무렵 가장 강함), 수소 흡수선이 점점 강해집니다.',st:'스피카 (B1), 리겔 (B8)'},
-A:{col:'흰색',rng:'7,500 ~ 10,000 K',ln:'수소 흡수선이 가장 강합니다(A0 무렵). 이온화된 칼슘 흡수선이 나타나기 시작합니다.',st:'베가 (A0), 시리우스 (A1)'},
+B:{col:'청백색',rng:'10,000 ~ 30,000 K',ln:'중성 헬륨(He I) 흡수선이 강하고, 수소 흡수선이 점점 강해집니다.',st:'스피카 (B1), 리겔 (B8)'},
+A:{col:'흰색',rng:'7,500 ~ 10,000 K',ln:'수소 흡수선이 가장 강합니다. 이온화된 칼슘(Ca II) 흡수선이 나타나기 시작합니다.',st:'베가 (A0), 시리우스 (A1)'},
 F:{col:'황백색',rng:'6,000 ~ 7,500 K',ln:'수소 흡수선이 약해지고, 이온화된 칼슘(Ca II)과 금속 원소의 흡수선이 강해집니다.',st:'프로키온 (F5)'},
 G:{col:'노란색',rng:'5,200 ~ 6,000 K',ln:'이온화된 칼슘(Ca II) 흡수선이 매우 강하고, 중성 금속(철 등)의 흡수선이 많이 나타납니다.',st:'태양 (G2)'},
 K:{col:'주황색',rng:'3,700 ~ 5,200 K',ln:'중성 금속 흡수선이 강합니다. 수소 흡수선은 매우 약합니다.',st:'아크투루스 (K1.5), 알데바란 (K5)'},
 M:{col:'붉은색',rng:'2,400 ~ 3,700 K',ln:'산화 타이타늄(TiO) 같은 분자의 넓은 흡수띠가 나타납니다.',st:'베텔게우스 (M1~M2), 안타레스 (M1.5)'}};
-// 분광형 위치 x = (O=0, B=1, …, M=6) + 세분 번호/10
+// 분광형 위치 x = (O=0, B=1, …, M=6) + 세분 번호/10. 각 줄은 분광형의 가운데(x = 0.5, 1.5, …)로 그림
 const lerp=(P,x)=>{if(x<=P[0][0])return P[0][1];for(let i=1;i<P.length;i++)if(x<=P[i][0]){const[a,b]=P[i-1],[c,d]=P[i];return b+(d-b)*(x-a)/(c-a)}return P[P.length-1][1]};
 // 주계열성의 대략적인 표면 온도 (K)
 const TA=[[0.3,44900],[0.5,41400],[0.7,37100],[0.9,33300],[1.0,31400],[1.1,26000],[1.2,20600],[1.3,17000],[1.5,15700],[1.7,14000],[1.8,12300],[1.9,10700],[2.0,9700],[2.1,9300],[2.2,8800],[2.5,8100],[3.0,7220],[3.2,6810],[3.5,6510],[3.8,6170],[4.0,5920],[4.2,5770],[4.5,5660],[4.8,5490],[5.0,5280],[5.2,5040],[5.5,4450],[5.7,4050],[6.0,3850],[6.2,3560],[6.5,3060],[6.7,2650],[6.9,2400]].map(([a,b])=>[a,Math.log(b)]);
 const temp=x=>Math.exp(lerp(TA,x));
-const fmtT=T=>(T>=10000?Math.round(T/1000)*1000:Math.round(T/100)*100).toLocaleString('ko-KR')+' K';
 // 별의 색 (구분하기 쉽도록 조금 진하게)
 const SC=[[0.3,[138,170,255]],[1.0,[166,192,255]],[1.5,[195,212,255]],[2.0,[228,236,255]],[2.6,[246,247,255]],[3.0,[255,248,232]],[3.5,[255,241,207]],[4.0,[255,232,168]],[4.5,[255,220,143]],[5.0,[255,201,122]],[5.5,[255,176,102]],[6.0,[255,154,85]],[6.9,[255,122,69]]];
 const starCol=x=>[0,1,2].map(k=>Math.round(lerp(SC.map(([a,c])=>[a,c[k]]),x)));
 const css=c=>`rgb(${c.join(',')})`;
-const glowBg=x=>{const c=starCol(x).join(',');return`radial-gradient(circle,#fff 0 13%,rgb(${c}) 33%,rgba(${c},.35) 52%,transparent 70%)`};
+const glowBg=x=>{const c=starCol(x).join(',');return`radial-gradient(circle,#fff 0 16%,rgb(${c}) 40%,rgba(${c},.3) 60%,transparent 72%)`};
 // 원소(이온·분자)별 흡수선: p = 분광형에 따른 상대 세기, L = [파장 nm, 선마다의 세기], B = 분자 흡수띠 [시작 파장, 폭, 세기]
 const SP={
-H:{n:'수소 (H)',c:'#e5484d',p:[[0.3,.12],[0.9,.3],[1.0,.35],[1.5,.65],[2.0,1],[2.5,.85],[3.0,.65],[3.5,.5],[4.0,.38],[4.2,.33],[5.0,.18],[6.0,.08],[6.9,.05]],L:[[656.3,1],[486.1,.95],[434.0,.9],[410.2,.85],[397.0,.8]],w:s=>.35+1.6*s},
-He2:{n:'이온화된 헬륨 (He II)',c:'#9b5de5',p:[[0.3,1],[0.5,.85],[0.9,.35],[1.0,.15],[1.15,0]],L:[[468.6,1],[541.1,.7],[454.2,.6],[420.0,.5]]},
-He1:{n:'중성 헬륨 (He I)',c:'#2f86e0',p:[[0.3,.3],[0.7,.5],[1.0,.8],[1.2,1],[1.5,.6],[1.9,.15],[2.1,0]],L:[[447.1,1],[587.6,.9],[402.6,.7],[501.6,.6],[667.8,.6],[471.3,.5],[492.2,.5]]},
-Ca2:{n:'이온화된 칼슘 (Ca II)',c:'#e08a00',p:[[1.5,0],[2.0,.2],[2.5,.4],[3.0,.6],[4.0,.9],[5.0,1],[5.5,.9],[6.0,.7],[6.9,.5]],L:[[393.4,1],[396.8,1]],w:s=>.4+.9*s},
-met:{n:'중성 금속 (철·마그네슘·나트륨 등)',c:'#2f9e6a',p:[[2.5,0],[3.0,.15],[3.5,.3],[4.0,.5],[5.0,.8],[5.5,.9],[6.0,1],[6.9,.95]],L:[[589.0,1],[589.6,.9],[518.4,.9],[517.3,.8],[516.7,.7],[422.7,.9],[527.0,.7],[438.4,.7],[430.8,.7],[404.6,.6],[532.8,.6],[495.7,.5],[440.5,.5],[427.2,.5],[537.1,.4],[406.4,.4]]},
-TiO:{n:'산화 타이타늄 분자 (TiO)',c:'#b07a55',p:[[5.3,0],[5.7,.15],[6.0,.45],[6.5,.8],[6.9,1]],B:[[476.1,15,.8],[495.4,18,.9],[516.7,25,.9],[544.8,14,.8],[559.7,25,1],[615.8,20,.9],[665.1,25,.9]]}};
-// 자세히 보기 스펙트럼에 이름을 붙일 흡수선
+H:{p:[[0.3,.12],[0.9,.3],[1.0,.35],[1.5,.65],[2.0,1],[2.5,.85],[3.0,.65],[3.5,.5],[4.0,.38],[4.2,.33],[5.0,.18],[6.0,.08],[6.9,.05]],L:[[656.3,1],[486.1,.95],[434.0,.9],[410.2,.85],[397.0,.8]],w:s=>.35+1.6*s},
+He2:{p:[[0.3,1],[0.5,.85],[0.9,.35],[1.0,.15],[1.15,0]],L:[[468.6,1],[541.1,.7],[454.2,.6],[420.0,.5]]},
+He1:{p:[[0.3,.3],[0.7,.5],[1.0,.8],[1.2,1],[1.5,.6],[1.9,.15],[2.1,0]],L:[[447.1,1],[587.6,.9],[402.6,.7],[501.6,.6],[667.8,.6],[471.3,.5],[492.2,.5]]},
+Ca2:{p:[[1.5,0],[2.0,.2],[2.5,.4],[3.0,.6],[4.0,.9],[5.0,1],[5.5,.9],[6.0,.7],[6.9,.5]],L:[[393.4,1],[396.8,1]],w:s=>.4+.9*s},
+met:{p:[[2.5,0],[3.0,.15],[3.5,.3],[4.0,.5],[5.0,.8],[5.5,.9],[6.0,1],[6.9,.95]],L:[[589.0,1],[589.6,.9],[518.4,.9],[517.3,.8],[516.7,.7],[422.7,.9],[527.0,.7],[438.4,.7],[430.8,.7],[404.6,.6],[532.8,.6],[495.7,.5],[440.5,.5],[427.2,.5],[537.1,.4],[406.4,.4]]},
+TiO:{p:[[5.3,0],[5.7,.15],[6.0,.45],[6.5,.8],[6.9,1]],B:[[476.1,15,.8],[495.4,18,.9],[516.7,25,.9],[544.8,14,.8],[559.7,25,1],[615.8,20,.9],[665.1,25,.9]]}};
+// 고른 줄에 이름을 붙일 흡수선
 const LB=[[656.3,'Hα','H'],[486.1,'Hβ','H'],[434.0,'Hγ','H'],[410.2,'Hδ','H'],[468.6,'He II','He2'],[541.1,'He II','He2'],[447.1,'He I','He1'],[587.6,'He I','He1'],[395.1,'Ca II','Ca2'],[589.3,'Na','met'],[517.3,'Mg','met'],[422.7,'Ca','met'],[527.0,'Fe','met'],[476.1,'TiO','TiO'],[559.7,'TiO','TiO'],[615.8,'TiO','TiO']];
 // 파장 → 색, 플랑크 법칙 (spectrum.html과 같은 식)
 function wl(l){let r=0,g=0,b=0;
@@ -229,9 +167,9 @@ function strip(g,W,d,y,h,x){
  let m=0;for(let l=L0;l<=L1;l+=2)m=Math.max(m,pl(l,T));
  let k=0;for(let l=L0;l<=L1;l+=2)k=Math.max(k,Math.pow(pl(l,T)/m,.4)*Math.max(...wl(l)));
  const ab=[],bd=[];
- for(const k in SP){const s=strength(k,x),sp=SP[k];if(s<.02)continue;
-  (sp.L||[]).forEach(([l,f])=>{const v=s*f;if(v<.02)return;ab.push([l,Math.max((sp.w||(q=>.35+.35*q))(v),.6*npx),Math.min(.95,.92*Math.pow(v,.75))])});
-  (sp.B||[]).forEach(([l,w,f])=>bd.push([l,w,.85*s*f]))}
+ for(const s in SP){const v0=strength(s,x),sp=SP[s];if(v0<.02)continue;
+  (sp.L||[]).forEach(([l,f])=>{const v=v0*f;if(v<.02)return;ab.push([l,Math.max((sp.w||(q=>.35+.35*q))(v),.6*npx),Math.min(.95,.92*Math.pow(v,.75))])});
+  (sp.B||[]).forEach(([l,w,f])=>bd.push([l,w,.85*v0*f]))}
  const oc=document.createElement('canvas');oc.width=pw;oc.height=1;const og=oc.getContext('2d'),im=og.createImageData(pw,1);
  for(let i=0;i<pw;i++){const l=L0+(i+.5)*npx;let t=1;
   for(const[c,s,a]of ab){const u=(l-c)/s;if(u>-4&&u<4)t*=1-a*Math.exp(-u*u)}
@@ -239,75 +177,45 @@ function strip(g,W,d,y,h,x){
   const I=Math.pow(pl(l,T)/m,.4)/k*t,cc=wl(l);
   im.data[i*4]=255*cc[0]*I;im.data[i*4+1]=255*cc[1]*I;im.data[i*4+2]=255*cc[2]*I;im.data[i*4+3]=255}
  og.putImageData(im,0,0);g.imageSmoothingEnabled=false;g.drawImage(oc,0,y,W,h)}
-function axis(g,W,y){g.strokeStyle='#aab';g.fillStyle='#cfd6ea';g.font='600 11px system-ui,sans-serif';g.textAlign='center';g.textBaseline='top';
- for(let l=400;l<=700;l+=50){const x=(l-L0)/(L1-L0)*W;g.beginPath();g.moveTo(x,y);g.lineTo(x,y+5);g.stroke();g.fillText(l==700?'700 nm':l,Math.min(x,W-20),y+7)}}
+function labels(g,W,x,lane){g.font='700 11px system-ui,sans-serif';g.textAlign='center';g.textBaseline='alphabetic';let end=-99;
+ LB.map(([l,t,k])=>[l,t,strength(k,x)]).filter(a=>a[2]>=.3).sort((a,b)=>a[0]-b[0]).forEach(([l,t])=>{
+  const px=(l-L0)/(L1-L0)*W,w=g.measureText(t).width;if(px-w/2-7<end)return;end=px+w/2;
+  g.strokeStyle='#cfd6ea';g.beginPath();g.moveTo(px,lane-9);g.lineTo(px,lane);g.stroke();
+  g.fillStyle='#fff';g.fillText(t,Math.max(w/2,Math.min(W-w/2,px)),lane-11)})}
 
-// 분광형별 스펙트럼 줄 만들기
-let cur={c:4,s:2};
+let sel=4;
 const rows=document.getElementById('rows');
 CLS.forEach((k,c)=>{const b=document.createElement('button');b.className='srow';b.dataset.c=c;
- b.innerHTML=`<span class="slab"><span class="chip" style="background:${css(starCol(c+.5))}">${k}</span><span>${k}5형<small>${INFO[k].rng}</small></span></span><canvas></canvas>`;
- b.onclick=()=>{cur.c=c;if(c==0&&cur.s<3)cur.s=3;update()};rows.appendChild(b)});
-rows.insertAdjacentHTML('beforeend','<div class="axisrow"><span></span><canvas id="raxis"></canvas></div><div class="hint">파장 →</div>');
-function drawRows(){rows.querySelectorAll('.srow').forEach(b=>{const cv=b.querySelector('canvas'),{g,W,H,d}=setup(cv);strip(g,W,d,0,H,+b.dataset.c+.5)});
- const{g,W}=setup(raxis);axis(g,W,0)}
-// 자세히 보기 스펙트럼: 위쪽에 흡수선 이름, 아래쪽에 파장 눈금
-function drawDetail(){const x=cur.c+cur.s/10,{g,W,H,d}=setup(dspec),top=38,sh=H-top-24;
- strip(g,W,d,top,sh,x);g.strokeStyle='#667';g.strokeRect(.5,top+.5,W-1,sh-1);axis(g,W,top+sh);
- g.font='700 12px system-ui,sans-serif';g.textAlign='center';g.textBaseline='alphabetic';
- const ends=[-99,-99];
- LB.map(([l,t,k])=>[l,t,k,strength(k,x)]).filter(a=>a[3]>=.3).sort((a,b)=>a[0]-b[0]).forEach(([l,t,k])=>{
-  const px=(l-L0)/(L1-L0)*W,w=g.measureText(t).width,lv=ends[0]<px-w/2-3?0:ends[1]<px-w/2-3?1:-1;if(lv<0)return;
-  ends[lv]=px+w/2;const ty=lv?28:13;
-  g.strokeStyle=SP[k].c;g.beginPath();g.moveTo(px,ty+3);g.lineTo(px,top);g.stroke();
-  g.fillStyle='#fff';g.fillText(t,Math.max(w/2,Math.min(W-w/2,px)),ty)})}
-// 흡수선 세기 그래프
-const legend=document.getElementById('legend');
-for(const k in SP)legend.insertAdjacentHTML('beforeend',`<span><i style="background:${SP[k].c}"></i>${SP[k].n}</span>`);
-function drawChart(){const{g,W,H}=setup(chart),cs=getComputedStyle(document.documentElement),fg=cs.getPropertyValue('--fg'),bd=cs.getPropertyValue('--bd'),acc=cs.getPropertyValue('--acc');
- const l=8,r=8,t=22,b=26,X=x=>l+x/7*(W-l-r),Y=s=>t+(1-s)*(H-t-b);
- g.font='600 12px system-ui,sans-serif';g.fillStyle=fg;g.textAlign='left';g.globalAlpha=.7;g.fillText('↑ 흡수선 세기 (상대값)',l,13);g.globalAlpha=1;
- g.strokeStyle=bd;g.lineWidth=1;
- for(let c=0;c<=7;c++){g.setLineDash(c%7?[3,4]:[]);g.beginPath();g.moveTo(X(c),t);g.lineTo(X(c),H-b);g.stroke()}
- g.setLineDash([]);g.beginPath();g.moveTo(X(0),H-b);g.lineTo(X(7),H-b);g.stroke();
- g.textAlign='center';g.font='800 14px system-ui,sans-serif';g.fillStyle=fg;CLS.forEach((k,c)=>g.fillText(k,X(c+.5),H-8));
- const x=cur.c+cur.s/10;g.strokeStyle=acc;g.lineWidth=3;g.globalAlpha=.35;g.beginPath();g.moveTo(X(x),t);g.lineTo(X(x),H-b);g.stroke();g.globalAlpha=1;
- g.lineWidth=2.4;g.lineJoin='round';
- for(const k in SP){g.strokeStyle=SP[k].c;g.beginPath();let on=false;
-  for(let q=0.3;q<=6.951;q+=.02){const s=strength(k,q);if(s<=0&&!on)continue;const px=X(q),py=Y(s);on?g.lineTo(px,py):g.moveTo(px,py);on=true}g.stroke()}
- g.fillStyle=acc;g.font='800 12px system-ui,sans-serif';g.fillText(CLS[cur.c]+cur.s,Math.max(14,Math.min(W-14,X(x))),t-3)}
-function update(){const k=CLS[cur.c],x=cur.c+cur.s/10;
- rows.querySelectorAll('.srow').forEach(b=>b.classList.toggle('on',+b.dataset.c==cur.c));
- sub.min=cur.c==0?3:0;sub.value=cur.s;smin.textContent=(cur.c==0?'3':'0')+' (고온)';
- dcode.textContent=subv.textContent=k+cur.s;dglow.style.background=glowBg(x);
- dtemp.textContent='약 '+fmtT(temp(x));dcol.innerHTML=`<b>${INFO[k].col}</b> <span class="sm">(${k}형 전체: ${INFO[k].rng})</span>`;
- dline.textContent=INFO[k].ln;dstar.textContent=INFO[k].st;
- drawDetail();drawChart()}
-sub.oninput=()=>{cur.s=+sub.value;update()};
+ b.innerHTML=`<span class="slab"><span class="dot" style="background:${glowBg(c+.5)}"></span><span><b>${k}형</b> <small class="cn">${INFO[k].col}</small><small>${INFO[k].rng.replace(' ~ ','~')}</small></span></span><canvas></canvas>`;
+ b.onclick=()=>{sel=c;update()};rows.appendChild(b)});
+rows.insertAdjacentHTML('beforeend','<div class="axisrow"><span></span><canvas id="raxis"></canvas></div><div class="cap"><span>각 줄을 누르면 흡수선 이름과 특징을 볼 수 있습니다.</span><span>파장 →</span></div>');
+function draw(){rows.querySelectorAll('.srow').forEach(b=>{const c=+b.dataset.c,cv=b.querySelector('canvas'),{g,W,H,d}=setup(cv),lane=c==sel?18:0;
+  strip(g,W,d,lane,H-lane,c+.5);if(lane)labels(g,W,c+.5,lane)});
+ const{g,W}=setup(raxis);g.strokeStyle='#aab';g.fillStyle='#cfd6ea';g.font='600 11px system-ui,sans-serif';g.textAlign='center';g.textBaseline='top';
+ for(let l=400;l<=700;l+=50){const x=(l-L0)/(L1-L0)*W;g.beginPath();g.moveTo(x,0);g.lineTo(x,5);g.stroke();g.fillText(l==700?'700 nm':l,Math.min(x,W-20),7)}}
+function update(){const k=CLS[sel];
+ rows.querySelectorAll('.srow').forEach(b=>b.classList.toggle('on',+b.dataset.c==sel));
+ info.innerHTML=`<div class="nh">${k}형 · ${INFO[k].col} · <span class="en">${INFO[k].rng}</span></div><p>${INFO[k].ln}</p><p>대표적인 별: ${INFO[k].st}</p>`;
+ draw()}
 
-// 분광형 이름의 역사: 처음 문자(일부)와 남은 문자
-'ABCDEFGHIKLMNO'.split('').forEach(k=>abc.insertAdjacentHTML('beforeend',CLS.includes(k)?`<span class="keep" style="background:${css(starCol(CLS.indexOf(k)+.5))}">${k}</span>`:`<span>${k}</span>`));
-CLS.forEach((k,c)=>obafgkm.insertAdjacentHTML('beforeend',`<span class="keep" style="background:${css(starCol(c+.5))}">${k}</span>`));
-
-// 외우는 문장
-mn.innerHTML=[['O','h'],['B','e'],['A',''],['F','ine'],['G','irl(Guy),'],['K','iss'],['M','e!']].map(([a,b],c)=>`<span><b style="background:${css(starCol(c+.5))}">${a}</b>${b}</span>`).join(' ');
-
-// 순서 맞추기
+// 순서 외우기 문장과 순서 맞추기
+mn.innerHTML='외우는 방법: '+[['O','h'],['B','e'],['A',''],['F','ine'],['G','irl(Guy),'],['K','iss'],['M','e!']].map(([a,b],c)=>`<b style="background:${css(starCol(c+.5))}">${a}</b>${b}`).join(' ');
 let step=0,miss=0;
 function shuffle(){let o;do{o=[...CLS].sort(()=>Math.random()-.5)}while(o.join('')==CLS.join(''));
- step=0;miss=0;gmsg.textContent='';slots.innerHTML=CLS.map(()=>'<span></span>').join('');
- tiles.innerHTML='';o.forEach(k=>{const b=document.createElement('button');b.textContent=k;b.onclick=()=>pickTile(b,k);tiles.appendChild(b)})}
-function pickTile(b,k){if(k==CLS[step]){const s=slots.children[step];s.textContent=k;s.style.background=css(starCol(step+.5));s.style.borderColor='transparent';b.disabled=true;step++;
-  gmsg.textContent=step==7?(miss?`완성! (틀린 횟수 ${miss}번) 다시 섞어서 한 번 더 해 보세요.`:'완벽합니다! 한 번도 틀리지 않았어요.'):''}
- else{miss++;b.classList.remove('bad');void b.offsetWidth;b.classList.add('bad');gmsg.textContent=`${k}형은 아직 차례가 아닙니다. ${step?CLS[step-1]+'형 다음으로 온도가 높은 분광형은?':'가장 뜨거운 분광형은?'}`}}
+ step=0;miss=0;gmsg.textContent='';tiles.innerHTML='';
+ o.forEach(k=>{const b=document.createElement('button');b.textContent=k;b.onclick=()=>pick(b,k);tiles.appendChild(b)})}
+function pick(b,k){if(b.classList.contains('ok')||step==7)return;
+ if(k==CLS[step]){b.classList.add('ok');b.style.background=css(starCol(step+.5));step++;
+  if(step==7){CLS.forEach(c=>tiles.appendChild([...tiles.children].find(t=>t.textContent==c)));gmsg.textContent=miss?`완성! (틀린 횟수 ${miss}번)`:'완벽합니다!'}else gmsg.textContent=''}
+ else{miss++;b.classList.remove('bad');void b.offsetWidth;b.classList.add('bad');gmsg.textContent=step?`${CLS[step-1]}형 다음은?`:'가장 뜨거운 분광형은?'}}
 shuf.onclick=shuffle;shuffle();
 
-// 분광형에 따른 별의 색깔
-CLS.forEach((k,c)=>cgrid.insertAdjacentHTML('beforeend',`<div><div class="cstar" style="background:${glowBg(c+.5)}"></div><b>${k}</b><small>${INFO[k].col}</small><small>${INFO[k].rng.replace(' ~ ','~<br>')}</small></div>`));
-cbar.style.background='linear-gradient(90deg,'+Array.from({length:15},(_,i)=>css(starCol(.3+i*6.6/14))).join(',')+')';
+// 분광형 이름에 숨은 이야기 (팝업): 처음 문자(일부)와 남은 문자
+'ABCDEFGHIKLMNO'.split('').forEach(k=>abc.insertAdjacentHTML('beforeend',CLS.includes(k)?`<span class="keep" style="background:${css(starCol(CLS.indexOf(k)+.5))}">${k}</span>`:`<span>${k}</span>`));
+CLS.forEach((k,c)=>obafgkm.insertAdjacentHTML('beforeend',`<span class="keep" style="background:${css(starCol(c+.5))}">${k}</span>`));
+openStory.onclick=()=>story.showModal();closeStory.onclick=()=>story.close();
+story.addEventListener('click',e=>{if(e.target==story)story.close()});
 
-let raf=0;const redraw=()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{drawRows();update()})};
-addEventListener('resize',redraw);
-matchMedia('(prefers-color-scheme: dark)').addEventListener('change',drawChart);
-redraw();
+let raf=0;addEventListener('resize',()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(draw)});
+update();
 </script></main></body></html>
