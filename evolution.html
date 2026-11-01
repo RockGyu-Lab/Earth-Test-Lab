@@ -310,7 +310,7 @@ drawPre();
 
 // ---- ② 주계열 단계 ----
 // 화살표 끝 모양 (색마다 하나씩)
-function heads(d){[['r','#ff6b6b'],['b','#6bb6ff'],['w','#e8eaf2'],['y','#ffd166']].forEach(([k,c])=>{const m=el('marker',{id:'h'+k,viewBox:'0 0 10 10',refX:7,refY:5,markerWidth:4,markerHeight:4,orient:'auto'},d);el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m)})}
+function heads(d){[['r','#ff6b6b'],['b','#6bb6ff'],['w','#e8eaf2'],['y','#ffd166'],['p','#c9a7ff']].forEach(([k,c])=>{const m=el('marker',{id:'h'+k,viewBox:'0 0 10 10',refX:7,refY:5,markerWidth:4,markerHeight:4,orient:'auto'},d);el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m)})}
 function arrow(x1,y1,x2,y2,k,c,w=4){el('line',{x1,y1,x2,y2,stroke:c,'stroke-width':w,'stroke-linecap':'round','marker-end':`url(#h${k})`})}
 
 // 정역학 평형: 중력(안쪽)과 기체 압력 차에 의한 힘(바깥쪽)이 같은 크기로 평형을 이룬 모습
@@ -348,19 +348,20 @@ let fm='pp',fi=0,fT=1,fRaf=0,fPlay=false;
 function nuc(x,y,t,o=1,z=1){const[p,n,l]=NUC[t],g=el('g',{opacity:o}),one=p+n==1,sp=one?[[0,0]]:[[-5,-4],[5,-4],[-5,5],[5,5]].slice(0,p+n);
  sp.forEach(([dx,dy],i)=>el('circle',{cx:x+dx*z,cy:y+dy*z,r:(one?8:7)*z,fill:i<p?'#ff6b6b':'#9aa3c7',stroke:'#0b1026','stroke-width':1},g));
  lab(x,y+(one?16:18)*z+8,l,14*Math.min(z,1.25),'middle','#e8eaf2',800,g)}
-function light(x,y,t,o=1,z=1){const g=el('g',{opacity:o}),fs=14*Math.min(z,1.25);
+// ang: 날아가는 방향(라디안). 감마선(γ)은 그 방향으로 물결치며 끝이 화살표
+function light(x,y,t,o=1,z=1,ang=0){const g=el('g',{opacity:o}),fs=14*Math.min(z,1.25);
  if(t=='e'){el('circle',{cx:x,cy:y,r:5*z,fill:'#ffd166'},g);lab(x,y+12*z+8,'e⁺',fs,'middle','#ffd166',800,g)}
  else if(t=='nu'){el('circle',{cx:x,cy:y,r:3.5*z,fill:'none',stroke:'#cfd6ea','stroke-width':1.5*z},g);lab(x,y+10*z+8,'ν',fs,'middle','#cfd6ea',800,g)}
- else if(t=='g'){const u=8*z;el('path',{d:`M${x-2*u},${y} q${u/2},-${u} ${u},0 t${u},0 t${u},0 t${u},0`,fill:'none',stroke:'#c9a7ff','stroke-width':2.2*z},g);lab(x,y+12*z+8,'γ',fs,'middle','#c9a7ff',800,g)}
+ else if(t=='g'){const u=7*z;el('path',{d:`M${-2.5*u},0 q${u/2},-${u} ${u},0 t${u},0 t${u},0 t${u},0 l${u*.8},0`,fill:'none',stroke:'#c9a7ff','stroke-width':2.2*z,'stroke-linecap':'round','marker-end':'url(#hp)',transform:`translate(${x},${y}) rotate(${ang*180/Math.PI})`},g);lab(x,y+12*z+12,'γ',fs,'middle','#c9a7ff',800,g)}
  else nuc(x,y,t,o,z)}
 // 오른쪽 세로 칸: 반응 이름, 단계, 반응식(두 줄), 결과, 우세한 조건
-function sideCol(step,eq,note){const g=el('g',{}),X=424;el('rect',{x:410,y:10,width:220,height:320,rx:12,fill:'#161c36',stroke:'#3a4260'},g);
+function sideCol(step,eq,note){const g=el('g',{}),X=414;el('rect',{x:400,y:8,width:234,height:324,rx:12,fill:'#161c36',stroke:'#3a4260'},g);
  const[l,r]=eq.split(' → ');
- [[fm=='pp'?'p-p 연쇄 반응':'CNO 순환 반응',17,'#ffd166',800,36],[step,14,'#cfd6ea',700,60],[l,19,'#fff',800,98],['→ '+r,19,'#fff',800,126],[note,12,'#a9b1cc',600,150]]
+ [[fm=='pp'?'p-p 연쇄 반응':'CNO 순환 반응',21,'#ffd166',800,38],[step,16,'#cfd6ea',700,64],[l,23,'#fff',800,102],['→ '+r,23,'#fff',800,132],[note,13,'#a9b1cc',600,154]]
   .forEach(([t,f,c,w,y])=>t&&lab(X,y,t,f,'start',c,w,g));
- el('line',{x1:X,x2:616,y1:166,y2:166,stroke:'#3a4260'},g);
- [['결과',15,'#ffd166',800,192],['수소 원자핵 4개 →',14,'#e8eaf2',700,216],['헬륨 원자핵 1개 + 에너지',14,'#e8eaf2',700,238],['질량 결손 → 에너지 (E = mc²)',12,'#a9b1cc',600,262],
-  ['중심부 온도 약 1,800만 K',13,'#8ff0b0',700,290],[fm=='pp'?'이하에서 우세 (예: 태양)':'이상에서 우세',13,'#8ff0b0',700,310],[fm=='pp'?'':'(예: 질량이 큰 주계열성)',13,'#8ff0b0',700,328]]
+ el('line',{x1:X,x2:620,y1:166,y2:166,stroke:'#3a4260'},g);
+ [['결과',18,'#ffd166',800,192],['수소 원자핵 4개 →',16,'#e8eaf2',700,216],['헬륨 원자핵 1개 + 에너지',16,'#e8eaf2',700,239],['질량 결손 → 에너지 (E = mc²)',14,'#a9b1cc',600,261],
+  ['중심부 온도 약 1,800만 K',15,'#8ff0b0',700,286],[fm=='pp'?'이하에서 우세 (예: 태양)':'이상에서 우세',15,'#8ff0b0',700,306],[fm=='pp'?'':'(예: 질량이 큰 주계열성)',15,'#8ff0b0',700,325]]
   .forEach(([t,f,c,w,y])=>t&&lab(X,y,t,f,'start',c,w,g))}
 // 그림은 왼쪽(가로 0~400), 설명과 결과는 오른쪽 세로 칸
 function drawFu(){S=fuv;S.innerHTML='';const d=el('defs',{});heads(d);const t=fT;
@@ -369,8 +370,8 @@ function drawFu(){S=fuv;S.innerHTML='';const d=el('defs',{});heads(d);const t=fT
   if(!after){nuc(55+(C[0]-34-55)*m,45+(C[1]-30-45)*m,st.a[0],1,Z);nuc(345-(345-C[0]-34)*m,295-(295-C[1]-30)*m,st.a[1],1,Z)}
   if(t>.38&&t<.66)el('circle',{cx:C[0],cy:C[1]-4,r:58*(1-Math.abs(t-.52)/.14),fill:'#fff3c4',opacity:.6});
   if(after){light(C[0],C[1],st.b[0],1,Z);
-   const fly=[[C[0]+125*q,C[1]-105*q],[C[0]-125*q,C[1]+95*q]];
-   st.b.slice(1).forEach((p,i)=>light(fly[i][0],fly[i][1],p,1,Z))}
+   const fly=[[C[0]+125*q,C[1]-105*q],[C[0]-125*q,C[1]+95*q]],ang=[Math.atan2(-105,125),Math.atan2(95,-125)];
+   st.b.slice(1).forEach((p,i)=>light(fly[i][0],fly[i][1],p,1,Z,ang[i]))}
   sideCol(`${fi+1}단계 ${st.x}`,st.eq,'')}
  else{const st=CNO[fi],O=[200,162],Rr=112,P=i=>{const a=(-90+i*60)*Math.PI/180;return[O[0]+Rr*Math.cos(a),O[1]+Rr*Math.sin(a)]};
   CN.forEach((_,i)=>{const[a,b]=[P(i),P((i+1)%6)],on=i==fi,dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy),u=[dx/L,dy/L];
@@ -380,7 +381,7 @@ function drawFu(){S=fuv;S.innerHTML='';const d=el('defs',{});heads(d);const t=fT
   // 들어오는 ¹H와 나가는 입자는 고리의 바깥쪽으로 드나듦
   const[a,b]=[P(fi),P((fi+1)%6)],mid=[(a[0]+b[0])/2,(a[1]+b[1])/2],ox=(mid[0]-O[0])/Rr,oy=(mid[1]-O[1])/Rr;
   if(st.in&&t<.5){const m=Math.min(1,t/.45);nuc(mid[0]+ox*80*(1-m),mid[1]+oy*80*(1-m)-8,'1H',1,1.3)}
-  if(t>.5){const q=(t-.5)/.5;st.out.forEach((p,i)=>light(mid[0]+ox*(30+36*q)+(i?22*-oy:0),mid[1]+oy*(30+36*q)+(i?22*ox:0),p,1,1.3))}
+  if(t>.5){const q=(t-.5)/.5;st.out.forEach((p,i)=>light(mid[0]+ox*(30+36*q)+(i?22*-oy:0),mid[1]+oy*(30+36*q)+(i?22*ox:0),p,1,1.3,Math.atan2(oy,ox)))}
   sideCol(`${fi+1}단계 / 6`,st.eq,fi==5?'→ 다시 ¹²C로 돌아가 순환이 이어짐':'')}
  fstep.textContent=`${fi+1} / ${fm=='pp'?3:6} 단계`}
 function runStep(then){cancelAnimationFrame(fRaf);fT=0;const t0=performance.now();const st=now=>{fT=Math.min(1,(now-t0)/1800);drawFu();if(fT<1)fRaf=requestAnimationFrame(st);else if(then)then()};fRaf=requestAnimationFrame(st)}
