@@ -146,7 +146,7 @@ const MASS=[
 MASS.forEach(M=>{M.C=curve(M.P);let L=0;M.len=M.C.map((p,i)=>i?L+=Math.hypot(p[0]-M.C[i-1][0],(p[1]-M.C[i-1][1])/4):0)}); // 길이는 대략 화면 비율로
 function along(M,p){const tot=M.len[M.len.length-1],d=p*tot;let i=1;while(i<M.len.length-1&&M.len[i]<d)i++;
  const f=(d-M.len[i-1])/((M.len[i]-M.len[i-1])||1);return[0,1].map(j=>M.C[i-1][j]+(M.C[i][j]-M.C[i-1][j])*f)}
-function fmtYr(y){if(y>=1e8){const v=Math.round(y/1e7)/10;return v+'억 년'}if(y>=1e4)return Math.round(y/1e4).toLocaleString('ko-KR')+'만 년';return Math.round(y/100)*100+'년'}
+function fmtYr(y){if(y>=1e8){const v=Math.round(y/1e7)/10;return v+'억 년'}if(y>=1e4)return Math.round(y/1e4).toLocaleString('ko-KR')+'만 년';return(Math.round(y/100)*100).toLocaleString('ko-KR')+'년'}
 // 중심부 온도 (모식적인 대략값): 성운 약 10 K → 원시별이 되며 수천 K → 주계열 도달 때 약 1,000만 K
 const Tc=s=>10**(s<.2?1+s/.2*.3:s<.4?1.3+(s-.2)/.2*2:3.3+(s-.4)/.6*3.7);
 const fmtK=T=>T>=1e4?Math.round(T/1e4).toLocaleString('ko-KR')+'만 K':(Math.round(T/10)*10).toLocaleString('ko-KR')+' K';
@@ -155,7 +155,7 @@ let ps=0,mi=3,playing=false,raf=0;
 // 왼쪽: 성운에서 별이 탄생하는 과정
 const BG=Array.from({length:60},(_,i)=>[(i*97)%430+10,(i*53)%330+10,(i%5==0)?1.3:.7]);
 const BLOB=[[0,0,1,'#6b5cd6'],[-60,-30,.7,'#c2588e'],[55,35,.75,'#4f7dd8'],[30,-55,.55,'#8f5fd0'],[-45,50,.6,'#5a6fd6'],[70,-10,.5,'#c0609a']];
-function drawBirth(){S=bv;S.innerHTML='';const s=ps,st=stageOf(s),M=MASS[mi],C=[220,195];
+function drawBirth(s){S=bv;S.innerHTML='';const st=stageOf(s),M=MASS[mi],C=[220,195];
  const d=el('defs',{});
  BLOB.forEach(([,, ,c],i)=>{const g=el('radialGradient',{id:'bl'+i},d);el('stop',{offset:0,'stop-color':c,'stop-opacity':.85},g);el('stop',{offset:1,'stop-color':c,'stop-opacity':0},g)});
  const gg=el('radialGradient',{id:'gw'},d);el('stop',{offset:0,'stop-color':'#fff'},gg);el('stop',{offset:.25,'stop-color':'#fff','stop-opacity':.9},gg);el('stop',{offset:1,'stop-color':'#fff','stop-opacity':0},gg);
@@ -201,8 +201,16 @@ function drawBirth(){S=bv;S.innerHTML='';const s=ps,st=stageOf(s),M=MASS[mi],C=[
 
 // 오른쪽: H-R 도 위에서 원시별이 주계열에 도달하는 경로
 const MSB=[[4.65,5.7],[4.6,5.3],[4.5,4.5],[4.4,3.75],[4.3,3.1],[4.2,2.6],[4.1,1.95],[4.0,1.45],[3.9,1.0],[3.86,.75],[3.8,.3],[3.761,0],[3.7,-.45],[3.65,-.85],[3.6,-1.15],[3.55,-1.6]];
-function drawHR(){S=hv;S.innerHTML='';const X0=78,X1=545,Y0=44,Y1=372,TA=4.62,TB=3.4,LA=5.3,LB=-2,
- x=t=>X0+(TA-t)/(TA-TB)*(X1-X0),y=l=>Y0+(LA-l)/(LA-LB)*(Y1-Y0),s=ps,q=s<.4?-1:(s-.4)/.6;
+// 진행 상태: 질량마다 경로 위 위치 q (0~1, 원시별이 되기 전은 -1)
+//  · 한 질량만 볼 때: 고른 질량이 재생 시간 동안 경로를 끝까지 감
+//  · 모두 보기(경주): 다섯 질량이 같은 시계로 움직임. 시계는 1천 년 → 2억 년을 10배씩 같은 간격(로그 눈금)으로 흐르고,
+//    걸린 시간 = 도달 시간 × q² 로 두어 q = √(t / 도달 시간)
+const race=()=>allm.checked;
+function stateOf(){if(ps<.4)return{vs:ps,t:null,q:MASS.map(()=>-1)};
+ if(!race()){const q=(ps-.4)/.6;return{vs:ps,t:null,q:MASS.map((_,i)=>i==mi?q:-1)}}
+ const t=10**(3+(ps-.4)/.6*5.3),q=MASS.map(M=>Math.sqrt(Math.min(1,t/M.yr)));return{vs:.4+.6*q[mi],t,q}}
+function drawHR(G){S=hv;S.innerHTML='';const X0=78,X1=545,Y0=44,Y1=372,TA=4.62,TB=3.4,LA=5.3,LB=-2,
+ x=t=>X0+(TA-t)/(TA-TB)*(X1-X0),y=l=>Y0+(LA-l)/(LA-LB)*(Y1-Y0),q=G.q[mi];
  el('rect',{x:X0,y:Y0,width:X1-X0,height:Y1-Y0},el('clipPath',{id:'hc'},el('defs',{})));
  [-2,0,2,4].forEach(p=>{const Y=y(p);el('line',{x1:X0,x2:X1,y1:Y,y2:Y,stroke:'#2a3156'});lab(X0-8,Y+5,(10**p).toLocaleString('ko-KR',{maximumFractionDigits:2}),14,'end')});
  [30000,10000,5000,3000].forEach(T=>{const X=x(lg(T));el('line',{x1:X,x2:X,y1:Y0,y2:Y1,stroke:'#2a3156'});lab(X,Y1+22,T.toLocaleString('ko-KR'),14)});
@@ -214,27 +222,32 @@ function drawHR(){S=hv;S.innerHTML='';const X0=78,X1=545,Y0=44,Y1=372,TA=4.62,TB
  el('polygon',{points:up.concat(dn).map(p=>p.join(',')).join(' '),fill:'#7fb4ff','fill-opacity':.13,stroke:'#7fb4ff','stroke-opacity':.5,'stroke-dasharray':'5 5','clip-path':'url(#hc)'});
  lab(x(4.36),y(2.2),'주계열',16,'middle','#7fb4ff',800);
  const path=C=>C.map((p,i)=>(i?'L':'M')+x(p[0]).toFixed(1)+','+y(p[1]).toFixed(1)).join('');
- // 모두 보기: 다섯 경로와 도달 시간
- if(allm.checked)MASS.forEach((M,i)=>{if(i==mi)return;el('path',{d:path(M.C),fill:'none',stroke:'#9aa3c7','stroke-width':2,opacity:.75});
-  const[t0,l0]=M.P[0],[t1,l1]=M.P[M.P.length-1];lab(x(t0)+6,y(l0)-6,M.m+' M☉',13,'start','#cfd6ea',700);el('circle',{cx:x(t1),cy:y(l1),r:3.5,fill:'#cfd6ea'});lab(x(t1),y(l1)+18,fmtYr(M.yr),12,'middle','#cfd6ea',600)});
+ // 경로: 모두 보기면 다섯 질량, 아니면 고른 질량만. 고른 질량은 호박색으로 강조
+ const show=race()?MASS.map((_,i)=>i):[mi];
+ show.forEach(i=>{const M=MASS[i],me=i==mi,qi=G.q[i],c=me?'#f5b942':'#aab3d6',[t0,l0]=M.P[0],[t1,l1]=M.P[M.P.length-1];
+  el('path',{d:path(M.C),fill:'none',stroke:c,'stroke-width':me?2:1.6,'stroke-dasharray':'5 6',opacity:me?.55:.45});
+  lab(x(t0)+(me?8:6),y(l0)-(me?8:6),M.m+' M☉',me?15:13,'start',me?'#ffd166':'#cfd6ea',me?800:700);
+  if(qi>=0){const n=Math.max(2,Math.round(qi*(M.C.length-1))),pt=along(M,qi);
+   el('path',{d:path(M.C.slice(0,n).concat([pt])),fill:'none',stroke:c,'stroke-width':me?3.5:2.5,'stroke-linecap':'round'});
+   el('circle',{cx:x(pt[0]),cy:y(pt[1]),r:me?13:9,fill:col(pt[0]),opacity:.35});el('circle',{cx:x(pt[0]),cy:y(pt[1]),r:me?7:5,fill:col(pt[0]),stroke:'#fff','stroke-width':1.5});
+   // 주계열에 도착하면 도달 시간 표시
+   if(qi>=1)lab(x(t1),y(l1)+(me?20:18),(race()?'도착! ':'')+fmtYr(M.yr),me?13:12,'middle',me?'#ffd166':'#cfd6ea',me?800:600)}});
  const M=MASS[mi];
- el('path',{d:path(M.C),fill:'none',stroke:'#f5b942','stroke-width':2,'stroke-dasharray':'5 6',opacity:.55});
- const[t0,l0]=M.P[0],[t1,l1]=M.P[M.P.length-1];lab(x(t0)+8,y(l0)-8,M.m+' M☉',15,'start','#ffd166',800);
- if(allm.checked)lab(x(t1),y(l1)+18,fmtYr(M.yr),13,'middle','#ffd166',800);
- if(q>=0){const n=Math.max(2,Math.round(q*(M.C.length-1))),pt=along(M,q),part=M.C.slice(0,n).concat([pt]);
-  el('path',{d:path(part),fill:'none',stroke:'#f5b942','stroke-width':3.5,'stroke-linecap':'round'});
-  el('circle',{cx:x(pt[0]),cy:y(pt[1]),r:13,fill:col(pt[0]),opacity:.35});el('circle',{cx:x(pt[0]),cy:y(pt[1]),r:7,fill:col(pt[0]),stroke:'#fff','stroke-width':1.5});
-  // 걸린 시간 상자
-  const g=el('g',{}),bg=el('rect',{rx:10,fill:'#161c36',opacity:.92,stroke:'#3a4260'},g),bx=X0+12,by=Y1-70;
-  lab(bx+12,by+24,M.m+' M☉ '+(q>=1?'주계열성':'원시별'),15,'start','#fff',800,g);
-  const t=lab(bx+12,by+48,'걸린 시간  ',13,'start','#a9b1cc',600,g),ts=el('tspan',{fill:'#f5b942','font-weight':800},t);ts.textContent='약 '+fmtYr(Math.max(M.yr*q*q,q>0?Math.min(M.yr,1000):0));
-  const b=g.getBBox();bg.setAttribute('x',bx);bg.setAttribute('y',by);bg.setAttribute('width',b.width+24);bg.setAttribute('height',60)}
+ if(q>=0){// 시간 상자: 한 질량이면 그 별이 걸린 시간, 경주면 공통 시계
+  const g=el('g',{}),bg=el('rect',{rx:10,fill:'#161c36',opacity:.92,stroke:'#3a4260'},g),bx=X0+12,by=Y1-(race()?92:70);
+  const row=(yy,k,v,fs=13)=>{const t=lab(bx+12,yy,k+'  ',fs,'start','#a9b1cc',600,g),ts=el('tspan',{fill:'#f5b942','font-weight':800},t);ts.textContent=v};
+  if(race()){lab(bx+12,by+24,'경과 시간  약 '+fmtYr(G.t),15,'start','#fff',800,g);
+   row(by+48,'주계열 도착',MASS.filter((_,i)=>G.q[i]>=1).map(m=>m.m).reverse().join(', ')+(G.q.some(v=>v>=1)?' M☉':'아직 없음'));
+   lab(bx+12,by+72,'※ 시계는 10배씩 커지는 눈금으로 흐름',12,'start','#a9b1cc',600,g)}
+  else{lab(bx+12,by+24,M.m+' M☉ '+(q>=1?'주계열성':'원시별'),15,'start','#fff',800,g);
+   row(by+48,'걸린 시간','약 '+fmtYr(Math.max(M.yr*q*q,q>0?Math.min(M.yr,1000):0)))}
+  const b=g.getBBox();bg.setAttribute('x',bx);bg.setAttribute('y',by);bg.setAttribute('width',b.width+24);bg.setAttribute('height',race()?84:60)}
  else{lab((X0+X1)/2,Y0+26,'성운 단계는 온도가 매우 낮고 먼지에 가려 H-R 도에 나타내지 않습니다',13,'middle','#a9b1cc',600)}
- if(allm.checked)lab(X0+10,Y0+22,'생각해 보기: 질량이 클수록 주계열에 도달하는 시간은?',13,'start','#ffd166',700)}
+ if(race()&&q>=0)lab(X0+10,Y0+22,'생각해 보기: 질량이 클수록 주계열에 도달하는 시간은?',13,'start','#ffd166',700)}
 
-function drawPre(){const st=stageOf(ps);
+function drawPre(){const G=stateOf(),st=stageOf(G.vs);
  pnote.innerHTML=`<div class="nh">전주계열 단계 <span class="ex">· 성운에서 태어난 원시별이 주계열성이 되기 전까지의 단계</span></div><p><b>${STG[st].n}</b> ${STG[st].d}</p>`;
- drawBirth();drawHR();prog.value=Math.round(ps*1000)}
+ drawBirth(G.vs);drawHR(G);prog.value=Math.round(ps*1000)}
 function setS(v){ps=Math.max(0,Math.min(1,v));drawPre()}
 MASS.forEach((M,i)=>{const b=document.createElement('button');b.textContent=M.m+' M☉';b.onclick=()=>{mi=i;msel.querySelectorAll('button').forEach((x,j)=>x.classList.toggle('on',j==i));drawPre()};msel.appendChild(b)});
 msel.children[mi].classList.add('on');
@@ -243,6 +256,6 @@ bv.addEventListener('click',e=>{const g=e.target.closest('[data-s]');if(g){stop(
 // 재생: 처음부터 끝까지 약 9초
 function stop(){playing=false;cancelAnimationFrame(raf);play.textContent='▶ 재생'}
 play.onclick=()=>{if(playing)return stop();if(ps>=1)ps=0;playing=true;play.textContent='❚❚ 멈춤';let last=performance.now();
- const step=now=>{if(!playing)return;setS(ps+(now-last)/9000);last=now;if(ps>=1)return stop();raf=requestAnimationFrame(step)};raf=requestAnimationFrame(step)};
+ const step=now=>{if(!playing)return;setS(ps+(now-last)/(race()?14000:9000));last=now;if(ps>=1)return stop();raf=requestAnimationFrame(step)};raf=requestAnimationFrame(step)};
 drawPre();
 </script></main></body></html>
