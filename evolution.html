@@ -73,19 +73,21 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .chk input{accent-color:var(--acc);margin:0}
 .unit{font-size:.8rem;opacity:.75;white-space:nowrap}
 [data-s]{cursor:pointer}
-/* ② 주계열 단계: 그림 두 개를 위아래로, 각 그림 오른쪽에 조작 칸 */
-.panel{display:grid;grid-template-columns:1fr 196px;gap:8px;margin-bottom:8px}
-.panel svg{max-height:max(150px,calc((100vh - 330px)/2))}
-.panel svg{max-height:max(150px,calc((100dvh - 330px)/2))}
-.side{background:var(--card);border-radius:14px;padding:8px 10px;display:flex;flex-direction:column;gap:6px;justify-content:center}
-.side h3{margin:0;font-size:.92rem;color:var(--acc)}
-.sbtn{display:flex;flex-direction:column;gap:5px}
-.sbtn.row{flex-direction:row}
-.sbtn button{flex:1;padding:5px 8px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--fg);font-size:.84rem;cursor:pointer;line-height:1.3}
+/* ② 주계열 단계: 왼쪽 정역학 평형, 오른쪽 수소 핵융합 (각 그림 아래에 조작 줄) */
+.duo2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.col{display:flex;flex-direction:column;gap:6px;min-width:0}
+.col svg{max-height:max(220px,calc(100vh - 340px))}
+.col svg{max-height:max(220px,calc(100dvh - 340px))}
+.side{background:var(--card);border-radius:14px;padding:6px 10px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;flex:1}
+.side .st{font-size:.88rem;color:var(--acc);white-space:nowrap}
+.sbtn{display:flex;gap:5px}
+.sbtn.row{flex-direction:row;flex-wrap:wrap}
+.sbtn button{padding:4px 9px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--fg);font-size:.82rem;cursor:pointer;line-height:1.3}
 .sbtn button.on{background:var(--acc);border-color:var(--acc);color:var(--on-acc);font-weight:700}
-.stp{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:.88rem}
-.stp button{width:34px;padding:4px 0;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--fg);cursor:pointer}
-@media (max-width:640px){.panel{grid-template-columns:1fr}}
+.stp{display:flex;align-items:center;gap:6px;font-size:.84rem;white-space:nowrap}
+.stp button{width:30px;padding:3px 0;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--fg);cursor:pointer}
+.side .pb{padding:4px 12px;font-size:.84rem;min-width:0}
+@media (max-width:640px){.duo2{grid-template-columns:1fr}}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
@@ -121,12 +123,14 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 <!-- ② 주계열 단계: 위 정역학 평형, 아래 수소 핵융합 반응 -->
 <section id="p2" role="tabpanel" aria-labelledby="tab2" hidden>
  <div class="note"><div class="nh">주계열 단계 <span class="ex">· 중심부에서 수소 핵융합 반응이 일어나며 크기가 일정하게 유지되는 단계</span></div><p>별이 일생의 대부분을 보내는 단계로, 중력과 기체 압력 차에 의한 힘이 평형을 이룹니다.</p></div>
- <div class="panel"><svg id="eqv" viewBox="0 0 760 220"></svg>
-  <div class="side"><h3>정역학 평형</h3><div class="sbtn" id="eqb"><button data-v="0" class="on">평형</button><button data-v="1">중력이 더 클 때</button><button data-v="-1">압력 차에 의한 힘이 더 클 때</button></div></div></div>
- <div class="panel"><svg id="fuv" viewBox="0 0 760 220"></svg>
-  <div class="side"><h3>수소 핵융합 반응</h3><div class="sbtn row" id="fmode"><button data-v="pp" class="on">p-p 연쇄</button><button data-v="cno">CNO 순환</button></div>
-   <div class="stp"><button id="fprev" aria-label="이전 단계">◀</button><b id="fstep"></b><button id="fnext" aria-label="다음 단계">▶</button></div>
-   <button class="pb" id="fplay">▶ 자동 진행</button></div></div>
+ <div class="duo2">
+  <div class="col"><svg id="eqv" viewBox="0 0 480 340"></svg>
+   <div class="side"><b class="st">정역학 평형</b><div class="sbtn row" id="eqb"><button data-v="0" class="on">평형</button><button data-v="1">중력이 더 클 때</button><button data-v="-1">압력 차에 의한 힘이 더 클 때</button></div></div></div>
+  <div class="col"><svg id="fuv" viewBox="0 0 480 340"></svg>
+   <div class="side"><div class="sbtn row" id="fmode"><button data-v="pp" class="on">p-p 연쇄</button><button data-v="cno">CNO 순환</button></div>
+    <div class="stp"><button id="fprev" aria-label="이전 단계">◀</button><b id="fstep"></b><button id="fnext" aria-label="다음 단계">▶</button></div>
+    <button class="pb" id="fplay">▶ 자동 진행</button></div></div>
+ </div>
  <div class="note ask"><span class="tag">생각해 보기</span><p>주계열성이 오랫동안 크기를 일정하게 유지할 수 있는 까닭은 무엇일까요?</p><button type="button" class="open-think" id="thb2">답 보기</button></div>
  <div class="ov" id="ov2" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기 답">
   <div class="think-h"><b class="think-t">생각해 보기 · 답</b><button type="button" class="x" id="thx2" aria-label="닫기">닫기 ✕</button></div>
@@ -315,7 +319,7 @@ let eqS=0,eqT=1,eqRaf=0;
 function drawEq(){S=eqv;S.innerHTML='';const d=el('defs',{});heads(d);
  const sg=el('radialGradient',{id:'stg'},d);[[0,'#fffbe8'],[.3,'#ffe08a'],[.75,'#ffb347'],[1,'#e8792e']].forEach(([o,c])=>el('stop',{offset:o,'stop-color':c},sg));
  const cg=el('radialGradient',{id:'cog'},d);[[0,'#ffffff',1],[.6,'#fff3c4',.9],[1,'#fff3c4',0]].forEach(([o,c,a])=>el('stop',{offset:o,'stop-color':c,'stop-opacity':a},cg));
- const s=eqS,t=eqT,k=1-.15*s*Math.sin(Math.PI*t),net=s?-.35*s*Math.cos(Math.PI*t)*(1-t):0,Fg=1/(k*k),Fp=Fg+net,C=[130,110],R=78*k;
+ const s=eqS,t=eqT,k=1-.15*s*Math.sin(Math.PI*t),net=s?-.35*s*Math.cos(Math.PI*t)*(1-t):0,Fg=1/(k*k),Fp=Fg+net,C=[240,152],R=86*k;
  const hg=el('radialGradient',{id:'eqh'},d);[[.6,'#ffb347',.35],[1,'#ffb347',0]].forEach(([o,c,a])=>el('stop',{offset:o,'stop-color':c,'stop-opacity':a},hg));
  el('circle',{cx:C[0],cy:C[1],r:R*1.35,fill:'url(#eqh)'}); // 경계 없는 빛무리
  el('circle',{cx:C[0],cy:C[1],r:R,fill:'url(#stg)'});
@@ -325,15 +329,15 @@ function drawEq(){S=eqv;S.innerHTML='';const d=el('defs',{});heads(d);
  [45,135,225,315].forEach(a=>{const r=a*Math.PI/180,ux=Math.cos(r),uy=Math.sin(r),px=-uy*8,py=ux*8,m=R*.66,lg_=30*Fg,lp=30*Math.max(.2,Fp);
   arrow(C[0]+ux*(m+lg_/2)+px,C[1]+uy*(m+lg_/2)+py,C[0]+ux*(m-lg_/2)+px,C[1]+uy*(m-lg_/2)+py,'r','#ff6b6b');
   arrow(C[0]+ux*(m-lp/2)-px,C[1]+uy*(m-lp/2)-py,C[0]+ux*(m+lp/2)-px,C[1]+uy*(m+lp/2)-py,'b','#6bb6ff')});
- // 범례와 상태 설명
- arrow(270,34,300,34,'r','#ff6b6b');lab(310,39,'중력 (안쪽으로)',14,'start','#ffb3b3',700);
- arrow(450,34,480,34,'b','#6bb6ff');lab(490,39,'기체 압력 차에 의한 힘 (바깥쪽으로)',14,'start','#b3dcff',700);
+ // 범례(왼쪽 위), 반지름(오른쪽 위), 상태 설명(아래)
+ arrow(14,20,40,20,'r','#ff6b6b');lab(48,25,'중력 (안쪽으로)',13,'start','#ffb3b3',700);
+ arrow(14,42,40,42,'b','#6bb6ff');lab(48,47,'기체 압력 차에 의한 힘 (바깥쪽으로)',13,'start','#b3dcff',700);
+ lab(468,25,'반지름 '+(k*100).toFixed(0)+'%',13,'end','#a9b1cc',700);
  let h,l1,l2;
  if(!s||t>=1){h='정역학 평형';l1='중력 = 기체 압력 차에 의한 힘';l2='→ 별의 크기가 일정하게 유지됨'}
  else if(t<.5){h=s>0?'중력 > 압력 차에 의한 힘':'압력 차에 의한 힘 > 중력';l1=s>0?'→ 별이 수축함':'→ 별이 팽창함';l2=s>0?'→ 중심부 온도와 압력이 높아짐':'→ 중심부 온도와 압력이 낮아짐'}
  else{h='다시 정역학 평형으로';l1=s>0?'높아진 압력으로 압력 차에 의한 힘이 커져':'낮아진 압력으로 압력 차에 의한 힘이 작아져';l2='→ 원래 크기로 돌아감'}
- lab(270,92,h,22,'start',(!s||t>=1)?'#8ff0b0':'#ffd166',800);lab(270,128,l1,16,'start','#e8eaf2',700);lab(270,156,l2,16,'start','#e8eaf2',700);
- lab(270,196,'반지름 '+(k*100).toFixed(0)+'% (평형일 때 = 100%)',13,'start','#a9b1cc',600)}
+ lab(240,282,h,19,'middle',(!s||t>=1)?'#8ff0b0':'#ffd166',800);lab(240,306,l1,14,'middle','#e8eaf2',700);lab(240,328,l2,14,'middle','#e8eaf2',700)}
 eqb.querySelectorAll('button').forEach(b=>b.onclick=()=>{eqb.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x==b));eqS=+b.dataset.v;cancelAnimationFrame(eqRaf);
  if(!eqS){eqT=1;return drawEq()}eqT=0;let t0=performance.now();const st=now=>{eqT=Math.min(1,(now-t0)/4500);drawEq();if(eqT<1)eqRaf=requestAnimationFrame(st)};eqRaf=requestAnimationFrame(st)});
 
@@ -355,30 +359,33 @@ function light(x,y,t,o=1){const g=el('g',{opacity:o});
  else if(t=='nu'){el('circle',{cx:x,cy:y,r:3.5,fill:'none',stroke:'#cfd6ea','stroke-width':1.5},g);lab(x,y+18,'ν',14,'middle','#cfd6ea',800,g)}
  else if(t=='g'){el('path',{d:`M${x-16},${y} q4,-8 8,0 t8,0 t8,0 t8,0`,fill:'none',stroke:'#c9a7ff','stroke-width':2.2},g);lab(x,y+20,'γ',14,'middle','#c9a7ff',800,g)}
  else nuc(x,y,t,o)}
-function summary(){const g=el('g',{});el('rect',{x:520,y:14,width:228,height:192,rx:12,fill:'#161c36',stroke:'#3a4260'},g);
- const L=[['결과',15,'#ffd166',800],['수소 원자핵 4개',14,'#e8eaf2',700],['→ 헬륨 원자핵 1개 + 에너지',14,'#e8eaf2',700],['줄어든 질량(질량 결손)이',13,'#a9b1cc',600],['에너지로 바뀜 (E = mc²)',13,'#a9b1cc',600],
-  [fm=='pp'?'중심부 약 1,800만 K 이하에서 우세':'중심부 약 1,800만 K 이상에서 우세',13,'#8ff0b0',700],[fm=='pp'?'예: 태양':'예: 질량이 큰 주계열성',13,'#8ff0b0',700]];
- L.forEach(([t,f,c,w],i)=>lab(534,40+i*24,t,f,'start',c,w,g))}
-function drawFu(){S=fuv;S.innerHTML='';const d=el('defs',{});heads(d);const t=fT,cx=245;
+// 결과 상자 (그림 아래쪽): 왼쪽은 두 반응에 공통, 오른쪽은 반응마다 다름
+function summary(){const g=el('g',{});el('rect',{x:12,y:200,width:456,height:130,rx:12,fill:'#161c36',stroke:'#3a4260'},g);
+ [['결과',15,'#ffd166',800],['수소 원자핵 4개 →',14,'#e8eaf2',700],['헬륨 원자핵 1개 + 에너지',14,'#e8eaf2',700],['줄어든 질량(질량 결손)이',12,'#a9b1cc',600],['에너지로 바뀜 (E = mc²)',12,'#a9b1cc',600]]
+  .forEach(([t,f,c,w],i)=>lab(26,224+i*24,t,f,'start',c,w,g));
+ el('line',{x1:258,x2:258,y1:214,y2:316,stroke:'#3a4260'},g);
+ [[fm=='pp'?'p-p 연쇄 반응':'CNO 순환 반응',14,'#ffd166',800],['중심부 온도 약 1,800만 K',13,'#8ff0b0',700],[fm=='pp'?'이하에서 우세':'이상에서 우세',13,'#8ff0b0',700],[fm=='pp'?'예: 태양':'예: 질량이 큰 주계열성',13,'#8ff0b0',700]]
+  .forEach(([t,f,c,w],i)=>lab(272,224+i*26,t,f,'start',c,w,g))}
+function drawFu(){S=fuv;S.innerHTML='';const d=el('defs',{});heads(d);const t=fT,cx=240;
  if(fm=='pp'){const st=PP[fi],m=Math.min(1,t/.45),after=t>.5,q=Math.max(0,(t-.5)/.5);
-  lab(16,26,`p-p 연쇄 반응 · ${fi+1}단계 ${st.x}`,15,'start','#ffd166',800);
-  if(!after){nuc(70+(cx-20-70)*m,100,st.a[0]);nuc(420-(420-cx-20)*m,100,st.a[1])}
-  if(t>.38&&t<.66)el('circle',{cx,cy:96,r:30*(1-Math.abs(t-.52)/.14),fill:'#fff3c4',opacity:.6});
-  if(after){light(cx,100,st.b[0]);
-   const fly=[[cx+150*q,100-55*q],[cx+150*q,100+45*q],[cx-150*q,100+30*q]];
+  lab(14,24,`p-p 연쇄 반응 · ${fi+1}단계 ${st.x}`,15,'start','#ffd166',800);
+  if(!after){nuc(60+(cx-20-60)*m,95,st.a[0]);nuc(420-(420-cx-20)*m,95,st.a[1])}
+  if(t>.38&&t<.66)el('circle',{cx,cy:91,r:30*(1-Math.abs(t-.52)/.14),fill:'#fff3c4',opacity:.6});
+  if(after){light(cx,95,st.b[0]);
+   const fly=[[cx+130*q,95-45*q],[cx+130*q,95+38*q]];
    st.b.slice(1).forEach((p,i)=>light(fly[i][0],fly[i][1],p))}
-  lab(cx,196,st.eq,20,'middle','#fff',800)}
- else{const st=CNO[fi],O=[120,112],Rr=70,P=i=>{const a=(-90+i*60)*Math.PI/180;return[O[0]+Rr*Math.cos(a),O[1]+Rr*Math.sin(a)]};
-  lab(380,70,`CNO 순환 반응 · ${fi+1}단계`,15,'middle','#ffd166',800);
+  lab(cx,178,st.eq,19,'middle','#fff',800)}
+ else{const st=CNO[fi],O=[108,110],Rr=66,P=i=>{const a=(-90+i*60)*Math.PI/180;return[O[0]+Rr*Math.cos(a),O[1]+Rr*Math.sin(a)]};
+  lab(330,44,`CNO 순환 반응 · ${fi+1}단계`,15,'middle','#ffd166',800);
   CN.forEach((_,i)=>{const[a,b]=[P(i),P((i+1)%6)],on=i==fi,dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy),u=[dx/L,dy/L];
    arrow(a[0]+u[0]*19,a[1]+u[1]*19,b[0]-u[0]*22,b[1]-u[1]*22,on?'y':'w',on?'#ffd166':'#5a6390',on?3.5:2)});
   CN.forEach(([n,c],i)=>{const[x,y]=P(i),on=i==fi||i==(fi+1)%6;el('circle',{cx:x,cy:y,r:17,fill:c,opacity:on?1:.55,stroke:on?'#ffd166':'none','stroke-width':2.5});lab(x,y+5,n,13,'middle','#0b1026',800).setAttribute('stroke','none')});
   lab(O[0],O[1]-2,'C·N·O는',12,'middle','#cfd6ea',700);lab(O[0],O[1]+14,'촉매 역할',12,'middle','#cfd6ea',700);
   const[a,b]=[P(fi),P((fi+1)%6)],mid=[(a[0]+b[0])/2,(a[1]+b[1])/2],ox=(mid[0]-O[0])/Rr,oy=(mid[1]-O[1])/Rr;
-  if(st.in&&t<.5){const m=Math.min(1,t/.45);nuc(mid[0]+ox*90*(1-m),mid[1]+oy*90*(1-m)-8,'1H')}
-  if(t>.5){const q=(t-.5)/.5;st.out.forEach((p,i)=>light(mid[0]+ox*(24+26*q)+(i?18:0),mid[1]+oy*(24+26*q)+(i?18:0),p))}
-  lab(380,110,st.eq,20,'middle','#fff',800);
-  lab(380,140,fi==5?'→ 다시 ¹²C로 돌아가 순환이 이어짐':'',13,'middle','#a9b1cc',600)}
+  if(st.in&&t<.5){const m=Math.min(1,t/.45);nuc(mid[0]+ox*70*(1-m),mid[1]+oy*70*(1-m)-8,'1H')}
+  if(t>.5){const q=(t-.5)/.5;st.out.forEach((p,i)=>light(mid[0]+ox*(22+22*q)+(i?18:0),mid[1]+oy*(22+22*q)+(i?18:0),p))}
+  lab(330,104,st.eq,17,'middle','#fff',800);
+  lab(330,130,fi==5?'→ 다시 ¹²C로 돌아가 순환이 이어짐':'',12,'middle','#a9b1cc',600)}
  summary();fstep.textContent=`${fi+1} / ${fm=='pp'?3:6} 단계`}
 function runStep(then){cancelAnimationFrame(fRaf);fT=0;const t0=performance.now();const st=now=>{fT=Math.min(1,(now-t0)/1800);drawFu();if(fT<1)fRaf=requestAnimationFrame(st);else if(then)then()};fRaf=requestAnimationFrame(st)}
 // 자동 진행: 탭을 열거나 반응을 바꾸면 1단계부터 차례로 저절로 진행되고, 마지막 단계 뒤에는 처음부터 되풀이
