@@ -89,6 +89,11 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .side .pb{padding:4px 12px;font-size:.84rem;min-width:0}
 .side .cap{font-size:.84rem;opacity:.85}
 @media (max-width:640px){.duo2{grid-template-columns:1fr}}
+/* ③ 후주계열 단계: 넓은 그림 하나 + 소메뉴와 단계 조작 줄 */
+#pmv{max-height:max(240px,calc(100vh - 345px))}
+#pmv{max-height:max(240px,calc(100dvh - 345px))}
+#pmnote{min-height:calc(3.1em + 18px)}
+#pmv [data-n]{cursor:pointer}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
@@ -139,10 +144,21 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  </div></div>
 </section>
 
-<!-- ③ 후주계열 단계 -->
+<!-- ③ 후주계열 단계: 소메뉴 셋 (주계열 이후 변화 / 거성과 초거성의 내부 구조 / 질량에 따른 진화 경로) -->
 <section id="p3" role="tabpanel" aria-labelledby="tab3" hidden>
- <div class="note"><div class="nh">후주계열 단계</div><p>준비 중입니다.</p></div>
- <svg viewBox="0 0 900 560"><text x="450" y="290" fill="#8a93b8" font-size="22" text-anchor="middle">후주계열 단계 — 준비 중</text></svg>
+ <div class="note" id="pmnote"></div>
+ <svg id="pmv" viewBox="0 0 960 360"></svg>
+ <div class="ctl">
+  <div class="sbtn row" id="pmsel"><button data-v="0" class="on">주계열 이후 변화</button><button data-v="1">거성과 초거성의 내부 구조</button><button data-v="2">질량에 따른 진화 경로</button></div>
+  <div class="stp" id="pmstp"><button id="pmprev" aria-label="이전 단계">◀</button><b id="pmstep"></b><button id="pmnext" aria-label="다음 단계">▶</button></div>
+  <button class="pb" id="pmplay">▶ 자동 진행</button>
+  <span class="unit" id="pmhint" hidden>그림의 각 단계를 눌러 보세요.</span>
+ </div>
+ <div class="note ask"><span class="tag">생각해 보기</span><p>질량이 태양 정도인 별과 태양보다 질량이 매우 큰 별은 일생의 마지막 모습이 어떻게 다를까요?</p><button type="button" class="open-think" id="thb3">답 보기</button></div>
+ <div class="ov" id="ov3" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기 답">
+  <div class="think-h"><b class="think-t">생각해 보기 · 답</b><button type="button" class="x" id="thx3" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans"><b>질량이 태양 정도인 별은 적색 거성을 거쳐 행성상 성운과 백색 왜성이 되고, 질량이 매우 큰 별은 초거성을 거쳐 초신성 폭발 후 중성자별이나 블랙홀이 됩니다.</b> 질량이 클수록 중심부 온도가 높아 더 무거운 원소까지 핵융합이 일어나고, 일생을 더 격렬하게 마칩니다.</p>
+ </div></div>
 </section>
 
 <!-- ④ 별의 진화와 순환 -->
@@ -400,11 +416,128 @@ fmode.querySelectorAll('button').forEach(b=>b.onclick=()=>{fmode.querySelectorAl
 fprev.onclick=()=>{fstop();fi=(fi+NST()-1)%NST();runStep()};fnext.onclick=()=>{fstop();fi=(fi+1)%NST();runStep()};
 fplay.onclick=()=>fPlay?fstop():fauto(fT>=1?(fi+1)%NST():fi);
 // 주계열 단계 탭을 열면 자동 진행 시작, 다른 탭으로 가면 멈춤
-window.onTab=i=>{if(i==1)fauto(0);else fstop()};
+window.onTab=i=>{if(i==1)fauto(0);else fstop();if(i==2&&pv==0)pmAuto();else if(window.pmStop)pmStop()};
 drawEq();drawFu();fstop();
 
+// ---- ③ 후주계열 단계 ----
+let pv=0; // 소메뉴: 0 주계열 이후 변화, 1 내부 구조, 2 질량에 따른 진화 경로
+const PMH='후주계열 단계 <span class="ex">· 주계열 단계가 끝난 뒤 별이 거성이나 초거성이 되고 일생을 마치는 단계</span>';
+const mix=(a,b,f)=>a.map((v,k)=>v+(b[k]-v)*f);
+// ① 주계열 이후 변화 (질량이 태양 정도인 별): 단계마다 별의 모습(반지름 R, 핵 반지름 c, 껍질 연소 sh, 바깥층 색 oc, 핵 색 cc, 핵 수축 표시 ar, 헬륨 핵융합 he)과 H-R 도 위치 hr
+const PS=[
+ {n:'주계열 끝',d:'중심부의 수소가 헬륨으로 바뀌어 헬륨 핵이 생기고, 중심부의 수소 핵융합 반응이 멈춥니다.',R:92,c:30,sh:0,oc:[255,214,120],cc:[214,210,200],ar:0,he:0,hr:[770,214]},
+ {n:'헬륨 핵 수축',d:'에너지를 내지 못하는 헬륨 핵이 중력에 의해 수축하며, 핵의 온도가 높아집니다.',R:92,c:20,sh:0,oc:[255,214,120],cc:[255,240,200],ar:1,he:0,hr:[790,205]},
+ {n:'수소 껍질 연소',d:'뜨거워진 헬륨 핵을 둘러싼 껍질에서 수소 핵융합 반응이 일어나 에너지가 많아집니다.',R:104,c:20,sh:1,oc:[255,200,110],cc:[255,240,200],ar:0,he:0,hr:[830,190]},
+ {n:'바깥층 팽창',d:'바깥층이 크게 팽창하여 반지름은 커지고 표면 온도는 낮아져 붉은 적색 거성이 됩니다.',R:158,c:20,sh:1,oc:[255,140,90],cc:[255,240,200],ar:0,he:0,hr:[885,95]},
+ {n:'헬륨 핵융합',d:'헬륨 핵의 온도가 약 1억 K에 이르면 중심부에서 헬륨 핵융합 반응(헬륨 → 탄소)이 일어납니다.',R:150,c:20,sh:1,oc:[255,150,95],cc:[200,225,255],ar:0,he:1,hr:[860,120]}];
+let pi_=0,pT=1,pFrom=0,pRaf=0,pPlay=false,pTimer=0;
+function pmState(){const a=PS[pFrom],b=PS[pi_],f=pT<1?pT*pT*(3-2*pT):1,o={};
+ ['R','c','sh','ar','he'].forEach(k=>o[k]=a[k]+(b[k]-a[k])*f);o.oc=mix(a.oc,b.oc,f);o.cc=mix(a.cc,b.cc,f);o.hr=mix(a.hr,b.hr,f);return o}
+function drawPm0(){const d=el('defs',{});heads(d);const s=pmState(),C=[270,180];
+ const og=el('radialGradient',{id:'pmo'},d);[[0,css(mix(s.oc,[255,255,255],.45))],[.7,css(s.oc)],[1,css(mix(s.oc,[0,0,0],.25))]].forEach(([o,c])=>el('stop',{offset:o,'stop-color':c},og));
+ const hg=el('radialGradient',{id:'pmh'},d);[[.6,css(s.oc),.35],[1,css(s.oc),0]].forEach(([o,c,a])=>el('stop',{offset:o,'stop-color':c,'stop-opacity':a},hg));
+ el('circle',{cx:C[0],cy:C[1],r:s.R*1.18,fill:'url(#pmh)'});el('circle',{cx:C[0],cy:C[1],r:s.R,fill:'url(#pmo)'});
+ // 수소 껍질 연소: 헬륨 핵을 둘러싼 빛나는 고리
+ if(s.sh>0){el('circle',{cx:C[0],cy:C[1],r:s.c+9,fill:'none',stroke:'#ff7a2e','stroke-width':14,opacity:.85*s.sh});el('circle',{cx:C[0],cy:C[1],r:s.c+9,fill:'none',stroke:'#ffd166','stroke-width':5,opacity:.9*s.sh})}
+ el('circle',{cx:C[0],cy:C[1],r:s.c,fill:css(s.cc),stroke:'#8a7a60','stroke-width':1});
+ if(s.he>0)el('circle',{cx:C[0],cy:C[1],r:s.c*.75,fill:'#ffffff',opacity:.8*s.he});
+ // 헬륨 핵 수축 화살표
+ if(s.ar>.05)[0,90,180,270].forEach(a=>{const r=a*Math.PI/180,ux=Math.cos(r),uy=Math.sin(r);arrow(C[0]+ux*(s.c+30),C[1]+uy*(s.c+30),C[0]+ux*(s.c+6),C[1]+uy*(s.c+6),'r','#ff6b6b',3)});
+ // 이름표 (별 오른쪽, 지시선)
+ const tag=(y,r,t,c)=>{el('line',{x1:C[0]+r*.7,y1:C[1]-r*.7,x2:455,y2:y,stroke:'#cfd6ea','stroke-width':1,opacity:.7});lab(462,y+5,t,15,'start',c,800)};
+ tag(70,s.R,'바깥층 (수소)','#ffd9b0');
+ if(s.sh>.5)tag(120,s.c+9,'수소 껍질 연소','#ffb36b');
+ tag(170,s.c*.8,s.he>.5?'헬륨 핵융합 (→ 탄소)':'헬륨 핵','#e8eaf2');
+ lab(20,30,`${pi_+1}. ${PS[pi_].n}`,20,'start','#ffd166',800);
+ lab(20,345,'※ 핵과 껍질의 크기는 알아보기 쉽게 크게 그림',12,'start','#a9b1cc',600);
+ // H-R 도 위의 위치 (작은 그림)
+ const X0=610,X1=945,Y0=40,Y1=300;el('rect',{x:X0,y:Y0,width:X1-X0,height:Y1-Y0,rx:8,fill:'#111836',stroke:'#3a4260'});
+ lab(X0,Y0-12,'H-R 도에서의 위치',14,'start','#cfd6ea',700);lab(X0+6,Y0+18,'광도 ↑',12,'start','#a9b1cc',600);lab(X1-6,Y1+18,'표면 온도 낮음 →',12,'end','#a9b1cc',600);
+ el('path',{d:`M${X0+20},${Y0+40} L${X0+130},${Y0+130} L${X0+230},${Y0+205} L${X1-20},${Y1-15}`,fill:'none',stroke:'#7fb4ff','stroke-width':18,opacity:.18,'stroke-linecap':'round'});
+ lab(X0+70,Y0+140,'주계열',13,'middle','#7fb4ff',700);
+ el('ellipse',{cx:885,cy:105,rx:42,ry:32,fill:'#ffb86b',opacity:.12});lab(885,62,'적색 거성',13,'middle','#ffb86b',700);
+ const tr=PS.slice(0,pi_+1).map(p=>p.hr).concat(pT<1?[s.hr]:[]);
+ el('path',{d:'M'+PS[0].hr.join(',')+PS.slice(1,pi_+1).map(p=>' L'+p.hr.join(',')).join(''),fill:'none',stroke:'#ffd166','stroke-width':2,'stroke-dasharray':'4 4',opacity:.8});
+ el('circle',{cx:s.hr[0],cy:s.hr[1],r:9,fill:css(s.oc),stroke:'#fff','stroke-width':2})}
+
+// ② 거성과 초거성의 내부 구조 (층의 두께는 실제 비율과 다름)
+const GI=[['수소 바깥층','#ff9a6b',1],['수소 핵융합','#ffb36b',.5],['헬륨 핵융합','#ffe08a',.34],['탄소 핵','#cfd6ea',.18]];
+const SG=[['H','수소','#ff8a8a',1],['He','헬륨','#ffb36b',.82],['C','탄소','#ffe08a',.66],['Ne','네온','#b6f0a0',.53],['O','산소','#8fd3ff',.41],['Si','규소','#c3a6ff',.29],['Fe','철','#9aa3c7',.16]];
+function drawPm1(){const g=[180,190],s=[640,190],R=130;
+ lab(g[0],30,'거성',20,'middle','#ffd166',800);lab(g[0],50,'(질량이 태양 정도인 별)',13,'middle','#cfd6ea',600);
+ GI.forEach(([n,c,f])=>el('circle',{cx:g[0],cy:g[1]+20,r:R*f*.85,fill:c,stroke:'#0b1026','stroke-width':1.5}));
+ // 이름표: 각 층의 가운데 지점에서 오른쪽 이름표까지 지시선
+ GI.forEach(([n,c,f],i)=>{const r=R*.85*(i<GI.length-1?(f+GI[i+1][2])/2:f*.45),a=(-50+i*28)*Math.PI/180,px=g[0]+r*Math.cos(a),py=g[1]+20+r*Math.sin(a),ly=110+i*42;
+  el('circle',{cx:px,cy:py,r:3,fill:'#0b1026'});el('line',{x1:px,y1:py,x2:g[0]+150,y2:ly,stroke:'#e8eaf2','stroke-width':1.2,opacity:.8});
+  lab(g[0]+156,ly+5,n,15,'start','#e8eaf2',800)});
+ lab(s[0],30,'초거성',20,'middle','#ffd166',800);lab(s[0],50,'(질량이 태양의 약 10배 이상인 별)',13,'middle','#cfd6ea',600);
+ SG.forEach(([e,n,c,f])=>el('circle',{cx:s[0],cy:s[1]+20,r:R*f,fill:c,stroke:'#0b1026','stroke-width':1.5}));
+ SG.forEach(([e,n,c,f],i)=>{const r=R*(i<SG.length-1?(f+SG[i+1][3])/2:0),y=s[1]+20-r;lab(s[0],y+5,e,i==SG.length-1?15:13,'middle','#0b1026',800).setAttribute('stroke','none')});
+ SG.forEach(([e,n,c],i)=>{el('rect',{x:800,y:96+i*24,width:14,height:14,rx:3,fill:c});lab(822,108+i*24,`${e} ${n}`,14,'start','#e8eaf2',700)});
+ lab(800,80,'바깥 → 중심',13,'start','#a9b1cc',600);
+ lab(g[0],348,'중심부: 헬륨 핵융합 · 그 바깥: 수소 핵융합',13,'middle','#cfd6ea',700);
+ lab(s[0],348,'중심으로 갈수록 무거운 원소 · 철(Fe)까지 핵융합 (양파 껍질 구조)',13,'middle','#cfd6ea',700);
+ lab(950,30,'※ 층의 두께는 실제 비율과 다름',12,'end','#a9b1cc',600)}
+
+// ③ 질량에 따른 진화 경로: 흐름도 (누르면 설명과 H-R 도 위치)
+const ND=[
+ {r:0,x:70,y:120,n:'주계열성',k:'ms1',d:'중심부에서 수소 핵융합 반응이 일어나는 안정한 단계로, 별의 일생에서 가장 긴 시간을 보냅니다.',hr:[770,215]},
+ {r:0,x:205,y:120,n:'적색 거성',k:'rg',d:'헬륨 핵이 수축하고 바깥층이 팽창하여, 크고 표면 온도가 낮은 붉은 별이 됩니다.',hr:[885,95]},
+ {r:0,x:345,y:120,n:'행성상 성운',k:'pn',d:'바깥층의 기체가 우주 공간으로 서서히 퍼져 나가, 중심의 별을 둘러싼 성운이 됩니다.',hr:[760,80]},
+ {r:0,x:480,y:120,n:'백색 왜성',k:'wd',d:'남은 중심핵이 수축하여 된 지구 정도 크기의 작고 뜨거운 별로, 서서히 식어 갑니다.',hr:[690,262]},
+ {r:1,x:70,y:280,n:'주계열성',k:'ms2',d:'질량이 커서 중심부 온도가 높고, 수소를 빠르게 소모하여 주계열 단계가 짧습니다.',hr:[680,120]},
+ {r:1,x:205,y:280,n:'초거성',k:'sg',d:'중심부에서 철까지 핵융합 반응이 일어나 양파 껍질 같은 구조가 되고, 반지름이 매우 커집니다.',hr:[905,58]},
+ {r:1,x:345,y:280,n:'초신성 폭발',k:'sn',d:'철로 된 중심핵이 급격히 붕괴한 뒤 바깥층이 폭발하며 매우 밝게 빛나고, 철보다 무거운 원소가 만들어집니다.',hr:[905,58]},
+ {r:1,x:480,y:240,n:'중성자별',k:'ns',d:'남은 중심핵이 중성자로 이루어진 매우 작고 밀도가 큰 별이 됩니다(지름 약 20 km).',hr:null},
+ {r:1,x:480,y:318,n:'블랙홀',k:'bh',d:'남은 중심핵의 질량이 매우 크면(태양의 약 3배 이상) 빛조차 빠져나올 수 없는 블랙홀이 됩니다.',hr:null}];
+let nsel=0;
+function icon(k,x,y,on){const g=el('g',{});
+ if(k=='ms1')el('circle',{cx:x,cy:y,r:14,fill:'#ffe08a'},g);
+ else if(k=='ms2')el('circle',{cx:x,cy:y,r:18,fill:'#b9ccff'},g);
+ else if(k=='rg'){el('circle',{cx:x,cy:y,r:34,fill:'#ff8a5c',opacity:.25},g);el('circle',{cx:x,cy:y,r:28,fill:'#ff8a5c'},g)}
+ else if(k=='sg'){el('circle',{cx:x,cy:y,r:44,fill:'#ff6b5c',opacity:.25},g);el('circle',{cx:x,cy:y,r:37,fill:'#ff6b5c'},g)}
+ else if(k=='pn'){el('circle',{cx:x,cy:y,r:28,fill:'none',stroke:'#5fd3c8','stroke-width':9,opacity:.75},g);el('circle',{cx:x,cy:y,r:28,fill:'none',stroke:'#ff9ad0','stroke-width':3,opacity:.8},g);el('circle',{cx:x,cy:y,r:4,fill:'#fff'},g)}
+ else if(k=='wd'){el('circle',{cx:x,cy:y,r:14,fill:'#dfe8ff',opacity:.25},g);el('circle',{cx:x,cy:y,r:6,fill:'#fff'},g)}
+ else if(k=='sn'){const p=[];for(let i=0;i<16;i++){const a=i*Math.PI/8,r=i%2?16:36;p.push((x+r*Math.cos(a)).toFixed(1)+','+(y+r*Math.sin(a)).toFixed(1))}el('polygon',{points:p.join(' '),fill:'#fff3c4'},g);el('circle',{cx:x,cy:y,r:12,fill:'#fff'},g)}
+ else if(k=='ns'){el('line',{x1:x-22,y1:y-14,x2:x+22,y2:y+14,stroke:'#9fd0ff','stroke-width':2,opacity:.8},g);el('circle',{cx:x,cy:y,r:10,fill:'#9fd0ff',opacity:.3},g);el('circle',{cx:x,cy:y,r:5,fill:'#e8f4ff'},g)}
+ else if(k=='bh'){el('ellipse',{cx:x,cy:y,rx:26,ry:8,fill:'none',stroke:'#ffb36b','stroke-width':4},g);el('circle',{cx:x,cy:y,r:12,fill:'#000',stroke:'#ffb36b','stroke-width':1.5},g)}
+ if(on)el('circle',{cx:x,cy:y,r:k=='sg'?46:k=='rg'||k=='sn'?40:k=='pn'?36:26,fill:'none',stroke:'#ffd166','stroke-width':2.5,'stroke-dasharray':'5 4'},g);return g}
+function drawPm2(){const d=el('defs',{});heads(d);
+ lab(20,40,'질량이 태양 정도인 별',15,'start','#ffd166',800);lab(20,212,'질량이 태양의 약 10배 이상인 별',15,'start','#ffd166',800);
+ const link=(a,b)=>{const A=ND[a],B=ND[b],dx=B.x-A.x,dy=B.y-A.y,L=Math.hypot(dx,dy),u=[dx/L,dy/L];arrow(A.x+u[0]*42,A.y+u[1]*42,B.x-u[0]*40,B.y-u[1]*40,'w','#8a93b8',2.5)};
+ [[0,1],[1,2],[2,3],[4,5],[5,6],[6,7],[6,8]].forEach(([a,b])=>link(a,b));
+ ND.forEach((n,i)=>{const g=el('g',{'data-n':i});g.appendChild(icon(n.k,n.x,n.y,i==nsel));lab(n.x,n.y+(n.k=='sg'?60:n.k=='rg'||n.k=='sn'?54:n.r==1&&n.x==480?28:46),n.n,14,'middle',i==nsel?'#ffd166':'#e8eaf2',800,g);
+  el('rect',{x:n.x-55,y:n.y-45,width:110,height:110,fill:'transparent'},g)});
+ lab(480,290,'남은 핵의 질량에 따라',11,'middle','#a9b1cc',600);
+ // H-R 도에서의 진화 경로 (고른 별의 무리)
+ const X0=610,X1=945,Y0=40,Y1=300,row=ND[nsel].r;el('rect',{x:X0,y:Y0,width:X1-X0,height:Y1-Y0,rx:8,fill:'#111836',stroke:'#3a4260'});
+ lab(X0,Y0-12,'H-R 도에서의 진화 경로',14,'start','#cfd6ea',700);lab(X0+6,Y0+18,'광도 ↑',12,'start','#a9b1cc',600);lab(X1-6,Y1+18,'표면 온도 낮음 →',12,'end','#a9b1cc',600);
+ el('path',{d:`M${X0+20},${Y0+40} L${X0+130},${Y0+130} L${X0+230},${Y0+205} L${X1-20},${Y1-15}`,fill:'none',stroke:'#7fb4ff','stroke-width':18,opacity:.18,'stroke-linecap':'round'});
+ lab(X0+70,Y0+140,'주계열',13,'middle','#7fb4ff',700);
+ const path=row?'M680,120 C760,110 860,70 905,58':'M770,215 C790,180 860,140 885,95 C860,82 800,78 760,80 C720,90 690,150 690,262';
+ el('path',{d:path,fill:'none',stroke:'#ffd166','stroke-width':2.5,'stroke-dasharray':'5 5',opacity:.85});
+ const h=ND[nsel].hr;
+ if(h){if(ND[nsel].k=='sn')icon('sn',h[0],h[1]).setAttribute('transform',`translate(${h[0]*.45},${h[1]*.45}) scale(.55)`);
+  else el('circle',{cx:h[0],cy:h[1],r:9,fill:'#ffd166',stroke:'#fff','stroke-width':2})}
+ else lab((X0+X1)/2,Y1-14,'중성자별과 블랙홀은 H-R 도에 나타내지 않음',12,'middle','#a9b1cc',600)}
+
+function drawPm(){S=pmv;S.innerHTML='';[drawPm0,drawPm1,drawPm2][pv]();
+ const desc=pv==0?`<b>${PS[pi_].n}</b> ${PS[pi_].d}`:pv==1?'<b>거성과 초거성</b> 질량이 큰 별일수록 중심부 온도가 높아, 더 무거운 원소까지 핵융합 반응이 일어납니다.':`<b>${ND[nsel].n}</b> ${ND[nsel].d}`;
+ pmnote.innerHTML=`<div class="nh">${PMH}</div><p>${desc}</p>`;pmstep.textContent=`${pi_+1} / ${PS.length} 단계`;
+ pmstp.style.display=pmplay.style.display=pv!=0?'none':'';pmhint.hidden=pv!=2}
+function pmGo(i,then){cancelAnimationFrame(pRaf);pFrom=pi_;pi_=i;pT=0;const t0=performance.now();
+ const st=now=>{pT=Math.min(1,(now-t0)/1300);drawPm();if(pT<1)pRaf=requestAnimationFrame(st);else if(then)then()};pRaf=requestAnimationFrame(st)}
+function pmStop(){pPlay=false;clearTimeout(pTimer);cancelAnimationFrame(pRaf);pT=1;pmplay.textContent='▶ 자동 진행'}
+function pmAuto(){pmStop();pPlay=true;pmplay.textContent='❚❚ 멈춤';pFrom=pi_=0;pT=1;drawPm();
+ const next=()=>{if(!pPlay)return;pTimer=setTimeout(()=>{if(!pPlay)return;if(pi_<PS.length-1)pmGo(pi_+1,next);else{pFrom=pi_=0;pT=1;drawPm();next()}},pi_==PS.length-1?2600:1900)};next()}
+pmsel.querySelectorAll('button').forEach(b=>b.onclick=()=>{pmsel.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x==b));pv=+b.dataset.v;if(pv==0)pmAuto();else{pmStop();drawPm()}});
+pmprev.onclick=()=>{pmStop();pmGo((pi_+PS.length-1)%PS.length)};pmnext.onclick=()=>{pmStop();pmGo((pi_+1)%PS.length)};
+pmplay.onclick=()=>pPlay?pmStop():pmAuto();
+pmv.addEventListener('click',e=>{const g=e.target.closest('[data-n]');if(g&&pv==2){nsel=+g.dataset.n;drawPm()}});
+drawPm();
+
 // 생각해 보기 답 팝업 열고 닫기 (radiation.html과 같은 방식)
-[['ov1','thb1','thx1'],['ov2','thb2','thx2']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
+[['ov1','thb1','thx1'],['ov2','thb2','thx2'],['ov3','thb3','thx3']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
  const closeTh=()=>{ov.hidden=true;btn.focus()};
  btn.addEventListener('click',()=>{ov.hidden=false;cl.focus()});cl.addEventListener('click',closeTh);
  ov.addEventListener('click',e=>{if(e.target===ov)closeTh()});
