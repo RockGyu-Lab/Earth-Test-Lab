@@ -30,8 +30,8 @@ main{max-width:960px;margin:0 auto;padding:14px}
 .note .nh{font-weight:700;color:var(--acc)}
 .note p{margin:2px 0 0}
 .note .ex{font-weight:500;color:var(--fg);opacity:.75;font-size:.88rem}
-/* 별의 분류 설명: 제목 한 줄 + 설명 두 줄 높이로 고정해 그림이 위아래로 움직이지 않게 함 */
-#gnote{min-height:calc(4.6em + 18px)}
+/* 별의 분류 설명: 제목 한 줄 + 설명 한 줄 높이로 고정해 그림이 위아래로 움직이지 않게 함 */
+#gnote{min-height:calc(3.1em + 18px)}
 /* 탭을 바꿀 때 내용이 살짝 떠오르며 나타남 */
 @keyframes enter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .enter{animation:enter .28s ease-out}
@@ -45,12 +45,12 @@ main{max-width:960px;margin:0 auto;padding:14px}
 .seg button i{width:10px;height:10px;border-radius:3px}
 .seg button.on{background:var(--acc);color:var(--on-acc);font-weight:700}
 /* H-R도 그림판: 패드처럼 세로가 짧은 화면에서도 한 화면에 들어오도록 높이를 화면 높이에 맞춰 제한
-   (위아래의 제목·설명·탭·조작 칸: 'H-R 도란?' 약 300px, '별의 분류'는 설명이 길어 약 345px) */
+   (위아래의 제목·설명·탭·조작 칸이 약 300px) */
 svg{width:100%;height:auto;display:block;border-radius:14px;background:#0b1026;box-shadow:0 0 0 1px var(--frame);touch-action:manipulation}
 #sv1{max-height:max(300px,calc(100vh - 300px))}
 #sv1{max-height:max(300px,calc(100dvh - 300px))}
-#sv2{max-height:max(300px,calc(100vh - 345px))}
-#sv2{max-height:max(300px,calc(100dvh - 345px))}
+#sv2{max-height:max(300px,calc(100vh - 300px))}
+#sv2{max-height:max(300px,calc(100dvh - 300px))}
 [data-star]{cursor:pointer}
 .chk{display:flex;align-items:center;gap:6px;margin-left:auto;padding:5px 12px;border:1px solid var(--bd);border-radius:10px;background:var(--card);font-size:.88rem;cursor:pointer}
 .chk input{accent-color:var(--acc);margin:0}
@@ -102,11 +102,11 @@ function el(n,a,p){const e=document.createElementNS(NS,n);for(const k in a)e.set
 function lab(x,y,t,fs=15,an='middle',fill='#cfd6ea',w=600,p){const e=el('text',{x,y,fill,'font-size':fs,'text-anchor':an,'font-weight':w,stroke:'#0b1026','stroke-width':3,'paint-order':'stroke'},p);e.textContent=t;return e}
 // 무리 (주계열성, 거성, 초거성, 백색왜성)
 const GR={
-// 설명(d)은 패드 화면에서 두 줄 안에 들어가도록 짧게 씀 (별의 분류를 바꿔도 그림이 위아래로 움직이지 않게)
-ms:{n:'주계열성',c:'#7fb4ff',d:'왼쪽 위에서 오른쪽 아래로 이어진 띠로, 별의 약 90%가 속합니다. 중심부에서 수소 핵융합 반응이 일어나며, 왼쪽 위로 갈수록 질량과 광도가 큽니다.',ex:'태양, 시리우스 A, 베가'},
-g:{n:'거성',c:'#ffb86b',d:'주계열의 오른쪽 위에 있습니다. 표면 온도가 낮아 붉게 보이지만, 반지름이 태양의 수십 배로 커서 광도가 큽니다(적색 거성).',ex:'아크투루스, 폴룩스'},
-sg:{n:'초거성',c:'#ff7a8a',d:'H-R 도의 가장 위쪽에 있습니다. 거성보다도 반지름이 훨씬 커서 광도가 매우 큽니다.',ex:'리겔, 데네브'},
-wd:{n:'백색왜성',c:'#e6ecff',d:'H-R 도의 왼쪽 아래에 있습니다. 표면 온도는 높지만 반지름이 지구 정도로 매우 작아서 광도가 작습니다.',ex:'시리우스 B, 프로키온 B'}};
+// 설명(d)은 패드 세로 화면에서도 한 줄에 들어가도록 짧게 씀 (별의 분류를 바꿔도 그림이 위아래로 움직이지 않게)
+ms:{n:'주계열성',c:'#7fb4ff',d:'별의 약 90%가 속하며, 중심부에서 수소 핵융합 반응이 일어납니다.',ex:'태양, 시리우스 A, 베가'},
+g:{n:'거성',c:'#ffb86b',d:'표면 온도는 낮지만 반지름이 태양의 수십 배로 커서 광도가 큽니다.',ex:'아크투루스, 폴룩스'},
+sg:{n:'초거성',c:'#ff7a8a',d:'거성보다도 반지름이 훨씬 커서 광도가 매우 큽니다.',ex:'리겔, 데네브'},
+wd:{n:'백색왜성',c:'#e6ecff',d:'표면 온도는 높지만 반지름이 지구 정도로 작아서 광도가 작습니다.',ex:'시리우스 B, 프로키온 B'}};
 // 주계열의 대략적인 위치 [log T, log L]
 const MS=[[4.65,5.7],[4.6,5.3],[4.5,4.5],[4.4,3.8],[4.3,3.2],[4.2,2.7],[4.1,2.1],[4.0,1.5],[3.9,1.0],[3.86,.75],[3.8,.3],[3.761,0],[3.7,-.45],[3.65,-.85],[3.6,-1.15],[3.55,-1.6],[3.5,-2.4],[3.45,-3.2],[3.42,-3.6]];
 const msL=t=>{for(let i=1;i<MS.length;i++)if(t>=MS[i][0]){const[a,b]=MS[i-1],[c,d]=MS[i];return d+(b-d)*(t-c)/(a-c)}return MS[MS.length-1][1]};
@@ -184,8 +184,8 @@ function pill(x,y,t,an){const w=t.length*9+16,bx=an=='end'?x-w:x-w/2;
 
 // ② H-R 도 상의 별의 분류: 왼쪽에 광도와 절대등급 두 축을 나란히 (그림판을 가로로 넓혀 패드 화면의 빈 곳을 씀)
 let G='all';
-const ALL='별들은 몇 개의 무리로 모여 있습니다. 위에서 별의 분류를 골라 보세요.';
-const ASK='<b>생각해 보기</b> 거성과 백색왜성 중 표면 온도가 높은 쪽과 광도가 큰 쪽은? 그 차이는 무엇 때문일까요? (‘반지름이 같은 선’을 켜 보세요.)';
+const ALL='별들은 몇 개의 무리로 모여 있습니다.';
+const ASK='<b>생각해 보기</b> 거성과 백색왜성은 왜 광도가 다를까요? ‘반지름이 같은 선’을 켜 보세요.';
 function draw2(){frame(sv2,200,975,44,500);const AL=112; // AL: 광도 축의 위치
  el('rect',{x:X0,y:Y0,width:X1-X0,height:Y1-Y0},el('clipPath',{id:'pa'},el('defs',{})));
  for(let m=15;m>=-10;m-=5){const y=yOf((MSUN-m)/2.5);el('line',{x1:X0,x2:X1,y1:y,y2:y,stroke:'#2a3156'});lab(X0-8,y+5,mTick(m),15,'end')}
@@ -211,7 +211,7 @@ function draw2(){frame(sv2,200,975,44,500);const AL=112; // AL: 광도 축의 �
   el('circle',{cx:x,cy:y,r:on?6:4.5,fill:col(lg(T)),stroke:on?'#f5b942':'#fff','stroke-width':on?2.5:1.3,opacity:G=='all'||on?1:.3});
   if(on){const r=lf||x>X1-140;lab(x+(r?-12:12),y-9,n,15,r?'end':'start','#fff',800)}})}
 function setG(k){G=k;gsel.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.k==k));
- // 첫 줄: 이름과 대표적인 별, 아래 두 줄: 설명
+ // 첫 줄: 이름과 대표적인 별, 둘째 줄: 설명
  gnote.innerHTML=k=='all'?`<div class="nh">전체 <span class="ex">· ${ALL}</span></div><p>${ASK}</p>`:`<div class="nh">${GR[k].n} <span class="ex">· 대표적인 별: ${GR[k].ex}</span></div><p>${GR[k].d}</p>`;
  gnote.classList.remove('enter');void gnote.offsetWidth;gnote.classList.add('enter');draw2()}
 
@@ -224,7 +224,7 @@ sv1.addEventListener('click',e=>{const g=e.target.closest('[data-star]');if(g)pi
 function show(e){const g=e.target.closest&&e.target.closest('[data-star]');
  if(g){tip.textContent=g.dataset.star;tip.style.display='block';tip.style.left=Math.max(4,Math.min(e.clientX+14,innerWidth-tip.offsetWidth-8))+'px';tip.style.top=(e.clientY-40)+'px'}else tip.style.display='none'}
 sv1.addEventListener('pointermove',show);sv1.addEventListener('pointerleave',()=>tip.style.display='none');
-Object.keys(GR).map(k=>[k,GR[k].n]).concat([['all','전체']]).forEach(([k,n])=>{const b=document.createElement('button');b.dataset.k=k;
+[['all','전체']].concat(Object.keys(GR).map(k=>[k,GR[k].n])).forEach(([k,n])=>{const b=document.createElement('button');b.dataset.k=k;
  b.innerHTML=(k=='all'?'':`<i style="background:${GR[k].c}"></i>`)+n;b.onclick=()=>setG(k);gsel.appendChild(b)});
 rad.onchange=draw2;
 // 학습 메뉴 탭 (radiation.html과 같은 방식: 왼쪽·오른쪽 화살표 키로도 이동)
