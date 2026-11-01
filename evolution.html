@@ -352,7 +352,11 @@ function nuc(x,y,t,o=1,z=1){const[p,n,l]=NUC[t],g=el('g',{opacity:o}),one=p+n==1
 function light(x,y,t,o=1,z=1,ang=0){const g=el('g',{opacity:o}),fs=14*Math.min(z,1.25);
  if(t=='e'){el('circle',{cx:x,cy:y,r:5*z,fill:'#ffd166'},g);lab(x,y+12*z+8,'e⁺',fs,'middle','#ffd166',800,g)}
  else if(t=='nu'){el('circle',{cx:x,cy:y,r:3.5*z,fill:'none',stroke:'#cfd6ea','stroke-width':1.5*z},g);lab(x,y+10*z+8,'ν',fs,'middle','#cfd6ea',800,g)}
- else if(t=='g'){const u=7*z;el('path',{d:`M${-2.5*u},0 q${u/2},-${u} ${u},0 t${u},0 t${u},0 t${u},0 l${u*.8},0`,fill:'none',stroke:'#c9a7ff','stroke-width':2.2*z,'stroke-linecap':'round','marker-end':'url(#hp)',transform:`translate(${x},${y}) rotate(${ang*180/Math.PI})`},g);lab(x,y+12*z+12,'γ',fs,'middle','#c9a7ff',800,g)}
+ else if(t=='g'){// 물결 끝에 좌우 대칭인 뾰족한 화살촉을 직접 그림 (진행 방향으로 회전)
+  const u=7*z,e=2.3*u,ah=6*z,aw=3.6*z,w=el('g',{transform:`translate(${x},${y}) rotate(${ang*180/Math.PI})`},g);
+  el('path',{d:`M${-2.5*u},0 q${u/2},-${u} ${u},0 t${u},0 t${u},0 t${u},0 L${e},0`,fill:'none',stroke:'#c9a7ff','stroke-width':2*z,'stroke-linecap':'round','stroke-linejoin':'round'},w);
+  el('polygon',{points:`${e+ah},0 ${e-1},${-aw} ${e-1},${aw}`,fill:'#c9a7ff'},w);
+  lab(x,y+12*z+12,'γ',fs,'middle','#c9a7ff',800,g)}
  else nuc(x,y,t,o,z)}
 // 오른쪽 세로 칸: 반응 이름, 단계, 반응식(두 줄), 결과, 우세한 조건
 function sideCol(step,eq,note){const g=el('g',{}),X=414;el('rect',{x:400,y:8,width:234,height:324,rx:12,fill:'#161c36',stroke:'#3a4260'},g);
