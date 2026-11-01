@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <!-- 시험용 사이트: 검색 엔진에 싣지 않음. 정식 사이트로 옮길 때 이 줄을 지울 것 -->
 <meta name="robots" content="noindex">
-<title>H-R 도</title>
+<title>H-R 도란?</title>
 <style>
 /* 정식 사이트 '별의 물리량' 학습실 자료(spectrum.html, luminosity.html)와 같은 규칙
    색: 남색 하나를 기본 강조색으로, 온도 값은 호박색 / 상자: 옅은 회색 판 / 모서리: 판 14px, 버튼 10px / 그림판: 밤하늘 남색 */
@@ -28,59 +28,45 @@ main{max-width:960px;margin:0 auto;padding:14px}
 .axes{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-bottom:10px}
 .seg{display:flex;align-items:center;gap:8px;font-size:.9rem;font-weight:700}
 .seg .bs{display:flex;border:1px solid var(--bd);border-radius:10px;overflow:hidden}
-.seg button{padding:7px 14px;border:0;background:var(--card);color:var(--fg);font-size:.9rem;cursor:pointer}
+.seg button{padding:6px 14px;border:0;background:var(--card);color:var(--fg);font-size:.9rem;cursor:pointer}
 .seg button+button{border-left:1px solid var(--bd)}
 .seg button.on{background:var(--acc);color:var(--on-acc);font-weight:700}
-/* H-R도 그림판 */
-.fig{position:relative}
+.axes .sm{margin:0 0 0 auto}
+/* H-R도 그림판: 패드처럼 세로가 짧은 화면에서도 한 화면에 들어오도록 높이를 화면 높이에 맞춰 제한
+   (위아래의 제목·설명·조작 칸이 약 330px) */
 svg{width:100%;height:auto;display:block;border-radius:14px;background:#0b1026;box-shadow:0 0 0 1px var(--frame);touch-action:manipulation}
-#sv{max-height:max(320px,calc(100vh - 300px))}
-#sv{max-height:max(320px,calc(100dvh - 300px))}
+#sv{max-height:max(300px,calc(100vh - 330px))}
+#sv{max-height:max(300px,calc(100dvh - 330px))}
 [data-star]{cursor:pointer}
-.info{position:absolute;left:13%;bottom:15%;max-width:46%;padding:8px 12px;border-radius:10px;background:#161c36e6;border:1px solid #3a4260;color:#e8eaf2;font-size:.88rem;line-height:1.45;pointer-events:none}
-.info b{font-size:.98rem}
-.info .k{opacity:.7}
-.info .v{color:#f5b942;font-weight:700}
-@media (max-width:640px){.info{left:13%;bottom:16%;max-width:58%;padding:5px 8px;font-size:.68rem}.info b{font-size:.76rem}}
-/* 무리와 유명한 별 고르기 */
-.ctl{margin-top:10px;display:flex;flex-direction:column;gap:8px}
-.grp,.stars{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:10px 14px;border-radius:14px;background:var(--card)}
-.grp .qmsg,.stars .qmsg{font-size:.92rem;font-weight:700;margin-right:4px}
-.grp label{display:flex;align-items:center;gap:6px;padding:5px 12px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);font-size:.88rem;cursor:pointer}
-.grp label i{width:12px;height:12px;border-radius:3px;display:inline-block}
-.grp input{accent-color:var(--acc);margin:0}
-.stars button{padding:5px 11px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--fg);font-size:.86rem;cursor:pointer}
+.sm{font-size:.78rem;opacity:.7}
+/* 유명한 별 고르기 */
+.stars{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-top:10px;padding:8px 12px;border-radius:14px;background:var(--card)}
+.stars .qmsg{font-size:.9rem;font-weight:700;margin-right:4px}
+.stars button{padding:4px 10px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--fg);font-size:.84rem;cursor:pointer}
 .stars button:hover{border-color:var(--acc)}
 .stars button.on{background:var(--acc);border-color:var(--acc);color:var(--on-acc);font-weight:700}
-#gdesc p{margin:4px 0 0}
-#gdesc b{color:var(--acc)}
-.sm{font-size:.8rem;opacity:.75;margin:6px 2px 0}
 #tip{position:fixed;pointer-events:none;background:#fff;color:#111;border-radius:8px;padding:5px 10px;font-weight:700;font-size:.95rem;box-shadow:0 2px 8px #0006;display:none;z-index:9;white-space:nowrap}
-@media (max-width:640px){.grp .qmsg,.stars .qmsg{flex-basis:100%}}
+@media (max-width:640px){.axes .sm{margin:0}.stars .qmsg{flex-basis:100%}}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
-<div class="titlebar"><p class="pnum">탐구 01</p><h1>H-R 도</h1><a class="back" href="./index.html">← [Earth Test Lab] 메뉴로 돌아가기</a></div>
+<div class="titlebar"><p class="pnum">탐구 01</p><h1>H-R 도란?</h1><a class="back" href="./index.html">← [Earth Test Lab] 메뉴로 돌아가기</a></div>
 
 <div class="note">
  <div class="nh">H-R 도 (헤르츠스프룽–러셀 도)</div>
- <p>별의 <b>표면 온도(분광형)</b>를 가로축, <b>광도(절대등급)</b>를 세로축으로 하여 별들을 점으로 나타낸 그림입니다. 가로축은 <b>왼쪽으로 갈수록 표면 온도가 높다</b>는 점에 주의하세요.</p>
+ <p>별의 <b>표면 온도(분광형)</b>를 가로축, <b>광도(절대등급)</b>를 세로축으로 하여 별들을 점으로 나타낸 그림입니다. 가로축은 <b>왼쪽으로 갈수록 표면 온도가 높습니다.</b></p>
  <p><b>생각해 보기</b> 세로축을 광도와 절대등급으로 바꿔 보며, 위쪽으로 갈수록 각 값이 어떻게 변하는지 비교해 보세요.</p>
 </div>
 
 <div class="axes">
  <div class="seg">세로축<div class="bs" id="ysel"><button data-v="L" class="on">광도</button><button data-v="M">절대등급</button></div></div>
  <div class="seg">가로축<div class="bs" id="xsel"><button data-v="S" class="on">분광형</button><button data-v="T">표면 온도</button></div></div>
+ <span class="sm">점들은 실제 별들의 분포를 본뜬 예시입니다.</span>
 </div>
 
-<div class="fig"><svg id="sv" viewBox="0 0 900 590"></svg><div class="info" id="info"></div></div>
-<p class="sm">점들은 실제 별들의 분포를 본떠 만든 예시입니다. 절대등급은 광도로부터 환산한 값(태양 = +4.8등)으로, 매우 뜨겁거나 차가운 별은 실제로 관측한 절대등급과 조금 다를 수 있습니다.</p>
-
-<div class="ctl">
- <div class="grp" id="grp"><span class="qmsg">무리 표시</span></div>
- <div class="note" id="gdesc" style="margin:0"></div>
- <div class="stars" id="stars"><span class="qmsg">유명한 별</span></div>
-</div>
+<svg id="sv" viewBox="0 0 900 590"></svg>
+<div class="stars" id="stars"><span class="qmsg">유명한 별</span></div>
+<p class="sm" style="margin:6px 2px 0">절대등급은 광도로부터 환산한 값(태양 = +4.8등)으로, 매우 뜨겁거나 차가운 별은 실제로 관측한 절대등급과 조금 다를 수 있습니다.</p>
 <div id="tip"></div>
 
 <script>
@@ -88,53 +74,40 @@ const NS="http://www.w3.org/2000/svg",sv=document.getElementById('sv');
 // 그림판 좌표: 가로 = log(표면 온도) (왼쪽이 고온), 세로 = log(광도, 태양 = 1)
 const X0=104,X1=880,Y0=44,Y1=510,TA=4.75,TB=3.38,LA=6.5,LB=-4.5;
 const xOf=t=>X0+(TA-t)/(TA-TB)*(X1-X0),yOf=l=>Y0+(LA-l)/(LA-LB)*(Y1-Y0);
-const MSUN=4.83,mag=l=>MSUN-2.5*l;
-let YM='L',XM='S',sel=null;const ON={};
+const MSUN=4.83,mag=l=>MSUN-2.5*l,lg=Math.log10;
+let YM='L',XM='S',sel=null;
 function el(n,a,p){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);(p||sv).appendChild(e);return e}
-function lab(x,y,t,fs=15,an='middle',fill='#cfd6ea',w=600){const e=el('text',{x,y,fill,'font-size':fs,'text-anchor':an,'font-weight':w,stroke:'#0b1026','stroke-width':3,'paint-order':'stroke'});e.textContent=t;return e}
-// 무리 (주계열성, 거성, 초거성, 백색왜성)
-const GR={
-ms:{n:'주계열성',c:'#7fb4ff',d:'H-R 도의 왼쪽 위에서 오른쪽 아래로 길게 이어진 띠입니다. 별의 약 90%가 여기에 속하며, 중심부에서 수소 핵융합 반응이 일어나고 있습니다.'},
-g:{n:'거성',c:'#ffb86b',d:'주계열의 오른쪽 위에 있습니다. 표면 온도는 낮지만 반지름이 커서 광도가 큽니다. 주로 붉게 보여 적색 거성이라고도 합니다.'},
-sg:{n:'초거성',c:'#ff7a8a',d:'H-R 도의 가장 위쪽에 있습니다. 반지름이 매우 커서 광도가 매우 큽니다.'},
-wd:{n:'백색왜성',c:'#e6ecff',d:'H-R 도의 왼쪽 아래에 있습니다. 표면 온도는 높지만 반지름이 매우 작아서 광도가 작습니다.'}};
+function lab(x,y,t,fs=15,an='middle',fill='#cfd6ea',w=600,p){const e=el('text',{x,y,fill,'font-size':fs,'text-anchor':an,'font-weight':w,stroke:'#0b1026','stroke-width':3,'paint-order':'stroke'},p);e.textContent=t;return e}
 // 주계열의 대략적인 위치 [log T, log L]
 const MS=[[4.65,5.7],[4.6,5.3],[4.5,4.5],[4.4,3.8],[4.3,3.2],[4.2,2.7],[4.1,2.1],[4.0,1.5],[3.9,1.0],[3.86,.75],[3.8,.3],[3.761,0],[3.7,-.45],[3.65,-.85],[3.6,-1.15],[3.55,-1.6],[3.5,-2.4],[3.45,-3.2],[3.42,-3.6]];
 const msL=t=>{for(let i=1;i<MS.length;i++)if(t>=MS[i][0]){const[a,b]=MS[i-1],[c,d]=MS[i];return d+(b-d)*(t-c)/(a-c)}return MS[MS.length-1][1]};
 const wdL=t=>4*t-18.85; // 반지름이 거의 같은 백색왜성: L ∝ T⁴
-// 무리 영역 (log T, log L 다각형)
-function band(f,t0,t1,up,dn){const a=[],b=[];for(let t=t0;t>=t1-1e-9;t-=.02){a.push([t,f(t)+up]);b.unshift([t,f(t)-dn])}return a.concat(b)}
-const REG={ms:band(msL,4.66,3.42,.55,.4),wd:band(wdL,4.5,3.8,.4,.4),
- g:[[3.75,.9],[3.73,1.9],[3.66,2.9],[3.57,3.5],[3.5,3.4],[3.53,2.4],[3.6,1.6],[3.68,1.0]],
- sg:[[4.6,6.2],[3.47,6.0],[3.47,4.2],[3.8,4.15],[4.3,4.5],[4.6,5.3]]};
-const RL={ms:[3.98,.25],g:[3.8,2.3],sg:[4.05,5.85],wd:[4.12,-3.35]};
 // 별의 색 (표면 온도에 따라, 구분하기 쉽도록 조금 진하게)
 const SC=[[4.6,[155,176,255]],[4.3,[170,191,255]],[4.0,[202,215,255]],[3.875,[248,247,255]],[3.78,[255,244,226]],[3.716,[255,229,180]],[3.6,[255,200,130]],[3.48,[255,160,100]]];
-function col(t){if(t>=SC[0][0])return css(SC[0][1]);for(let i=1;i<SC.length;i++)if(t>=SC[i][0]){const[a,p]=SC[i-1],[b,q]=SC[i],f=(t-b)/(a-b);return css(q.map((v,k)=>v+(p[k]-v)*f))}return css(SC[SC.length-1][1])}
 const css=c=>`rgb(${c.map(Math.round).join(',')})`;
+function col(t){if(t>=SC[0][0])return css(SC[0][1]);for(let i=1;i<SC.length;i++)if(t>=SC[i][0]){const[a,p]=SC[i-1],[b,q]=SC[i],f=(t-b)/(a-b);return css(q.map((v,k)=>v+(p[k]-v)*f))}return css(SC[SC.length-1][1])}
 // 일반적인 별들 (분포를 본뜬 예시, 매번 같은 모양이 되도록 고정된 난수 사용)
 let seed=20261101;const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296},gs=()=>Math.sqrt(-2*Math.log(rnd()+1e-9))*Math.cos(2*Math.PI*rnd());
 const PTS=[];
-for(let i=0;i<430;i++){const t=3.43+1.18*Math.pow(rnd(),1.7);PTS.push([t,msL(t)+.16*gs()+.25*rnd(),'ms'])}
-for(let i=0;i<95;i++){const t=3.55+.18*rnd();PTS.push([t,1.6+(3.72-t)*8+.25*gs(),'g'])}
-for(let i=0;i<30;i++){const t=3.66+.03*gs();PTS.push([t,1.7+.15*gs(),'g'])}
-for(let i=0;i<34;i++){const t=3.5+1.0*rnd();PTS.push([t,4.4+1.3*rnd(),'sg'])}
-for(let i=0;i<45;i++){const t=3.82+.62*rnd();PTS.push([t,wdL(t)+.18*gs(),'wd'])}
-// 유명한 별 [이름, 분광형, 표면 온도 K, 광도(태양 = 1), 무리]
-const ST=[['태양','G2',5772,1,'ms'],['시리우스 A','A1',9940,25.4,'ms'],['베가','A0',9600,40,'ms'],['프로키온 A','F5',6530,6.9,'ms'],['알파 센타우리 A','G2',5790,1.5,'ms'],['프록시마 센타우리','M5.5',3040,.0017,'ms'],['레굴루스','B8',12460,288,'ms'],
-['아크투루스','K1.5',4290,170,'g'],['알데바란','K5',3900,440,'g'],['폴룩스','K0',4670,33,'g'],
-['베텔게우스','M1~M2',3600,100000,'sg'],['안타레스','M1.5',3660,75000,'sg'],['리겔','B8',12100,120000,'sg'],['데네브','A2',8500,200000,'sg'],
-['시리우스 B','DA2',25000,.056,'wd'],['프로키온 B','DQZ',7740,.00049,'wd']];
+for(let i=0;i<430;i++){const t=3.43+1.18*Math.pow(rnd(),1.7);PTS.push([t,msL(t)+.16*gs()+.25*rnd()])}
+for(let i=0;i<95;i++){const t=3.55+.18*rnd();PTS.push([t,1.6+(3.72-t)*8+.25*gs()])}
+for(let i=0;i<30;i++){const t=3.66+.03*gs();PTS.push([t,1.7+.15*gs()])}
+for(let i=0;i<34;i++){const t=3.5+1.0*rnd();PTS.push([t,4.4+1.3*rnd()])}
+for(let i=0;i<45;i++){const t=3.82+.62*rnd();PTS.push([t,wdL(t)+.18*gs()])}
+// 유명한 별 [이름, 분광형, 표면 온도 K, 광도(태양 = 1)]
+const ST=[['태양','G2',5772,1],['시리우스 A','A1',9940,25.4],['베가','A0',9600,40],['프로키온 A','F5',6530,6.9],['알파 센타우리 A','G2',5790,1.5],['프록시마 센타우리','M5.5',3040,.0017],['레굴루스','B8',12460,288],
+['아크투루스','K1.5',4290,170],['알데바란','K5',3900,440],['폴룩스','K0',4670,33],
+['베텔게우스','M1~M2',3600,100000],['안타레스','M1.5',3660,75000],['리겔','B8',12100,120000],['데네브','A2',8500,200000],
+['시리우스 B','DA2',25000,.056],['프로키온 B','DQZ',7740,.00049]];
+const WD=['시리우스 B','프로키온 B'];
 // 분광형 경계 (K)
 const SB=[[56000,'O'],[30000,'B'],[10000,'A'],[7500,'F'],[6000,'G'],[5200,'K'],[3700,'M'],[2400,'']];
 const fmtT=T=>'약 '+(Math.round(T/100)*100).toLocaleString('ko-KR')+' K';
 function fmtL(L){const v=L>=10?Math.round(Number(L.toPrecision(2))):Number(L.toPrecision(2));return v.toLocaleString('ko-KR',{maximumFractionDigits:6})}
 const fmtM=l=>{const m=mag(l);return(m>=0?'+':'−')+Math.abs(m).toFixed(1)};
-const lg=Math.log10;
 
 function draw(){sv.innerHTML='';
  const d=el('defs',{}),f=el('filter',{id:'gl',x:'-100%',y:'-100%',width:'300%',height:'300%'},d);el('feGaussianBlur',{stdDeviation:2.2},f);
- el('rect',{x:X0,y:Y0,width:X1-X0,height:Y1-Y0},el('clipPath',{id:'pa'},d));
  // 격자와 세로축 눈금
  if(YM=='L')for(let p=-4;p<=6;p+=2){const y=yOf(p);el('line',{x1:X0,x2:X1,y1:y,y2:y,stroke:'#2a3156'});lab(X0-10,y+5,(10**p).toLocaleString('ko-KR',{maximumFractionDigits:4}),14,'end')}
  else for(let m=15;m>=-10;m-=5){const y=yOf((MSUN-m)/2.5);el('line',{x1:X0,x2:X1,y1:y,y2:y,stroke:'#2a3156'});lab(X0-10,y+5,(m>0?'+':m<0?'−':'')+Math.abs(m),15,'end')}
@@ -146,12 +119,8 @@ function draw(){sv.innerHTML='';
  lab((X0+X1)/2,Y1+56,XM=='T'?'표면 온도 (K)':'분광형',16,'middle','#e8eaf2',700);
  lab(X0+4,Y1+56,'← 고온',13,'start');lab(X1,Y1+56,'저온 →',13,'end');
  el('rect',{x:X0,y:Y0,width:X1-X0,height:Y1-Y0,fill:'none',stroke:'#4a5280'});
- // 무리 영역
- const any=Object.values(ON).some(v=>v);
- for(const k in GR)if(ON[k]){el('polygon',{'clip-path':'url(#pa)',points:REG[k].map(([t,l])=>xOf(t)+','+yOf(l)).join(' '),fill:GR[k].c,'fill-opacity':.16,stroke:GR[k].c,'stroke-width':2,'stroke-dasharray':'6 5','stroke-linejoin':'round'})}
  // 일반적인 별들
- PTS.forEach(([t,l,g])=>{const x=xOf(t),y=yOf(l);if(x<X0||x>X1||y<Y0||y>Y1)return;el('circle',{cx:x,cy:y,r:2.3,fill:col(t),opacity:any&&!ON[g]?.18:.85})});
- for(const k in GR)if(ON[k]){const[t,l]=RL[k];lab(xOf(t),yOf(l),GR[k].n,18,'middle',GR[k].c,800)}
+ PTS.forEach(([t,l])=>{const x=xOf(t),y=yOf(l);if(x<X0||x>X1||y<Y0||y>Y1)return;el('circle',{cx:x,cy:y,r:2.3,fill:col(t),opacity:.85})});
  // 유명한 별
  const s=ST.find(a=>a[0]==sel);
  if(s){const x=xOf(lg(s[2])),y=yOf(lg(s[3]));
@@ -162,25 +131,25 @@ function draw(){sv.innerHTML='';
   el('circle',{cx:x,cy:y,r:14,fill:'transparent'},g)});
  if(s){const x=xOf(lg(s[2])),y=yOf(lg(s[3])),r=x>X1-150;lab(x+(r?-14:14),y-10,s[0],16,r?'end':'start','#fff',800);
   // 축 위의 값 표시
-  const yv=YM=='L'?fmtL(s[3]):fmtM(lg(s[3])),xv=XM=='T'?(Math.round(s[2]/100)*100).toLocaleString('ko-KR'):s[1];
-  pill(X0-8,y,yv,'end');pill(x,Y1+25,xv,'middle')}
- info.innerHTML=s?`<b>${s[0]}</b> <span class="k">· ${GR[s[4]].n}</span><br><span class="k">${XM=='T'?'표면 온도':'분광형'}</span> <span class="v">${XM=='T'?fmtT(s[2]):s[1]+'형'}</span>${XM=='S'&&s[4]=='wd'?' <span class="k">(백색왜성의 분광형)</span>':''}<br><span class="k">${YM=='L'?'광도':'절대등급'}</span> <span class="v">${YM=='L'?'약 '+fmtL(s[3])+' (태양 = 1)':'약 '+fmtM(lg(s[3]))+'등'}</span>`:'';
- info.style.display=s?'':'none'}
+  pill(X0-8,y,YM=='L'?fmtL(s[3]):fmtM(lg(s[3])),'end');pill(x,Y1+25,XM=='T'?(Math.round(s[2]/100)*100).toLocaleString('ko-KR'):s[1],'middle');
+  // 값 상자 (그림판 왼쪽 아래의 빈 곳)
+  const wd=WD.includes(s[0]),g=el('g',{'pointer-events':'none'}),bg=el('rect',{rx:10,fill:'#161c36',opacity:.92,stroke:'#3a4260'},g),bx=X0+14,by=Y1-92;
+  lab(bx+12,by+24,s[0],17,'start','#fff',800,g);
+  const row=(y,k,v)=>{const t=lab(bx+12,y,k+'  ',14,'start','#a9b1cc',600,g),ts=el('tspan',{fill:'#f5b942','font-weight':800},t);ts.textContent=v};
+  row(by+50,XM=='T'?'표면 온도':'분광형',XM=='T'?fmtT(s[2]):s[1]+'형'+(wd?' (백색왜성의 분광형)':''));
+  row(by+74,YM=='L'?'광도':'절대등급',YM=='L'?'약 '+fmtL(s[3])+' (태양 = 1)':'약 '+fmtM(lg(s[3]))+'등');
+  const b=g.getBBox();bg.setAttribute('x',bx);bg.setAttribute('y',by);bg.setAttribute('width',b.width+24);bg.setAttribute('height',88)}}
 function pill(x,y,t,an){const w=t.length*9+16,bx=an=='end'?x-w:x-w/2;
  el('rect',{x:bx,y:y-14,width:w,height:24,rx:7,fill:'#f5b942'});const e=el('text',{x:bx+w/2,y:y+4,fill:'#1b1f2a','font-size':15,'font-weight':800,'text-anchor':'middle'});e.textContent=t}
 
 // 조작
 function seg(id,set){document.querySelectorAll(`#${id} button`).forEach(b=>b.onclick=()=>{set(b.dataset.v);document.querySelectorAll(`#${id} button`).forEach(x=>x.classList.toggle('on',x==b));draw()})}
 seg('ysel',v=>YM=v);seg('xsel',v=>XM=v);
-for(const k in GR){const l=document.createElement('label');l.innerHTML=`<input type="checkbox"><i style="background:${GR[k].c}"></i>${GR[k].n}`;
- l.querySelector('input').onchange=e=>{ON[k]=e.target.checked;draw();desc()};grp.appendChild(l)}
-function desc(){const a=Object.keys(GR).filter(k=>ON[k]);
- gdesc.innerHTML=a.length?a.map(k=>`<p><b>${GR[k].n}</b> ${GR[k].d}</p>`).join(''):'<p>무리를 고르면 H-R 도에 그 무리가 차지하는 영역이 표시됩니다.</p>'}
 function pickStar(n){sel=sel==n?null:n;document.querySelectorAll('#stars button').forEach(b=>b.classList.toggle('on',b.textContent==sel));draw()}
 ST.forEach(a=>{const b=document.createElement('button');b.textContent=a[0];b.onclick=()=>pickStar(a[0]);stars.appendChild(b)});
 sv.addEventListener('click',e=>{const g=e.target.closest('[data-star]');if(g)pickStar(g.dataset.star)});
 function show(e){const g=e.target.closest&&e.target.closest('[data-star]');
  if(g){tip.textContent=g.dataset.star;tip.style.display='block';tip.style.left=Math.max(4,Math.min(e.clientX+14,innerWidth-tip.offsetWidth-8))+'px';tip.style.top=(e.clientY-40)+'px'}else tip.style.display='none'}
 sv.addEventListener('pointermove',show);sv.addEventListener('pointerleave',()=>tip.style.display='none');
-desc();pickStar('태양');
+pickStar('태양');
 </script></main></body></html>
