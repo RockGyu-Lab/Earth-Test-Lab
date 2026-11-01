@@ -351,14 +351,15 @@ const CNO=[{in:1,out:['g'],eq:'¹²C + ¹H → ¹³N + γ'},{in:0,out:['e','nu']
  {in:1,out:['g'],eq:'¹⁴N + ¹H → ¹⁵O + γ'},{in:0,out:['e','nu'],eq:'¹⁵O → ¹⁵N + e⁺ + ν'},{in:1,out:['4He'],eq:'¹⁵N + ¹H → ¹²C + ⁴He'}];
 let fm='pp',fi=0,fT=1,fRaf=0,fPlay=false;
 // 원자핵(양성자 빨강, 중성자 회색), 가벼운 입자(양전자, 중성미자, 감마선)
-function nuc(x,y,t,o=1){const[p,n,l]=NUC[t],g=el('g',{opacity:o}),sp=p+n==1?[[0,0]]:[[-5,-4],[5,-4],[-5,5],[5,5]].slice(0,p+n);
- sp.forEach(([dx,dy],i)=>el('circle',{cx:x+dx,cy:y+dy,r:p+n==1?8:7,fill:i<p?'#ff6b6b':'#9aa3c7',stroke:'#0b1026','stroke-width':1},g));
- lab(x,y+(p+n==1?24:26),l,14,'middle','#e8eaf2',800,g)}
-function light(x,y,t,o=1){const g=el('g',{opacity:o});
- if(t=='e'){el('circle',{cx:x,cy:y,r:5,fill:'#ffd166'},g);lab(x,y+20,'e⁺',13,'middle','#ffd166',800,g)}
- else if(t=='nu'){el('circle',{cx:x,cy:y,r:3.5,fill:'none',stroke:'#cfd6ea','stroke-width':1.5},g);lab(x,y+18,'ν',14,'middle','#cfd6ea',800,g)}
- else if(t=='g'){el('path',{d:`M${x-16},${y} q4,-8 8,0 t8,0 t8,0 t8,0`,fill:'none',stroke:'#c9a7ff','stroke-width':2.2},g);lab(x,y+20,'γ',14,'middle','#c9a7ff',800,g)}
- else nuc(x,y,t,o)}
+// z: 크기 배율 (p-p 연쇄 반응은 크게, CNO 순환 반응은 원 둘레에 맞게 작게)
+function nuc(x,y,t,o=1,z=1){const[p,n,l]=NUC[t],g=el('g',{opacity:o}),one=p+n==1,sp=one?[[0,0]]:[[-5,-4],[5,-4],[-5,5],[5,5]].slice(0,p+n);
+ sp.forEach(([dx,dy],i)=>el('circle',{cx:x+dx*z,cy:y+dy*z,r:(one?8:7)*z,fill:i<p?'#ff6b6b':'#9aa3c7',stroke:'#0b1026','stroke-width':1},g));
+ lab(x,y+(one?16:18)*z+8,l,14*Math.min(z,1.25),'middle','#e8eaf2',800,g)}
+function light(x,y,t,o=1,z=1){const g=el('g',{opacity:o}),fs=14*Math.min(z,1.25);
+ if(t=='e'){el('circle',{cx:x,cy:y,r:5*z,fill:'#ffd166'},g);lab(x,y+12*z+8,'e⁺',fs,'middle','#ffd166',800,g)}
+ else if(t=='nu'){el('circle',{cx:x,cy:y,r:3.5*z,fill:'none',stroke:'#cfd6ea','stroke-width':1.5*z},g);lab(x,y+10*z+8,'ν',fs,'middle','#cfd6ea',800,g)}
+ else if(t=='g'){const u=8*z;el('path',{d:`M${x-2*u},${y} q${u/2},-${u} ${u},0 t${u},0 t${u},0 t${u},0`,fill:'none',stroke:'#c9a7ff','stroke-width':2.2*z},g);lab(x,y+12*z+8,'γ',fs,'middle','#c9a7ff',800,g)}
+ else nuc(x,y,t,o,z)}
 // 결과 상자 (그림 아래쪽): 왼쪽은 두 반응에 공통, 오른쪽은 반응마다 다름
 function summary(){const g=el('g',{});el('rect',{x:12,y:200,width:456,height:130,rx:12,fill:'#161c36',stroke:'#3a4260'},g);
  [['결과',15,'#ffd166',800],['수소 원자핵 4개 →',14,'#e8eaf2',700],['헬륨 원자핵 1개 + 에너지',14,'#e8eaf2',700],['줄어든 질량(질량 결손)이',12,'#a9b1cc',600],['에너지로 바뀜 (E = mc²)',12,'#a9b1cc',600]]
@@ -369,21 +370,24 @@ function summary(){const g=el('g',{});el('rect',{x:12,y:200,width:456,height:130
 function drawFu(){S=fuv;S.innerHTML='';const d=el('defs',{});heads(d);const t=fT,cx=240;
  if(fm=='pp'){const st=PP[fi],m=Math.min(1,t/.45),after=t>.5,q=Math.max(0,(t-.5)/.5);
   lab(14,24,`p-p 연쇄 반응 · ${fi+1}단계 ${st.x}`,15,'start','#ffd166',800);
-  if(!after){nuc(60+(cx-20-60)*m,95,st.a[0]);nuc(420-(420-cx-20)*m,95,st.a[1])}
-  if(t>.38&&t<.66)el('circle',{cx,cy:91,r:30*(1-Math.abs(t-.52)/.14),fill:'#fff3c4',opacity:.6});
-  if(after){light(cx,95,st.b[0]);
-   const fly=[[cx+130*q,95-45*q],[cx+130*q,95+38*q]];
-   st.b.slice(1).forEach((p,i)=>light(fly[i][0],fly[i][1],p))}
+  const Z=1.7; // p-p 연쇄 반응의 입자 크기 배율
+  if(!after){nuc(60+(cx-28-60)*m,92,st.a[0],1,Z);nuc(420-(420-cx-28)*m,92,st.a[1],1,Z)}
+  if(t>.38&&t<.66)el('circle',{cx,cy:90,r:42*(1-Math.abs(t-.52)/.14),fill:'#fff3c4',opacity:.6});
+  if(after){light(cx,92,st.b[0],1,Z);
+   const fly=[[cx+120*q,92-42*q],[cx+120*q,92+30*q]];
+   st.b.slice(1).forEach((p,i)=>light(fly[i][0],fly[i][1],p,1,Z))}
   lab(cx,178,st.eq,19,'middle','#fff',800)}
- else{const st=CNO[fi],O=[108,110],Rr=66,P=i=>{const a=(-90+i*60)*Math.PI/180;return[O[0]+Rr*Math.cos(a),O[1]+Rr*Math.sin(a)]};
+ else{const st=CNO[fi],O=[108,100],Rr=64,P=i=>{const a=(-90+i*60)*Math.PI/180;return[O[0]+Rr*Math.cos(a),O[1]+Rr*Math.sin(a)]};
   lab(330,44,`CNO 순환 반응 · ${fi+1}단계`,15,'middle','#ffd166',800);
   CN.forEach((_,i)=>{const[a,b]=[P(i),P((i+1)%6)],on=i==fi,dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy),u=[dx/L,dy/L];
    arrow(a[0]+u[0]*19,a[1]+u[1]*19,b[0]-u[0]*22,b[1]-u[1]*22,on?'y':'w',on?'#ffd166':'#5a6390',on?3.5:2)});
   CN.forEach(([n,c],i)=>{const[x,y]=P(i),on=i==fi||i==(fi+1)%6;el('circle',{cx:x,cy:y,r:17,fill:c,opacity:on?1:.55,stroke:on?'#ffd166':'none','stroke-width':2.5});lab(x,y+5,n,13,'middle','#0b1026',800).setAttribute('stroke','none')});
   lab(O[0],O[1]-2,'C·N·O는',12,'middle','#cfd6ea',700);lab(O[0],O[1]+14,'촉매 역할',12,'middle','#cfd6ea',700);
-  const[a,b]=[P(fi),P((fi+1)%6)],mid=[(a[0]+b[0])/2,(a[1]+b[1])/2],ox=(mid[0]-O[0])/Rr,oy=(mid[1]-O[1])/Rr;
-  if(st.in&&t<.5){const m=Math.min(1,t/.45);nuc(mid[0]+ox*70*(1-m),mid[1]+oy*70*(1-m)-8,'1H')}
-  if(t>.5){const q=(t-.5)/.5;st.out.forEach((p,i)=>light(mid[0]+ox*(22+22*q)+(i?18:0),mid[1]+oy*(22+22*q)+(i?18:0),p))}
+  const[a,b]=[P(fi),P((fi+1)%6)],mid=[(a[0]+b[0])/2,(a[1]+b[1])/2];let ox=(mid[0]-O[0])/Rr,oy=(mid[1]-O[1])/Rr;
+  // 원의 아래쪽 단계는 입자가 아래 결과 상자에 가리지 않도록, 원 아래 가장자리를 따라 옆으로 드나들게 함
+  let dy0=0;if(oy>.3){ox=Math.sign(ox)||1;oy=0;dy0=10}
+  if(st.in&&t<.5){const m=Math.min(1,t/.45);nuc(mid[0]+ox*70*(1-m),mid[1]+dy0+oy*70*(1-m)-8,'1H')}
+  if(t>.5){const q=(t-.5)/.5;st.out.forEach((p,i)=>light(mid[0]+ox*(26+30*q)+(i?18*ox:0),mid[1]+dy0+oy*(26+30*q)+(i&&!dy0?18:0),p))}
   lab(330,104,st.eq,17,'middle','#fff',800);
   lab(330,130,fi==5?'→ 다시 ¹²C로 돌아가 순환이 이어짐':'',12,'middle','#a9b1cc',600)}
  summary();fstep.textContent=`${fi+1} / ${fm=='pp'?3:6} 단계`}
