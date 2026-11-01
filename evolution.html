@@ -106,6 +106,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 #cyv{max-height:max(200px,calc(100vh - 392px))}
 #cyv{max-height:max(200px,calc(100dvh - 392px))}
 #cynote{min-height:calc(3.1em + 18px)}
+.cytop{display:flex;align-items:center;gap:12px;margin:0 0 8px}
 #cyv [data-c]{cursor:pointer}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
@@ -176,10 +177,11 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 
 <!-- ④ 별의 진화와 순환: 성간 물질을 가운데 두고 두 고리(질량이 태양과 비슷한 별 / 매우 큰 별)가 8자 모양으로 순환 -->
 <section id="p4" role="tabpanel" aria-labelledby="tab4" hidden>
+ <!-- 위에서부터: 순환 따라가기 단추 → 그에 따른 설명 → 별의 질량 고르기(라벤더) → 그림 -->
+ <div class="cytop"><button class="pb" id="cyplay">▶ 순환 따라가기</button><span class="unit">각 단계를 눌러도 설명을 볼 수 있습니다.</span></div>
  <div class="note" id="cynote"></div>
- <div class="subtabs" id="cysel"><button data-v="all" class="on">전체 순환</button><button data-v="sun">질량이 태양과 비슷한 별</button><button data-v="big">질량이 태양보다 매우 큰 별</button></div>
+ <div class="subtabs" id="cysel"><button data-v="sun" class="on">질량이 태양과 비슷한 별</button><button data-v="big">질량이 태양보다 매우 큰 별</button></div>
  <svg id="cyv" viewBox="0 0 960 420"></svg>
- <div class="ctl"><button class="pb" id="cyplay">▶ 순환 따라가기</button><span class="unit">각 단계를 누르면 설명을 볼 수 있습니다.</span></div>
  <div class="note ask"><span class="tag">생각해 보기</span><p>우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?</p><button type="button" class="open-think" id="thb4">답 보기</button></div>
  <div class="ov" id="ov4" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기 답">
   <div class="think-h"><b class="think-t">생각해 보기 · 답</b><button type="button" class="x" id="thx4" aria-label="닫기">닫기 ✕</button></div>
@@ -578,17 +580,26 @@ const CY=[
  {id:'ns',lp:'big',n:'중성자별',k:'ns',p:[585,385],d:'초신성 폭발 뒤 남은 중심핵이 중성자로 이루어진 매우 작고 밀도가 큰 별이 됩니다.'},
  {id:'bh',lp:'big',n:'블랙홀',k:'bh',p:[720,385],d:'남은 중심핵의 질량이 매우 크면 빛조차 빠져나올 수 없는 블랙홀이 됩니다.'}];
 CY.forEach(c=>{if(c.a!=null)c.p=onE(c.lp=='sun'?LP:RP,c.a)});
-let cyMode='all',cySel=0,cyT=-1,cyRaf=0,cyPlay=false; // cyT: 따라가기 진행 정도 0~1 (−1이면 멈춤)
+let cyMode='sun',cySel=0,cyT=-1,cyRaf=0,cyPlay=false; // cyT: 따라가기 진행 정도 0~1 (−1이면 멈춤)
 const CYH='별의 진화와 순환 <span class="ex">· 별은 성간 물질에서 태어나 일생을 마친 뒤, 만든 원소를 다시 성간 물질로 돌려보냄</span>';
 function cyIcon(k,x,y){if(k=='pr'){const g=el('g',{});el('circle',{cx:x,cy:y,r:16,fill:'#dfe8ff',opacity:.25},g);
   [0,45,90,135].forEach(a=>{const r=a*Math.PI/180;el('line',{x1:x-Math.cos(r)*16,y1:y-Math.sin(r)*16,x2:x+Math.cos(r)*16,y2:y+Math.sin(r)*16,stroke:'#fff',opacity:.5,'stroke-width':1.5},g)});el('circle',{cx:x,cy:y,r:7,fill:'#fff'},g);return g}
  if(k=='ism'){const g=el('g',{});[[-22,-8,34,'#c0506a'],[18,-14,30,'#8f4a8a'],[4,16,36,'#b8563c'],[-14,18,24,'#6a4a9a']].forEach(([dx,dy,r,c])=>el('circle',{cx:x+dx,cy:y+dy,r,fill:c,opacity:.55},g));
   for(let i=0;i<14;i++)el('circle',{cx:x+((i*37)%70)-35,cy:y+((i*23)%60)-30,r:1.3,fill:'#ffd9e8',opacity:.8},g);return g}
  return icon(k,x,y,false)}
-function cyPos(lp,t){return lp=='sun'?onE(LP,-360*t):onE(RP,180+360*t)} // 따라가기 점의 위치 (t: 0~1)
-function cyStage(lp,t){const ang=lp=='sun'?-360*t:180+360*t;let best=0;CY.forEach((c,i)=>{if(c.lp!=lp||c.a==null)return;if(lp=='sun'?ang<=c.a:ang>=c.a)best=i});return best} // 지금까지 지난 단계
+// 순환 따라가기 (t: 0~1, 한 바퀴 14초)
+//  · 별(노란 점)이 고리를 따라 행성상 성운(또는 초신성 폭발)까지 감
+//  · 그 뒤 둘로 나뉨: 남은 중심핵은 작은 점이 되어 백색 왜성(또는 중성자별·블랙홀)으로 가고,
+//    퍼져 나간 물질은 성간 물질 같은 뿌연 구름이 되어 고리를 따라 성간 물질로 돌아감
+const SPL={sun:225/360,big:220/360}; // 행성상 성운·초신성 폭발에 닿는 때
+const cyAng=(lp,t)=>lp=='sun'?-360*t:180+360*t;
+const cyPos=(lp,t)=>onE(lp=='sun'?LP:RP,cyAng(lp,t));
+function cyStage(lp,t){const s=SPL[lp];
+ if(t<s){const ang=cyAng(lp,t);let best=0;CY.forEach((c,i)=>{if(c.lp!=lp||c.a==null)return;if(lp=='sun'?ang<=c.a:ang>=c.a)best=i});return best}
+ const q=(t-s)/(1-s);if(q<.3)return lp=='sun'?4:9;if(q<.62)return lp=='sun'?5:(q<.46?10:11);return 0} // 지금 설명할 단계
 function drawCy(){S=cyv;S.innerHTML='';const d=el('defs',{});heads(d);
- const act=lp=>cyMode=='all'||cyMode==lp,op=lp=>act(lp)?1:.22;
+ const act=lp=>cyMode==lp,op=lp=>act(lp)?1:.22;
+ const cg=el('radialGradient',{id:'cyc'},d);[[0,'#f0a0c0',.85],[.55,'#a060b0',.5],[1,'#6a4a9a',0]].forEach(([o,c,a])=>el('stop',{offset:o,'stop-color':c,'stop-opacity':a},cg));
  // 고리 (화살표로 진행 방향 표시)
  [['sun',LP,0,-360],['big',RP,180,540]].forEach(([lp,E,a0,a1])=>{const pts=[];for(let i=0;i<=120;i++)pts.push(onE(E,a0+(a1-a0)*i/120).map(v=>v.toFixed(1)).join(','));
   const g=el('g',{opacity:op(lp)});el('polyline',{points:pts.join(' '),fill:'none',stroke:'#7f8bb3','stroke-width':5,opacity:.55},g);
@@ -607,14 +618,24 @@ function drawCy(){S=cyv;S.innerHTML='';const d=el('defs',{});heads(d);
  // 고리 이름
  lab(290,190,'질량이 태양과',16,'middle','#cfd6ea',700).setAttribute('opacity',op('sun'));lab(290,210,'비슷한 별',16,'middle','#cfd6ea',700).setAttribute('opacity',op('sun'));
  lab(670,190,'질량이 태양보다',16,'middle','#cfd6ea',700).setAttribute('opacity',op('big'));lab(670,210,'매우 큰 별',16,'middle','#cfd6ea',700).setAttribute('opacity',op('big'));
- // 따라가기 점
- if(cyT>=0)['sun','big'].forEach(lp=>{if(!act(lp))return;const[x,y]=cyPos(lp,cyT);el('circle',{cx:x,cy:y,r:13,fill:'#ffd166',opacity:.3});el('circle',{cx:x,cy:y,r:7,fill:'#ffd166',stroke:'#fff','stroke-width':2})});
+ // 따라가기: 별(노란 점) → 나뉜 뒤 남은 중심핵(작은 점)과 뿌연 구름
+ if(cyT>=0){const lp=cyMode,s=SPL[lp],t=cyT,dot=(x,y,r)=>{el('circle',{cx:x,cy:y,r:r*1.9,fill:'#ffd166',opacity:.3});el('circle',{cx:x,cy:y,r,fill:'#ffd166',stroke:'#fff','stroke-width':2})};
+  if(t<s){const[x,y]=cyPos(lp,t);dot(x,y,7)}
+  else{const q=(t-s)/(1-s),sp=cyPos(lp,s);
+   // 폭발·방출 순간의 퍼지는 고리
+   if(q<.2)el('circle',{cx:sp[0],cy:sp[1],r:12+120*q,fill:'none',stroke:lp=='sun'?'#7fe0d8':'#fff3c4','stroke-width':3,opacity:1-q/.2});
+   // 남은 중심핵: 작아지면서 백색 왜성(또는 중성자별·블랙홀)으로
+   const m=Math.min(1,q/.3),r=7-3*m;(lp=='sun'?[5]:[10,11]).forEach(i=>{const p=CY[i].p;dot(sp[0]+(p[0]-sp[0])*m,sp[1]+(p[1]-sp[1])*m,r)});
+   // 퍼져 나간 물질: 뿌연 구름이 되어 고리를 따라 성간 물질로 (끝에서 성간 물질에 섞이며 사라짐)
+   const u=Math.max(0,Math.min(1,(q-.08)/.84)),[cx,cy]=cyPos(lp,s+(1-s)*u),cr=12+12*u,co=u>.88?(1-u)/.12:1;
+   if(q>.08)el('circle',{cx,cy,r:cr,fill:'url(#cyc)',opacity:co})}}
  const c=CY[cySel];cynote.innerHTML=`<div class="nh">${CYH}</div><p><b>${c.n}</b> ${c.d}</p>`}
 function cyStop(){cyPlay=false;cancelAnimationFrame(cyRaf);cyplay.textContent='▶ 순환 따라가기'}
-cyplay.onclick=()=>{if(cyPlay)return cyStop();cyPlay=true;cyplay.textContent='❚❚ 멈춤';let t0=performance.now()-Math.max(0,cyT)*12000;
- const st=now=>{if(!cyPlay)return;cyT=((now-t0)/12000)%1;cySel=cyStage(cyMode=='big'?'big':'sun',cyT);drawCy();cyRaf=requestAnimationFrame(st)};cyRaf=requestAnimationFrame(st)};
+cyplay.onclick=()=>{if(cyPlay)return cyStop();cyPlay=true;cyplay.textContent='❚❚ 멈춤';let t0=performance.now()-Math.max(0,cyT)*14000;
+ const st=now=>{if(!cyPlay)return;cyT=((now-t0)/14000)%1;cySel=cyStage(cyMode,cyT);drawCy();cyRaf=requestAnimationFrame(st)};cyRaf=requestAnimationFrame(st)};
+// 별의 질량을 바꾸면 따라가기를 처음부터
 cysel.querySelectorAll('button').forEach(b=>b.onclick=()=>{cysel.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x==b));cyMode=b.dataset.v;
- if(CY[cySel].lp!='both'&&cyMode!='all'&&CY[cySel].lp!=cyMode)cySel=0;drawCy()});
+ const was=cyPlay;cyStop();cyT=-1;cySel=0;drawCy();if(was)cyplay.onclick()});
 cyv.addEventListener('click',e=>{const g=e.target.closest('[data-c]');if(g){cyStop();cyT=-1;cySel=+g.dataset.c;drawCy()}});
 drawCy();
 
