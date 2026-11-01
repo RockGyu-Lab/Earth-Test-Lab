@@ -63,10 +63,11 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .note .ex{font-weight:500;color:var(--fg);opacity:.75;font-size:.88rem}
 .ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:8px;padding:8px 12px;border-radius:14px;background:var(--card)}
 .seg{display:flex;align-items:center;gap:8px;font-size:.9rem;font-weight:700}
-.seg .bs{display:flex;flex-wrap:wrap;border:1px solid var(--bd);border-radius:10px;overflow:hidden}
-.seg button{padding:6px 11px;border:0;background:var(--bg);color:var(--fg);font-size:.88rem;cursor:pointer}
-.seg button+button{border-left:1px solid var(--bd)}
-.seg button.on{background:var(--acc);color:var(--on-acc);font-weight:700}
+/* 탭 안에서 고르는 단추(질량, 반응 종류, 소메뉴)는 모두 옅은 녹색 (위쪽 큰 탭의 남색과 구분) */
+.seg .bs{display:flex;flex-wrap:wrap;border:1px solid var(--sub-bd);border-radius:10px;overflow:hidden}
+.seg button{padding:6px 11px;border:0;background:var(--sub-bg);color:var(--sub);font-size:.88rem;font-weight:600;cursor:pointer}
+.seg button+button{border-left:1px solid var(--sub-bd)}
+.seg button.on{background:var(--sub);color:var(--on-sub);font-weight:700}
 .pb{padding:6px 14px;border:1px solid var(--acc);border-radius:10px;background:var(--acc);color:var(--on-acc);font-size:.9rem;font-weight:700;cursor:pointer;min-width:5.6em}
 #prog{flex:1;min-width:140px;accent-color:var(--acc)}
 .chk{display:flex;align-items:center;gap:6px;font-size:.88rem;cursor:pointer}
@@ -82,8 +83,8 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .side .st{font-size:.88rem;color:var(--acc);white-space:nowrap}
 .sbtn{display:flex;gap:5px}
 .sbtn.row{flex-direction:row;flex-wrap:wrap}
-.sbtn button{padding:4px 9px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--fg);font-size:.82rem;cursor:pointer;line-height:1.3}
-.sbtn button.on{background:var(--acc);border-color:var(--acc);color:var(--on-acc);font-weight:700}
+.sbtn button{padding:4px 9px;border:1px solid var(--sub-bd);border-radius:10px;background:var(--sub-bg);color:var(--sub);font-size:.82rem;font-weight:600;cursor:pointer;line-height:1.3}
+.sbtn button.on{background:var(--sub);border-color:var(--sub);color:var(--on-sub);font-weight:700}
 .stp{display:flex;align-items:center;gap:6px;font-size:.84rem;white-space:nowrap}
 .stp button{width:30px;padding:3px 0;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--fg);cursor:pointer}
 .side .pb{padding:4px 12px;font-size:.84rem;min-width:0}
