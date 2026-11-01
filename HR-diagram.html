@@ -65,7 +65,7 @@ svg{width:100%;height:auto;display:block;border-radius:14px;background:#0b1026;b
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
 <div class="titlebar"><p class="pnum">탐구 01</p><h1>H-R 도</h1><a class="back" href="./index.html">← [Earth Test Lab] 메뉴로 돌아가기</a></div>
-<p class="intro"><b>H-R 도(헤르츠스프룽–러셀 도)</b>는 별의 <b>표면 온도(분광형)</b>를 가로축, <b>광도(절대등급)</b>를 세로축으로 하여 별들을 점으로 나타낸 그림입니다. 가로축은 <b>왼쪽으로 갈수록 표면 온도가 높습니다.</b></p>
+<p class="intro"><b>H-R 도(헤르츠스프룽–러셀 도)</b>는 별의 <b>표면 온도(분광형)</b>와 <b>광도(절대등급)</b> 사이의 관계를 나타내어 별의 물리적 특성과 진화 단계를 파악할 수 있는 그래프입니다.</p>
 <div class="tabs" role="tablist" aria-label="학습 메뉴">
  <button role="tab" id="tab1" aria-controls="p1" aria-selected="true">H-R 도란?</button>
  <button role="tab" id="tab2" aria-controls="p2" aria-selected="false" tabindex="-1">H-R 도 상의 별의 분류</button>
@@ -73,20 +73,20 @@ svg{width:100%;height:auto;display:block;border-radius:14px;background:#0b1026;b
 
 <!-- ① H-R 도란? -->
 <section id="p1" role="tabpanel" aria-labelledby="tab1">
+ <div class="note"><p><b>생각해 보기</b> 세로축과 가로축을 바꿔 보며, 축의 물리량이 어떻게 변하는지 확인해 보세요.</p></div>
  <div class="bar">
   <div class="seg">세로축<div class="bs" id="ysel"><button data-v="L" class="on">광도</button><button data-v="M">절대등급</button></div></div>
   <div class="seg">가로축<div class="bs" id="xsel"><button data-v="S" class="on">분광형</button><button data-v="T">표면 온도</button></div></div>
  </div>
- <div class="note"><p><b>생각해 보기</b> 세로축을 광도와 절대등급으로 바꿔 보며, 위쪽으로 갈수록 각 값이 어떻게 변하는지 비교해 보세요.</p></div>
  <svg id="sv1" viewBox="0 0 900 590"></svg>
  <div class="stars" id="stars"><span class="qmsg">유명한 별</span></div>
 </section>
 
 <!-- ② H-R 도 상의 별의 분류 -->
 <section id="p2" role="tabpanel" aria-labelledby="tab2" hidden>
- <div class="bar"><div class="seg">무리<div class="bs" id="gsel"></div></div><label class="chk"><input type="checkbox" id="rad"> 반지름이 같은 선</label></div>
+ <div class="bar"><div class="seg">별의 분류<div class="bs" id="gsel"></div></div><label class="chk"><input type="checkbox" id="rad"> 반지름이 같은 선</label></div>
  <div class="note" id="gnote"></div>
- <svg id="sv2" viewBox="0 0 900 600"></svg>
+ <svg id="sv2" viewBox="0 0 1000 600"></svg>
 </section>
 <div id="tip"></div>
 
@@ -104,7 +104,7 @@ const GR={
 ms:{n:'주계열성',c:'#7fb4ff',d:'H-R 도의 왼쪽 위에서 오른쪽 아래로 길게 이어진 띠에 있는 별들입니다. 별의 약 90%가 여기에 속하며, 중심부에서 수소 핵융합 반응이 일어나고 있습니다. 왼쪽 위에 있을수록 표면 온도가 높고 광도가 크며, 질량도 큽니다.',ex:'태양, 시리우스 A, 베가'},
 g:{n:'거성',c:'#ffb86b',d:'주계열의 오른쪽 위에 있는 별들입니다. 표면 온도가 낮아 주로 붉은색을 띠지만, 반지름이 태양의 수십 배 정도로 커서 광도가 큽니다. 그래서 적색 거성이라고도 합니다.',ex:'아크투루스, 폴룩스'},
 sg:{n:'초거성',c:'#ff7a8a',d:'H-R 도의 가장 위쪽에 있는 별들입니다. 반지름이 매우 커서 광도가 매우 큽니다.',ex:'리겔, 데네브'},
-wd:{n:'백색왜성',c:'#e6ecff',d:'H-R 도의 왼쪽 아래에 있는 별들입니다. 표면 온도는 높지만 반지름이 지구 정도로 매우 작아서 광도가 작습니다.',ex:'프로키온 B'}};
+wd:{n:'백색왜성',c:'#e6ecff',d:'H-R 도의 왼쪽 아래에 있는 별들입니다. 표면 온도는 높지만 반지름이 지구 정도로 매우 작아서 광도가 작습니다.',ex:'시리우스 B, 프로키온 B'}};
 // 주계열의 대략적인 위치 [log T, log L]
 const MS=[[4.65,5.7],[4.6,5.3],[4.5,4.5],[4.4,3.8],[4.3,3.2],[4.2,2.7],[4.1,2.1],[4.0,1.5],[3.9,1.0],[3.86,.75],[3.8,.3],[3.761,0],[3.7,-.45],[3.65,-.85],[3.6,-1.15],[3.55,-1.6],[3.5,-2.4],[3.45,-3.2],[3.42,-3.6]];
 const msL=t=>{for(let i=1;i<MS.length;i++)if(t>=MS[i][0]){const[a,b]=MS[i-1],[c,d]=MS[i];return d+(b-d)*(t-c)/(a-c)}return MS[MS.length-1][1]};
@@ -133,8 +133,9 @@ for(let i=0;i<34;i++){const t=3.5+1.0*rnd();PTS.push([t,4.4+1.3*rnd(),'sg'])}
 for(let i=0;i<45;i++){const t=3.82+.62*rnd();PTS.push([t,wdL(t)+.18*gs(),'wd'])}
 // 유명한 별 [이름, 분광형, 표면 온도 K, 광도(태양 = 1), 무리, 이름표를 왼쪽에 둘지]
 // 절대등급을 광도로부터 환산하므로, 환산값이 실제 절대등급과 크게 달라지는 매우 뜨겁거나 차가운 별은 넣지 않음
+// (시리우스 B는 사용자 요청으로 넣음: 환산값 약 +8.0등, 실제 안시 절대등급 약 +11.2등)
 const ST=[['태양','G2',5772,1,'ms'],['시리우스 A','A1',9940,25.4,'ms'],['베가','A0',9600,40,'ms',1],['프로키온 A','F5',6530,6.9,'ms'],['알파 센타우리 A','G2',5790,1.5,'ms'],
-['아크투루스','K1.5',4290,170,'g',1],['폴룩스','K0',4670,33,'g',1],['리겔','B8',12100,120000,'sg'],['데네브','A2',8500,200000,'sg'],['프로키온 B','DQZ',7740,.00049,'wd']];
+['아크투루스','K1.5',4290,170,'g',1],['폴룩스','K0',4670,33,'g',1],['리겔','B8',12100,120000,'sg'],['데네브','A2',8500,200000,'sg'],['시리우스 B','DA2',25000,.056,'wd'],['프로키온 B','DQZ',7740,.00049,'wd']];
 // 분광형 경계 (K)
 const SB=[[56000,'O'],[30000,'B'],[10000,'A'],[7500,'F'],[6000,'G'],[5200,'K'],[3700,'M'],[2400,'']];
 const fmtT=T=>'약 '+(Math.round(T/100)*100).toLocaleString('ko-KR')+' K';
@@ -143,7 +144,8 @@ const fmtM=l=>{const m=MSUN-2.5*l;return(m>=0?'+':'−')+Math.abs(m).toFixed(1)}
 const mTick=m=>(m>0?'+':m<0?'−':'')+Math.abs(m);
 function dots(dim){PTS.forEach(([t,l,g])=>{const x=xOf(t),y=yOf(l);if(x<X0||x>X1||y<Y0||y>Y1)return;el('circle',{cx:x,cy:y,r:2.3,fill:col(t),opacity:dim(g)?.15:.86})})}
 function specAxis(){SB.forEach(([T],i)=>{if(i==0||i==SB.length-1)return;const x=xOf(lg(T));el('line',{x1:x,x2:x,y1:Y0,y2:Y1,stroke:'#2a3156','stroke-dasharray':'4 5'})});
- for(let i=0;i<SB.length-1;i++){const x=(xOf(lg(SB[i][0]))+xOf(lg(SB[i+1][0])))/2;lab(x,Y1+25,SB[i][1],18,'middle','#e8eaf2',800)}}
+ // 분광형 문자는 그 분광형 별의 색으로
+ for(let i=0;i<SB.length-1;i++){const m=(lg(SB[i][0])+lg(SB[i+1][0]))/2;lab(xOf(m),Y1+25,SB[i][1],19,'middle',col(m),800)}}
 
 // ① H-R 도란?: 축 바꾸기와 유명한 별의 값
 let YM='L',XM='S',sel=null;
@@ -155,7 +157,7 @@ function draw1(){frame(sv1,104,880,44,510);
  if(XM=='T')[40000,20000,10000,5000,3000].forEach(T=>{const x=xOf(lg(T));el('line',{x1:x,x2:x,y1:Y0,y2:Y1,stroke:'#2a3156'});lab(x,Y1+24,T.toLocaleString('ko-KR'),15)});
  else specAxis();
  lab((X0+X1)/2,Y1+56,XM=='T'?'표면 온도 (K)':'분광형',16,'middle','#e8eaf2',700);
- lab(X0+4,Y1+56,'← 고온',13,'start');lab(X1,Y1+56,'저온 →',13,'end');
+ if(XM=='T'){lab(X0+4,Y1+56,'← 고온',13,'start');lab(X1,Y1+56,'저온 →',13,'end')}
  el('rect',{x:X0,y:Y0,width:X1-X0,height:Y1-Y0,fill:'none',stroke:'#4a5280'});
  dots(()=>false);
  const s=ST.find(a=>a[0]==sel);
@@ -178,15 +180,16 @@ function draw1(){frame(sv1,104,880,44,510);
 function pill(x,y,t,an){const w=t.length*9+16,bx=an=='end'?x-w:x-w/2;
  el('rect',{x:bx,y:y-14,width:w,height:24,rx:7,fill:'#f5b942'});const e=el('text',{x:bx+w/2,y:y+4,fill:'#1b1f2a','font-size':15,'font-weight':800,'text-anchor':'middle'});e.textContent=t}
 
-// ② H-R 도 상의 별의 분류: 왼쪽 축은 절대등급, 오른쪽 축은 광도
+// ② H-R 도 상의 별의 분류: 왼쪽에 광도와 절대등급 두 축을 나란히 (그림판을 가로로 넓혀 패드 화면의 빈 곳을 씀)
 let G='all';
-const ALL='H-R 도에서 별들은 고르게 흩어져 있지 않고 몇 개의 무리로 모여 있습니다. 위에서 무리를 골라 위치와 특징을 확인해 보세요.';
+const ALL='H-R 도에서 별들은 고르게 흩어져 있지 않고 몇 개의 무리로 모여 있습니다. 위에서 별의 분류를 골라 위치와 특징을 확인해 보세요.';
 const ASK='<p><b>생각해 보기</b> 거성과 백색왜성 중 표면 온도가 높은 쪽은? 광도가 큰 쪽은? 그 차이를 만드는 것은 무엇일까요? (‘반지름이 같은 선’을 켜 보세요.)</p>';
-function draw2(){frame(sv2,74,810,44,500);
+function draw2(){frame(sv2,200,975,44,500);const AL=112; // AL: 광도 축의 위치
  el('rect',{x:X0,y:Y0,width:X1-X0,height:Y1-Y0},el('clipPath',{id:'pa'},el('defs',{})));
  for(let m=15;m>=-10;m-=5){const y=yOf((MSUN-m)/2.5);el('line',{x1:X0,x2:X1,y1:y,y2:y,stroke:'#2a3156'});lab(X0-8,y+5,mTick(m),15,'end')}
- for(let p=-4;p<=6;p+=2){const y=yOf(p);el('line',{x1:X1,x2:X1+6,y1:y,y2:y,stroke:'#6a72a0'});lab(X1+10,y+5,(10**p).toLocaleString('ko-KR',{maximumFractionDigits:4}),13,'start')}
- lab(10,Y0-14,'절대등급',16,'start','#e8eaf2',700);lab(890,Y0-14,'광도 (태양 = 1)',16,'end','#e8eaf2',700);
+ el('line',{x1:AL,x2:AL,y1:Y0,y2:Y1,stroke:'#4a5280'});
+ for(let p=-4;p<=6;p+=2){const y=yOf(p);el('line',{x1:AL,x2:AL+6,y1:y,y2:y,stroke:'#6a72a0'});lab(AL-6,y+5,(10**p).toLocaleString('ko-KR',{maximumFractionDigits:4}),14,'end')}
+ lab(AL-6,Y0-14,'광도 (태양 = 1)',15,'end','#e8eaf2',700);lab(X0-8,Y0-14,'절대등급',15,'end','#e8eaf2',700);
  specAxis();
  [40000,20000,10000,5000,3000].forEach(T=>{const x=xOf(lg(T));el('line',{x1:x,x2:x,y1:Y1,y2:Y1+5,stroke:'#6a72a0'});lab(x,Y1+48,T.toLocaleString('ko-KR')+' K',13)});
  lab((X0+X1)/2,Y1+78,'분광형 (표면 온도)',16,'middle','#e8eaf2',700);lab(X0,Y1+78,'← 고온',13,'start');lab(X1,Y1+78,'저온 →',13,'end');
@@ -218,7 +221,7 @@ sv1.addEventListener('click',e=>{const g=e.target.closest('[data-star]');if(g)pi
 function show(e){const g=e.target.closest&&e.target.closest('[data-star]');
  if(g){tip.textContent=g.dataset.star;tip.style.display='block';tip.style.left=Math.max(4,Math.min(e.clientX+14,innerWidth-tip.offsetWidth-8))+'px';tip.style.top=(e.clientY-40)+'px'}else tip.style.display='none'}
 sv1.addEventListener('pointermove',show);sv1.addEventListener('pointerleave',()=>tip.style.display='none');
-[['all','전체']].concat(Object.keys(GR).map(k=>[k,GR[k].n])).forEach(([k,n])=>{const b=document.createElement('button');b.dataset.k=k;
+Object.keys(GR).map(k=>[k,GR[k].n]).concat([['all','전체']]).forEach(([k,n])=>{const b=document.createElement('button');b.dataset.k=k;
  b.innerHTML=(k=='all'?'':`<i style="background:${GR[k].c}"></i>`)+n;b.onclick=()=>setG(k);gsel.appendChild(b)});
 rad.onchange=draw2;
 // 학습 메뉴 탭 (radiation.html과 같은 방식: 왼쪽·오른쪽 화살표 키로도 이동)
