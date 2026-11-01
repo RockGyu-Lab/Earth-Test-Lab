@@ -87,6 +87,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .stp{display:flex;align-items:center;gap:6px;font-size:.84rem;white-space:nowrap}
 .stp button{width:30px;padding:3px 0;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--fg);cursor:pointer}
 .side .pb{padding:4px 12px;font-size:.84rem;min-width:0}
+.side .cap{font-size:.84rem;opacity:.85}
 @media (max-width:640px){.duo2{grid-template-columns:1fr}}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
@@ -125,7 +126,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  <div class="note"><div class="nh">주계열 단계 <span class="ex">· 중심부에서 수소 핵융합 반응이 일어나며 크기가 일정하게 유지되는 단계</span></div><p>별이 일생의 대부분을 보내는 단계로, 중력과 기체 압력 차에 의한 힘이 평형을 이룹니다.</p></div>
  <div class="duo2">
   <div class="col"><svg id="eqv" viewBox="0 0 480 340"></svg>
-   <div class="side"><b class="st">정역학 평형</b><div class="sbtn row" id="eqb"><button data-v="0" class="on">평형</button><button data-v="1">중력이 더 클 때</button><button data-v="-1">압력 차에 의한 힘이 더 클 때</button></div></div></div>
+   <div class="side"><b class="st">정역학 평형</b><span class="cap">중력과 기체 압력 차에 의한 힘이 평형을 이룸</span></div></div>
   <div class="col"><svg id="fuv" viewBox="0 0 480 340"></svg>
    <div class="side"><div class="sbtn row" id="fmode"><button data-v="pp" class="on">p-p 연쇄</button><button data-v="cno">CNO 순환</button></div>
     <div class="stp"><button id="fprev" aria-label="이전 단계">◀</button><b id="fstep"></b><button id="fnext" aria-label="다음 단계">▶</button></div>
@@ -134,7 +135,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  <div class="note ask"><span class="tag">생각해 보기</span><p>주계열성이 오랫동안 크기를 일정하게 유지할 수 있는 까닭은 무엇일까요?</p><button type="button" class="open-think" id="thb2">답 보기</button></div>
  <div class="ov" id="ov2" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기 답">
   <div class="think-h"><b class="think-t">생각해 보기 · 답</b><button type="button" class="x" id="thx2" aria-label="닫기">닫기 ✕</button></div>
-  <p class="ans"><b>중력과 기체 압력 차에 의한 힘이 평형(정역학 평형)을 이루기 때문입니다.</b> 별이 수축하거나 팽창하면 중심부의 온도와 압력이 바뀌어 다시 평형으로 돌아옵니다.</p>
+  <p class="ans"><b>중력과 기체 압력 차에 의한 힘이 평형(정역학 평형)을 이루기 때문입니다.</b> 안쪽으로 당기는 중력과 바깥쪽으로 미는 힘의 크기가 같아 별이 수축하지도 팽창하지도 않습니다.</p>
  </div></div>
 </section>
 
@@ -312,10 +313,9 @@ drawPre();
 function heads(d){[['r','#ff6b6b'],['b','#6bb6ff'],['w','#e8eaf2'],['y','#ffd166']].forEach(([k,c])=>{const m=el('marker',{id:'h'+k,viewBox:'0 0 10 10',refX:7,refY:5,markerWidth:4,markerHeight:4,orient:'auto'},d);el('path',{d:'M0,0 L10,5 L0,10 z',fill:c},m)})}
 function arrow(x1,y1,x2,y2,k,c,w=4){el('line',{x1,y1,x2,y2,stroke:c,'stroke-width':w,'stroke-linecap':'round','marker-end':`url(#h${k})`})}
 
-// 정역학 평형: 흔들림 s (0 평형, 1 중력이 더 큼, -1 압력 차에 의한 힘이 더 큼), 진행 τ (0~1)
-// 반지름 k = 1 − 0.15·s·sin(πτ): 한 번 수축(팽창)했다가 원래 크기로 돌아옴
-// 알짜힘(바깥쪽 +) = −0.35·s·cos(πτ)·(1−τ): 처음엔 한쪽 힘이 크고, 크기가 바뀌면서 반대쪽으로 바뀐 뒤 평형으로
-let eqS=0,eqT=1,eqRaf=0;
+// 정역학 평형: 중력(안쪽)과 기체 압력 차에 의한 힘(바깥쪽)이 같은 크기로 평형을 이룬 모습
+// (수축·팽창 단추는 실제로 흔한 일처럼 보일 수 있어 뺌. 아래 k, net 식은 평형(s = 0)만 쓰므로 k = 1, net = 0)
+const eqS=0,eqT=1;
 function drawEq(){S=eqv;S.innerHTML='';const d=el('defs',{});heads(d);
  const sg=el('radialGradient',{id:'stg'},d);[[0,'#fffbe8'],[.3,'#ffe08a'],[.75,'#ffb347'],[1,'#e8792e']].forEach(([o,c])=>el('stop',{offset:o,'stop-color':c},sg));
  const cg=el('radialGradient',{id:'cog'},d);[[0,'#ffffff',1],[.6,'#fff3c4',.9],[1,'#fff3c4',0]].forEach(([o,c,a])=>el('stop',{offset:o,'stop-color':c,'stop-opacity':a},cg));
@@ -332,14 +332,7 @@ function drawEq(){S=eqv;S.innerHTML='';const d=el('defs',{});heads(d);
  // 범례(왼쪽 위), 반지름(오른쪽 위), 상태 설명(아래)
  arrow(14,20,40,20,'r','#ff6b6b');lab(48,25,'중력 (안쪽으로)',13,'start','#ffb3b3',700);
  arrow(14,42,40,42,'b','#6bb6ff');lab(48,47,'기체 압력 차에 의한 힘 (바깥쪽으로)',13,'start','#b3dcff',700);
- lab(468,25,'반지름 '+(k*100).toFixed(0)+'%',13,'end','#a9b1cc',700);
- let h,l1,l2;
- if(!s||t>=1){h='정역학 평형';l1='중력 = 기체 압력 차에 의한 힘';l2='→ 별의 크기가 일정하게 유지됨'}
- else if(t<.5){h=s>0?'중력 > 압력 차에 의한 힘':'압력 차에 의한 힘 > 중력';l1=s>0?'→ 별이 수축함':'→ 별이 팽창함';l2=s>0?'→ 중심부 온도와 압력이 높아짐':'→ 중심부 온도와 압력이 낮아짐'}
- else{h='다시 정역학 평형으로';l1=s>0?'높아진 압력으로 압력 차에 의한 힘이 커져':'낮아진 압력으로 압력 차에 의한 힘이 작아져';l2='→ 원래 크기로 돌아감'}
- lab(240,282,h,19,'middle',(!s||t>=1)?'#8ff0b0':'#ffd166',800);lab(240,306,l1,14,'middle','#e8eaf2',700);lab(240,328,l2,14,'middle','#e8eaf2',700)}
-eqb.querySelectorAll('button').forEach(b=>b.onclick=()=>{eqb.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x==b));eqS=+b.dataset.v;cancelAnimationFrame(eqRaf);
- if(!eqS){eqT=1;return drawEq()}eqT=0;let t0=performance.now();const st=now=>{eqT=Math.min(1,(now-t0)/4500);drawEq();if(eqT<1)eqRaf=requestAnimationFrame(st)};eqRaf=requestAnimationFrame(st)});
+ lab(240,282,'정역학 평형',19,'middle','#8ff0b0',800);lab(240,306,'중력 = 기체 압력 차에 의한 힘',14,'middle','#e8eaf2',700);lab(240,328,'→ 별의 크기가 일정하게 유지됨',14,'middle','#e8eaf2',700)}
 
 // 수소 핵융합 반응: p-p 연쇄 반응(3단계), CNO 순환 반응(6단계)
 const NUC={'1H':[1,0,'¹H'],'2H':[1,1,'²H'],'3He':[2,1,'³He'],'4He':[2,2,'⁴He']};
