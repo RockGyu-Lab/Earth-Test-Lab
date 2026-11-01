@@ -93,10 +93,10 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 #pmv{max-height:max(240px,calc(100vh - 390px))}
 #pmv{max-height:max(240px,calc(100dvh - 390px))}
 #pmnote{min-height:calc(3.1em + 18px)}
-/* 탭 안의 소메뉴 단추: 위쪽 큰 탭(남색)과 구분되는 호박색 */
-:root{--sub:#c27a00;--on-sub:#fff;--sub-bg:#fff4e0;--sub-bd:#f0c98a}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sub:#f5b942;--on-sub:#1b1f2a;--sub-bg:#2c2414;--sub-bd:#6b5420}}
-:root[data-theme="dark"]{--sub:#f5b942;--on-sub:#1b1f2a;--sub-bg:#2c2414;--sub-bd:#6b5420}
+/* 탭 안의 소메뉴 단추: 위쪽 큰 탭(남색)과 구분되는 옅은 녹색 */
+:root{--sub:#2f9e6a;--on-sub:#fff;--sub-bg:#e8f7ef;--sub-bd:#a8dcc0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sub:#6fd6a0;--on-sub:#10241a;--sub-bg:#15281f;--sub-bd:#2f5a44}}
+:root[data-theme="dark"]{--sub:#6fd6a0;--on-sub:#10241a;--sub-bg:#15281f;--sub-bd:#2f5a44}
 .subtabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
 .subtabs button{padding:5px 14px;border:1px solid var(--sub-bd);border-radius:999px;background:var(--sub-bg);color:var(--sub);font-size:.88rem;font-weight:700;cursor:pointer}
 .subtabs button.on{background:var(--sub);border-color:var(--sub);color:var(--on-sub)}
@@ -154,7 +154,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 <!-- ③ 후주계열 단계: 소메뉴 셋 (주계열 이후 변화 / 거성과 초거성의 내부 구조 / 질량에 따른 진화 경로) -->
 <section id="p3" role="tabpanel" aria-labelledby="tab3" hidden>
  <div class="note" id="pmnote"></div>
- <!-- 소메뉴: 위쪽 탭(남색)과 구분되도록 호박색, 그림 위에 둠 -->
+ <!-- 소메뉴: 위쪽 탭(남색)과 구분되도록 옅은 녹색, 그림 위에 둠 -->
  <div class="subtabs" id="pmsel"><button data-v="0" class="on">주계열 이후 변화</button><button data-v="1">거성과 초거성의 내부 구조</button><button data-v="2">질량에 따른 진화 경로</button></div>
  <svg id="pmv" viewBox="0 0 960 360"></svg>
  <div class="ctl">
