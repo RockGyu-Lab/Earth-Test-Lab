@@ -56,12 +56,13 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 #prog{flex:1;min-width:140px;accent-color:var(--acc)}
 .chk{display:flex;align-items:center;gap:6px;font-size:.88rem;cursor:pointer}
 .chk input{accent-color:var(--acc);margin:0}
+.unit{font-size:.8rem;opacity:.75;white-space:nowrap}
 [data-s]{cursor:pointer}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
 <div class="titlebar"><p class="pnum">탐구 02</p><h1>별의 진화</h1><a class="back" href="./Evol_index.html">← [H-R 도와 별의 진화] 메뉴로 돌아가기</a></div>
-<p class="intro">별은 성운에서 태어나 일생 동안 표면 온도와 광도가 변하며, 그에 따라 <b>H-R 도 위에서의 위치</b>도 달라집니다.</p>
+<p class="intro">별은 성운에서 태어나 각 단계를 거치며 살아가는 동안 표면 온도와 광도가 변하며, 그에 따라 <b>H-R 도 위에서의 위치</b>도 달라집니다.</p>
 <div class="tabs" role="tablist" aria-label="학습 메뉴">
  <button role="tab" id="tab1" aria-controls="p1" aria-selected="true">전주계열 단계</button>
  <button role="tab" id="tab2" aria-controls="p2" aria-selected="false" tabindex="-1">주계열 단계</button>
@@ -76,9 +77,10 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  <div class="duo"><svg id="bv" viewBox="0 0 500 440"></svg><svg id="hv" viewBox="0 0 560 440"></svg></div>
  <div class="ctl">
   <div class="seg">질량<div class="bs" id="msel"></div></div>
+  <label class="chk"><input type="checkbox" id="allm"> 모두 보기</label>
   <button id="play" class="pb">▶ 재생</button>
   <input type="range" id="prog" min="0" max="1000" value="0" aria-label="진화 진행 정도">
-  <label class="chk"><input type="checkbox" id="allm"> 모두 보기</label>
+  <span class="unit" title="태양의 질량을 1로 나타낸 단위">M☉ = 태양 질량</span>
  </div>
 </section>
 
@@ -174,13 +176,16 @@ function drawBirth(){S=bv;S.innerHTML='';const s=ps,st=stageOf(s),M=MASS[mi],C=[
   const dop=Math.max(0,1-q*1.15);
   if(dop>0){el('ellipse',{cx:C[0],cy:C[1],rx:120-40*q,ry:20-6*q,fill:'url(#dk)',opacity:dop});
    const jo=dop*.8;el('path',{d:`M${C[0]},${C[1]-16} l-8,-${90-30*q} l16,0 z`,fill:'#9fc3ff',opacity:jo*.45});el('path',{d:`M${C[0]},${C[1]+16} l-8,${90-30*q} l16,0 z`,fill:'#9fc3ff',opacity:jo*.45})}
-  const sc=css(now),r=13+7*q;
-  el('circle',{cx:C[0],cy:C[1],r:r*3,fill:sc,opacity:.18+.12*q});el('circle',{cx:C[0],cy:C[1],r:r*1.8,fill:sc,opacity:.35});
-  el('circle',{cx:C[0],cy:C[1],r,fill:sc});el('circle',{cx:C[0]-r*.3,cy:C[1]-r*.3,r:r*.45,fill:'#fff',opacity:.7});
+  // 별: 경계가 없는 부드러운 빛무리 + 가운데가 밝고 가장자리로 갈수록 별의 색이 짙어지는 공 (입체감, 단면이 아님)
+  const sc=css(now),lt=css(now.map(v=>v+(255-v)*.6)),dk=css(now.map(v=>v*.82)),r=13+7*q;
+  const hg=el('radialGradient',{id:'halo'},d);[[0,sc,.75],[.3,sc,.35],[.6,sc,.12],[1,sc,0]].forEach(([o,c,a])=>el('stop',{offset:o,'stop-color':c,'stop-opacity':a},hg));
+  const bg=el('radialGradient',{id:'ball',cx:'42%',cy:'40%',r:'62%'},d);[[0,'#fff',1],[.25,lt,1],[.7,sc,1],[1,dk,1]].forEach(([o,c,a])=>el('stop',{offset:o,'stop-color':c,'stop-opacity':a},bg));
+  el('circle',{cx:C[0],cy:C[1],r:r*(3.4+.6*q),fill:'url(#halo)'});
+  el('circle',{cx:C[0],cy:C[1],r,fill:'url(#ball)'});
   if(dop>0)el('ellipse',{cx:C[0],cy:C[1]+3,rx:120-40*q,ry:(20-6*q)*.55,fill:'url(#dk)',opacity:dop*.75}); // 원반의 앞쪽이 별을 살짝 가림
   if(s>=1)lab(C[0],C[1]+r*3+18,'수소 핵융합 반응 시작!',17,'middle','#ffd166',800)}
  lab(16,32,STG[st].n,22,'start','#fff',800);
- if(s>=.4)lab(16,56,M.m+' M☉',15,'start','#cfd6ea',700);
+ if(s>=.4)lab(16,56,M.m+' M☉ (태양 질량의 '+M.m+'배)',14,'start','#cfd6ea',700);
  // 중심부 온도계 (로그 눈금, 10 K ~ 1억 K)
  const gx=462,gy0=330,gy1=100,gyOf=T=>gy0+(lg(T)-1)/7*(gy1-gy0),T=Tc(s);
  el('rect',{x:gx-7,y:gy1-6,width:14,height:gy0-gy1+12,rx:7,fill:'#1b2244',stroke:'#4a5280'});
