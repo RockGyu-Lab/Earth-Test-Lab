@@ -16,7 +16,8 @@
 ## 폴더 구조
 ```
 index.html                 시험용 메인 화면 (시험 중인 자료 카드 목록)
-spectral_type.html         별의 분광형 (정식 사이트 Star/ 탐구 03 예정: spectrum.html 다음, luminosity.html은 04로 밀림. 지금 돌아가기 링크는 ./index.html)
+HR-diagram.html            H-R 도 (정식 사이트 새 학습실 'H-R도와 별의 진화' 예정, 뒤에 별의 진화 등이 이어짐. 지금 돌아가기 링크는 ./index.html)
+spectral_type.html         별의 분광형 (정식 사이트로 옮김: Star/spectrum.html의 '별의 분광형' 탭)
 README.md                  사용자용 설명서 (게시 방법, 정식 사이트로 옮기는 방법)
 CLAUDE.md                  이 파일
 ```
