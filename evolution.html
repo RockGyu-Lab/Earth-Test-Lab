@@ -77,8 +77,8 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 /* ② 주계열 단계: 왼쪽 정역학 평형(좁게), 오른쪽 수소 핵융합(넓게). 각 그림 아래에 조작 줄 */
 .duo2{display:grid;grid-template-columns:.78fr 1.22fr;gap:8px}
 .col{display:flex;flex-direction:column;gap:6px;min-width:0}
-.col svg{max-height:max(220px,calc(100vh - 340px))}
-.col svg{max-height:max(220px,calc(100dvh - 340px))}
+.col svg{max-height:max(220px,calc(100vh - 330px))}
+.col svg{max-height:max(220px,calc(100dvh - 330px))}
 .side{background:var(--card);border-radius:14px;padding:6px 10px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;min-height:42px}
 .side .st{font-size:.88rem;color:var(--acc);white-space:nowrap}
 .sbtn{display:flex;gap:5px}
@@ -94,6 +94,8 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 #pmv{max-height:max(240px,calc(100vh - 390px))}
 #pmv{max-height:max(240px,calc(100dvh - 390px))}
 #pmnote{min-height:calc(3.1em + 18px)}
+/* 소메뉴를 바꿔도 아래 생각해 보기 자리가 같도록 조작 줄 높이를 '주계열 이후 변화'(단계 단추가 있는 줄)에 맞춤 */
+#p3 .ctl{min-height:50px}
 /* 탭 안의 소메뉴 단추: 위쪽 큰 탭(남색)과 구분되는 라벤더(연보라) */
 :root{--sub:#7c5cd6;--on-sub:#fff;--sub-bg:#efeafd;--sub-bd:#cdbff3;--sub-tx:#5b3fbf}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}}
@@ -103,10 +105,12 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .subtabs button.on{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub)}
 #pmv [data-n]{cursor:pointer}
 /* ④ 별의 진화와 순환 */
-#cyv{max-height:max(200px,calc(100vh - 392px))}
-#cyv{max-height:max(200px,calc(100dvh - 392px))}
-#cynote{min-height:calc(3.1em + 18px)}
-.cytop{display:flex;align-items:center;gap:12px;margin:0 0 8px}
+#cyv{max-height:max(200px,calc(100vh - 328px))}
+#cyv{max-height:max(200px,calc(100dvh - 328px))}
+/* 그림 왼쪽 위에 겹쳐 놓는 작은 '순환 따라가기' 단추 (그림 안 위쪽 여백 자리) */
+.cyfig{position:relative}
+.cyb{position:absolute;left:10px;top:8px;padding:3px 10px;font-size:.8rem;min-width:0}
+.ask2{margin-top:6px}
 #cyv [data-c]{cursor:pointer}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
@@ -144,9 +148,9 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 <section id="p2" role="tabpanel" aria-labelledby="tab2" hidden>
  <div class="note"><div class="nh">주계열 단계 <span class="ex">· 중심부에서 수소 핵융합 반응이 일어나며 크기가 일정하게 유지되는 단계</span></div><p>별이 일생의 대부분을 보내는 단계로, 중력과 기체 압력 차에 의한 힘이 평형을 이룹니다.</p></div>
  <div class="duo2">
-  <div class="col"><svg id="eqv" viewBox="0 0 480 400"></svg>
+  <div class="col"><svg id="eqv" viewBox="0 0 480 440"></svg>
    <div class="side"><b class="st">정역학 평형</b><span class="cap">중력과 기체 압력 차에 의한 힘이 평형을 이룸</span></div></div>
-  <div class="col"><svg id="fuv" viewBox="0 0 640 340"></svg>
+  <div class="col"><svg id="fuv" viewBox="0 0 640 380"></svg>
    <div class="side"><div class="sbtn row" id="fmode"><button data-v="pp" class="on">p-p 연쇄</button><button data-v="cno">CNO 순환</button></div>
     <div class="stp"><button id="fprev" aria-label="이전 단계">◀</button><b id="fstep"></b><button id="fnext" aria-label="다음 단계">▶</button></div>
     <button class="pb" id="fplay">▶ 자동 진행</button></div></div>
@@ -180,16 +184,21 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 
 <!-- ④ 별의 진화와 순환: 성간 물질을 가운데 두고 두 고리(질량이 태양과 비슷한 별 / 매우 큰 별)가 8자 모양으로 순환 -->
 <section id="p4" role="tabpanel" aria-labelledby="tab4" hidden>
- <!-- 위에서부터: 순환 따라가기 단추 → 그에 따른 설명 → 별의 질량 고르기(라벤더) → 그림 -->
- <div class="cytop"><button class="pb" id="cyplay">▶ 순환 따라가기</button><span class="unit">각 단계를 눌러도 설명을 볼 수 있습니다.</span></div>
- <div class="note" id="cynote"></div>
+ <!-- 위에서부터: 설명 → 별의 질량 고르기(라벤더) → 그림 (그림 왼쪽 위에 작은 '순환 따라가기' 단추, 그 아래에 단계 설명) -->
+ <div class="note"><div class="nh">별의 진화와 순환 <span class="ex">· 별은 성간 물질에서 태어나 일생을 마친 뒤, 만든 원소를 다시 성간 물질로 돌려보내 새로운 별을 만드는 재료가 된다.</span></div></div>
  <div class="subtabs" id="cysel"><button data-v="sun" class="on">질량이 태양과 비슷한 별</button><button data-v="big">질량이 태양보다 매우 큰 별</button></div>
- <svg id="cyv" viewBox="0 0 960 420"></svg>
+ <div class="cyfig"><svg id="cyv" viewBox="0 0 960 500"></svg><button class="pb cyb" id="cyplay">▶ 순환 따라가기</button></div>
  <div class="note ask"><span class="tag">생각해 보기</span><p>우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?</p><button type="button" class="open-think" id="thb4">답 보기</button></div>
  <div class="ov" id="ov4" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?</b><button type="button" class="x" id="thx4" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">별의 내부에서 핵융합으로 만들어지고, 행성상 성운과 초신성 폭발로 우주에 퍼진 원소들입니다.</p>
   <p class="exp">이 원소들이 성간 물질이 되었다가 다시 태양계와 지구, 생명체를 이루는 재료가 되었습니다.</p>
+ </div></div>
+ <div class="note ask ask2"><span class="tag">생각해 보기</span><p>철보다 더 무거운 원소는 어느 과정에서 어떻게 만들어질까요?</p><button type="button" class="open-think" id="thb5">답 보기</button></div>
+ <div class="ov" id="ov5" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 철보다 더 무거운 원소는 어느 과정에서 어떻게 만들어질까요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>철보다 더 무거운 원소는 어느 과정에서 어떻게 만들어질까요?</b><button type="button" class="x" id="thx5" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">초신성 폭발 과정에서 만들어집니다.</p>
+  <p class="exp">별 내부의 핵융합 반응으로는 철까지만 만들어집니다. 철보다 무거운 원소(금, 우라늄 등)는 초신성이 폭발할 때 생기는 엄청난 에너지 속에서 원자핵이 많은 중성자를 흡수하여 만들어지고, 폭발과 함께 우주로 흩어집니다.</p>
  </div></div>
 </section>
 
@@ -354,7 +363,7 @@ const eqS=0,eqT=1;
 function drawEq(){S=eqv;S.innerHTML='';const d=el('defs',{});heads(d);
  const sg=el('radialGradient',{id:'stg'},d);[[0,'#fffbe8'],[.3,'#ffe08a'],[.75,'#ffb347'],[1,'#e8792e']].forEach(([o,c])=>el('stop',{offset:o,'stop-color':c},sg));
  const cg=el('radialGradient',{id:'cog'},d);[[0,'#ffffff',1],[.6,'#fff3c4',.9],[1,'#fff3c4',0]].forEach(([o,c,a])=>el('stop',{offset:o,'stop-color':c,'stop-opacity':a},cg));
- const s=eqS,t=eqT,k=1-.15*s*Math.sin(Math.PI*t),net=s?-.35*s*Math.cos(Math.PI*t)*(1-t):0,Fg=1/(k*k),Fp=Fg+net,C=[240,182],R=104*k;
+ const s=eqS,t=eqT,k=1-.15*s*Math.sin(Math.PI*t),net=s?-.35*s*Math.cos(Math.PI*t)*(1-t):0,Fg=1/(k*k),Fp=Fg+net,C=[240,196],R=120*k;
  const hg=el('radialGradient',{id:'eqh'},d);[[.6,'#ffb347',.35],[1,'#ffb347',0]].forEach(([o,c,a])=>el('stop',{offset:o,'stop-color':c,'stop-opacity':a},hg));
  el('circle',{cx:C[0],cy:C[1],r:R*1.35,fill:'url(#eqh)'}); // 경계 없는 빛무리
  el('circle',{cx:C[0],cy:C[1],r:R,fill:'url(#stg)'});
@@ -367,7 +376,7 @@ function drawEq(){S=eqv;S.innerHTML='';const d=el('defs',{});heads(d);
  // 범례(왼쪽 위), 반지름(오른쪽 위), 상태 설명(아래)
  arrow(14,22,44,22,'r','#ff6b6b');lab(52,28,'중력 (안쪽으로)',15,'start','#ffb3b3',700);
  arrow(14,48,44,48,'b','#6bb6ff');lab(52,54,'기체 압력 차에 의한 힘 (바깥쪽으로)',15,'start','#b3dcff',700);
- lab(240,334,'정역학 평형',22,'middle','#8ff0b0',800);lab(240,361,'중력 = 기체 압력 차에 의한 힘',16,'middle','#e8eaf2',700);lab(240,386,'→ 별의 크기가 일정하게 유지됨',16,'middle','#e8eaf2',700)}
+ lab(240,366,'정역학 평형',22,'middle','#8ff0b0',800);lab(240,394,'중력 = 기체 압력 차에 의한 힘',16,'middle','#e8eaf2',700);lab(240,420,'→ 별의 크기가 일정하게 유지됨',16,'middle','#e8eaf2',700)}
 
 // 수소 핵융합 반응: p-p 연쇄 반응(3단계), CNO 순환 반응(6단계)
 const NUC={'1H':[1,0,'¹H'],'2H':[1,1,'²H'],'3He':[2,1,'³He'],'4He':[2,2,'⁴He']};
@@ -394,16 +403,18 @@ function light(x,y,t,o=1,z=1,ang=0){const g=el('g',{opacity:o}),fs=14*Math.min(z
   lab(x,y+12*z+12,'γ',fs,'middle','#c9a7ff',800,g)}
  else nuc(x,y,t,o,z)}
 // 오른쪽 세로 칸: 반응 이름, 단계, 반응식(두 줄), 결과, 우세한 조건
-function sideCol(step,eq,note){const g=el('g',{}),X=414;el('rect',{x:400,y:8,width:234,height:324,rx:12,fill:'#161c36',stroke:'#3a4260'},g);
+function sideCol(step,eq,note){const g=el('g',{}),X=414;el('rect',{x:400,y:8,width:234,height:364,rx:12,fill:'#161c36',stroke:'#3a4260'},g);
  const[l,r]=eq.split(' → ');
  [[fm=='pp'?'p-p 연쇄 반응':'CNO 순환 반응',21,'#ffd166',800,38],[step,16,'#cfd6ea',700,64],[l,23,'#fff',800,102],['→ '+r,23,'#fff',800,132],[note,13,'#a9b1cc',600,154]]
-  .forEach(([t,f,c,w,y])=>t&&lab(X,y,t,f,'start',c,w,g));
- el('line',{x1:X,x2:620,y1:166,y2:166,stroke:'#3a4260'},g);
+  .forEach(([t,f,c,w,y])=>t&&lab(X,y+20,t,f,'start',c,w,g));
+ el('line',{x1:X,x2:620,y1:186,y2:186,stroke:'#3a4260'},g);
  [['결과',18,'#ffd166',800,192],['수소 원자핵 4개 →',16,'#e8eaf2',700,216],['헬륨 원자핵 1개 + 에너지',16,'#e8eaf2',700,239],['질량 결손 → 에너지 (E = mc²)',14,'#a9b1cc',600,261],
   ['중심부 온도 약 1,800만 K',15,'#8ff0b0',700,286],[fm=='pp'?'이하에서 우세 (예: 태양)':'이상에서 우세',15,'#8ff0b0',700,306],[fm=='pp'?'':'(예: 질량이 큰 주계열성)',15,'#8ff0b0',700,325]]
-  .forEach(([t,f,c,w,y])=>t&&lab(X,y,t,f,'start',c,w,g))}
+  .forEach(([t,f,c,w,y])=>t&&lab(X,y+20,t,f,'start',c,w,g))}
 // 그림은 왼쪽(가로 0~400), 설명과 결과는 오른쪽 세로 칸
+// 왼쪽 위에 '수소 핵융합 반응' 제목을 두고, 그 아래(40만큼 내려서) 반응 그림을 그림
 function drawFu(){S=fuv;S.innerHTML='';const d=el('defs',{});heads(d);const t=fT;
+ lab(200,34,'수소 핵융합 반응',22,'middle','#ffffff',800);S=el('g',{transform:'translate(0,40)'});
  if(fm=='pp'){const st=PP[fi],m=Math.min(1,t/.45),after=t>.5,q=Math.max(0,(t-.5)/.5),C=[200,170],Z=2.2; // Z: p-p 연쇄 반응의 입자 크기 배율
   // 두 원자핵이 대각선 방향(왼쪽 위, 오른쪽 아래)에서 다가와 부딪치고, 가벼운 입자는 다른 대각선 방향으로 날아감
   if(!after){nuc(55+(C[0]-34-55)*m,45+(C[1]-30-45)*m,st.a[0],1,Z);nuc(345-(345-C[0]-34)*m,295-(295-C[1]-30)*m,st.a[1],1,Z)}
@@ -411,7 +422,7 @@ function drawFu(){S=fuv;S.innerHTML='';const d=el('defs',{});heads(d);const t=fT
   if(after){light(C[0],C[1],st.b[0],1,Z);
    const fly=[[C[0]+125*q,C[1]-105*q],[C[0]-125*q,C[1]+95*q]],ang=[Math.atan2(-105,125),Math.atan2(95,-125)];
    st.b.slice(1).forEach((p,i)=>light(fly[i][0],fly[i][1],p,1,Z,ang[i]))}
-  sideCol(`${fi+1}단계 ${st.x}`,st.eq,'')}
+  S=fuv;sideCol(`${fi+1}단계 ${st.x}`,st.eq,'')}
  else{const st=CNO[fi],O=[200,162],Rr=112,P=i=>{const a=(-90+i*60)*Math.PI/180;return[O[0]+Rr*Math.cos(a),O[1]+Rr*Math.sin(a)]};
   CN.forEach((_,i)=>{const[a,b]=[P(i),P((i+1)%6)],on=i==fi,dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy),u=[dx/L,dy/L];
    arrow(a[0]+u[0]*27,a[1]+u[1]*27,b[0]-u[0]*31,b[1]-u[1]*31,on?'y':'w',on?'#ffd166':'#5a6390',on?4:2.4)});
@@ -421,7 +432,7 @@ function drawFu(){S=fuv;S.innerHTML='';const d=el('defs',{});heads(d);const t=fT
   const[a,b]=[P(fi),P((fi+1)%6)],mid=[(a[0]+b[0])/2,(a[1]+b[1])/2],ox=(mid[0]-O[0])/Rr,oy=(mid[1]-O[1])/Rr;
   if(st.in&&t<.5){const m=Math.min(1,t/.45);nuc(mid[0]+ox*80*(1-m),mid[1]+oy*80*(1-m)-8,'1H',1,1.3)}
   if(t>.5){const q=(t-.5)/.5;st.out.forEach((p,i)=>light(mid[0]+ox*(30+36*q)+(i?22*-oy:0),mid[1]+oy*(30+36*q)+(i?22*ox:0),p,1,1.3,Math.atan2(oy,ox)))}
-  sideCol(`${fi+1}단계 / 6`,st.eq,fi==5?'→ 다시 ¹²C로 돌아가 순환이 이어짐':'')}
+  S=fuv;sideCol(`${fi+1}단계 / 6`,st.eq,fi==5?'→ 다시 ¹²C로 돌아가 순환이 이어짐':'')}
  fstep.textContent=`${fi+1} / ${fm=='pp'?3:6} 단계`}
 function runStep(then){cancelAnimationFrame(fRaf);fT=0;const t0=performance.now();const st=now=>{fT=Math.min(1,(now-t0)/1800);drawFu();if(fT<1)fRaf=requestAnimationFrame(st);else if(then)then()};fRaf=requestAnimationFrame(st)}
 // 자동 진행: 탭을 열거나 반응을 바꾸면 1단계부터 차례로 저절로 진행되고, 마지막 단계 뒤에는 처음부터 되풀이
@@ -435,7 +446,7 @@ fmode.querySelectorAll('button').forEach(b=>b.onclick=()=>{fmode.querySelectorAl
 fprev.onclick=()=>{fstop();fi=(fi+NST()-1)%NST();runStep()};fnext.onclick=()=>{fstop();fi=(fi+1)%NST();runStep()};
 fplay.onclick=()=>fPlay?fstop():fauto(fT>=1?(fi+1)%NST():fi);
 // 주계열 단계 탭을 열면 자동 진행 시작, 다른 탭으로 가면 멈춤
-window.onTab=i=>{if(i==1)fauto(0);else fstop();if(i==2&&pv==0)pmAuto();else if(window.pmStop)pmStop();if(i!=3&&window.cyStop)cyStop()};
+window.onTab=i=>{if(i==3)placeCyb();if(i==1)fauto(0);else fstop();if(i==2&&pv==0)pmAuto();else if(window.pmStop)pmStop();if(i!=3&&window.cyStop)cyStop()};
 drawEq();drawFu();fstop();
 
 // ---- ③ 후주계열 단계 ----
@@ -585,7 +596,6 @@ const CY=[
  {id:'bh',lp:'big',n:'블랙홀',k:'bh',p:[720,385],d:'남은 중심핵의 질량이 매우 크면 빛조차 빠져나올 수 없는 블랙홀이 됩니다.'}];
 CY.forEach(c=>{if(c.a!=null)c.p=onE(c.lp=='sun'?LP:RP,c.a)});
 let cyMode='sun',cySel=0,cyT=-1,cyRaf=0,cyPlay=false; // cyT: 따라가기 진행 정도 0~1 (−1이면 멈춤)
-const CYH='별의 진화와 순환 <span class="ex">· 별은 성간 물질에서 태어나 일생을 마친 뒤, 만든 원소를 다시 성간 물질로 돌려보냄</span>';
 function cyIcon(k,x,y){if(k=='pr'){const g=el('g',{});el('circle',{cx:x,cy:y,r:16,fill:'#dfe8ff',opacity:.25},g);
   [0,45,90,135].forEach(a=>{const r=a*Math.PI/180;el('line',{x1:x-Math.cos(r)*16,y1:y-Math.sin(r)*16,x2:x+Math.cos(r)*16,y2:y+Math.sin(r)*16,stroke:'#fff',opacity:.5,'stroke-width':1.5},g)});el('circle',{cx:x,cy:y,r:7,fill:'#fff'},g);return g}
  if(k=='ism'){const g=el('g',{});[[-22,-8,34,'#c0506a'],[18,-14,30,'#8f4a8a'],[4,16,36,'#b8563c'],[-14,18,24,'#6a4a9a']].forEach(([dx,dy,r,c])=>el('circle',{cx:x+dx,cy:y+dy,r,fill:c,opacity:.55},g));
@@ -604,6 +614,12 @@ function cyStage(lp,t){const s=SPL[lp];
 function drawCy(){S=cyv;S.innerHTML='';const d=el('defs',{});heads(d);
  const act=lp=>cyMode==lp,op=lp=>act(lp)?1:.22;
  const cg=el('radialGradient',{id:'cyc'},d);[[0,'#f0a0c0',.85],[.55,'#a060b0',.5],[1,'#6a4a9a',0]].forEach(([o,c,a])=>el('stop',{offset:o,'stop-color':c,'stop-opacity':a},cg));
+ // 위쪽 여백: 왼쪽 위의 '순환 따라가기' 단추(HTML) 옆에 안내, 그 아래에 지금 단계의 이름과 설명 (길면 두 줄)
+ lab(250,33,'각 단계를 눌러도 설명을 볼 수 있습니다.',17,'start','#a9b1cc',600);
+ {const c=CY[cySel],L=[''];(c.n+' '+c.d).split(' ').forEach(w=>{const s=L[L.length-1];if(s&&(s+' '+w).length>46)L.push(w);else L[L.length-1]=s?s+' '+w:w});
+  L.forEach((s,i)=>{const e=el('text',{x:20,y:74+i*27,'font-size':21,'font-weight':600,fill:'#e8eaf2'});
+   if(i==0){el('tspan',{fill:'#ffd166','font-weight':800},e).textContent=c.n;el('tspan',{},e).textContent=s.slice(c.n.length)}else e.textContent=s})}
+ S=el('g',{transform:'translate(0,80)'}); // 순환 그림은 80만큼 아래로
  // 고리 (화살표로 진행 방향 표시)
  [['sun',LP,0,-360],['big',RP,180,540]].forEach(([lp,E,a0,a1])=>{const pts=[];for(let i=0;i<=120;i++)pts.push(onE(E,a0+(a1-a0)*i/120).map(v=>v.toFixed(1)).join(','));
   const g=el('g',{opacity:op(lp)});el('polyline',{points:pts.join(' '),fill:'none',stroke:'#7f8bb3','stroke-width':5,opacity:.55},g);
@@ -633,18 +649,21 @@ function drawCy(){S=cyv;S.innerHTML='';const d=el('defs',{});heads(d);
    // 퍼져 나간 물질: 뿌연 구름이 되어 고리를 따라 성간 물질로 (끝에서 성간 물질에 섞이며 사라짐)
    const u=Math.max(0,Math.min(1,(q-.08)/.84)),[cx,cy]=cyPos(lp,s+(1-s)*u),cr=12+12*u,co=u>.88?(1-u)/.12:1;
    if(q>.08)el('circle',{cx,cy,r:cr,fill:'url(#cyc)',opacity:co})}}
- const c=CY[cySel];cynote.innerHTML=`<div class="nh">${CYH}</div><p><b>${c.n}</b> ${c.d}</p>`}
+}
 function cyStop(){cyPlay=false;cancelAnimationFrame(cyRaf);cyplay.textContent='▶ 순환 따라가기'}
 cyplay.onclick=()=>{if(cyPlay)return cyStop();cyPlay=true;cyplay.textContent='❚❚ 멈춤';let t0=performance.now()-Math.max(0,cyT)*14000;
  const st=now=>{if(!cyPlay)return;cyT=((now-t0)/14000)%1;cySel=cyStage(cyMode,cyT);drawCy();cyRaf=requestAnimationFrame(st)};cyRaf=requestAnimationFrame(st)};
 // 별의 질량을 바꾸면 따라가기를 처음부터
 cysel.querySelectorAll('button').forEach(b=>b.onclick=()=>{cysel.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x==b));cyMode=b.dataset.v;
  const was=cyPlay;cyStop();cyT=-1;cySel=0;drawCy();if(was)cyplay.onclick()});
+// 그림이 높이에 맞춰 줄면 좌우에 빈 띠가 생기므로, 단추를 그림 내용의 왼쪽 위에 맞춤
+function placeCyb(){const r=cyv.getBoundingClientRect();if(!r.width)return;const s=Math.min(r.width/960,r.height/500);cyplay.style.left=((r.width-960*s)/2+10)+'px'}
+addEventListener('resize',placeCyb);
 cyv.addEventListener('click',e=>{const g=e.target.closest('[data-c]');if(g){cyStop();cyT=-1;cySel=+g.dataset.c;drawCy()}});
 drawCy();
 
 // 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
-[['ov1','thb1','thx1'],['ov2','thb2','thx2'],['ov3','thb3','thx3'],['ov4','thb4','thx4']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
+[['ov1','thb1','thx1'],['ov2','thb2','thx2'],['ov3','thb3','thx3'],['ov4','thb4','thx4'],['ov5','thb5','thx5']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
  const closeTh=()=>{ov.hidden=true;btn.focus()};
  btn.addEventListener('click',()=>{ov.hidden=false;cl.focus()});cl.addEventListener('click',closeTh);
  ov.addEventListener('click',e=>{if(e.target===ov)closeTh()});
