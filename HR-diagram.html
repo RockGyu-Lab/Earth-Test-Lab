@@ -51,8 +51,8 @@ main{max-width:960px;margin:0 auto;padding:14px}
 /* H-R도 그림판: 패드처럼 세로가 짧은 화면에서도 한 화면에 들어오도록 높이를 화면 높이에 맞춰 제한
    (위아래의 제목·설명·탭·조작 칸이 약 300px) */
 svg{width:100%;height:auto;display:block;border-radius:14px;background:#0b1026;box-shadow:0 0 0 1px var(--frame);touch-action:manipulation}
-#sv1{max-height:max(300px,calc(100vh - 300px))}
-#sv1{max-height:max(300px,calc(100dvh - 300px))}
+#sv1{max-height:max(300px,calc(100vh - 306px))}
+#sv1{max-height:max(300px,calc(100dvh - 306px))}
 #sv2{max-height:max(300px,calc(100vh - 300px))}
 #sv2{max-height:max(300px,calc(100dvh - 300px))}
 [data-star]{cursor:pointer}
@@ -69,6 +69,12 @@ svg{width:100%;height:auto;display:block;border-radius:14px;background:#0b1026;b
    [꼬리표(남색)] 질문 [답 보기(남색 테두리)] → 누르면 팝업에 질문과 답 */
 .ask{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;margin:0 0 8px;font-size:.95rem}
 .ask p{margin:0;font-weight:600}
+.ask-b{margin:8px 0 0}
+/* 축 바꾸기 안내 (가로축 단추 오른쪽) */
+.guide{font-size:.88rem;color:var(--fg);opacity:.75}
+.guide::before{content:"← "}
+/* 좁은 화면에서는 안내가 단추 아래 줄로 내려가므로 화살표를 뺌 */
+@media (max-width:860px){.guide::before{content:none}}
 .tag{display:inline-block;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.02em;white-space:nowrap}
 .note .tag{margin-right:6px}
 .open-think{margin-left:6px;padding:3px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;font-family:inherit}
@@ -94,13 +100,19 @@ svg{width:100%;height:auto;display:block;border-radius:14px;background:#0b1026;b
 
 <!-- ① H-R 도란? -->
 <section id="p1" role="tabpanel" aria-labelledby="tab1">
- <div class="ask"><span class="tag">생각해 보기</span><p>세로축과 가로축을 바꿔 보며, 축의 물리량이 어떻게 변하는지 확인해 보세요.</p></div>
  <div class="bar">
   <div class="seg">세로축<div class="bs" id="ysel"><button data-v="L" class="on">광도</button><button data-v="M">절대등급</button></div></div>
   <div class="seg">가로축<div class="bs" id="xsel"><button data-v="S" class="on">분광형</button><button data-v="T">표면 온도</button></div></div>
+  <span class="guide">세로축과 가로축을 바꿔 보며, 축의 물리량이 어떻게 변하는지 확인해 보세요.</span>
  </div>
  <svg id="sv1" viewBox="0 0 900 590"></svg>
  <div class="stars" id="stars"><span class="qmsg">유명한 별</span></div>
+ <div class="ask ask-b"><span class="tag">생각해 보기</span><p>H-R 도에서 가로축은 왼쪽으로 갈수록 별의 온도는 어떻게 변하나요?</p><button type="button" class="open-think" id="thb1">답 보기</button></div>
+ <div class="ov" id="ov1" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: H-R 도에서 가로축은 왼쪽으로 갈수록 별의 온도는 어떻게 변하나요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>H-R 도에서 가로축은 왼쪽으로 갈수록 별의 온도는 어떻게 변하나요?</b><button type="button" class="x" id="thx1" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">왼쪽으로 갈수록 별의 표면 온도가 높아집니다.</p>
+  <p class="exp">H-R 도의 가로축은 왼쪽이 고온, 오른쪽이 저온입니다. 분광형도 왼쪽부터 O, B, A, F, G, K, M형 순서로, 표면 온도가 높은 별부터 낮은 별 순서입니다.</p>
+ </div></div>
 </section>
 
 <!-- ② H-R 도 상의 별의 분류 -->
@@ -259,6 +271,11 @@ function openTab(i){TABS.forEach((t,j)=>{t.setAttribute('aria-selected',i==j);t.
 TABS.forEach((t,i)=>{t.onclick=()=>openTab(i);t.onkeydown=e=>{if(e.key=='ArrowRight'||e.key=='ArrowLeft'){const j=(i+(e.key=='ArrowRight'?1:TABS.length-1))%TABS.length;TABS[j].focus();openTab(j)}}});
 pickStar('태양');setG('all');
 // 생각해 보기 답 팝업: '답 보기'는 설명 칸을 다시 그릴 때마다 새로 생기므로 설명 칸에서 누름을 받음. 닫기·바깥 누르기·Esc로 닫힘
+{const ov=document.getElementById('ov1'),bt=document.getElementById('thb1'),cl=document.getElementById('thx1');
+ const closeTh=()=>{ov.hidden=true;bt.focus()};
+ bt.addEventListener('click',()=>{ov.hidden=false;cl.focus()});cl.addEventListener('click',closeTh);
+ ov.addEventListener('click',e=>{if(e.target===ov)closeTh()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!ov.hidden)closeTh()})}
 {const ov=document.getElementById('ov'),cl=document.getElementById('thx'),gn=document.getElementById('gnote');
  const closeTh=()=>{ov.hidden=true;const b=document.getElementById('thb');if(b)b.focus()};
  gn.addEventListener('click',e=>{if(e.target.closest('#thb')){ov.hidden=false;cl.focus()}});
