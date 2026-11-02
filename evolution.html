@@ -96,6 +96,10 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 #pmnote{min-height:calc(3.1em + 18px)}
 /* 소메뉴를 바꿔도 아래 생각해 보기 자리가 같도록 조작 줄 높이를 '주계열 이후 변화'(단계 단추가 있는 줄)에 맞춤 */
 #p3 .ctl{min-height:50px}
+/* 거성과 초거성: 조작 줄에 두 별의 수명 비교를 한 줄로 */
+#pmhint{white-space:normal;font-size:.86rem;opacity:.9}
+/* 좁은 화면에서는 수명 설명이 두 줄이 되므로 조작 줄 높이를 그에 맞춤 */
+@media (max-width:900px){#p3 .ctl{min-height:57px}}
 /* 탭 안의 소메뉴 단추: 위쪽 큰 탭(남색)과 구분되는 라벤더(연보라) */
 :root{--sub:#7c5cd6;--on-sub:#fff;--sub-bg:#efeafd;--sub-bd:#cdbff3;--sub-tx:#5b3fbf}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}}
@@ -109,7 +113,9 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 #cyv{max-height:max(200px,calc(100dvh - 328px))}
 /* 그림 왼쪽 위에 겹쳐 놓는 작은 '순환 따라가기' 단추 (그림 안 위쪽 여백 자리) */
 .cyfig{position:relative}
-.cyb{position:absolute;left:10px;top:8px;padding:3px 10px;font-size:.8rem;min-width:0}
+.cyb{position:absolute;left:10px;top:8px;display:flex;align-items:center;gap:10px}
+.cyb .pb{padding:3px 10px;font-size:.8rem;min-width:0}
+.cyb span{font-size:.78rem;font-weight:600;color:#a9b1cc}
 .ask2{margin-top:6px}
 #cyv [data-c]{cursor:pointer}
 </style>
@@ -187,7 +193,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  <!-- 위에서부터: 설명 → 별의 질량 고르기(라벤더) → 그림 (그림 왼쪽 위에 작은 '순환 따라가기' 단추, 그 아래에 단계 설명) -->
  <div class="note"><div class="nh">별의 진화와 순환 <span class="ex">· 별은 성간 물질에서 태어나 일생을 마친 뒤, 만든 원소를 다시 성간 물질로 돌려보내 새로운 별을 만드는 재료가 된다.</span></div></div>
  <div class="subtabs" id="cysel"><button data-v="sun" class="on">질량이 태양과 비슷한 별</button><button data-v="big">질량이 태양보다 매우 큰 별</button></div>
- <div class="cyfig"><svg id="cyv" viewBox="0 0 960 500"></svg><button class="pb cyb" id="cyplay">▶ 순환 따라가기</button></div>
+ <div class="cyfig"><svg id="cyv" viewBox="0 0 960 500"></svg><div class="cyb" id="cytool"><button class="pb" id="cyplay">▶ 순환 따라가기</button><span>각 단계를 눌러도 설명을 볼 수 있습니다.</span></div></div>
  <div class="note ask"><span class="tag">생각해 보기</span><p>우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?</p><button type="button" class="open-think" id="thb4">답 보기</button></div>
  <div class="ov" id="ov4" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?</b><button type="button" class="x" id="thx4" aria-label="닫기">닫기 ✕</button></div>
@@ -571,7 +577,7 @@ function drawPm(){S=pmv;S.innerHTML='';[drawPm0,drawPm1,drawPm2][pv]();
  const desc=pv==0?`<b>${PS[pi_].n}</b> ${PS[pi_].d}`:pv==1?'<b>거성과 초거성</b> 질량이 큰 별일수록 중심부 온도가 높아, 더 무거운 원소까지 핵융합 반응이 일어납니다.':`<b>${ND[nsel].n}</b> ${ND[nsel].d}`;
  pmnote.innerHTML=`<div class="nh">${PMH}</div><p>${desc}</p>`;pmstep.textContent=`${pi_+1} / ${PS.length} 단계`;
  pmstp.style.display=pmplay.style.display=pv!=0?'none':'';pmhint.hidden=pv==0;
- pmhint.textContent=pv==1?'거성과 초거성의 층 구조를 비교해 보세요.':'그림의 각 단계를 눌러 보세요.'}
+ pmhint.innerHTML=pv==1?'<b>수명</b> 질량이 큰 별일수록 핵융합 반응이 빨리 일어나 수명이 짧습니다. (질량이 태양 정도인 별 약 100억 년, 질량이 태양의 약 10배 이상인 별 수천만 년 이하)':'그림의 각 단계를 눌러 보세요.'}
 function pmGo(i,then){cancelAnimationFrame(pRaf);pFrom=pi_;pi_=i;pT=0;const t0=performance.now();
  const st=now=>{pT=Math.min(1,(now-t0)/1300);drawPm();if(pT<1)pRaf=requestAnimationFrame(st);else if(then)then()};pRaf=requestAnimationFrame(st)}
 function pmStop(){pPlay=false;clearTimeout(pTimer);cancelAnimationFrame(pRaf);pT=1;pmplay.textContent='▶ 자동 진행'}
@@ -621,10 +627,9 @@ function cyStage(lp,t){const s=SPL[lp];
 function drawCy(){S=cyv;S.innerHTML='';const d=el('defs',{});heads(d);
  const act=lp=>cyMode==lp,op=lp=>act(lp)?1:.22;
  const cg=el('radialGradient',{id:'cyc'},d);[[0,'#f0a0c0',.85],[.55,'#a060b0',.5],[1,'#6a4a9a',0]].forEach(([o,c,a])=>el('stop',{offset:o,'stop-color':c,'stop-opacity':a},cg));
- // 위쪽 여백: 왼쪽 위의 '순환 따라가기' 단추(HTML) 옆에 안내, 그 아래에 지금 단계의 이름과 설명 (길면 두 줄)
- lab(250,33,'각 단계를 눌러도 설명을 볼 수 있습니다.',17,'start','#a9b1cc',600);
- {const c=CY[cySel],L=[''];(c.n+' '+c.d).split(' ').forEach(w=>{const s=L[L.length-1];if(s&&(s+' '+w).length>46)L.push(w);else L[L.length-1]=s?s+' '+w:w});
-  L.forEach((s,i)=>{const e=el('text',{x:20,y:74+i*27,'font-size':21,'font-weight':600,fill:'#e8eaf2'});
+ // 위쪽 여백: 왼쪽 위의 '순환 따라가기' 단추와 안내(HTML) 아래에 지금 단계의 이름과 설명 (길면 두 줄)
+  {const c=CY[cySel],L=[''];(c.n+' '+c.d).split(' ').forEach(w=>{const s=L[L.length-1];if(s&&(s+' '+w).length>60)L.push(w);else L[L.length-1]=s?s+' '+w:w});
+  L.forEach((s,i)=>{const e=el('text',{x:20,y:70+i*21,'font-size':16,'font-weight':600,fill:'#e8eaf2'});
    if(i==0){el('tspan',{fill:'#ffd166','font-weight':800},e).textContent=c.n;el('tspan',{},e).textContent=s.slice(c.n.length)}else e.textContent=s})}
  S=el('g',{transform:'translate(0,80)'}); // 순환 그림은 80만큼 아래로
  // 고리 (화살표로 진행 방향 표시)
@@ -664,7 +669,7 @@ cyplay.onclick=()=>{if(cyPlay)return cyStop();cyPlay=true;cyplay.textContent='�
 cysel.querySelectorAll('button').forEach(b=>b.onclick=()=>{cysel.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x==b));cyMode=b.dataset.v;
  const was=cyPlay;cyStop();cyT=-1;cySel=0;drawCy();if(was)cyplay.onclick()});
 // 그림이 높이에 맞춰 줄면 좌우에 빈 띠가 생기므로, 단추를 그림 내용의 왼쪽 위에 맞춤
-function placeCyb(){const r=cyv.getBoundingClientRect();if(!r.width)return;const s=Math.min(r.width/960,r.height/500);cyplay.style.left=((r.width-960*s)/2+10)+'px'}
+function placeCyb(){const r=cyv.getBoundingClientRect();if(!r.width)return;const s=Math.min(r.width/960,r.height/500);cytool.style.left=((r.width-960*s)/2+10)+'px'}
 addEventListener('resize',placeCyb);
 cyv.addEventListener('click',e=>{const g=e.target.closest('[data-c]');if(g){cyStop();cyT=-1;cySel=+g.dataset.c;drawCy()}});
 drawCy();
