@@ -9,6 +9,7 @@
 - 저장소: https://github.com/RockGyu-Lab/Earth-Test-Lab (branch `main`, 공개 저장소)
 - 시험용 사이트: https://rockgyu-lab.github.io/Earth-Test-Lab/ (올린 뒤 반영까지 1~2분)
 - 학생에게 주소를 알리지 않는 시험용 사이트입니다. **모든 HTML의 `<head>`에 `<meta name="robots" content="noindex">`를 넣습니다.**
+- **모든 HTML의 `</body>` 바로 앞에 저작권 표시 `<script src="./copyright.js"></script>`를 넣습니다**(새로 만드는 페이지도 기본으로 넣음. 하위 폴더 안의 페이지는 `../copyright.js`). `copyright.js`는 정식 사이트의 같은 파일을 복사한 것이며, 문구를 바꾸면 두 사이트의 파일을 함께 고칩니다.
 - 사용자가 "올려줘"라고 하면 바뀐 내용을 짧은 한국어 메시지로 커밋하고 push합니다. 다른 컴퓨터에서 작업할 때는 시작하기 전에 pull합니다.
 - Git for Windows는 `C:\Program Files\Git\cmd`에 있습니다. 세션에서 `git`이 PATH에 없으면 앞에 붙여 씁니다. 로그인은 Git Credential Manager에 저장되어 있으며, push할 때 로그인을 요구하면 사용자의 Terminal 패널에서 실행합니다.
 - **정식 사이트 폴더(`EarthScienceWorld`)는 이 폴더에서 작업하는 동안 건드리지 않습니다.** 옮기는 작업은 사용자가 요청할 때만 합니다.
@@ -16,6 +17,7 @@
 ## 폴더 구조
 ```
 index.html                 시험용 메인 화면 (시험 중인 자료 카드 목록)
+copyright.js               모든 페이지 오른쪽 아래의 저작권 표시 (정식 사이트의 copyright.js와 같은 파일)
 Evol_index.html            학습실 'H-R 도와 별의 진화' 메뉴 (탐구 01, 02). 정식 사이트에 새 학습실로 옮길 때
                            폴더를 만들고 "← 지구과학 World"(../index.html)로 바꿉니다.
 HR-diagram.html            탐구 01 · H-R 도: 탭 'H-R 도란?', 'H-R 도 상의 별의 분류' (돌아가기 링크 ./Evol_index.html)

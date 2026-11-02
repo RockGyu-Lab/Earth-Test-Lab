@@ -237,4 +237,5 @@ function openTab(i){TABS.forEach((t,j)=>{t.setAttribute('aria-selected',i==j);t.
  PANES[i].classList.remove('enter');void PANES[i].offsetWidth;PANES[i].classList.add('enter');i?draw2():draw1()}
 TABS.forEach((t,i)=>{t.onclick=()=>openTab(i);t.onkeydown=e=>{if(e.key=='ArrowRight'||e.key=='ArrowLeft'){const j=(i+(e.key=='ArrowRight'?1:TABS.length-1))%TABS.length;TABS[j].focus();openTab(j)}}});
 pickStar('태양');setG('all');
-</script></main></body></html>
+</script></main><script src="./copyright.js"></script>
+</body></html>
