@@ -117,8 +117,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   <span class="hint" id="nhint"></span>
  </div>
  <div class="ctl" id="ectl" hidden>
-  <label class="sl">우주 상수<input type="range" id="lam" min="0" max="2" step="0.05" value="0" list="lamt" aria-label="우주 상수의 크기"><b id="lamv"></b></label>
-  <datalist id="lamt"><option value="1"></option></datalist>
+  <div class="seg">우주 상수<div class="bs" id="esel"><button data-v="no" class="on">없음</button><button data-v="yes">있음</button></div></div>
   <button class="pb" id="eplay">▶ 재생</button><button class="pb" id="ereset">↺ 처음으로</button>
   <span class="hint" id="ehint"></span>
  </div>
@@ -216,12 +215,13 @@ function finDraw(){if(nG)nG.remove();nG=mk('g',{},sv);
   // 처음 화면에만: 몇몇 별(가로·세로·대각선 방향)이 받는 힘. 가운데를 향하고, 가장자리일수록 큼
   [0,1,2,3,4,5,6,7].forEach(k=>{const a=k*Math.PI/4;[60,120].forEach(d=>{const px=FC.x+Math.cos(a)*d,py=FC.y+Math.sin(a)*d,L=d*.22;
    arrow(px-Math.cos(a)*4,py-Math.sin(a)*4,px-Math.cos(a)*(4+L),py-Math.sin(a)*(4+L),'#ffb066','ag',nG)})});
-  label('유한한 우주: 별들이 가운데 쪽으로 당겨짐 (가장자리일수록 큰 힘)',480,30,nG,'middle','#ffb066')}
+  label(who=='e'?'우주 상수가 없으면: 중력만 작용하여 별들이 가운데 쪽으로 당겨짐':'유한한 우주: 별들이 가운데 쪽으로 당겨짐 (가장자리일수록 큰 힘)',480,30,nG,'middle','#ffb066')}
  else label(fDone?'모든 별이 하나의 큰 덩어리로 모임':'가까운 별끼리 먼저 뭉치고, 덩어리들이 가운데로 모임',480,30,nG,'middle','#ffd76b');
- label('별이 있는 영역 (바깥에는 별이 없음)',FC.x+FR+24,FC.y-FR*.6,nG,'start','#a9b1cc',16);
- label('단순화한 모형: 처음에 별들이 멈춰 있고, 아주 가까워진 별은 하나로 합쳐진다고 가정',14,388,nG,'start','#a9b1cc',16)}
+ if(who=='n')label('별이 있는 영역 (바깥에는 별이 없음)',FC.x+FR+24,FC.y-FR*.6,nG,'start','#a9b1cc',16);
+ label(who=='e'?'단순화한 모형: 우주 전체를 둥근 영역으로 나타내고, 아주 가까워진 별은 하나로 합쳐진다고 가정':'단순화한 모형: 처음에 별들이 멈춰 있고, 아주 가까워진 별은 하나로 합쳐진다고 가정',14,388,nG,'start','#a9b1cc',16)}
 function finLoop(){for(let k=0;k<4;k++)finStep(1/240);fTime+=1/60;
  if(FS.length==1||fTime>15){fDone=FS.length==1;finDraw();stopAll();
+  if(who=='e'){ehint.textContent='우주 상수가 없으면 중력만 작용하므로, 뉴턴의 유한한 우주처럼 별들이 뭉치며 모여 무너집니다. 그래서 아인슈타인은 우주 상수를 넣었습니다.';return}
   nhint.textContent='벤틀리의 말대로 별들이 뭉치며 가운데로 모여, 결국 하나의 큰 덩어리가 됩니다. 우주가 유한하면 중력 때문에 이렇게 무너질 수밖에 없습니다.';return}
  finDraw();raf=requestAnimationFrame(finLoop)}
 // 무한하고 균일한 우주: 별을 무늬(pattern)로 끝없이 채움. [더 멀리 보기]로 넓게 보아도 별이 끝없이 고르게 이어짐
@@ -271,35 +271,26 @@ sv.addEventListener('click',e=>{if(who!='n'||nMode!='inf'||raf)return;const m=sv
  selI=Math.round((pt.x-IC.x)/sp);selJ=Math.round((pt.y-IC.y)/sp);infDraw();
  nhint.textContent='이 별도 모든 방향에서 같은 크기의 힘으로 당겨져 힘의 평형을 이룹니다. 우주가 끝없이 고르므로 어느 별을 골라도 마찬가지입니다.'});
 
-// ---- 아인슈타인: 우주(단순화하여 둥근 영역)의 크기 R 변화. 중력 ∝ 1/R², 우주 상수에 의한 척력 ∝ Λ·R (Λ=1에서 R=1로 균형) ----
-const EC={x:480,y:205},R0=105,KE=.3;
-const GAL=(()=>{const r=rng(3),a=[];while(a.length<70){const x=r()*2-1,y=r()*2-1;if(x*x+y*y<.9)a.push([x,y])}return a})();
-let R=1,V=0,eG=null;
-function lamName(l){return l==0?'없음':l<1?'작음':l==1?'중력과 균형':'큼'}
-function eDraw(){if(eG)eG.remove();eG=mk('g',{},sv);const l=+lam.value,r=R0*R;
- mk('circle',{cx:EC.x,cy:EC.y,r,fill:'#1a2350',stroke:'#7d8bd6','stroke-dasharray':'6 6','stroke-width':1.5},eG);
- GAL.forEach(([x,y])=>mk('ellipse',{cx:EC.x+x*r,cy:EC.y+y*r,rx:4,ry:2.5,fill:'#dfe5ff'},eG));
- const Lg=Math.min(80,40/(R*R)),Lr=Math.min(80,40*l*R);
- for(let k=0;k<8;k++){const a=k*Math.PI/4+Math.PI/8,cx=Math.cos(a),cy=Math.sin(a),bx=EC.x+cx*r,by=EC.y+cy*r;
-  if(Lg>3)arrow(bx+cx*4,by+cy*4,bx-cx*Lg,by-cy*Lg,'#ffb066','ag',eG);
-  if(Lr>3)arrow(bx+cx*6,by+cy*6,bx+cx*(6+Lr),by+cy*(6+Lr),'#6fd3ff','ar',eG)}
- const lg=mk('g',{},eG);arrow(20,26,58,26,'#ffb066','ag',lg);label('중력 (안쪽으로 끌어당김)',66,31,lg);
- arrow(20,52,58,52,'#6fd3ff','ar',lg);label('우주 상수에 의한 척력 (바깥으로 밀어냄)',66,57,lg);
- label(`우주의 크기: 처음의 ${R.toFixed(2)}배`,944,31,eG,'end');
- label('단순화한 모형: 우주 전체를 둥근 영역으로 나타냄',14,388,eG,'start','#a9b1cc',16);
- lamv.textContent=lamName(l)}
-function eInit(){R=1;V=0;eG=null;eDraw();ehint.textContent='우주 상수의 크기를 정한 뒤 ▶ 재생을 눌러 우주의 크기가 어떻게 변하는지 관찰해 보세요.'}
-function eLoop(){const l=+lam.value;for(let k=0;k<4;k++){const dt=1/240;V+=KE*(-1/(R*R)+l*R)*dt;R+=V*dt}
- if(R<.12||R>1.9){R=Math.min(1.9,Math.max(.12,R));eDraw();stopAll();
-  ehint.textContent=R<1?(+lam.value==0?'우주 상수가 없으면 중력만 작용하여 우주가 수축하고 한곳으로 무너집니다.':'중력이 척력보다 커서 우주가 수축하여 한곳으로 무너집니다.'):'척력이 중력보다 커서 우주가 점점 빠르게 팽창합니다.';return}
- eDraw();raf=requestAnimationFrame(eLoop)}
+// ---- 아인슈타인: [우주 상수 없음] 뉴턴의 유한한 우주처럼 별들이 뭉치며 모여 무너짐 / [우주 상수 있음] 중력과 척력이 균형을 이루어 변하지 않음 ----
+let eMode='no';
+function eInit(){nG=null;esel.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v==eMode));finInit();
+ if(eMode=='no'){finDraw();ehint.textContent='우주 상수가 없으면 우주는 어떻게 될까요? ▶ 재생을 눌러 보세요.'}
+ else{eqDraw();ehint.textContent='우주 상수가 있으면 우주는 어떻게 될까요? ▶ 재생을 눌러 보세요.'}}
+// 우주 상수가 있을 때: 별마다 안쪽으로 당기는 중력과 바깥쪽으로 밀어내는 척력의 크기가 같음 (둘 다 가운데에서 멀수록 큼)
+function eqDraw(){if(nG)nG.remove();nG=mk('g',{},sv);
+ mk('circle',{cx:FC.x,cy:FC.y,r:FR+14,fill:'none',stroke:'#4a5694','stroke-dasharray':'6 6'},nG);
+ FS.forEach(s=>mk('circle',{cx:FC.x+s.x,cy:FC.y+s.y,r:fRad(s.m),fill:'#dfe5ff'},nG));
+ [0,1,2,3,4,5,6,7].forEach(k=>{const a=k*Math.PI/4+Math.PI/8,c=Math.cos(a),s=Math.sin(a);[70,130].forEach(d=>{const px=FC.x+c*d,py=FC.y+s*d,L=d*.2;
+  arrow(px-c*4,py-s*4,px-c*(4+L),py-s*(4+L),'#ffb066','ag',nG);arrow(px+c*4,py+s*4,px+c*(4+L),py+s*(4+L),'#6fd3ff','ar',nG)})});
+ label('우주 상수가 있으면: 중력과 척력이 균형을 이루어 우주의 크기가 변하지 않음',480,30,nG,'middle','#6fd3ff');
+ const lg=mk('g',{},nG);arrow(690,150,728,150,'#ffb066','ag',lg);label('중력 (안쪽으로 끌어당김)',736,155,lg,'start','#e8ecff',17);
+ arrow(690,182,728,182,'#6fd3ff','ar',lg);label('우주 상수에 의한 척력',736,187,lg,'start','#e8ecff',17);label('(바깥으로 밀어냄)',736,211,lg,'start','#e8ecff',17);
+ label('단순화한 모형: 우주 전체를 둥근 영역으로 나타냄',14,388,nG,'start','#a9b1cc',16)}
 eplay.onclick=()=>{if(raf){stopAll();return}
- if(R<=.12||R>=1.9){R=1;V=0}const l=+lam.value;
- ehint.textContent=l==1?'중력과 척력이 균형을 이루어 우주의 크기가 변하지 않습니다(정적 우주). 아인슈타인이 생각한 우주입니다.':l==0?'우주 상수가 없으면 중력만 작용하여 우주가 수축합니다.':l<1?'중력이 척력보다 커서 우주가 수축합니다.':'척력이 중력보다 커서 우주가 팽창합니다.';
- if(l==1){V=0;R=1;eDraw();return}
- eplay.textContent='⏸ 멈춤';raf=requestAnimationFrame(eLoop)};
-lam.oninput=()=>{stopAll();R=1;V=0;eDraw();ehint.textContent=+lam.value==1?'우주 상수를 중력과 꼭 균형을 이루는 크기로 정했습니다. ▶ 재생을 눌러 보세요.':'▶ 재생을 눌러 우주의 크기가 어떻게 변하는지 관찰해 보세요.'};
-ereset.onclick=()=>{lam.value=0;pick('e')};
+ if(eMode=='yes'){ehint.textContent='시간이 지나도 별들은 움직이지 않고 우주의 크기는 그대로입니다(정적 우주). 아인슈타인은 이렇게 우주 상수로 정적 우주를 지켰습니다.';return}
+ if(FS.length==1||fTime>15)finInit();eplay.textContent='⏸ 멈춤';raf=requestAnimationFrame(finLoop)};
+ereset.onclick=()=>pick('e');
+esel.addEventListener('click',e=>{const b=e.target.closest('button');if(b){eMode=b.dataset.v;pick('e')}});
 
 // ---- 프리드만: 시간에 따른 우주의 크기 (그래프 모양은 개념을 보여 주기 위해 단순화) ----
 // 계속 팽창: a ∝ t^(2/3) / 팽창하다가 수축: a = (1 - cos θ)/2, t = (θ - sin θ)/2π
