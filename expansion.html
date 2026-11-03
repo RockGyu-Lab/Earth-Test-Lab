@@ -183,7 +183,7 @@ const SN={
  e:'<div class="nh">아인슈타인의 생각 <span class="ex">· 1917년, 우주 상수로 지킨 정적 우주</span></div><p>일반 상대성 이론으로 우주 전체를 계산하면 중력 때문에 우주는 가만히 있을 수 없다. 우주가 변하지 않는다고 믿은 아인슈타인은 중력과 반대로 밀어내는 효과를 내는 <b>우주 상수</b>를 식에 넣어 정적 우주를 만들었다.</p>',
  f:'<div class="nh">프리드만의 생각 <span class="ex">· 1922년, 팽창하는 우주</span></div><p>아인슈타인의 방정식을 \'우주는 변하지 않는다\'는 가정 없이 풀어, 우주가 팽창하거나 수축할 수 있음을 보였다. 이 생각으로 보면 우주가 <b>팽창하고 있다면</b>, 중력은 팽창을 늦출 뿐 별들이 곧바로 한곳으로 모이지는 않는다.</p>'};
 let who='n',raf=0;
-function stopAll(){cancelAnimationFrame(raf);raf=0;nplay.textContent=nMode=='fin'?'▶ 재생':'▶ 더 멀리 보기';eplay.textContent='▶ 재생';fplay.textContent='▶ 재생'}
+function stopAll(){cancelAnimationFrame(raf);raf=0;nplay.textContent='▶ 재생';eplay.textContent='▶ 재생';fplay.textContent='▶ 재생'}
 function pick(v){stopAll();who=v;psel.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v==v));
  snote.innerHTML=SN[v];nctl.hidden=v!='n';ectl.hidden=v!='e';fctl.hidden=v!='f';
  sv.innerHTML='';defs();({n:nInit,e:eInit,f:fInit})[v]()}
@@ -223,7 +223,7 @@ function finLoop(){for(let k=0;k<4;k++)finStep(1/240);fTime+=1/60;
   if(who=='e'){ehint.textContent='우주 상수가 없으면 중력만 작용하므로, 뉴턴의 유한한 우주처럼 별들이 서로 끌려가 한곳에 모입니다. 그래서 아인슈타인은 우주 상수를 넣었습니다.';return}
   nhint.textContent='별들이 서로 끌려가 뭉치며 가운데로 모여, 결국 한곳에 하나의 큰 덩어리로 모입니다. 우주가 유한하면 중력 때문에 이렇게 될 수밖에 없습니다.';return}
  finDraw();raf=requestAnimationFrame(finLoop)}
-// 무한하고 균일한 우주: 별을 무늬(pattern)로 끝없이 채움. [더 멀리 보기]로 넓게 보아도 별이 끝없이 고르게 이어짐
+// 무한하고 균일한 우주: 별을 무늬(pattern)로 끝없이 채움. 재생해도 별들은 움직이지 않음
 const IC={x:480,y:205},ISP=40;
 let Z=1,selI=0,selJ=0,iT0=0;
 // 그림판에서 실제로 보이는 영역 (viewBox 좌표)
@@ -248,18 +248,14 @@ function infDraw(){if(nG)nG.remove();nG=mk('g',{},sv);const sp=ISP*Z,sp2=ISP*Mat
  // 화면 가장자리: 별이 바깥으로 끝없이 이어짐
  label('◀ 끝없이',V.x+12,210,nG,'start','#cbd3ff',17);label('끝없이 ▶',V.x+V.w-12,210,nG,'end','#cbd3ff',17);
  label('▼ 끝없이',480,388,nG,'middle','#cbd3ff',17);
- if(Z<.999)label(`처음보다 ${Math.round(1/Z)}배 넓게 본 모습`,948,30,nG,'end','#a9b1cc',16)}
-function infLoop(ts){if(!iT0)iT0=ts;const p=Math.min(1,(ts-iT0)/5000),e=p<.5?2*p*p:1-2*(1-p)*(1-p);
- Z=Math.pow(.2,e);selI=0;selJ=0;infDraw();
- if(p>=1){stopAll();nhint.textContent='아무리 넓게 보아도 별이 모든 방향으로 끝없이 고르게 퍼져 있습니다. 그래서 어느 별이든 힘의 평형을 이루어 멈춰 있고, 별들이 한곳으로 모이지 않습니다.';return}
- raf=requestAnimationFrame(infLoop)}
+}
 function nInit(){nG=null;nsel.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v==nMode));
  if(nMode=='fin'){finInit();finDraw();nhint.textContent='우주가 유한하다면 별들은 어떻게 될까요? ▶ 재생을 눌러 보세요.'}
- else{Z=1;selI=0;selJ=0;infDraw();nhint.textContent='아무 별이나 눌러 보세요. 어느 별이든 모든 방향에서 같은 크기의 힘으로 당겨져 힘의 평형을 이룹니다.'}
+ else{Z=1;selI=0;selJ=0;infDraw();nhint.textContent='아무 별이나 눌러 보세요. 어느 별이든 모든 방향에서 같은 크기의 힘으로 당겨져 힘의 평형을 이룹니다. ▶ 재생을 누르면 어떻게 될까요?'}
  stopAll()}
 nplay.onclick=()=>{if(raf){stopAll();return}nplay.textContent='⏸ 멈춤';
  if(nMode=='fin'){if(FS.length==1||fTime>15){finInit()}raf=requestAnimationFrame(finLoop)}
- else{iT0=0;raf=requestAnimationFrame(infLoop)}};
+ else{nplay.textContent='▶ 재생';nhint.textContent='시간이 지나도 별들은 움직이지 않습니다. 어느 별이든 모든 방향에서 같은 크기의 힘으로 당겨져 힘의 평형을 이루므로, 별들이 한곳으로 모이지 않고 우주는 변하지 않습니다.'}};
 nreset.onclick=()=>pick('n');
 // 화면 크기가 바뀌면 무한한 우주의 별 무늬를 다시 깖
 addEventListener('resize',()=>{if(who=='n'&&nMode=='inf'&&!raf)infDraw()});
