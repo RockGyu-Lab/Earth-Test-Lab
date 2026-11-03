@@ -122,7 +122,6 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   <span class="hint" id="ehint"></span>
  </div>
  <div class="ctl" id="fctl" hidden>
-  <div class="seg">우주<div class="bs" id="fsel"><button data-v="o" class="on">계속 팽창</button><button data-v="c">팽창하다가 수축</button></div></div>
   <button class="pb" id="fplay">▶ 재생</button><button class="pb" id="freset">↺ 처음으로</button>
   <span class="hint" id="fhint"></span>
  </div>
@@ -136,7 +135,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
    <tbody>
     <tr><th>생각한 우주</th><td>정적 우주</td><td>정적 우주</td><td>팽창(또는 수축)하는 우주</td></tr>
     <tr><th>우주의 크기 변화</th><td>변하지 않음</td><td>변하지 않음</td><td>시간에 따라 변함</td></tr>
-    <tr><th>벤틀리의 질문에 대한 답</th><td>우주는 무한하고 별이 고르게 퍼져 있어 모든 방향의 힘이 상쇄된다.</td><td>중력과 반대로 밀어내는 우주 상수가 중력과 균형을 이룬다.</td><td>우주는 정지해 있을 필요가 없으며, 팽창하거나 수축할 수 있다.</td></tr>
+    <tr><th>벤틀리의 질문에 대한 답</th><td>우주는 무한하고 별이 고르게 퍼져 있어 모든 방향의 힘이 상쇄된다.</td><td>중력과 반대로 밀어내는 우주 상수가 중력과 균형을 이룬다.</td><td>우주는 멈춰 있지 않고 팽창하고 있어서, 중력이 팽창을 늦출 뿐 무너지지 않는다.</td></tr>
    </tbody>
   </table>
  </div></div>
@@ -182,7 +181,7 @@ function label(s,x,y,par,anchor='start',col='#e8ecff',size=19){const g=mk('g',{}
 const SN={
  n:'<div class="nh">뉴턴의 생각 <span class="ex">· 1692년, 무한하고 변하지 않는 우주</span></div><p>우주가 유한하면 별들은 중력 때문에 가운데로 모여 무너진다. 그러나 우주가 <b>무한하고 별이 고르게 퍼져 있다면</b>, 어느 별이든 모든 방향에서 같은 크기의 힘으로 당겨져 힘의 평형을 이루므로 우주는 무너지지 않고 변하지 않는다고 생각했다.</p>',
  e:'<div class="nh">아인슈타인의 생각 <span class="ex">· 1917년, 우주 상수로 지킨 정적 우주</span></div><p>일반 상대성 이론으로 우주 전체를 계산하면 중력 때문에 우주는 가만히 있을 수 없다. 우주가 변하지 않는다고 믿은 아인슈타인은 중력과 반대로 밀어내는 효과를 내는 <b>우주 상수</b>를 식에 넣어 정적 우주를 만들었다.</p>',
- f:'<div class="nh">프리드만의 생각 <span class="ex">· 1922년, 시간에 따라 변하는 우주</span></div><p>아인슈타인의 방정식을 \'우주는 변하지 않는다\'는 가정 없이 풀어, 우주는 정지해 있지 않고 <b>팽창하거나 수축할 수 있다</b>는 것을 보였다.</p>'};
+ f:'<div class="nh">프리드만의 생각 <span class="ex">· 1922년, 팽창하는 우주</span></div><p>아인슈타인의 방정식을 \'우주는 변하지 않는다\'는 가정 없이 풀어, 우주가 팽창하거나 수축할 수 있음을 보였다. 이 생각으로 보면 우주가 <b>팽창하고 있다면</b>, 중력은 팽창을 늦출 뿐 우주는 곧바로 무너지지 않는다.</p>'};
 let who='n',raf=0;
 function stopAll(){cancelAnimationFrame(raf);raf=0;nplay.textContent=nMode=='fin'?'▶ 재생':'▶ 더 멀리 보기';eplay.textContent='▶ 재생';fplay.textContent='▶ 재생'}
 function pick(v){stopAll();who=v;psel.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v==v));
@@ -292,40 +291,31 @@ eplay.onclick=()=>{if(raf){stopAll();return}
 ereset.onclick=()=>pick('e');
 esel.addEventListener('click',e=>{const b=e.target.closest('button');if(b){eMode=b.dataset.v;pick('e')}});
 
-// ---- 프리드만: 시간에 따른 우주의 크기 (그래프 모양은 개념을 보여 주기 위해 단순화) ----
-// 계속 팽창: a ∝ t^(2/3) / 팽창하다가 수축: a = (1 - cos θ)/2, t = (θ - sin θ)/2π
-let fMode='o',fs=0,fG=null,fT0=0;
-const FGAL=(()=>{const r=rng(11),a=[];while(a.length<46){a.push([r()*2-1,(r()*2-1)*.72])}return a})(),FP=[[-.42,-.12],[.4,.2]];
-function fAt(s){if(fMode=='o')return{t:s,a:.12+.98*Math.pow(s,2/3)};const th=2*Math.PI*s;return{t:(th-Math.sin(th))/(2*Math.PI),a:.12+.98*(1-Math.cos(th))/2}}
-const GX=612,GY=352,GW=318,GH=290;
-function fDraw(){if(fG)fG.remove();fG=mk('g',{},sv);const {a}=fAt(fs);
- // 왼쪽: 은하 (은하 자체의 크기는 그대로, 은하 사이의 거리만 변함)
- const cp=mk('clipPath',{id:'fclip'},fG);mk('rect',{x:0,y:0,width:576,height:400,rx:14},cp);
- const L=mk('g',{'clip-path':'url(#fclip)'},fG),cx=288,cy=200,sc=240;
- FGAL.forEach(([x,y])=>mk('ellipse',{cx:cx+x*sc*a,cy:cy+y*sc*a,rx:5,ry:3,fill:'#dfe5ff',opacity:.85},L));
- const [p,q]=FP.map(([x,y])=>[cx+x*sc*a,cy+y*sc*a]);
- mk('line',{x1:p[0],y1:p[1],x2:q[0],y2:q[1],stroke:'#ffd76b','stroke-width':2,'stroke-dasharray':'5 5'},L);
- [p,q].forEach(([x,y])=>mk('ellipse',{cx:x,cy:y,rx:7,ry:4,fill:'#ffd76b'},L));
- label('두 은하 사이의 거리',(p[0]+q[0])/2,(p[1]+q[1])/2-12,L,'middle','#ffd76b',18);
- mk('line',{x1:588,y1:16,x2:588,y2:384,stroke:'#2c3770'},fG);
- // 오른쪽: 그래프
- txt('시간에 따른 우주의 크기',{x:GX+GW/2,y:30,'text-anchor':'middle',fill:'#e8ecff','font-size':19,'font-weight':700},fG);
- arrow(GX,GY,GX+GW+10,GY,'#a9b1cc','ay',fG).setAttribute('stroke-width',1.5);
- arrow(GX,GY,GX,GY-GH-10,'#a9b1cc','ay',fG).setAttribute('stroke-width',1.5);
- txt('시간',{x:GX+GW+6,y:GY+18,'text-anchor':'end',fill:'#a9b1cc','font-size':17},fG);
- txt('우주의 크기',{x:GX+8,y:GY-GH+4,fill:'#a9b1cc','font-size':17},fG);
- let d='';const N=Math.max(1,Math.round(fs*120));for(let k=0;k<=N;k++){const v=fAt(fs*k/N);d+=(k?'L':'M')+(GX+v.t*GW).toFixed(1)+','+(GY-v.a/1.1*GH*.92).toFixed(1)}
- mk('path',{d,fill:'none',stroke:'#ffd76b','stroke-width':3,'stroke-linejoin':'round'},fG);
- const v=fAt(fs);mk('circle',{cx:GX+v.t*GW,cy:GY-v.a/1.1*GH*.92,r:6,fill:'#ffd76b'},fG);
- label('그래프 모양은 개념을 보여 주기 위해 단순화함',944,388,fG,'end','#a9b1cc',16)}
-function fInit(){fs=0;fG=null;fsel.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v==fMode));fDraw();
- fhint.textContent='우주의 모습을 고른 뒤 ▶ 재생을 눌러 은하 사이의 거리와 우주의 크기가 어떻게 변하는지 관찰해 보세요.'}
-function fLoop(ts){if(!fT0)fT0=ts-fs*7000;fs=Math.min(1,(ts-fT0)/7000);fDraw();
- if(fs>=1){stopAll();fhint.textContent=fMode=='o'?'우주가 계속 팽창하여 은하 사이의 거리가 점점 멀어집니다. 은하 자체의 크기는 변하지 않습니다.':'우주가 팽창하다가 중력에 의해 다시 수축하여 은하 사이의 거리가 가까워집니다.';return}
- raf=requestAnimationFrame(fLoop)}
-fplay.onclick=()=>{if(raf){stopAll();return}if(fs>=1)fs=0;fT0=0;fplay.textContent='⏸ 멈춤';raf=requestAnimationFrame(fLoop)};
+// ---- 프리드만: 처음부터 팽창하고 있는 별 무리. 중력이 팽창을 늦추지만 무너지지 않음 ----
+// 별 무리의 크기 a: a'' = -k/a² (중력), 처음 속도는 탈출 속도보다 조금 커서 느려지면서도 계속 팽창
+const FK=.012,FV0=.18;
+let fa=1,fv=FV0,fT=0;
+function frDraw(){if(nG)nG.remove();nG=mk('g',{},sv);
+ mk('circle',{cx:FC.x,cy:FC.y,r:(FR+14)*fa,fill:'none',stroke:'#4a5694','stroke-dasharray':'6 6'},nG);
+ FS.forEach(s=>mk('circle',{cx:FC.x+s.x*fa,cy:FC.y+s.y*fa,r:3,fill:'#dfe5ff'},nG));
+ // 몇몇 곳의 화살표: 바깥으로 멀어지는 움직임(초록)과 안쪽으로 당기는 중력(주황). 가운데에서 멀수록 큼
+ [0,1,2,3,4,5,6,7].forEach(k=>{const an=k*Math.PI/4+Math.PI/8,c=Math.cos(an),s=Math.sin(an);[70,130].forEach(d=>{const px=FC.x+c*d*fa,py=FC.y+s*d*fa,
+  Lv=Math.min(70,d*fv*1.8),Lg=Math.min(70,d*FK/(fa*fa)*20);
+  arrow(px+c*4,py+s*4,px+c*(4+Lv),py+s*(4+Lv),'#7be08f','av',nG);arrow(px-c*4,py-s*4,px-c*(4+Lg),py-s*(4+Lg),'#ffb066','ag',nG)})});
+ label(fT==0?'프리드만의 생각으로 보면: 우주가 처음부터 팽창하고 있다면?':'중력이 팽창을 늦출 뿐, 우주는 무너지지 않고 팽창함',480,30,nG,'middle','#7be08f');
+ const lg=mk('g',{},nG);arrow(24,70,62,70,'#7be08f','av',lg);label('별들이 서로 멀어지는 움직임',70,76,lg,'start','#e8ecff',17);
+ arrow(24,102,62,102,'#ffb066','ag',lg);label('중력 (안쪽으로 끌어당김)',70,108,lg,'start','#e8ecff',17);
+ label(`우주의 크기: 처음의 ${fa.toFixed(2)}배`,944,76,nG,'end','#e8ecff',17);
+ label('단순화한 모형: 우주 전체를 둥근 영역으로 나타냄',14,388,nG,'start','#a9b1cc',16)}
+function fInit(){nG=null;finInit();fa=1;fv=FV0;fT=0;
+ const d=sv.querySelector('defs'),m=mk('marker',{id:'av',viewBox:'0 0 10 10',refX:8,refY:5,markerWidth:5,markerHeight:5,orient:'auto-start-reverse'},d);mk('path',{d:'M0,0L10,5L0,10z',fill:'#7be08f'},m);
+ frDraw();fhint.textContent='우주가 처음부터 팽창하고 있다면 중력이 있어도 무너질까요? ▶ 재생을 눌러 보세요.'}
+function frLoop(){for(let k=0;k<4;k++){const dt=1/240;fv+=-FK/(fa*fa)*dt;fa+=fv*dt}fT+=1/60;
+ if(fa>1.75||fT>12){frDraw();stopAll();
+  fhint.textContent='중력이 별들을 안쪽으로 당겨 팽창이 조금씩 느려지지만, 우주는 무너지지 않고 계속 팽창합니다. 위로 던진 공이 중력을 받아도 올라가는 동안에는 바로 떨어지지 않는 것과 같습니다.';return}
+ frDraw();raf=requestAnimationFrame(frLoop)}
+fplay.onclick=()=>{if(raf){stopAll();return}if(fa>1.75||fT>12){fa=1;fv=FV0;fT=0}fplay.textContent='⏸ 멈춤';raf=requestAnimationFrame(frLoop)};
 freset.onclick=()=>pick('f');
-fsel.addEventListener('click',e=>{const b=e.target.closest('button');if(b){fMode=b.dataset.v;pick('f')}});
 pick('n');
 
 // 생각해 보기 답 팝업과 비교 표 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
