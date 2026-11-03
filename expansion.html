@@ -193,23 +193,36 @@ psel.addEventListener('click',e=>{const b=e.target.closest('button');if(b)pick(b
 
 // ---- 뉴턴: [유한한 우주] 별들이 가운데로 모여 무너짐 / [무한하고 균일한 우주] 어느 별이든 힘의 평형 ----
 let nMode='fin',nG=null;
-// 유한한 우주: 둥근 영역 안에 고르게 놓인 별. 영역의 크기 Rf가 중력으로 줄어듦 (Rf'' = -k/Rf², 처음에 멈춰 있음)
-const FC={x:480,y:205},FR=150,FSP=30;
-const FST=(()=>{const a=[];for(let j=-5;j<=5;j++)for(let i=-5;i<=5;i++){const x=i*FSP,y=j*FSP;if(x*x+y*y<=FR*FR)a.push([x,y])}return a})();
-let Rf=1,Vf=0;
+// 유한한 우주: 둥근 영역 안에 거의 고르게(조금씩 불규칙하게) 놓인 별들이 서로 끌어당김 (처음에 멈춰 있음)
+// 이웃한 별끼리 먼저 작은 덩어리를 이루고, 덩어리들이 가운데로 모이며 합쳐져 결국 하나가 됨
+const FC={x:480,y:205},FR=150,FSP=22,FG=600,FEPS2=16;
+let FS=[],fTime=0,fDone=false;
+function finInit(){const r=rng(5);FS=[];
+ for(let j=-7;j<=7;j++)for(let i=-7;i<=7;i++){const x=i*FSP+(r()-.5)*18,y=j*FSP+(r()-.5)*18;if(x*x+y*y<=FR*FR)FS.push({x,y,vx:0,vy:0,m:1})}
+ fTime=0;fDone=false}
+const fRad=m=>2.6*Math.pow(m,.4);
+function finStep(dt){const n=FS.length,ax=new Float64Array(n),ay=new Float64Array(n);
+ for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){const a=FS[i],b=FS[j],dx=b.x-a.x,dy=b.y-a.y,r2=dx*dx+dy*dy+FEPS2,f=FG/(r2*Math.sqrt(r2));
+  ax[i]+=f*b.m*dx;ay[i]+=f*b.m*dy;ax[j]-=f*a.m*dx;ay[j]-=f*a.m*dy}
+ FS.forEach((s,i)=>{s.vx+=ax[i]*dt;s.vy+=ay[i]*dt;s.x+=s.vx*dt;s.y+=s.vy*dt});
+ // 아주 가까워진 별은 하나로 합쳐짐 (질량과 운동량은 보존)
+ for(let i=0;i<FS.length;i++)for(let j=i+1;j<FS.length;j++){const a=FS[i],b=FS[j];
+  if(Math.hypot(b.x-a.x,b.y-a.y)<.8*(fRad(a.m)+fRad(b.m))){const m=a.m+b.m;
+   a.x=(a.x*a.m+b.x*b.m)/m;a.y=(a.y*a.m+b.y*b.m)/m;a.vx=(a.vx*a.m+b.vx*b.m)/m;a.vy=(a.vy*a.m+b.vy*b.m)/m;a.m=m;FS.splice(j,1);j=i}}}
 function finDraw(){if(nG)nG.remove();nG=mk('g',{},sv);
- mk('circle',{cx:FC.x,cy:FC.y,r:FR*Rf+12,fill:'none',stroke:'#4a5694','stroke-dasharray':'6 6'},nG);
- const s=Math.min(3,1/(Rf*Rf));
- FST.forEach(([x,y])=>{const px=FC.x+x*Rf,py=FC.y+y*Rf,d=Math.hypot(x,y);
-  mk('circle',{cx:px,cy:py,r:3,fill:'#dfe5ff'},nG);
-  // 몇몇 별(가로·세로·대각선 위)에만 받는 힘 표시: 가운데를 향하고, 가장자리일수록 큼
-  if(d>0&&d<=130&&(x==0||y==0||Math.abs(x)==Math.abs(y))&&Rf>.25){const L=Math.min(48,d*.22*s);
-   arrow(px-x/d*4,py-y/d*4,px-x/d*(4+L),py-y/d*(4+L),'#ffb066','ag',nG)}});
- label('유한한 우주: 모든 별이 가운데 쪽으로 당겨짐 (가장자리의 별일수록 큰 힘)',480,30,nG,'middle','#ffb066');
- label('별이 있는 영역 (바깥에는 별이 없음)',FC.x+FR*Rf+20,FC.y-FR*Rf*.6,nG,'start','#a9b1cc',16);
- label('단순화한 모형: 처음에 별들이 멈춰 있다고 가정',14,388,nG,'start','#a9b1cc',16)}
-function finLoop(){for(let k=0;k<4;k++){const dt=1/240;Vf+=-.3/(Rf*Rf)*dt;Rf+=Vf*dt}
- if(Rf<.08){Rf=.08;finDraw();stopAll();nhint.textContent='벤틀리의 말대로 별들이 모두 가운데로 모여 무너집니다. 우주가 유한하면 중력 때문에 이렇게 될 수밖에 없습니다.';return}
+ mk('circle',{cx:FC.x,cy:FC.y,r:FR+14,fill:'none',stroke:'#4a5694','stroke-dasharray':'6 6'},nG);
+ FS.forEach(s=>mk('circle',{cx:FC.x+s.x,cy:FC.y+s.y,r:fRad(s.m),fill:s.m>1?'#fff4d6':'#dfe5ff'},nG));
+ if(fTime==0){
+  // 처음 화면에만: 몇몇 별(가로·세로·대각선 방향)이 받는 힘. 가운데를 향하고, 가장자리일수록 큼
+  [0,1,2,3,4,5,6,7].forEach(k=>{const a=k*Math.PI/4;[60,120].forEach(d=>{const px=FC.x+Math.cos(a)*d,py=FC.y+Math.sin(a)*d,L=d*.22;
+   arrow(px-Math.cos(a)*4,py-Math.sin(a)*4,px-Math.cos(a)*(4+L),py-Math.sin(a)*(4+L),'#ffb066','ag',nG)})});
+  label('유한한 우주: 별들이 가운데 쪽으로 당겨짐 (가장자리일수록 큰 힘)',480,30,nG,'middle','#ffb066')}
+ else label(fDone?'모든 별이 하나의 큰 덩어리로 모임':'가까운 별끼리 먼저 뭉치고, 덩어리들이 가운데로 모임',480,30,nG,'middle','#ffd76b');
+ label('별이 있는 영역 (바깥에는 별이 없음)',FC.x+FR+24,FC.y-FR*.6,nG,'start','#a9b1cc',16);
+ label('단순화한 모형: 처음에 별들이 멈춰 있고, 아주 가까워진 별은 하나로 합쳐진다고 가정',14,388,nG,'start','#a9b1cc',16)}
+function finLoop(){for(let k=0;k<4;k++)finStep(1/240);fTime+=1/60;
+ if(FS.length==1||fTime>15){fDone=FS.length==1;finDraw();stopAll();
+  nhint.textContent='벤틀리의 말대로 별들이 뭉치며 가운데로 모여, 결국 하나의 큰 덩어리가 됩니다. 우주가 유한하면 중력 때문에 이렇게 무너질 수밖에 없습니다.';return}
  finDraw();raf=requestAnimationFrame(finLoop)}
 // 무한하고 균일한 우주: 별을 무늬(pattern)로 끝없이 채움. [더 멀리 보기]로 넓게 보아도 별이 끝없이 고르게 이어짐
 const IC={x:480,y:205},ISP=40;
@@ -242,11 +255,11 @@ function infLoop(ts){if(!iT0)iT0=ts;const p=Math.min(1,(ts-iT0)/5000),e=p<.5?2*p
  if(p>=1){stopAll();nhint.textContent='아무리 넓게 보아도 별이 모든 방향으로 끝없이 고르게 퍼져 있습니다. 그래서 어느 별이든 힘의 평형을 이루어 멈춰 있고, 우주는 무너지지 않습니다.';return}
  raf=requestAnimationFrame(infLoop)}
 function nInit(){nG=null;nsel.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v==nMode));
- if(nMode=='fin'){Rf=1;Vf=0;finDraw();nhint.textContent='우주가 유한하다면 별들은 어떻게 될까요? ▶ 재생을 눌러 보세요.'}
+ if(nMode=='fin'){finInit();finDraw();nhint.textContent='우주가 유한하다면 별들은 어떻게 될까요? ▶ 재생을 눌러 보세요.'}
  else{Z=1;selI=0;selJ=0;infDraw();nhint.textContent='아무 별이나 눌러 보세요. 어느 별이든 모든 방향에서 같은 크기의 힘으로 당겨져 힘의 평형을 이룹니다.'}
  stopAll()}
 nplay.onclick=()=>{if(raf){stopAll();return}nplay.textContent='⏸ 멈춤';
- if(nMode=='fin'){if(Rf<=.08){Rf=1;Vf=0}raf=requestAnimationFrame(finLoop)}
+ if(nMode=='fin'){if(FS.length==1||fTime>15){finInit()}raf=requestAnimationFrame(finLoop)}
  else{iT0=0;raf=requestAnimationFrame(infLoop)}};
 nreset.onclick=()=>pick('n');
 // 화면 크기가 바뀌면 무한한 우주의 별 무늬를 다시 깖
