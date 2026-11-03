@@ -91,8 +91,8 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .side .cap{font-size:.84rem;opacity:.85}
 @media (max-width:640px){.duo2{grid-template-columns:1fr}}
 /* ③ 후주계열 단계: 넓은 그림 하나 + 소메뉴와 단계 조작 줄 */
-#pmv{max-height:max(240px,calc(100vh - 390px))}
-#pmv{max-height:max(240px,calc(100dvh - 390px))}
+#pmv{max-height:max(218px,calc(100vh - 430px))}
+#pmv{max-height:max(218px,calc(100dvh - 430px))}
 #pmnote{min-height:calc(3.1em + 18px)}
 /* 소메뉴를 바꿔도 아래 생각해 보기 자리가 같도록 조작 줄 높이를 '주계열 이후 변화'(단계 단추가 있는 줄)에 맞춤 */
 #p3 .ctl{min-height:50px}
@@ -186,19 +186,25 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   <p class="ans">질량이 태양 정도인 별은 적색 거성을 거쳐 행성상 성운과 백색 왜성이 되고, 질량이 매우 큰 별은 초거성을 거쳐 초신성 폭발 후 중성자별이나 블랙홀이 됩니다.</p>
   <p class="exp">질량이 클수록 중심부 온도가 높아 더 무거운 원소까지 핵융합이 일어나고, 일생을 더 격렬하게 마칩니다.</p>
  </div></div>
+ <div class="note ask ask2"><span class="tag">생각해 보기</span><p>우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?</p><button type="button" class="open-think" id="thb4">답 보기</button></div>
+ <div class="ov" id="ov4" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?</b><button type="button" class="x" id="thx4" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">별의 내부에서 핵융합으로 만들어지고, 행성상 성운과 초신성 폭발로 우주에 퍼진 원소들입니다.</p>
+  <p class="exp">이 원소들이 성간 물질이 되었다가 다시 태양계와 지구, 생명체를 이루는 재료가 되었습니다.</p>
+ </div></div>
 </section>
 
 <!-- ④ 별의 진화와 순환: 성간 물질을 가운데 두고 두 고리(질량이 태양과 비슷한 별 / 매우 큰 별)가 8자 모양으로 순환 -->
 <section id="p4" role="tabpanel" aria-labelledby="tab4" hidden>
  <!-- 위에서부터: 설명 → 별의 질량 고르기(라벤더) → 그림 (그림 왼쪽 위에 작은 '순환 따라가기' 단추, 그 아래에 단계 설명) -->
  <div class="note"><div class="nh">별의 진화와 순환 <span class="ex">· 별은 성간 물질에서 태어나 일생을 마친 뒤, 만든 원소를 다시 성간 물질로 돌려보내 새로운 별을 만드는 재료가 된다.</span></div></div>
- <div class="subtabs" id="cysel"><button data-v="sun" class="on">질량이 태양과 비슷한 별</button><button data-v="big">질량이 태양보다 매우 큰 별</button></div>
- <div class="cyfig"><svg id="cyv" viewBox="0 0 960 500"></svg><div class="cyb" id="cytool"><button class="pb" id="cyplay">▶ 순환 따라가기</button><span>각 단계를 눌러도 설명을 볼 수 있습니다.</span></div></div>
- <div class="note ask"><span class="tag">생각해 보기</span><p>우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?</p><button type="button" class="open-think" id="thb4">답 보기</button></div>
- <div class="ov" id="ov4" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?">
-  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>우리 몸과 지구를 이루는 탄소, 산소, 철 같은 원소들은 어디에서 왔을까요?</b><button type="button" class="x" id="thx4" aria-label="닫기">닫기 ✕</button></div>
-  <p class="ans">별의 내부에서 핵융합으로 만들어지고, 행성상 성운과 초신성 폭발로 우주에 퍼진 원소들입니다.</p>
-  <p class="exp">이 원소들이 성간 물질이 되었다가 다시 태양계와 지구, 생명체를 이루는 재료가 되었습니다.</p>
+ <div class="subtabs" id="cysel"><button data-v="sun" class="on">질량이 태양과 비슷한 별</button><button data-v="big">질량이 태양보다 매우 큰 별</button><button data-v="cmp">진화 속도 비교</button></div>
+ <div class="cyfig"><svg id="cyv" viewBox="0 0 960 500"></svg><div class="cyb" id="cytool"><button class="pb" id="cyplay">▶ 순환 따라가기</button><span id="cyhint">각 단계를 눌러도 설명을 볼 수 있습니다.</span></div></div>
+ <div class="note ask"><span class="tag">생각해 보기</span><p>질량이 태양과 비슷한 별과 질량이 매우 큰 별 중 일생이 더 짧은 별은 무엇이고, 그 까닭은 무엇일까요?</p><button type="button" class="open-think" id="thb6">답 보기</button></div>
+ <div class="ov" id="ov6" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 질량이 태양과 비슷한 별과 질량이 매우 큰 별 중 일생이 더 짧은 별은 무엇이고, 그 까닭은 무엇일까요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>질량이 태양과 비슷한 별과 질량이 매우 큰 별 중 일생이 더 짧은 별은 무엇이고, 그 까닭은 무엇일까요?</b><button type="button" class="x" id="thx6" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">질량이 매우 큰 별입니다. 중심부 온도가 매우 높아 핵융합 반응이 빠르게 일어나 수소를 빨리 소모하기 때문입니다.</p>
+  <p class="exp">질량이 큰 별은 수소를 더 많이 가지고 있지만, 그보다 훨씬 많은 에너지를 내보내므로 연료가 금방 바닥납니다. 질량이 태양과 비슷한 별은 약 100억 년, 질량이 태양의 약 10배 이상인 별은 수천만 년 이하를 삽니다. 그래서 질량이 큰 별이 만든 원소가 먼저 성간 물질로 돌아갑니다.</p>
  </div></div>
  <div class="note ask ask2"><span class="tag">생각해 보기</span><p>철보다 더 무거운 원소는 어느 과정에서 어떻게 만들어질까요?</p><button type="button" class="open-think" id="thb5">답 보기</button></div>
  <div class="ov" id="ov5" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 철보다 더 무거운 원소는 어느 과정에서 어떻게 만들어질까요?">
@@ -625,13 +631,15 @@ function cyStage(lp,t){const s=SPL[lp];
  if(t<s){const ang=cyAng(lp,t);let best=0;CY.forEach((c,i)=>{if(c.lp!=lp||c.a==null)return;if(lp=='sun'?ang<=c.a:ang>=c.a)best=i});return best}
  const q=(t-s)/(1-s);if(q<.3)return lp=='sun'?4:9;if(q<.62)return lp=='sun'?5:(q<.46?10:11);return 0} // 지금 설명할 단계
 function drawCy(){S=cyv;S.innerHTML='';const d=el('defs',{});heads(d);
- const act=lp=>cyMode==lp,op=lp=>act(lp)?1:.22;
+ const cmp=cyMode=='cmp',act=lp=>cmp||cyMode==lp,op=lp=>act(lp)?1:.22;
+ // 진화 속도 비교에서는 두 별의 지금 단계를 함께 강조 (단계를 눌러 설명을 볼 때는 그 단계만)
+ const onS=new Set(cmp?(cyPick?[cySel]:cmpR<0?[]:(G=>[cyStage('sun',G.ts),cyStage('big',G.tb)])(cmpState(cmpR))):[cySel]);
  const cg=el('radialGradient',{id:'cyc'},d);[[0,'#f0a0c0',.85],[.55,'#a060b0',.5],[1,'#6a4a9a',0]].forEach(([o,c,a])=>el('stop',{offset:o,'stop-color':c,'stop-opacity':a},cg));
  // 위쪽 여백: 왼쪽 위의 '순환 따라가기' 단추와 안내(HTML) 아래에 지금 단계의 이름과 설명 (길면 두 줄)
-  {const c=CY[cySel],L=[''];(c.n+' '+c.d).split(' ').forEach(w=>{const s=L[L.length-1];if(s&&(s+' '+w).length>60)L.push(w);else L[L.length-1]=s?s+' '+w:w});
+  {const c=cmp&&!cyPick?(([n,d])=>({n,d}))(cmpMsg()):CY[cySel],L=[''];(c.n+' '+c.d).split(' ').forEach(w=>{const s=L[L.length-1];if(s&&(s+' '+w).length>60)L.push(w);else L[L.length-1]=s?s+' '+w:w});
   L.forEach((s,i)=>{const e=el('text',{x:20,y:70+i*21,'font-size':16,'font-weight':600,fill:'#e8eaf2'});
    if(i==0){el('tspan',{fill:'#ffd166','font-weight':800},e).textContent=c.n;el('tspan',{},e).textContent=s.slice(c.n.length)}else e.textContent=s})}
- S=el('g',{transform:'translate(0,80)'}); // 순환 그림은 80만큼 아래로
+ S=el('g',{transform:cmp?'translate(120,90) scale(.75)':'translate(0,80)'}); // 순환 그림은 80만큼 아래로 (진화 속도 비교에서는 작게 줄이고 아래에 일생 막대)
  // 고리 (화살표로 진행 방향 표시)
  [['sun',LP,0,-360],['big',RP,180,540]].forEach(([lp,E,a0,a1])=>{const pts=[];for(let i=0;i<=120;i++)pts.push(onE(E,a0+(a1-a0)*i/120).map(v=>v.toFixed(1)).join(','));
   const g=el('g',{opacity:op(lp)});el('polyline',{points:pts.join(' '),fill:'none',stroke:'#7f8bb3','stroke-width':5,opacity:.55},g);
@@ -644,14 +652,17 @@ function drawCy(){S=cyv;S.innerHTML='';const d=el('defs',{});heads(d);
  const ret=(x,y,t1,t2,lp)=>{const g=el('g',{opacity:op(lp)});lab(x,y,t1,13,'middle','#ffd9a0',700,g);lab(x,y+17,t2,13,'middle','#ffd9a0',700,g)};
  ret(372,276,'원소가 성간 물질로','(헬륨, 탄소, 질소 등)','sun');ret(588,276,'원소가 성간 물질로','(산소, 철, 금, 우라늄 등)','big');
  // 단계 아이콘과 이름
- CY.forEach((c,i)=>{const g=el('g',{'data-c':i,opacity:c.lp=='both'?1:op(c.lp)}),[x,y]=c.p,on=i==cySel;g.appendChild(cyIcon(c.k||'ism',x,y));
+ CY.forEach((c,i)=>{const g=el('g',{'data-c':i,opacity:c.lp=='both'?1:op(c.lp)}),[x,y]=c.p,on=onS.has(i);g.appendChild(cyIcon(c.k||'ism',x,y));
   const big=c.k=='sg'||c.k=='sn'||c.id=='ism',dy=big?52:c.k=='rg'||c.k=='pn'?44:c.k=='bh'||c.k=='ns'||c.k=='wd'?26:30;
   lab(x,y+dy,c.n,16,'middle',on?'#ffd166':'#e8eaf2',800,g);el('rect',{x:x-45,y:y-40,width:90,height:90,fill:'transparent'},g)});
  // 고리 이름
  lab(290,190,'질량이 태양과',16,'middle','#cfd6ea',700).setAttribute('opacity',op('sun'));lab(290,210,'비슷한 별',16,'middle','#cfd6ea',700).setAttribute('opacity',op('sun'));
  lab(670,190,'질량이 태양보다',16,'middle','#cfd6ea',700).setAttribute('opacity',op('big'));lab(670,210,'매우 큰 별',16,'middle','#cfd6ea',700).setAttribute('opacity',op('big'));
  // 따라가기: 별(노란 점) → 나뉜 뒤 남은 중심핵(작은 점)과 뿌연 구름
- if(cyT>=0){const lp=cyMode,s=SPL[lp],t=cyT,dot=(x,y,r)=>{el('circle',{cx:x,cy:y,r:r*1.9,fill:'#ffd166',opacity:.3});el('circle',{cx:x,cy:y,r,fill:'#ffd166',stroke:'#fff','stroke-width':2})};
+ if(cmp){if(cmpR>=0){const G=cmpState(cmpR);cyTrace('sun',G.ts);cyTrace('big',G.tb)}S=cyv;cmpBars()}
+ else if(cyT>=0)cyTrace(cyMode,cyT);
+}
+function cyTrace(lp,t){const s=SPL[lp],dot=(x,y,r)=>{el('circle',{cx:x,cy:y,r:r*1.9,fill:'#ffd166',opacity:.3});el('circle',{cx:x,cy:y,r,fill:'#ffd166',stroke:'#fff','stroke-width':2})};
   if(t<s){const[x,y]=cyPos(lp,t);dot(x,y,7)}
   else{const q=(t-s)/(1-s),sp=cyPos(lp,s);
    // 폭발·방출 순간의 퍼지는 고리
@@ -660,22 +671,61 @@ function drawCy(){S=cyv;S.innerHTML='';const d=el('defs',{});heads(d);
    const m=Math.min(1,q/.3),r=7-3*m;(lp=='sun'?[5]:[10,11]).forEach(i=>{const p=CY[i].p;dot(sp[0]+(p[0]-sp[0])*m,sp[1]+(p[1]-sp[1])*m,r)});
    // 퍼져 나간 물질: 뿌연 구름이 되어 고리를 따라 성간 물질로 (끝에서 성간 물질에 섞이며 사라짐)
    const u=Math.max(0,Math.min(1,(q-.08)/.84)),[cx,cy]=cyPos(lp,s+(1-s)*u),cr=12+12*u,co=u>.88?(1-u)/.12:1;
-   if(q>.08)el('circle',{cx,cy,r:cr,fill:'url(#cyc)',opacity:co})}}
+   if(q>.08)el('circle',{cx,cy,r:cr,fill:'url(#cyc)',opacity:co})}
 }
-function cyStop(){cyPlay=false;cancelAnimationFrame(cyRaf);cyplay.textContent='▶ 순환 따라가기'}
-cyplay.onclick=()=>{if(cyPlay)return cyStop();cyPlay=true;cyplay.textContent='❚❚ 멈춤';let t0=performance.now()-Math.max(0,cyT)*14000;
+// ---- 진화 속도 비교: 두 별이 성간 물질에서 동시에 출발, 같은 시계로 움직임 ----
+// 시간(년)은 대략값. 질량이 태양과 비슷한 별: 주계열 도달 약 5천만 년, 주계열 약 100억 년, 거성을 거쳐 약 110억 년에 행성상 성운
+// 질량이 매우 큰 별(태양의 약 15배 예): 주계열 도달 약 6만 년, 주계열 약 1,300만 년, 초거성을 거쳐 약 1,500만 년에 초신성 폭발
+// 실제 비율로는 큰 별의 일생이 순식간에 지나가므로 시간 빠르기를 구간마다 바꿈 (cmpR: 재생한 실제 초, 0~22)
+//  0~8초: 0 → 4천만 년 / 8~16초: → 100억 년 / 16~19초: → 110억 년 / 19~22초: 남은 물질이 성간 물질로 돌아감
+let cmpR=-1,cyPick=false;
+const CMP_END=22,lerp=(a,b,f)=>a+(b-a)*Math.max(0,Math.min(1,f));
+function cmpState(r){
+ const Y=r<8?5e6*r:r<16?4e7+(r-8)*(1e10-4e7)/8:r<19?1e10+(r-16)*1e9/3:1.1e10,
+  rate=r<8?5e6:r<16?(1e10-4e7)/8:r<19?1e9/3:0;
+ const as=Y<5e7?lerp(0,-90,Y/5e7):Y<1e10?lerp(-90,-125,(Y-5e7)/(1e10-5e7)):lerp(-125,-225,(Y-1e10)/1e9),
+  ts=r<19?-as/360:SPL.sun+(1-SPL.sun)*Math.min(1,(r-19)/3);
+ const ab=Y<6e4?lerp(180,270,Y/6e4):Y<1.3e7?lerp(270,320,(Y-6e4)/(1.3e7-6e4)):lerp(320,400,(Y-1.3e7)/2e6),
+  tb=Y<1.5e7?(ab-180)/360:SPL.big+(1-SPL.big)*Math.min(1,(r-3)/3);
+ return{Y,rate,ts,tb}}
+function cmpMsg(){if(cmpR<0)return['동시에 출발','질량이 다른 두 별이 성간 물질에서 동시에 태어나면, 어느 별이 먼저 일생을 마칠까요?'];
+ const Y=cmpState(cmpR).Y;
+ if(Y<1.5e7)return['질량이 매우 큰 별','약 6만 년 만에 주계열성이 되고, 수소를 매우 빠르게 소모합니다.'];
+ if(Y<5e7)return['약 1,500만 년','질량이 매우 큰 별(예: 태양의 약 15배)은 초신성 폭발로 일생을 마칩니다. 이때 질량이 태양과 비슷한 별은 아직 주계열성에도 도달하지 못했습니다.'];
+ if(Y<1e10)return['주계열성','질량이 태양과 비슷한 별은 주계열성으로 약 100억 년을 머뭅니다. 별의 일생에서 가장 긴 단계입니다.'];
+ if(cmpR<19)return['거성','주계열을 벗어난 별은 바깥층이 팽창하여 거성이 됩니다.'];
+ return['약 110억 년','질량이 태양과 비슷한 별이 일생을 마칩니다. 질량이 매우 큰 별보다 수백 배 오래 삽니다.']}
+// 그림 아래: 같은 시간 눈금(0~120억 년)의 일생 막대. 지금까지 흐른 시간만큼 채워짐
+function cmpBars(){const X0=212,X1=920,YM=1.2e10,xs=y=>X0+(X1-X0)*Math.min(y,YM)/YM,G=cmpR<0?null:cmpState(cmpR),Y=G?G.Y:0;
+ lab(20,428,'흐른 시간',14,'start','#cfd6ea',700);lab(96,428,Y?fmtYr(Y):'0년',17,'start','#ffd166',800);
+ if(G&&G.rate)lab(X1,428,'시간 빠르기: 1초에 약 '+fmtYr(G.rate),13,'end','#a9b1cc',600);
+ [{n:'질량이 태양과 비슷한 별',y:438,end:1.1e10,e:'약 110억 년',seg:[[0,5e7,'#c9b6ff',''],[5e7,1e10,'#ffe08a','주계열성'],[1e10,1.1e10,'#ff8a5c','거성']]},
+  {n:'질량이 태양보다 매우 큰 별',y:462,end:1.5e7,e:'약 1,500만 년 (너무 짧아 거의 보이지 않음)',seg:[[0,6e4,'#c9b6ff',''],[6e4,1.3e7,'#9fc3ff',''],[1.3e7,1.5e7,'#ff6a6a','']]}].forEach(R=>{
+  lab(X0-10,R.y+13,R.n,13,'end','#e8eaf2',700);el('rect',{x:X0,y:R.y,width:X1-X0,height:16,rx:3,fill:'#1b2240',stroke:'#3a4370'});
+  R.seg.forEach(([a,b,c,t])=>{if(Y<=a)return;const x=xs(a),w=Math.max(R.end<1e8?3:0,xs(Math.min(b,Y))-x);el('rect',{x,y:R.y,width:w,height:16,fill:c});
+   if(t&&w>(t.length*13+8))lab(x+w/2,R.y+12.5,t,12,'middle','#1a1f36',800).setAttribute('stroke','none')});
+  if(Y>=R.end)lab(xs(R.end)+(R.end<1e8?8:6),R.y+12.5,R.e,12,'start','#ffd9a0',700)});
+ for(let v=0;v<=YM;v+=2e9){const x=xs(v);el('line',{x1:x,x2:x,y1:480,y2:484,stroke:'#7f8bb3'});lab(x,497,v?v/1e8+'억'+(v==YM?' 년':''):'0',11,'middle','#a9b1cc',600)}
+ if(G){const x=xs(Y);el('line',{x1:x,x2:x,y1:434,y2:482,stroke:'#ffd166','stroke-width':2})}
+}
+function cyStop(){cyPlay=false;cancelAnimationFrame(cyRaf);cyplay.textContent=cyMode!='cmp'?'▶ 순환 따라가기':cmpR>=CMP_END?'↺ 다시 출발':'▶ 동시에 출발'}
+cyplay.onclick=()=>{if(cyPlay)return cyStop();cyPlay=true;cyplay.textContent='❚❚ 멈춤';
+ if(cyMode=='cmp'){if(cmpR<0||cmpR>=CMP_END)cmpR=0;cyPick=false;const t0=performance.now()-cmpR*1000;
+  const st=now=>{if(!cyPlay)return;cmpR=Math.min(CMP_END,(now-t0)/1000);drawCy();if(cmpR>=CMP_END)cyStop();else cyRaf=requestAnimationFrame(st)};cyRaf=requestAnimationFrame(st);return}
+ let t0=performance.now()-Math.max(0,cyT)*14000;
  const st=now=>{if(!cyPlay)return;cyT=((now-t0)/14000)%1;cySel=cyStage(cyMode,cyT);drawCy();cyRaf=requestAnimationFrame(st)};cyRaf=requestAnimationFrame(st)};
-// 별의 질량을 바꾸면 따라가기를 처음부터
+// 별의 질량(또는 진화 속도 비교)을 바꾸면 따라가기를 처음부터
 cysel.querySelectorAll('button').forEach(b=>b.onclick=()=>{cysel.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x==b));cyMode=b.dataset.v;
- const was=cyPlay;cyStop();cyT=-1;cySel=0;drawCy();if(was)cyplay.onclick()});
+ cyhint.textContent=cyMode=='cmp'?'시간이 흐르는 빠르기를 바꾸어 나타냈습니다.':'각 단계를 눌러도 설명을 볼 수 있습니다.';
+ const was=cyPlay;cyStop();cyT=-1;cySel=0;cmpR=-1;cyPick=false;cyStop();drawCy();if(was)cyplay.onclick()});
 // 그림이 높이에 맞춰 줄면 좌우에 빈 띠가 생기므로, 단추를 그림 내용의 왼쪽 위에 맞춤
 function placeCyb(){const r=cyv.getBoundingClientRect();if(!r.width)return;const s=Math.min(r.width/960,r.height/500);cytool.style.left=((r.width-960*s)/2+10)+'px'}
 addEventListener('resize',placeCyb);
-cyv.addEventListener('click',e=>{const g=e.target.closest('[data-c]');if(g){cyStop();cyT=-1;cySel=+g.dataset.c;drawCy()}});
+cyv.addEventListener('click',e=>{const g=e.target.closest('[data-c]');if(g){cyStop();cyT=-1;cySel=+g.dataset.c;cyPick=true;drawCy()}});
 drawCy();
 
 // 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
-[['ov1','thb1','thx1'],['ov2','thb2','thx2'],['ov3','thb3','thx3'],['ov4','thb4','thx4'],['ov5','thb5','thx5']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
+[['ov1','thb1','thx1'],['ov2','thb2','thx2'],['ov3','thb3','thx3'],['ov4','thb4','thx4'],['ov5','thb5','thx5'],['ov6','thb6','thx6']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
  const closeTh=()=>{ov.hidden=true;btn.focus()};
  btn.addEventListener('click',()=>{ov.hidden=false;cl.focus()});cl.addEventListener('click',closeTh);
  ov.addEventListener('click',e=>{if(e.target===ov)closeTh()});
