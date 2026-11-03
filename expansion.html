@@ -67,8 +67,8 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .bq p{margin:2px 0 0;font-weight:600}
 #snote{min-height:calc(3em + 18px)}
 #snote p{margin:2px 0 0}
-#sv{max-height:max(220px,calc(100vh - 508px))}
-#sv{max-height:max(220px,calc(100dvh - 508px))}
+#sv{max-height:max(220px,calc(100vh - 445px))}
+#sv{max-height:max(220px,calc(100dvh - 445px))}
 /* 생각해 보기: 정식 사이트(eclipses.html 심화 질문, luminosity.html)와 같은 형식
    상자 없이 한 줄에 [꼬리표(남색)] 질문 [답 보기(남색 테두리)] → 누르면 팝업에 질문과 답 */
 .note.ask{margin:10px 0 0;padding:0;border-radius:0;background:none;display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;font-size:.95rem}
@@ -102,28 +102,17 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  <button role="tab" id="tab2" aria-controls="p2" aria-selected="false" tabindex="-1">허블-르메트르 법칙과 우주 팽창</button>
 </div>
 
-<!-- ① 정적 우주와 팽창 우주: 벤틀리의 질문에 대한 뉴턴, 아인슈타인, 프리드만의 생각을 비교 -->
+<!-- ① 정적 우주와 팽창 우주: [벤틀리의 질문] 별들이 서로 끌어당기면 한곳에 모임 → 뉴턴, 아인슈타인, 프리드만의 해결 아이디어 -->
 <section id="p1" role="tabpanel" aria-labelledby="tab1">
- <div class="note bq"><div class="nh">벤틀리의 질문 <span class="ex">· 1692년, 벤틀리와 뉴턴이 주고받은 편지에서</span></div><p>모든 별이 만유인력으로 서로 끌어당긴다면, 별들은 왜 서로 끌려가 한곳에 모이지 않을까?</p></div>
  <div class="srow">
-  <div class="subtabs" id="psel"><button data-v="n" class="on">뉴턴</button><button data-v="e">아인슈타인</button><button data-v="f">프리드만</button></div>
+  <div class="subtabs" id="psel"><button data-v="b" class="on">벤틀리의 질문</button><button data-v="n">뉴턴</button><button data-v="e">아인슈타인</button><button data-v="f">프리드만</button></div>
   <button type="button" class="open-think" id="cmpb">세 사람의 생각 비교</button>
  </div>
  <div class="note" id="snote"></div>
  <svg id="sv" viewBox="0 0 960 400"></svg>
- <div class="ctl" id="nctl">
-  <div class="seg">우주<div class="bs" id="nsel"><button data-v="fin" class="on">유한한 우주</button><button data-v="inf">무한하고 균일한 우주</button></div></div>
-  <button class="pb" id="nplay">▶ 재생</button><button class="pb" id="nreset">↺ 처음으로</button>
-  <span class="hint" id="nhint"></span>
- </div>
- <div class="ctl" id="ectl" hidden>
-  <div class="seg">우주 상수<div class="bs" id="esel"><button data-v="no" class="on">없음</button><button data-v="yes">있음</button></div></div>
-  <button class="pb" id="eplay">▶ 재생</button><button class="pb" id="ereset">↺ 처음으로</button>
-  <span class="hint" id="ehint"></span>
- </div>
- <div class="ctl" id="fctl" hidden>
-  <button class="pb" id="fplay">▶ 재생</button><button class="pb" id="freset">↺ 처음으로</button>
-  <span class="hint" id="fhint"></span>
+ <div class="ctl" id="sctl">
+  <button class="pb" id="splay">▶ 재생</button><button class="pb" id="sreset">↺ 처음으로</button>
+  <span class="hint" id="shint"></span>
  </div>
  <div class="note ask"><span class="tag">생각해 보기</span><p>뉴턴, 아인슈타인, 프리드만의 생각을 정적 우주와 팽창 우주로 구분해 보세요.</p><button type="button" class="open-think" id="thb3">답 보기</button></div>
  <div class="note ask ask2"><span class="tag">생각해 보기</span><p>아인슈타인과 프리드만 중 누구의 생각이 옳은지 어떻게 판단할 수 있을까요?</p><button type="button" class="open-think" id="thb1">답 보기</button></div>
@@ -135,7 +124,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
    <tbody>
     <tr><th>생각한 우주</th><td>정적 우주</td><td>정적 우주</td><td>팽창(또는 수축)하는 우주</td></tr>
     <tr><th>우주의 크기 변화</th><td>변하지 않음</td><td>변하지 않음</td><td>시간에 따라 변함</td></tr>
-    <tr><th>벤틀리의 질문에 대한 답</th><td>우주는 무한하고 별이 고르게 퍼져 있어 모든 방향의 힘이 상쇄된다.</td><td>중력과 반대로 밀어내는 우주 상수가 중력과 균형을 이룬다.</td><td>우주는 멈춰 있지 않고 팽창하고 있어서, 중력이 팽창을 늦출 뿐 별들이 한곳으로 모이지 않는다.</td></tr>
+    <tr><th>해결 아이디어</th><td>우주는 무한하고 별이 고르게 퍼져 있어 모든 방향의 힘이 상쇄된다.</td><td>중력과 반대로 밀어내는 우주 상수가 중력과 균형을 이룬다.</td><td>우주는 멈춰 있지 않고 팽창하고 있어서, 중력이 팽창을 늦출 뿐 별들이 한곳으로 모이지 않는다.</td></tr>
    </tbody>
   </table>
  </div></div>
@@ -177,20 +166,21 @@ function arrow(x1,y1,x2,y2,c,m,par){return mk('line',{x1,y1,x2,y2,stroke:c,'stro
 function label(s,x,y,par,anchor='start',col='#e8ecff',size=19){const g=mk('g',{},par);const t=txt(s,{x,y,'text-anchor':anchor,fill:col,'font-size':size,'font-weight':600},g);
  const b=t.getBBox?t.getBBox():null;if(b&&b.width){g.insertBefore(mk('rect',{x:b.x-6,y:b.y-3,width:b.width+12,height:b.height+6,rx:6,fill:'#0b1026',opacity:.8}),t)}return g}
 
+// 각 화면의 설명: 벤틀리의 질문(문제) → 세 과학자의 해결 아이디어
 const SN={
- n:'<div class="nh">뉴턴의 생각 <span class="ex">· 무한하고 균일한 정적 우주 (1692년)</span></div><p>우주가 유한하면 별들은 중력 때문에 서로 끌려가 가운데의 한곳에 모인다. 그러나 우주가 <b>무한하고 별이 고르게 퍼져 있다면</b>, 어느 별이든 모든 방향에서 같은 크기의 힘으로 당겨져 힘의 평형을 이루므로 별들이 한곳으로 모이지 않고 우주는 변하지 않는다고 생각했다.</p>',
- e:'<div class="nh">아인슈타인의 생각 <span class="ex">· 우주 상수로 지킨 정적 우주 (1917년)</span></div><p>일반 상대성 이론으로 우주 전체를 계산하면 중력 때문에 우주는 가만히 있을 수 없다. 우주가 변하지 않는다고 믿은 아인슈타인은 중력과 반대로 밀어내는 효과를 내는 <b>우주 상수</b>를 식에 넣어 정적 우주를 만들었다.</p>',
- f:'<div class="nh">프리드만의 생각 <span class="ex">· 팽창하는 우주 (1922년)</span></div><p>아인슈타인의 방정식을 \'우주는 변하지 않는다\'는 가정 없이 풀어, 우주가 팽창하거나 수축할 수 있음을 보였다. 이 생각으로 보면 우주가 <b>팽창하고 있다면</b>, 중력은 팽창을 늦출 뿐 별들이 곧바로 한곳으로 모이지는 않는다.</p>'};
-let who='n',raf=0;
-function stopAll(){cancelAnimationFrame(raf);raf=0;nplay.textContent='▶ 재생';eplay.textContent='▶ 재생';fplay.textContent='▶ 재생'}
+ b:'<div class="nh">벤틀리의 질문 <span class="ex">· 1692년, 벤틀리와 뉴턴이 주고받은 편지에서</span></div><p>모든 별이 만유인력으로 서로 끌어당긴다면, 별들은 서로 끌려가 결국 한곳에 모이지 않을까? 그런데 실제 우주의 별들은 왜 한곳에 모이지 않을까?</p>',
+ n:'<div class="nh">뉴턴의 해결 아이디어 <span class="ex">· 무한하고 균일한 정적 우주 (1692년)</span></div><p>우주가 끝없이 넓고 별이 고르게 퍼져 있다면, 어느 별이든 모든 방향에서 같은 크기의 힘으로 당겨져 힘의 평형을 이룬다. 그래서 별들은 한곳으로 모이지 않고 우주는 변하지 않는다.</p>',
+ e:'<div class="nh">아인슈타인의 해결 아이디어 <span class="ex">· 우주 상수로 지킨 정적 우주 (1917년)</span></div><p>일반 상대성 이론으로 계산해도 중력만 있으면 우주는 그대로 있을 수 없다. 아인슈타인은 중력과 반대로 밀어내는 효과를 내는 <b>우주 상수</b>를 식에 넣어, 중력과 균형을 이루는 정적 우주를 만들었다.</p>',
+ f:'<div class="nh">프리드만의 해결 아이디어 <span class="ex">· 팽창하는 우주 (1922년)</span></div><p>아인슈타인의 방정식을 \'우주는 변하지 않는다\'는 가정 없이 풀어, 우주가 팽창하거나 수축할 수 있음을 보였다. 이 생각으로 보면 우주가 <b>팽창하고 있다면</b>, 중력은 팽창을 늦출 뿐 별들이 곧바로 한곳으로 모이지는 않는다.</p>'};
+let who='b',raf=0,nG=null;
+function stopAll(){cancelAnimationFrame(raf);raf=0;splay.textContent='▶ 재생'}
 function pick(v){stopAll();who=v;psel.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v==v));
- snote.innerHTML=SN[v];nctl.hidden=v!='n';ectl.hidden=v!='e';fctl.hidden=v!='f';
- sv.innerHTML='';defs();({n:nInit,e:eInit,f:fInit})[v]()}
+ snote.innerHTML=SN[v];sv.innerHTML='';defs();nG=null;({b:bInit,n:nInit,e:eInit,f:fInit})[v]()}
 psel.addEventListener('click',e=>{const b=e.target.closest('button');if(b)pick(b.dataset.v)});
+splay.onclick=()=>{if(raf){stopAll();return}({b:bPlay,n:nPlay,e:ePlay,f:fPlay})[who]()};
+sreset.onclick=()=>pick(who);
 
-// ---- 뉴턴: [유한한 우주] 별들이 서로 끌려가 한곳에 모임 / [무한하고 균일한 우주] 어느 별이든 힘의 평형 ----
-let nMode='fin',nG=null;
-// 유한한 우주: 둥근 영역 안에 거의 고르게(조금씩 불규칙하게) 놓인 별들이 서로 끌어당김 (처음에 멈춰 있음)
+// ---- 벤틀리의 질문: 일정한 영역 안에 거의 고르게(조금씩 불규칙하게) 놓인 별들이 서로 끌어당김 (처음에 멈춰 있음) ----
 // 이웃한 별끼리 먼저 작은 덩어리를 이루고, 덩어리들이 가운데로 모이며 합쳐져 결국 하나가 됨
 const FC={x:480,y:205},FR=150,FSP=22,FG=600,FEPS2=16;
 let FS=[],fTime=0,fDone=false;
@@ -213,78 +203,62 @@ function finDraw(){if(nG)nG.remove();nG=mk('g',{},sv);
   // 처음 화면에만: 몇몇 별(가로·세로·대각선 방향)이 받는 힘. 가운데를 향하고, 가장자리일수록 큼
   [0,1,2,3,4,5,6,7].forEach(k=>{const a=k*Math.PI/4;[60,120].forEach(d=>{const px=FC.x+Math.cos(a)*d,py=FC.y+Math.sin(a)*d,L=d*.22;
    arrow(px-Math.cos(a)*4,py-Math.sin(a)*4,px-Math.cos(a)*(4+L),py-Math.sin(a)*(4+L),'#ffb066','ag',nG)})});
-  label(who=='e'?'우주 상수가 없으면: 중력만 작용하여 별들이 가운데 쪽으로 당겨짐':'유한한 우주: 별들이 가운데 쪽으로 당겨짐 (가장자리일수록 큰 힘)',480,30,nG,'middle','#ffb066')}
+  label('별들이 서로 끌어당김 → 모든 별이 가운데 쪽으로 당겨짐',480,30,nG,'middle','#ffb066')}
  else label(fDone?'모든 별이 하나의 큰 덩어리로 모임':'가까운 별끼리 먼저 뭉치고, 덩어리들이 가운데로 모임',480,30,nG,'middle','#ffd76b');
- if(who=='n')label('별이 있는 영역 (바깥에는 별이 없음)',FC.x+FR+24,FC.y-FR*.6,nG,'start','#a9b1cc',16);
- label(who=='e'?'단순화한 모형: 우주 전체를 둥근 영역으로 나타내고, 아주 가까워진 별은 하나로 합쳐진다고 가정':'단순화한 모형: 처음에 별들이 멈춰 있고, 아주 가까워진 별은 하나로 합쳐진다고 가정',14,388,nG,'start','#a9b1cc',16)}
+ label('단순화한 모형: 별들이 일정한 영역 안에 있고 처음에 멈춰 있으며, 아주 가까워진 별은 하나로 합쳐진다고 가정',14,388,nG,'start','#a9b1cc',16)}
 function finLoop(){for(let k=0;k<4;k++)finStep(1/240);fTime+=1/60;
  if(FS.length==1||fTime>15){fDone=FS.length==1;finDraw();stopAll();
-  if(who=='e'){ehint.textContent='우주 상수가 없으면 중력만 작용하므로, 뉴턴의 유한한 우주처럼 별들이 서로 끌려가 한곳에 모입니다. 그래서 아인슈타인은 우주 상수를 넣었습니다.';return}
-  nhint.textContent='별들이 서로 끌려가 뭉치며 가운데로 모여, 결국 한곳에 하나의 큰 덩어리로 모입니다. 우주가 유한하면 중력 때문에 이렇게 될 수밖에 없습니다.';return}
+  shint.textContent='별들이 서로 끌려가 뭉치며 가운데로 모여, 결국 하나의 큰 덩어리가 됩니다. 그런데 실제 우주는 왜 이렇게 되지 않을까요? 세 과학자의 아이디어를 살펴보세요.';return}
  finDraw();raf=requestAnimationFrame(finLoop)}
-// 무한하고 균일한 우주: 별을 무늬(pattern)로 끝없이 채움. 재생해도 별들은 움직이지 않음
+function bInit(){finInit();finDraw();shint.textContent='모든 별이 서로 끌어당긴다면 별들은 어떻게 될까요? ▶ 재생을 눌러 보세요.'}
+function bPlay(){if(FS.length==1||fTime>15)finInit();splay.textContent='⏸ 멈춤';raf=requestAnimationFrame(finLoop)}
+
+// ---- 뉴턴: 무한하고 균일한 우주. 별을 무늬(pattern)로 끝없이 채움. 재생해도 별들은 움직이지 않음 ----
 const IC={x:480,y:205},ISP=40;
-let Z=1,selI=0,selJ=0,iT0=0;
+let selI=0,selJ=0;
 // 그림판에서 실제로 보이는 영역 (viewBox 좌표)
 function visBox(){const m=sv.getScreenCTM(),r=sv.getBoundingClientRect();if(!m||!r.width)return{x:0,y:0,w:960,h:400};const i=m.inverse(),a=new DOMPoint(r.left,r.top).matrixTransform(i),b=new DOMPoint(r.right,r.bottom).matrixTransform(i);return{x:a.x,y:a.y,w:b.x-a.x,h:b.y-a.y}}
-function infDraw(){if(nG)nG.remove();nG=mk('g',{},sv);const sp=ISP*Z,sp2=ISP*Math.pow(Z,.6);
+function infDraw(){if(nG)nG.remove();nG=mk('g',{},sv);
  const d=mk('defs',{},nG);
  // 멀리 있는 별(작고 어두움)을 한 겹 더 깔아 깊이감을 줌
- const p2=mk('pattern',{id:'lat2',patternUnits:'userSpaceOnUse',width:sp2,height:sp2,x:IC.x+sp2/2,y:IC.y+sp2/2},d);
- mk('circle',{cx:0,cy:0,r:Math.max(.7,1.4*Math.sqrt(Z)),fill:'#8f9ad0',opacity:.55},p2);
- [[sp2,0],[0,sp2],[sp2,sp2]].forEach(([x,y])=>mk('circle',{cx:x,cy:y,r:Math.max(.7,1.4*Math.sqrt(Z)),fill:'#8f9ad0',opacity:.55},p2));
- const p1=mk('pattern',{id:'lat1',patternUnits:'userSpaceOnUse',width:sp,height:sp,x:IC.x-sp/2,y:IC.y-sp/2},d);
- mk('circle',{cx:sp/2,cy:sp/2,r:Math.max(1,3*Math.sqrt(Z)),fill:'#dfe5ff'},p1);
+ const p2=mk('pattern',{id:'lat2',patternUnits:'userSpaceOnUse',width:ISP,height:ISP,x:IC.x+ISP/2,y:IC.y+ISP/2},d);
+ [[0,0],[ISP,0],[0,ISP],[ISP,ISP]].forEach(([x,y])=>mk('circle',{cx:x,cy:y,r:1.4,fill:'#8f9ad0',opacity:.55},p2));
+ const p1=mk('pattern',{id:'lat1',patternUnits:'userSpaceOnUse',width:ISP,height:ISP,x:IC.x-ISP/2,y:IC.y-ISP/2},d);
+ mk('circle',{cx:ISP/2,cy:ISP/2,r:3,fill:'#dfe5ff'},p1);
  // 그림판이 화면 비율 때문에 좌우·위아래로 넓어져도 빈 곳이 없도록 무늬를 넉넉히 넓게 깖
  const V=visBox();
  mk('rect',{x:V.x-50,y:V.y-50,width:V.w+100,height:V.h+100,fill:'url(#lat2)'},nG);
  mk('rect',{x:V.x-50,y:V.y-50,width:V.w+100,height:V.h+100,fill:'url(#lat1)'},nG);
  // 고른 별: 모든 방향에서 같은 크기로 당겨짐
- const cx=IC.x+selI*sp,cy=IC.y+selJ*sp;
+ const cx=IC.x+selI*ISP,cy=IC.y+selJ*ISP;
  mk('circle',{cx,cy,r:7,fill:'#ffd76b'},nG);
  for(let k=0;k<8;k++){const a=k*Math.PI/4,L=26;arrow(cx+Math.cos(a)*10,cy+Math.sin(a)*10,cx+Math.cos(a)*(10+L),cy+Math.sin(a)*(10+L),'#ffd76b','ay',nG)}
  label('고른 별(노란색): 모든 방향에서 같은 크기로 당겨짐 → 힘의 평형',480,30,nG,'middle','#ffd76b');
  // 화면 가장자리: 별이 바깥으로 끝없이 이어짐
  label('◀ 끝없이',V.x+12,210,nG,'start','#cbd3ff',17);label('끝없이 ▶',V.x+V.w-12,210,nG,'end','#cbd3ff',17);
- label('▼ 끝없이',480,388,nG,'middle','#cbd3ff',17);
-}
-function nInit(){nG=null;nsel.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v==nMode));
- if(nMode=='fin'){finInit();finDraw();nhint.textContent='우주가 유한하다면 별들은 어떻게 될까요? ▶ 재생을 눌러 보세요.'}
- else{Z=1;selI=0;selJ=0;infDraw();nhint.textContent='아무 별이나 눌러 보세요. 어느 별이든 모든 방향에서 같은 크기의 힘으로 당겨져 힘의 평형을 이룹니다. ▶ 재생을 누르면 어떻게 될까요?'}
- stopAll()}
-nplay.onclick=()=>{if(raf){stopAll();return}nplay.textContent='⏸ 멈춤';
- if(nMode=='fin'){if(FS.length==1||fTime>15){finInit()}raf=requestAnimationFrame(finLoop)}
- else{nplay.textContent='▶ 재생';nhint.textContent='시간이 지나도 별들은 움직이지 않습니다. 어느 별이든 모든 방향에서 같은 크기의 힘으로 당겨져 힘의 평형을 이루므로, 별들이 한곳으로 모이지 않고 우주는 변하지 않습니다.'}};
-nreset.onclick=()=>pick('n');
-// 화면 크기가 바뀌면 무한한 우주의 별 무늬를 다시 깖
-addEventListener('resize',()=>{if(who=='n'&&nMode=='inf'&&!raf)infDraw()});
-nsel.addEventListener('click',e=>{const b=e.target.closest('button');if(b){nMode=b.dataset.v;pick('n')}});
-// 무한한 우주에서 별을 누르면 그 별을 고름 (가장 가까운 별)
-sv.addEventListener('click',e=>{if(who!='n'||nMode!='inf'||raf)return;const m=sv.getScreenCTM();if(!m)return;
- const pt=new DOMPoint(e.clientX,e.clientY).matrixTransform(m.inverse()),sp=ISP*Z;
- selI=Math.round((pt.x-IC.x)/sp);selJ=Math.round((pt.y-IC.y)/sp);infDraw();
- nhint.textContent='이 별도 모든 방향에서 같은 크기의 힘으로 당겨져 힘의 평형을 이룹니다. 우주가 끝없이 고르므로 어느 별을 골라도 마찬가지입니다.'});
+ label('▼ 끝없이',480,388,nG,'middle','#cbd3ff',17)}
+function nInit(){selI=0;selJ=0;infDraw();shint.textContent='아무 별이나 눌러 보세요. 어느 별이든 모든 방향에서 같은 크기의 힘으로 당겨져 힘의 평형을 이룹니다. ▶ 재생을 누르면 어떻게 될까요?'}
+function nPlay(){shint.textContent='시간이 지나도 별들은 움직이지 않습니다. 어느 별이든 힘의 평형을 이루므로, 별들이 한곳으로 모이지 않고 우주는 변하지 않습니다.'}
+// 화면 크기가 바뀌면 별 무늬를 다시 깖
+addEventListener('resize',()=>{if(who=='n')infDraw()});
+// 별을 누르면 그 별을 고름 (가장 가까운 별)
+sv.addEventListener('click',e=>{if(who!='n')return;const m=sv.getScreenCTM();if(!m)return;
+ const pt=new DOMPoint(e.clientX,e.clientY).matrixTransform(m.inverse());
+ selI=Math.round((pt.x-IC.x)/ISP);selJ=Math.round((pt.y-IC.y)/ISP);infDraw();
+ shint.textContent='이 별도 모든 방향에서 같은 크기의 힘으로 당겨져 힘의 평형을 이룹니다. 우주가 끝없이 고르므로 어느 별을 골라도 마찬가지입니다.'});
 
-// ---- 아인슈타인: [우주 상수 없음] 뉴턴의 유한한 우주처럼 별들이 서로 끌려가 한곳에 모임 / [우주 상수 있음] 중력과 척력이 균형을 이루어 변하지 않음 ----
-let eMode='no';
-function eInit(){nG=null;esel.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v==eMode));finInit();
- if(eMode=='no'){finDraw();ehint.textContent='우주 상수가 없으면 우주는 어떻게 될까요? ▶ 재생을 눌러 보세요.'}
- else{eqDraw();ehint.textContent='우주 상수가 있으면 우주는 어떻게 될까요? ▶ 재생을 눌러 보세요.'}}
-// 우주 상수가 있을 때: 별마다 안쪽으로 당기는 중력과 바깥쪽으로 밀어내는 척력의 크기가 같음 (둘 다 가운데에서 멀수록 큼)
+// ---- 아인슈타인: 별마다 안쪽으로 당기는 중력과 우주 상수에 의한 척력의 크기가 같음 (둘 다 가운데에서 멀수록 큼) ----
+function eInit(){finInit();eqDraw();shint.textContent='우주 상수가 중력과 균형을 이루면 별들은 어떻게 될까요? ▶ 재생을 눌러 보세요.'}
 function eqDraw(){if(nG)nG.remove();nG=mk('g',{},sv);
  mk('circle',{cx:FC.x,cy:FC.y,r:FR+14,fill:'none',stroke:'#4a5694','stroke-dasharray':'6 6'},nG);
  FS.forEach(s=>mk('circle',{cx:FC.x+s.x,cy:FC.y+s.y,r:fRad(s.m),fill:'#dfe5ff'},nG));
  [0,1,2,3,4,5,6,7].forEach(k=>{const a=k*Math.PI/4+Math.PI/8,c=Math.cos(a),s=Math.sin(a);[70,130].forEach(d=>{const px=FC.x+c*d,py=FC.y+s*d,L=d*.2;
   arrow(px-c*4,py-s*4,px-c*(4+L),py-s*(4+L),'#ffb066','ag',nG);arrow(px+c*4,py+s*4,px+c*(4+L),py+s*(4+L),'#6fd3ff','ar',nG)})});
- label('우주 상수가 있으면: 중력과 척력이 균형을 이루어 우주의 크기가 변하지 않음',480,30,nG,'middle','#6fd3ff');
+ label('중력과 우주 상수에 의한 척력이 균형을 이루어 우주의 크기가 변하지 않음',480,30,nG,'middle','#6fd3ff');
  const lg=mk('g',{},nG);arrow(690,150,728,150,'#ffb066','ag',lg);label('중력 (안쪽으로 끌어당김)',736,155,lg,'start','#e8ecff',17);
  arrow(690,182,728,182,'#6fd3ff','ar',lg);label('우주 상수에 의한 척력',736,187,lg,'start','#e8ecff',17);label('(바깥으로 밀어냄)',736,211,lg,'start','#e8ecff',17);
  label('단순화한 모형: 우주 전체를 둥근 영역으로 나타냄',14,388,nG,'start','#a9b1cc',16)}
-eplay.onclick=()=>{if(raf){stopAll();return}
- if(eMode=='yes'){ehint.textContent='시간이 지나도 별들은 움직이지 않고 우주의 크기는 그대로입니다(정적 우주). 아인슈타인은 이렇게 우주 상수로 정적 우주를 지켰습니다.';return}
- if(FS.length==1||fTime>15)finInit();eplay.textContent='⏸ 멈춤';raf=requestAnimationFrame(finLoop)};
-ereset.onclick=()=>pick('e');
-esel.addEventListener('click',e=>{const b=e.target.closest('button');if(b){eMode=b.dataset.v;pick('e')}});
+function ePlay(){shint.textContent='시간이 지나도 별들은 움직이지 않고 우주의 크기는 그대로입니다(정적 우주). 아인슈타인은 이렇게 우주 상수로 정적 우주를 지켰습니다.'}
 
 // ---- 프리드만: 처음부터 팽창하고 있는 별 무리. 중력이 팽창을 늦추지만 한곳으로 모이지 않음 ----
 // 별 무리의 크기 a: a'' = -k/a² (중력), 처음 속도는 탈출 속도보다 조금 커서 느려지면서도 계속 팽창
@@ -297,21 +271,20 @@ function frDraw(){if(nG)nG.remove();nG=mk('g',{},sv);
  [0,1,2,3,4,5,6,7].forEach(k=>{const an=k*Math.PI/4+Math.PI/8,c=Math.cos(an),s=Math.sin(an);[70,130].forEach(d=>{const px=FC.x+c*d*fa,py=FC.y+s*d*fa,
   Lv=Math.min(70,d*fv*1.8),Lg=Math.min(70,d*FK/(fa*fa)*20);
   arrow(px+c*4,py+s*4,px+c*(4+Lv),py+s*(4+Lv),'#7be08f','av',nG);arrow(px-c*4,py-s*4,px-c*(4+Lg),py-s*(4+Lg),'#ffb066','ag',nG)})});
- label(fT==0?'프리드만의 생각으로 보면: 우주가 처음부터 팽창하고 있다면?':'중력이 팽창을 늦출 뿐, 별들은 한곳으로 모이지 않고 멀어짐',480,30,nG,'middle','#7be08f');
+ label(fT==0?'우주가 처음부터 팽창하고 있다면?':'중력이 팽창을 늦출 뿐, 별들은 한곳으로 모이지 않고 멀어짐',480,30,nG,'middle','#7be08f');
  const lg=mk('g',{},nG);arrow(24,70,62,70,'#7be08f','av',lg);label('별들이 서로 멀어지는 움직임',70,76,lg,'start','#e8ecff',17);
  arrow(24,102,62,102,'#ffb066','ag',lg);label('중력 (안쪽으로 끌어당김)',70,108,lg,'start','#e8ecff',17);
  label(`우주의 크기: 처음의 ${fa.toFixed(2)}배`,944,76,nG,'end','#e8ecff',17);
  label('단순화한 모형: 우주 전체를 둥근 영역으로 나타냄',14,388,nG,'start','#a9b1cc',16)}
-function fInit(){nG=null;finInit();fa=1;fv=FV0;fT=0;
+function fInit(){finInit();fa=1;fv=FV0;fT=0;
  const d=sv.querySelector('defs'),m=mk('marker',{id:'av',viewBox:'0 0 10 10',refX:8,refY:5,markerWidth:5,markerHeight:5,orient:'auto-start-reverse'},d);mk('path',{d:'M0,0L10,5L0,10z',fill:'#7be08f'},m);
- frDraw();fhint.textContent='우주가 처음부터 팽창하고 있다면 중력 때문에 별들이 한곳으로 모일까요? ▶ 재생을 눌러 보세요.'}
+ frDraw();shint.textContent='우주가 처음부터 팽창하고 있다면 중력 때문에 별들이 한곳으로 모일까요? ▶ 재생을 눌러 보세요.'}
 function frLoop(){for(let k=0;k<4;k++){const dt=1/240;fv+=-FK/(fa*fa)*dt;fa+=fv*dt}fT+=1/60;
  if(fa>1.75||fT>12){frDraw();stopAll();
-  fhint.textContent='중력이 별들을 안쪽으로 당겨 팽창이 조금씩 느려지지만, 별들은 한곳으로 모이지 않고 우주는 계속 팽창합니다. 위로 던진 공이 중력을 받아도 올라가는 동안에는 바로 떨어지지 않는 것과 같습니다.';return}
+  shint.textContent='중력이 별들을 안쪽으로 당겨 팽창이 조금씩 느려지지만, 별들은 한곳으로 모이지 않고 우주는 계속 팽창합니다. 위로 던진 공이 중력을 받아도 올라가는 동안에는 바로 떨어지지 않는 것과 같습니다.';return}
  frDraw();raf=requestAnimationFrame(frLoop)}
-fplay.onclick=()=>{if(raf){stopAll();return}if(fa>1.75||fT>12){fa=1;fv=FV0;fT=0}fplay.textContent='⏸ 멈춤';raf=requestAnimationFrame(frLoop)};
-freset.onclick=()=>pick('f');
-pick('n');
+function fPlay(){if(fa>1.75||fT>12){fa=1;fv=FV0;fT=0}splay.textContent='⏸ 멈춤';raf=requestAnimationFrame(frLoop)}
+pick('b');
 
 // 생각해 보기 답 팝업과 비교 표 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
 [['ovc','cmpb','cxc'],['ov3','thb3','thx3'],['ov1','thb1','thx1']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
