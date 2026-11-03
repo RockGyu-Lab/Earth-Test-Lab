@@ -67,8 +67,8 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .bq p{margin:2px 0 0;font-weight:600}
 #snote{min-height:calc(3em + 18px)}
 #snote p{margin:2px 0 0}
-#sv{max-height:max(180px,calc(100vh - 540px))}
-#sv{max-height:max(180px,calc(100dvh - 540px))}
+#sv{max-height:max(220px,calc(100vh - 508px))}
+#sv{max-height:max(220px,calc(100dvh - 508px))}
 /* 생각해 보기: 정식 사이트(eclipses.html 심화 질문, luminosity.html)와 같은 형식
    상자 없이 한 줄에 [꼬리표(남색)] 질문 [답 보기(남색 테두리)] → 누르면 팝업에 질문과 답 */
 .note.ask{margin:10px 0 0;padding:0;border-radius:0;background:none;display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;font-size:.95rem}
@@ -126,8 +126,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   <span class="hint" id="fhint"></span>
  </div>
  <div class="note ask"><span class="tag">생각해 보기</span><p>뉴턴, 아인슈타인, 프리드만의 생각을 정적 우주와 팽창 우주로 구분해 보세요.</p><button type="button" class="open-think" id="thb3">답 보기</button></div>
- <div class="note ask ask2"><span class="tag">생각해 보기</span><p>뉴턴, 아인슈타인, 프리드만 중 누구의 생각이 옳은지 어떻게 판단할 수 있을까요?</p><button type="button" class="open-think" id="thb1">답 보기</button></div>
- <div class="note ask ask2"><span class="tag">심화</span><p>아인슈타인이 버렸던 우주 상수는 오늘날 어떻게 다시 쓰이고 있을까요?</p><button type="button" class="open-think" id="thb2">답 보기</button></div>
+ <div class="note ask ask2"><span class="tag">생각해 보기</span><p>아인슈타인과 프리드만 중 누구의 생각이 옳은지 어떻게 판단할 수 있을까요?</p><button type="button" class="open-think" id="thb1">답 보기</button></div>
 
  <div class="ov" id="ovc" hidden><div class="think" role="dialog" aria-modal="true" aria-label="세 사람의 생각 비교">
   <div class="think-h"><b class="think-t">세 사람의 생각 비교</b><button type="button" class="x" id="cxc" aria-label="닫기">닫기 ✕</button></div>
@@ -145,16 +144,10 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   <p class="ans">정적 우주: 뉴턴, 아인슈타인 / 팽창 우주: 프리드만</p>
   <p class="exp">뉴턴과 아인슈타인은 우주의 크기가 변하지 않는다고 보고, 별들이 한곳으로 모이지 않는 까닭을 각각 무한하고 균일한 별의 분포와 우주 상수로 설명했습니다. 프리드만은 우주가 멈춰 있을 필요가 없으며, 시간에 따라 팽창(또는 수축)할 수 있다고 보았습니다.</p>
  </div></div>
- <div class="ov" id="ov1" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 뉴턴, 아인슈타인, 프리드만 중 누구의 생각이 옳은지 어떻게 판단할 수 있을까요?">
-  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>뉴턴, 아인슈타인, 프리드만 중 누구의 생각이 옳은지 어떻게 판단할 수 있을까요?</b><button type="button" class="x" id="thx1" aria-label="닫기">닫기 ✕</button></div>
-  <p class="ans">생각이나 계산만으로는 정할 수 없고, 실제 우주를 관측한 증거로 판단해야 합니다.</p>
-  <p class="exp">1920년대에 르메트르와 허블은 멀리 있는 은하일수록 더 빠르게 멀어진다는 사실을 밝혔습니다(허블-르메트르 법칙). 이것은 우주가 팽창하고 있다는 증거로, 프리드만과 르메트르가 제시한 팽창 우주를 지지합니다. 다음 탭에서 자세히 알아봅니다.</p>
- </div></div>
- <div class="ov" id="ov2" hidden><div class="think" role="dialog" aria-modal="true" aria-label="심화: 아인슈타인이 버렸던 우주 상수는 오늘날 어떻게 다시 쓰이고 있을까요?">
-  <div class="think-h"><b class="think-t"><span class="tag">심화</span>아인슈타인이 버렸던 우주 상수는 오늘날 어떻게 다시 쓰이고 있을까요?</b><button type="button" class="x" id="thx2" aria-label="닫기">닫기 ✕</button></div>
-  <p class="ans">우주의 팽창 속도가 점점 빨라지는 가속 팽창을 설명하는 데 다시 쓰이고 있으며, 그 원인을 암흑 에너지라고 합니다.</p>
-  <p class="exp">우주가 팽창한다는 사실이 관측으로 밝혀지자, 아인슈타인은 정적 우주를 만들려고 넣었던 우주 상수를 버렸습니다.</p>
-  <p class="exp">그런데 1998년, 멀리 있는 Ia형 초신성을 관측한 결과 우주의 팽창 속도가 점점 빨라지고 있다는 사실이 밝혀졌습니다. 이 가속 팽창을 일으키는 원인을 암흑 에너지라고 하며, 우주 상수는 암흑 에너지를 나타내는 가장 간단한 방법으로 다시 쓰이고 있습니다. 다만 오늘날의 우주 상수는 정적 우주를 만들기 위한 것이 아니라, 우주의 팽창을 가속시키는 역할을 합니다.</p>
+ <div class="ov" id="ov1" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 아인슈타인과 프리드만 중 누구의 생각이 옳은지 어떻게 판단할 수 있을까요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>아인슈타인과 프리드만 중 누구의 생각이 옳은지 어떻게 판단할 수 있을까요?</b><button type="button" class="x" id="thx1" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">생각이나 계산만으로는 정할 수 없고, 실제 우주를 관측하여 우주의 크기가 변하지 않는지, 팽창하고 있는지를 확인해야 합니다.</p>
+  <p class="exp">두 사람은 같은 일반 상대성 이론의 방정식에서 출발했지만, 우주가 실제로 어떤 모습인지는 방정식만으로 정할 수 없습니다. 예를 들어 멀리 있는 은하들이 우리에게서 멀어지고 있는지를 관측하면 판단할 수 있습니다. 다음 탭에서 은하를 관측한 결과를 살펴봅시다.</p>
  </div></div>
 </section>
 
@@ -321,7 +314,7 @@ freset.onclick=()=>pick('f');
 pick('n');
 
 // 생각해 보기 답 팝업과 비교 표 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
-[['ovc','cmpb','cxc'],['ov3','thb3','thx3'],['ov1','thb1','thx1'],['ov2','thb2','thx2']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
+[['ovc','cmpb','cxc'],['ov3','thb3','thx3'],['ov1','thb1','thx1']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
  const closeTh=()=>{ov.hidden=true;btn.focus()};
  btn.addEventListener('click',()=>{ov.hidden=false;cl.focus()});cl.addEventListener('click',closeTh);
  ov.addEventListener('click',e=>{if(e.target===ov)closeTh()});
