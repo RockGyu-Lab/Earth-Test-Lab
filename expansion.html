@@ -79,9 +79,11 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 :root{--paper:#fffaee;--pline:#c9d8ee;--pmar:#eeaaaa;--pbd:#eadfc6}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#29271f;--pline:#3c475c;--pmar:#7a4040;--pbd:#3d3a2e}}
 :root[data-theme="dark"]{--paper:#29271f;--pline:#3c475c;--pmar:#7a4040;--pbd:#3d3a2e}
-.duo>.lq{display:flex;flex-direction:column;padding:10px 14px 8px 40px;background:linear-gradient(90deg,transparent 27px,var(--pmar) 27px 28px,transparent 28px 30px,var(--pmar) 30px 31px,transparent 31px),var(--paper);border:1px solid var(--pbd);border-radius:6px;box-shadow:0 2px 6px rgba(60,40,0,.12)}
-.lq .body{flex:1;margin:4px 0 0;line-height:1.75;background:repeating-linear-gradient(transparent 0 calc(1.75em - 1px),var(--pline) calc(1.75em - 1px) 1.75em)}
+.duo>.lq{align-self:start!important;display:flex;flex-direction:column;padding:10px 14px 8px 40px;background:linear-gradient(90deg,transparent 27px,var(--pmar) 27px 28px,transparent 28px 30px,var(--pmar) 30px 31px,transparent 31px),var(--paper);border:1px solid var(--pbd);border-radius:6px;box-shadow:0 2px 6px rgba(60,40,0,.12)}
+.lq .body{flex:1;margin:4px 0 0;font-style:italic;line-height:1.75;background:repeating-linear-gradient(transparent 0 calc(1.75em - 1px),var(--pline) calc(1.75em - 1px) 1.75em)}
 .aside{opacity:.72;font-size:.9em}
+/* 학생에게 할 일을 알려 주는 말: 재생 단추와 같은 남색 굵은 글씨로 설명과 구분 */
+.go{color:var(--acc);font-weight:700}
 .lq .from{display:block;text-align:right;padding-right:.5em}
 .srow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
 /* 왼쪽·오른쪽 그림판의 높이를 똑같이 맞춤 (화면 높이에 따라 정하고, 그림은 가운데에 맞춰 그림) */
@@ -286,7 +288,9 @@ function bLoop(){for(let k=0;k<4;k++)finStep(1/240);bTime+=1/60;
  if(BS.length==1||bTime>15){bDone=BS.length==1;bDraw();bStop();
   bhint.textContent='별들이 한 점으로 모입니다.';return}
  bDraw();braf=requestAnimationFrame(bLoop)}
-function bInit(){bStop();BS=makeStars();bTime=0;bDone=false;bDraw();bhint.textContent='재생 버튼을 눌러주세요.'}
+// 재생을 눌러 달라는 안내 (남색 굵은 글씨)
+const GO='<span class="go">재생 버튼을 눌러주세요.</span>';
+function bInit(){bStop();BS=makeStars();bTime=0;bDone=false;bDraw();bhint.innerHTML=GO}
 bplay.onclick=()=>{if(braf){bStop();return}if(BS.length==1||bTime>15){BS=makeStars();bTime=0;bDone=false}bplay.textContent='⏸ 멈춤';bhint.textContent='';braf=requestAnimationFrame(bLoop)};
 breset.onclick=bInit;
 bInit();
@@ -294,9 +298,9 @@ bInit();
 // ==== 오른쪽: 세 과학자의 해결 아이디어 (그림판 sv) ====
 const SN={
  '':'<p>벤틀리의 질문처럼 별들이 한곳에 모이지 않으려면 어떻게 해야 할까요? 위에서 세 과학자 중 한 사람을 골라 그 사람의 생각을 알아보세요.</p>',
- n:'<div class="nh">뉴턴의 해결 아이디어 <span class="ex">· 무한하고 균일한 정적 우주 (1692년)</span></div><p>우주가 끝없이 넓고 별이 균일하게 퍼져 있다면, 어느 별이든 모든 방향에서 같은 크기의 힘으로 당겨져 힘의 평형을 이룬다. 그래서 별들은 한곳으로 모이지 않는다. <span class="aside">(속마음: 바늘을 거꾸로 세운 듯 아슬아슬해서, 사실 내 답변이 마음에 들지는 않아.)</span></p>',
+ n:'<div class="nh">뉴턴의 해결 아이디어 <span class="ex">· 무한하고 균일한 정적 우주 (1692년)</span></div><p>우주가 끝없이 넓고 별이 균일하게 퍼져 있다면, 어느 별이든 모든 방향에서 같은 크기의 힘으로 당겨져 힘의 평형을 이룬다. 그래서 별들은 한곳으로 모이지 않는다. <span class="aside">(속마음: 실제로는 일어나기 어려운 일인 것 같아서, 사실 내 답변이 마음에 들지는 않아.)</span></p>',
  e:'<div class="nh">아인슈타인의 해결 아이디어 <span class="ex">· 우주 상수로 지킨 정적 우주 (1917년)</span></div><p>중력만 있으면 우주는 그대로 있을 수 없다. 그래서 중력과 반대로 밀어내는 효과를 내는 <b>우주 상수</b>를 식에 넣어, 중력과 균형을 이루는 정적 우주를 만들었다. <span class="aside">(속마음: 우주가 팽창하거나 수축하며 변한다니, 그건 도저히 믿을 수 없어!)</span></p>',
- f:'<div class="nh">프리드만의 해결 아이디어 <span class="ex">· 팽창하는 우주 (1922년)</span></div><p>아인슈타인의 방정식을 풀어 우주가 팽창하거나 수축할 수 있음을 보였다. 우주가 <b>팽창하고 있다면</b> 중력은 팽창을 늦출 뿐, 별들이 한곳으로 모이지 않는다. <span class="aside">(속마음: 방정식이 허락하는데, 우주가 꼭 멈춰 있어야 할 이유가 있을까?)</span></p>'};
+ f:'<div class="nh">프리드만의 해결 아이디어 <span class="ex">· 팽창하는 우주 (1922년)</span></div><p>아인슈타인의 방정식을 풀어 우주가 팽창하거나 수축할 수 있음을 보였다. 우주가 <b>팽창하고 있다면</b> 중력은 팽창을 늦출 뿐, 별들이 한곳으로 모이지 않는다. <span class="aside">(속마음: 계산해 보면 우주는 커질 수도 있는데, 꼭 멈춰 있어야 할 이유가 있을까?)</span></p>'};
 const RC={x:360,y:172};
 let who='',raf=0,nG=null,ES=[];
 function stopAll(){cancelAnimationFrame(raf);raf=0;splay.textContent='▶ 재생'}
@@ -335,7 +339,7 @@ function infDraw(){if(nG)nG.remove();nG=mk('g',{},sv);
  // 화면 가장자리: 별이 바깥으로 끝없이 이어짐
  label('◀ 끝없이',V.x+12,177,nG,'start','#cbd3ff',17);label('끝없이 ▶',V.x+V.w-12,177,nG,'end','#cbd3ff',17);
  label('▼ 끝없이',360,320,nG,'middle','#cbd3ff',17)}
-function nInit(){selI=0;selJ=0;infDraw();shint.textContent='아무 별이나 눌러 보세요.'}
+function nInit(){selI=0;selJ=0;infDraw();shint.innerHTML='<span class="go">아무 별이나 눌러 보세요.</span>'}
 function nPlay(){shint.textContent='시간이 지나도 별들은 움직이지 않습니다. 모든 별이 힘의 평형을 이루어 우주는 변하지 않습니다.'}
 // 화면 크기가 바뀌면 별 무늬를 다시 깖
 addEventListener('resize',()=>{if(who=='n')infDraw()});
@@ -343,13 +347,13 @@ addEventListener('resize',()=>{if(who=='n')infDraw()});
 sv.addEventListener('click',e=>{if(who!='n')return;const m=sv.getScreenCTM();if(!m)return;
  const pt=new DOMPoint(e.clientX,e.clientY).matrixTransform(m.inverse());
  selI=Math.round((pt.x-RC.x)/ISP);selJ=Math.round((pt.y-RC.y)/ISP);infDraw();
- shint.textContent='이 별도 모든 방향에서 같은 크기로 당겨집니다. 이제 재생 버튼을 눌러주세요.'});
+ shint.innerHTML='이 별도 모든 방향에서 같은 크기로 당겨집니다.<br>'+GO});
 
 // 범례 한 줄: 화살표 + 글
 function legend(y,c,m,s,par){arrow(14,y,50,y,c,m,par);label(s,58,y+5,par,'start','#e8ecff',16)}
 
 // ---- 아인슈타인: 별마다 안쪽으로 당기는 중력과 우주 상수에 의한 척력의 크기가 같음 (둘 다 가운데에서 멀수록 큼) ----
-function eInit(){ES=makeStars();eqDraw();shint.textContent='재생 버튼을 눌러주세요.'}
+function eInit(){ES=makeStars();eqDraw();shint.innerHTML=GO}
 function eqDraw(){if(nG)nG.remove();nG=mk('g',{},sv);
  mk('circle',{cx:RC.x,cy:RC.y,r:SR+14,fill:'none',stroke:'#4a5694','stroke-dasharray':'6 6'},nG);
  ES.forEach(s=>mk('circle',{cx:RC.x+s.x,cy:RC.y+s.y,r:fRad(s.m),fill:'#dfe5ff'},nG));
@@ -375,7 +379,7 @@ function frDraw(){if(nG)nG.remove();nG=mk('g',{},sv);
  const lg=mk('g',{},nG);legend(66,'#7be08f','av','멀어지는 움직임',lg);legend(94,'#ffb066','ag','중력 (끌어당김)',lg);
  label(`우주의 크기: 처음의 ${fa.toFixed(2)}배`,708,71,nG,'end','#e8ecff',16);
  label('단순화한 모형: 우주 전체를 둥근 영역으로 나타냄',10,322,nG,'start','#a9b1cc',15)}
-function fInit(){ES=makeStars();fa=1;fv=FV0;fT=0;frDraw();shint.textContent='재생 버튼을 눌러주세요.'}
+function fInit(){ES=makeStars();fa=1;fv=FV0;fT=0;frDraw();shint.innerHTML=GO}
 function frLoop(){for(let k=0;k<4;k++){const dt=1/240;fv+=-FK/(fa*fa)*dt;fa+=fv*dt}fT+=1/60;
  if(fa>1.75||fT>12){frDraw();stopAll();return}
  frDraw();raf=requestAnimationFrame(frLoop)}
