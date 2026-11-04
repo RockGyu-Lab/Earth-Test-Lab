@@ -45,7 +45,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 /* 그림 아래 조작 줄 */
 .ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:8px;padding:8px 12px;border-radius:14px;background:var(--card);min-height:50px}
 #p1 .ctl{min-height:60px}
-#p1 .lc .hint{flex-basis:120px}
+#p1 .lc{gap:8px}#p1 .lc .pb{padding:6px 11px}#p1 .lc .hint{flex:1 1 0;min-width:0;font-size:.84rem}
 .ctl[hidden],.seg[hidden]{display:none}
 .unit{font-size:.85rem;opacity:.75}
 .hint{flex:1 1 260px;font-size:.86rem;line-height:1.45}
@@ -81,6 +81,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 :root[data-theme="dark"]{--paper:#29271f;--pline:#3c475c;--pmar:#7a4040;--pbd:#3d3a2e}
 .duo>.lq{display:flex;flex-direction:column;padding:10px 14px 8px 40px;background:linear-gradient(90deg,transparent 27px,var(--pmar) 27px 28px,transparent 28px 30px,var(--pmar) 30px 31px,transparent 31px),var(--paper);border:1px solid var(--pbd);border-radius:6px;box-shadow:0 2px 6px rgba(60,40,0,.12)}
 .lq .body{flex:1;margin:4px 0 0;line-height:1.75;background:repeating-linear-gradient(transparent 0 calc(1.75em - 1px),var(--pline) calc(1.75em - 1px) 1.75em)}
+.aside{opacity:.72;font-size:.9em}
 .lq .from{display:block;text-align:right;padding-right:.5em}
 .srow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
 /* 왼쪽·오른쪽 그림판의 높이를 똑같이 맞춤 (화면 높이에 따라 정하고, 그림은 가운데에 맞춰 그림) */
@@ -140,11 +141,11 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 
 <!-- 화살표 머리 (두 그림판이 함께 씀) -->
 <svg aria-hidden="true" style="position:absolute;width:0;height:0;box-shadow:none"><defs>
- <marker id="ag" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#ffb066"/></marker>
- <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#6fd3ff"/></marker>
- <marker id="ay" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#ffd76b"/></marker>
- <marker id="av" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#7be08f"/></marker>
- <marker id="aw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#ffd76b"/></marker>
+ <marker id="ag" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="3.4" markerHeight="3.4" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#ffb066"/></marker>
+ <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="3.4" markerHeight="3.4" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#6fd3ff"/></marker>
+ <marker id="ay" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="3.4" markerHeight="3.4" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#ffd76b"/></marker>
+ <marker id="av" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="3.4" markerHeight="3.4" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#7be08f"/></marker>
+ <marker id="aw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="2.8" markerHeight="2.8" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#ffd76b"/></marker>
 </defs></svg>
 
 <!-- ① 정적 우주와 팽창 우주: 왼쪽 [벤틀리의 질문] 별들이 서로 끌어당기면 한곳에 모임 | 오른쪽 뉴턴, 아인슈타인, 프리드만의 해결 아이디어를 골라 봄 -->
@@ -283,19 +284,19 @@ function bDraw(){if(bG)bG.remove();bG=mk('g',{},bv);
  label('단순화한 모형: 부딪힌 별은 합쳐진다고 가정',8,330,bG,'start','#a9b1cc',15)}
 function bLoop(){for(let k=0;k<4;k++)finStep(1/240);bTime+=1/60;
  if(BS.length==1||bTime>15){bDone=BS.length==1;bDraw();bStop();
-  bhint.textContent='실제 우주는 왜 이렇게 되지 않을까요?';return}
+  bhint.textContent='별들이 한 점으로 모입니다.';return}
  bDraw();braf=requestAnimationFrame(bLoop)}
-function bInit(){bStop();BS=makeStars();bTime=0;bDone=false;bDraw();bhint.textContent=''}
-bplay.onclick=()=>{if(braf){bStop();return}if(BS.length==1||bTime>15){BS=makeStars();bTime=0;bDone=false}bplay.textContent='⏸ 멈춤';braf=requestAnimationFrame(bLoop)};
+function bInit(){bStop();BS=makeStars();bTime=0;bDone=false;bDraw();bhint.textContent='재생 버튼을 눌러주세요.'}
+bplay.onclick=()=>{if(braf){bStop();return}if(BS.length==1||bTime>15){BS=makeStars();bTime=0;bDone=false}bplay.textContent='⏸ 멈춤';bhint.textContent='';braf=requestAnimationFrame(bLoop)};
 breset.onclick=bInit;
 bInit();
 
 // ==== 오른쪽: 세 과학자의 해결 아이디어 (그림판 sv) ====
 const SN={
  '':'<p>벤틀리의 질문처럼 별들이 한곳에 모이지 않으려면 어떻게 해야 할까요? 위에서 세 과학자 중 한 사람을 골라 그 사람의 생각을 알아보세요.</p>',
- n:'<div class="nh">뉴턴의 해결 아이디어 <span class="ex">· 무한하고 균일한 정적 우주 (1692년)</span></div><p>우주가 끝없이 넓고 별이 고르게 퍼져 있다면, 어느 별이든 모든 방향에서 같은 크기의 힘으로 당겨져 힘의 평형을 이룬다. 그래서 별들은 한곳으로 모이지 않는다.</p>',
- e:'<div class="nh">아인슈타인의 해결 아이디어 <span class="ex">· 우주 상수로 지킨 정적 우주 (1917년)</span></div><p>중력만 있으면 우주는 그대로 있을 수 없다. 그래서 중력과 반대로 밀어내는 효과를 내는 <b>우주 상수</b>를 식에 넣어, 중력과 균형을 이루는 정적 우주를 만들었다.</p>',
- f:'<div class="nh">프리드만의 해결 아이디어 <span class="ex">· 팽창하는 우주 (1922년)</span></div><p>아인슈타인의 방정식을 풀어 우주가 팽창하거나 수축할 수 있음을 보였다. 우주가 <b>팽창하고 있다면</b> 중력은 팽창을 늦출 뿐, 별들이 한곳으로 모이지 않는다.</p>'};
+ n:'<div class="nh">뉴턴의 해결 아이디어 <span class="ex">· 무한하고 균일한 정적 우주 (1692년)</span></div><p>우주가 끝없이 넓고 별이 균일하게 퍼져 있다면, 어느 별이든 모든 방향에서 같은 크기의 힘으로 당겨져 힘의 평형을 이룬다. 그래서 별들은 한곳으로 모이지 않는다. <span class="aside">(속마음: 바늘을 거꾸로 세운 듯 아슬아슬해서, 사실 내 답변이 마음에 들지는 않아.)</span></p>',
+ e:'<div class="nh">아인슈타인의 해결 아이디어 <span class="ex">· 우주 상수로 지킨 정적 우주 (1917년)</span></div><p>중력만 있으면 우주는 그대로 있을 수 없다. 그래서 중력과 반대로 밀어내는 효과를 내는 <b>우주 상수</b>를 식에 넣어, 중력과 균형을 이루는 정적 우주를 만들었다. <span class="aside">(속마음: 우주가 팽창하거나 수축하며 변한다니, 그건 도저히 믿을 수 없어!)</span></p>',
+ f:'<div class="nh">프리드만의 해결 아이디어 <span class="ex">· 팽창하는 우주 (1922년)</span></div><p>아인슈타인의 방정식을 풀어 우주가 팽창하거나 수축할 수 있음을 보였다. 우주가 <b>팽창하고 있다면</b> 중력은 팽창을 늦출 뿐, 별들이 한곳으로 모이지 않는다. <span class="aside">(속마음: 방정식이 허락하는데, 우주가 꼭 멈춰 있어야 할 이유가 있을까?)</span></p>'};
 const RC={x:360,y:172};
 let who='',raf=0,nG=null,ES=[];
 function stopAll(){cancelAnimationFrame(raf);raf=0;splay.textContent='▶ 재생'}
@@ -342,13 +343,13 @@ addEventListener('resize',()=>{if(who=='n')infDraw()});
 sv.addEventListener('click',e=>{if(who!='n')return;const m=sv.getScreenCTM();if(!m)return;
  const pt=new DOMPoint(e.clientX,e.clientY).matrixTransform(m.inverse());
  selI=Math.round((pt.x-RC.x)/ISP);selJ=Math.round((pt.y-RC.y)/ISP);infDraw();
- shint.textContent='이 별도 모든 방향에서 같은 크기로 당겨집니다. 어느 별을 골라도 마찬가지입니다.'});
+ shint.textContent='이 별도 모든 방향에서 같은 크기로 당겨집니다. 이제 재생 버튼을 눌러주세요.'});
 
 // 범례 한 줄: 화살표 + 글
 function legend(y,c,m,s,par){arrow(14,y,50,y,c,m,par);label(s,58,y+5,par,'start','#e8ecff',16)}
 
 // ---- 아인슈타인: 별마다 안쪽으로 당기는 중력과 우주 상수에 의한 척력의 크기가 같음 (둘 다 가운데에서 멀수록 큼) ----
-function eInit(){ES=makeStars();eqDraw();shint.textContent=''}
+function eInit(){ES=makeStars();eqDraw();shint.textContent='재생 버튼을 눌러주세요.'}
 function eqDraw(){if(nG)nG.remove();nG=mk('g',{},sv);
  mk('circle',{cx:RC.x,cy:RC.y,r:SR+14,fill:'none',stroke:'#4a5694','stroke-dasharray':'6 6'},nG);
  ES.forEach(s=>mk('circle',{cx:RC.x+s.x,cy:RC.y+s.y,r:fRad(s.m),fill:'#dfe5ff'},nG));
@@ -374,13 +375,16 @@ function frDraw(){if(nG)nG.remove();nG=mk('g',{},sv);
  const lg=mk('g',{},nG);legend(66,'#7be08f','av','멀어지는 움직임',lg);legend(94,'#ffb066','ag','중력 (끌어당김)',lg);
  label(`우주의 크기: 처음의 ${fa.toFixed(2)}배`,708,71,nG,'end','#e8ecff',16);
  label('단순화한 모형: 우주 전체를 둥근 영역으로 나타냄',10,322,nG,'start','#a9b1cc',15)}
-function fInit(){ES=makeStars();fa=1;fv=FV0;fT=0;frDraw();shint.textContent=''}
+function fInit(){ES=makeStars();fa=1;fv=FV0;fT=0;frDraw();shint.textContent='재생 버튼을 눌러주세요.'}
 function frLoop(){for(let k=0;k<4;k++){const dt=1/240;fv+=-FK/(fa*fa)*dt;fa+=fv*dt}fT+=1/60;
- if(fa>1.75||fT>12){frDraw();stopAll();
-  shint.textContent='위로 던진 공이 올라가는 동안 떨어지지 않듯, 팽창하는 우주는 중력이 있어도 한곳으로 모이지 않습니다.';return}
+ if(fa>1.75||fT>12){frDraw();stopAll();return}
  frDraw();raf=requestAnimationFrame(frLoop)}
-function fPlay(){if(fa>1.75||fT>12){fa=1;fv=FV0;fT=0}splay.textContent='⏸ 멈춤';raf=requestAnimationFrame(frLoop)}
-pick('');
+function fPlay(){if(fa>1.75||fT>12){fa=1;fv=FV0;fT=0}splay.textContent='⏸ 멈춤';
+ shint.textContent='위로 던진 공이 올라가는 동안 떨어지지 않듯, 팽창하는 우주는 중력이 있어도 한곳으로 모이지 않습니다.';raf=requestAnimationFrame(frLoop)}
+// 과학자를 바꿔도 아래 그림판이 움직이지 않도록 설명 칸 높이를 가장 긴 설명에 맞춤
+function fitNote(){snote.style.minHeight='';let m=0;for(const k in SN){snote.innerHTML=SN[k];m=Math.max(m,snote.offsetHeight)}snote.style.minHeight=m+'px';snote.innerHTML=SN[who]}
+addEventListener('resize',fitNote);
+fitNote();pick('');
 
 // ---- 소리의 도플러 효과: 위 칸 [구급차] 사이렌 소리를 듣고 파면을 봄 / 아래 칸 [오리] 물결파의 파장을 봄 ----
 // 두 칸은 같은 조건(멈춰 있을 때 / 움직일 때)으로 함께 움직임
