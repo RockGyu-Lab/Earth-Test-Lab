@@ -98,13 +98,16 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 #sview{display:flex;flex-direction:column;gap:8px}
 #sview[hidden],svg[hidden],.sndb[hidden]{display:none}
 .dwrap{position:relative}
-#dsc{max-height:max(170px,calc((100vh - 416px)*.63))}
-#dsc{max-height:max(170px,calc((100dvh - 416px)*.63))}
-#dwave{max-height:max(100px,calc((100vh - 416px)*.37))}
-#dwave{max-height:max(100px,calc((100dvh - 416px)*.37))}
-/* 그림판 왼쪽 위의 구급차·오리 고르기 단추 (연보라) */
-.dsel{position:absolute;top:8px;left:8px}
-.dsel button{padding:4px 12px;font-size:.85rem}
+#dsc{max-height:max(170px,calc((100vh - 456px)*.63))}
+#dsc{max-height:max(170px,calc((100dvh - 456px)*.63))}
+#dwave{max-height:max(100px,calc((100vh - 456px)*.37))}
+#dwave{max-height:max(100px,calc((100dvh - 456px)*.37))}
+/* 해보기 팝업(오리가 만든 물결파): 넓은 팝업 안에서 그림판이 화면 높이에 맞춰 줄어듦 */
+.think.wide{width:min(980px,100%)}
+#dslot{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+#dslot #dsc{max-height:max(170px,calc((100vh - 260px)*.63))}
+#dslot #dwave{max-height:max(100px,calc((100vh - 260px)*.37))}
+#dslot .ctl{margin:0}
 /* 그림판 귀퉁이의 소리 켬·끔 단추 (연보라) */
 .sndb{position:absolute;top:8px;right:8px;padding:4px 12px;border:1px solid var(--sub-bd);border-radius:999px;background:var(--sub-bg);color:var(--sub-tx);font-size:.85rem;font-weight:700;cursor:pointer}
 .sndb.on{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub)}
@@ -228,10 +231,10 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   <div class="subtabs" id="hsel"><button data-v="s" class="on">소리(음파)와 물결파의 도플러 효과</button><button data-v="l">빛(전자기파)의 도플러 효과</button></div>
  </div>
  <div class="note" id="hnote"></div>
- <!-- 소리(음파)와 물결파의 도플러 효과: 위 칸 구급차(소리) 또는 오리(물결파)를 골라 봄, 아래 칸 파동의 모습 -->
+ <!-- 소리(음파)와 물결파의 도플러 효과: 위 칸 구급차(소리), 아래 칸 파동의 모습
+      [해보기]를 누르면 이 그림판과 조작 줄이 팝업으로 옮겨 가서 오리(물결파)를 보여 주고, 닫으면 제자리로 돌아와 구급차를 보여 줌 -->
  <div id="sview">
   <div class="dwrap"><svg id="dsc" viewBox="0 0 960 220"></svg>
-   <div class="subtabs dsel" id="dsrcb"><button data-v="a" class="on">구급차의 사이렌 소리</button><button data-v="d">헤엄치는 오리가 만든 물결파</button></div>
    <button type="button" class="sndb on" id="sndb" aria-pressed="true">🔊 소리 켬</button></div>
   <svg id="dwave" viewBox="0 0 960 130"></svg>
  </div>
@@ -239,16 +242,21 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  <svg id="hv" viewBox="0 0 960 340" hidden></svg>
  <div class="ctl" id="dctl">
   <button class="pb" id="dplay">▶ 재생</button><button class="pb" id="dreset">↺ 처음으로</button>
-  <div class="seg"><div class="bs" id="dmov"><button data-v="0" class="on">멈춰 있을 때</button><button data-v="1">움직일 때</button></div></div>
-  <div class="seg" id="dspdw" hidden><div class="bs" id="dspd"><button data-v="1" class="on">기본 속력</button><button data-v="2">속력 2배</button></div></div>
+  <div class="seg"><div class="bs" id="dmov"><button data-v="0" class="on">멈춰 있을 때</button><button data-v="1">천천히 움직일 때</button><button data-v="2">빨리 움직일 때(2배)</button></div></div>
   <span class="hint" id="dhint"></span>
  </div>
  <div class="ctl" id="lctl" hidden><span class="unit">조작 단추가 들어갈 자리</span></div>
- <!-- 생각해 보기 2개 (꼬리표 + 질문 + 답 보기 팝업) -->
+ <!-- 해보기(오리가 만든 물결파 팝업) + 생각해 보기 2개 (꼬리표 + 질문 + 답 보기 팝업) -->
  <div id="dask">
- <div class="note ask"><span class="tag">생각해 보기</span><p>파원이 관찰자를 향해 올 때와 파원이 관찰자로부터 멀어질 때 파장은 어떻게 달라지나요?</p><button type="button" class="open-think" id="thb5">답 보기</button></div>
+ <div class="note ask"><button type="button" class="pb" id="dtryb">해보기</button><p>헤엄치는 오리가 만든 물결파에서도 도플러 효과가 나타나는지 확인해 보세요.</p></div>
+ <div class="note ask ask2"><span class="tag">생각해 보기</span><p>파원이 관찰자를 향해 올 때와 파원이 관찰자로부터 멀어질 때 파장은 어떻게 달라지나요?</p><button type="button" class="open-think" id="thb5">답 보기</button></div>
  <div class="note ask ask2"><span class="tag">생각해 보기</span><p>파원이 움직이는 속도가 빨라지면, 파장의 변화 폭은 어떻게 달라지나요?</p><button type="button" class="open-think" id="thb6">답 보기</button></div>
  </div>
+ <div class="ov" id="ovd" hidden><div class="think wide" role="dialog" aria-modal="true" aria-label="해보기: 헤엄치는 오리가 만든 물결파">
+  <div class="think-h"><b class="think-t"><span class="tag">해보기</span>헤엄치는 오리가 만든 물결파</b><button type="button" class="x" id="dtryx" aria-label="닫기">닫기 ✕</button></div>
+  <p class="exp">물 위에 떠 있는 두 나뭇잎을 관찰자로 보고, 오리가 멈춰 있을 때와 움직일 때 나뭇잎이 흔들리는 빠르기(진동수)를 비교해 보세요.</p>
+  <div id="dslot"></div>
+ </div></div>
  <div class="ov" id="ov5" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 파원이 관찰자를 향해 올 때와 파원이 관찰자로부터 멀어질 때 파장은 어떻게 달라지나요?">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>파원이 관찰자를 향해 올 때와 파원이 관찰자로부터 멀어질 때 파장은 어떻게 달라지나요?</b><button type="button" class="x" id="thx5" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">파원이 다가올 때는 관찰자 쪽의 파장이 짧아지고, 멀어질 때는 파장이 길어집니다.</p>
@@ -259,7 +267,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>파원이 움직이는 속도가 빨라지면, 파장의 변화 폭은 어떻게 달라지나요?</b><button type="button" class="x" id="thx6" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">파원이 빠르게 움직일수록 파장의 변화 폭이 커집니다. 앞쪽의 파장은 더 짧아지고, 뒤쪽의 파장은 더 길어집니다.</p>
   <p class="exp">파원은 파면을 한 번 내보내고 다음 파면을 내보낼 때까지(한 주기 동안) 일정한 거리를 이동하고, 앞쪽 파장은 이 거리만큼 짧아지고 뒤쪽 파장은 이 거리만큼 길어집니다. 파원이 빨라지면 한 주기 동안 이동하는 거리가 늘어나므로 파장의 변화도 커집니다.</p>
-  <p class="exp">예를 들어 구급차가 소리 속력의 0.3배로 움직이면 앞쪽 파장은 원래의 0.7배, 뒤쪽 파장은 1.3배가 됩니다. 속력을 2배(소리 속력의 0.6배)로 하면 앞쪽은 0.4배, 뒤쪽은 1.6배가 됩니다. <span class="go">'움직일 때'를 고른 뒤 '속력 2배' 단추를 눌러 확인해 보세요.</span></p>
+  <p class="exp">예를 들어 구급차가 소리 속력의 0.3배로 움직이면 앞쪽 파장은 원래의 0.7배, 뒤쪽 파장은 1.3배가 됩니다. 속력을 2배(소리 속력의 0.6배)로 하면 앞쪽은 0.4배, 뒤쪽은 1.6배가 됩니다. <span class="go">'천천히 움직일 때'와 '빨리 움직일 때(2배)'를 눌러 비교해 보세요.</span></p>
  </div></div>
 </section>
 
@@ -597,7 +605,7 @@ function dDraw(){const t=dT,P=DS[dsrc];dsc.innerHTML='';const g=mk('g',{},dsc),x
   txt(`차이가 잘 드러나도록 오리를 물결파 속력의 ${vr(P)}배로 빠르게 나타냄`,{x:480,y:211,'text-anchor':'middle',fill:'#cfe3f5','font-size':12,opacity:.85},g)}
  waveStrip(P,t)}
 
-const DN='<p style="margin:0"><span class="go">그림 왼쪽에 있는 구급차와 오리 중 하나를 고르세요.</span></p>';
+const DN='<p style="margin:0">구급차가 멈춰 있을 때, 천천히 이동할 때, 빠르게 이동할 때 들리는 소리의 차이를 비교해 보세요.</p>';
 const dInitMsg=()=>dsrc=='a'?(dmv?'<span class="go">▶ 재생을 눌러 보세요.</span> 구급차가 왼쪽에서 오른쪽으로 지나갑니다. 소리의 높낮이와 앞뒤 파장을 비교해 보세요.':'<span class="go">▶ 재생을 눌러 멈춰 있는 구급차의 사이렌 소리를 들어 보세요.</span>')
  :(dmv?'<span class="go">▶ 재생을 눌러 보세요.</span> 물 위의 두 나뭇잎을 관찰자로 보고, 흔들리는 빠르기(진동수)를 비교해 보세요.':'<span class="go">▶ 재생을 눌러 보세요.</span> 제자리에서 물을 젓는 오리가 물결을 만듭니다.');
 function dMsg(h){if(dsrc=='d')return dmv?'오리가 다가오는 나뭇잎 2는 진동수가 크고, 오리가 멀어지는 나뭇잎 1은 진동수가 작습니다.':'멈춰 있을 때: 물결이 모든 방향으로 같은 간격으로 퍼져, 두 나뭇잎이 같은 진동수로 흔들립니다.';
@@ -616,12 +624,20 @@ function dLoop(now){dT+=DSPD*Math.min(.05,(now-dLast)/1000);dLast=now;const end=
  const h=dSound();dDraw();dSetHint(dMsg(h));draf=requestAnimationFrame(dLoop)}
 function dPlay(){if(draf){dStop();return}if(dT>=dEnd())dT=0;if(dsrc=='a'&&dsnd)aStart();
  dplay.textContent='⏸ 멈춤';dLast=performance.now();draf=1;dSound();draf=requestAnimationFrame(dLoop)}
-function dInit(){dStop();dT=0;hnote.innerHTML=DN;sndb.hidden=dsrc!='a';dspdw.hidden=!dmv;dDraw();dSetHint(dInitMsg())}
+function dInit(){dStop();dT=0;hnote.innerHTML=DN;sndb.hidden=dsrc!='a';dDraw();dSetHint(dInitMsg())}
 function segPick(box,v){box.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v==v))}
 dplay.onclick=dPlay;dreset.onclick=dInit;
-dmov.onclick=e=>{const b=e.target.closest('button');if(!b)return;dmv=+b.dataset.v;segPick(dmov,b.dataset.v);dInit()};
-dspd.onclick=e=>{const b=e.target.closest('button');if(!b)return;dk=+b.dataset.v;segPick(dspd,b.dataset.v);dInit()};
-dsrcb.onclick=e=>{const b=e.target.closest('button');if(!b)return;dsrc=b.dataset.v;segPick(dsrcb,b.dataset.v);dInit()};
+dmov.onclick=e=>{const b=e.target.closest('button');if(!b)return;dmv=+b.dataset.v?1:0;dk=b.dataset.v=='2'?2:1;segPick(dmov,b.dataset.v);dInit()};
+// 해보기: 그림판(sview)과 조작 줄(dctl)을 팝업 안으로 옮겨 오리(물결파)를 보여 주고, 닫으면 제자리로 돌려 구급차를 보여 줌
+// 팝업이 열려 있는 동안 뒤쪽 화면이 줄어들지 않도록 같은 높이의 빈 칸을 남겨 둠
+const dhold=document.createElement('div');
+function dTry(open){dStop();
+ if(open){dhold.style.height=(sview.offsetHeight+dctl.offsetHeight+8)+'px';sview.before(dhold);dslot.append(sview,dctl);dsrc='d';ovd.hidden=false;dtryx.focus()}
+ else{dhold.before(sview,dctl);dhold.remove();dsrc='a';ovd.hidden=true;dtryb.focus()}
+ dInit()}
+dtryb.onclick=()=>dTry(1);dtryx.onclick=()=>dTry(0);
+ovd.addEventListener('click',e=>{if(e.target===ovd)dTry(0)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!ovd.hidden)dTry(0)});
 sndb.onclick=()=>{dsnd=dsnd?0:1;sndb.classList.toggle('on',!!dsnd);sndb.textContent=dsnd?'🔊 소리 켬':'🔇 소리 끔';sndb.setAttribute('aria-pressed',!!dsnd);
  if(dsnd&&draf){aStart();dSound()}if(!dsnd)aSet(0,0)};
 
