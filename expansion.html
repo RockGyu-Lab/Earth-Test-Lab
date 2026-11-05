@@ -243,7 +243,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  <svg id="hv" viewBox="0 0 960 340" hidden></svg>
  <div class="ctl" id="dctl">
   <button class="pb" id="dplay">▶ 재생</button><button class="pb" id="dreset">↺ 처음으로</button>
-  <div class="seg"><div class="bs" id="dmov"><button data-v="0" class="on">멈춰 있을 때</button><button data-v="1">천천히 움직일 때</button><button data-v="2">빨리 움직일 때(2배)</button></div></div>
+  <div class="seg"><div class="bs" id="dmov"><button data-v="0" class="on">정지하고 있을 때</button><button data-v="1">천천히 움직일 때</button><button data-v="2">빨리 움직일 때(2배)</button></div></div>
   <span class="hint" id="dhint"></span>
  </div>
  <div class="ctl" id="lctl" hidden><span class="unit">조작 단추가 들어갈 자리</span></div>
@@ -566,7 +566,7 @@ function leaf(g,L,s){const b=mk('g',{transform:`translate(${L.x},${L.y}) rotate(
  mk('path',{d:'M-13,0L13,0',stroke:'#3f8a33','stroke-width':1},b);mk('path',{d:'M-17,1L-13,0',stroke:'#3f8a33','stroke-width':1.5},b)}
 // 아래 그림판: 파원이 지나는 직선 위의 각 지점에 지금 와 있는 파동을 언제 내보냈는지(te) 찾아 마루와 골을 그림
 // (파면을 내보낸 때 te = k·T 인 곳이 마루. 위 그림판의 파면과 같은 자리에 마루가 옴)
-function waveStrip(P,t){dwave.innerHTML='';const g=mk('g',{},dwave),Y0=80,A=22,x=srcX(P,t),col=dsrc=='a'?'#8fd3ff':'#e6f4ff';let d='';
+function waveStrip(P,t){dwave.innerHTML='';dwave.setAttribute('viewBox','0 0 960 130');const g=mk('g',{},dwave),Y0=80,A=22,x=srcX(P,t),col=dsrc=='a'?'#8fd3ff':'#e6f4ff';let d='';
  mk('rect',{x:-3000,y:-500,width:7000,height:1200,fill:'#090d22'},g);mk('rect',{x:-3000,y:0,width:7000,height:130,fill:'url(#gStrip)'},g);
  for(let px=-240;px<=1200;px+=3){let te=t;for(let i=0;i<40;i++)te=t-Math.abs(px-srcX(P,te))/P.c;
   d+=(px>-240?'L':'M')+px+','+(Y0-A*Math.cos(2*Math.PI*te/P.T)).toFixed(1)}
@@ -584,6 +584,22 @@ function waveStrip(P,t){dwave.innerHTML='';const g=mk('g',{},dwave),Y0=80,A=22,x
  obs.forEach(o=>txt('▲ '+o.n,{x:o.x,y:123,'text-anchor':'middle',fill:'#ffd76b','font-size':12,'font-weight':700},g));
  spans(g,P,x,t,40)}
 
+// 구급차 아래 칸: 세 경우를 나란히 비교 (정지하고 있을 때 / 천천히 움직일 때 / 빨리 움직일 때(2배))
+// 재생하면서 관찰자가 실제로 들은 경우만 기록하고, 처음으로를 누르거나 다른 경우를 골라도 기록은 남겨 둠
+// 관찰자가 구급차가 다니는 직선 가까이 있다고 보고, 같은 시간 동안의 진동을 그림 (진동수 배율 c/(c∓v), 파장 배율 1∓v/c)
+const DREC=[{},{},{}];
+const fx=n=>String(+n.toFixed(2));
+function cmpPanels(){dwave.innerHTML='';dwave.setAttribute('viewBox','0 0 960 112');const g=mk('g',{},dwave),P=DS.a,cur=dmv?dk:0,W=306,TW=1.4;
+ ['정지하고 있을 때','천천히 움직일 때','빨리 움직일 때(2배)'].forEach((nm,i)=>{const X=12+i*(W+9),on=i==cur,R=DREC[i],b=i*P.v/P.c;
+  mk('rect',{x:X,y:3,width:W,height:106,rx:10,fill:'url(#gStrip)',stroke:on?'#ffd76b':'rgba(255,255,255,.16)','stroke-width':on?1.6:1},g);
+  txt(nm,{x:X+12,y:21,fill:on?'#ffd76b':'#e8ecff','font-size':13,'font-weight':700},g);
+  txt('같은 시간 동안 관찰자가 듣는 진동',{x:X+W-10,y:21,'text-anchor':'end',fill:'#a9b1cc','font-size':10},g);
+  const rows=i?[['다가올 때',1/(1-b),1-b,'#ff8a7a',R.a,46],['멀어질 때',1/(1+b),1+b,'#6fd3ff',R.r,82]]:[['원래 소리',1,1,'#ffd76b',R.s,62]];
+  rows.forEach(([lb,f,l,col,done,cy])=>{
+   if(!done){txt(lb+': 재생하면 기록됩니다',{x:X+12,y:cy+6,fill:'#a9b1cc','font-size':11,opacity:.75},g);return}
+   txt(`${lb} · 파장 ${fx(l)}배 · 진동수 ${fx(f)}배`,{x:X+12,y:cy-6,fill:col,'font-size':11.5,'font-weight':700},g);
+   let d='';for(let s=0;s<=280;s+=2)d+=(s?'L':'M')+(X+13+s)+','+(cy+10-7*Math.cos(2*Math.PI*f*(s/280*TW)/P.T)).toFixed(1);
+   mk('path',{d,fill:'none',stroke:col,'stroke-width':1.8,'stroke-linejoin':'round'},g)})})}
 function dDraw(){const t=dT,P=DS[dsrc];dsc.innerHTML='';const g=mk('g',{},dsc),x=srcX(P,t);
  if(dsrc=='a'){
   // 구급차와 관찰자: 밤하늘, 찻길, 인도
@@ -593,7 +609,7 @@ function dDraw(){const t=dT,P=DS[dsrc];dsc.innerHTML='';const g=mk('g',{},dsc),x
   mk('line',{x1:-3000,y1:75,x2:4000,y2:75,stroke:'#e8ecff','stroke-dasharray':'22 18',opacity:.35,'stroke-width':1.6},g);
   mk('rect',{x:-3000,y:100,width:7000,height:5,fill:'#3a4262'},g);
   mk('rect',{x:-3000,y:105,width:7000,height:115,fill:'url(#gWalk)'},g);
-  fronts(g,P,t,'#8fd3ff');ambulance(g,x,P.y,t);observer(g);recorder(g,P,EAR.x,EAR.y,t,686,112,266,94,'관찰자가 받는 소리의 진동',1);
+  fronts(g,P,t,'#8fd3ff');ambulance(g,x,P.y,t);observer(g);
   txt(`차이가 잘 드러나도록 구급차를 소리 속력의 ${vr(P)}배로 빠르게 나타냄`,{x:12,y:210,fill:'#a9b1cc','font-size':12,opacity:.85},g);
  }else{
   // 연못의 오리 (위에서 본 모습)
@@ -605,24 +621,27 @@ function dDraw(){const t=dT,P=DS[dsrc];dsc.innerHTML='';const g=mk('g',{},dsc),x
   LEAF.forEach((L,i)=>recorder(g,P,L.x,L.y,t,i?706:14,148,240,68,L.n+'의 진동',0));
   txt('물결이 같은 속력으로 퍼진다고 가정하고,',{x:480,y:196,'text-anchor':'middle',fill:'#cfe3f5','font-size':12,opacity:.85},g);
   txt(`차이가 잘 드러나도록 오리를 물결파 속력의 ${vr(P)}배로 빠르게 나타냄`,{x:480,y:211,'text-anchor':'middle',fill:'#cfe3f5','font-size':12,opacity:.85},g)}
- waveStrip(P,t)}
+ dsrc=='a'?cmpPanels():waveStrip(P,t)}
 
 const DN='<p style="margin:0">구급차가 멈춰 있을 때, 천천히 이동할 때, 빠르게 이동할 때 들리는 소리의 차이를 비교해 보세요.</p>';
 const dInitMsg=()=>dsrc=='a'?(dmv?'<span class="go">▶ 재생을 눌러 보세요.</span> 구급차가 왼쪽에서 오른쪽으로 지나갑니다. 소리의 높낮이와 앞뒤 파장을 비교해 보세요.':'<span class="go">▶ 재생을 눌러 멈춰 있는 구급차의 사이렌 소리를 들어 보세요.</span>')
  :(dmv?'<span class="go">▶ 재생을 눌러 보세요.</span> 물 위의 두 나뭇잎을 관찰자로 보고, 흔들리는 빠르기(진동수)를 비교해 보세요.':'<span class="go">▶ 재생을 눌러 보세요.</span> 제자리에서 물을 젓는 오리가 물결을 만듭니다.');
 function dMsg(h){if(dsrc=='d')return dmv?'오리가 다가오는 나뭇잎 2는 진동수가 크고, 오리가 멀어지는 나뭇잎 1은 진동수가 작습니다.':'멈춰 있을 때: 물결이 모든 방향으로 같은 간격으로 퍼져, 두 나뭇잎이 같은 진동수로 흔들립니다.';
- if(!dmv)return'멈춰 있을 때: 파면이 모든 방향으로 같은 간격(파장)으로 퍼져, 관찰자에게는 원래 높이의 소리가 들립니다.';
+ if(!dmv)return'정지하고 있을 때: 파면이 모든 방향으로 같은 간격(파장)으로 퍼져, 관찰자에게는 원래 높이의 소리가 들립니다.';
  return h.f>1.02?'다가오는 동안: 관찰자 쪽 파장이 짧아지고 진동수가 커져, 원래보다 높은 소리가 들립니다.'
   :h.f<.98?'멀어지는 동안: 관찰자 쪽 파장이 길어지고 진동수가 작아져, 원래보다 낮은 소리가 들립니다.'
   :'구급차가 관찰자 앞을 지나는 순간: 소리의 높이가 바뀝니다.'}
 function dSetHint(s){if(dhint.innerHTML!=s)dhint.innerHTML=s}
 function dStop(){cancelAnimationFrame(draf);draf=0;dplay.textContent='▶ 재생';aSet(0,0)}
-function dSound(){const h=heard(dT);if(dsrc=='a'&&dsnd&&draf)aSet(siren(h.te)*h.f,.16*h.vol);else aSet(0,0);return h}
+function dSound(){const h=heard(dT);
+ // 아래 칸 기록: 관찰자가 들은 경우(원래 소리, 다가올 때, 멀어질 때)를 표시
+ if(dsrc=='a'&&draf){const R=DREC[dmv?dk:0];if(!dmv)R.s=1;else if(h.f>1.02)R.a=1;else if(h.f<.98)R.r=1}
+if(dsrc=='a'&&dsnd&&draf)aSet(siren(h.te)*h.f,.16*h.vol);else aSet(0,0);return h}
 // 진행 상황을 알아보기 쉽도록 실제 시간의 0.5배 빠르기로 천천히 움직임
 const DSPD=.5;
 function dLoop(now){dT+=DSPD*Math.min(.05,(now-dLast)/1000);dLast=now;const end=dEnd();
  if(dT>=end){dT=end;dDraw();dStop();
-  dSetHint(dsrc=='a'&&dmv?'구급차가 다가올 때는 원래보다 높은 소리, 멀어질 때는 낮은 소리가 들립니다. 사이렌이 내는 소리 자체는 바뀌지 않았습니다.':dMsg(heard(dT)));return}
+  dSetHint(dsrc=='a'&&dmv?'구급차가 다가올 때는 원래보다 높은 소리, 멀어질 때는 낮은 소리가 들립니다. 사이렌이 내는 소리 자체는 바뀌지 않았습니다. 아래 칸의 기록을 다른 경우와 비교해 보세요.':dMsg(heard(dT)));return}
  const h=dSound();dDraw();dSetHint(dMsg(h));draf=requestAnimationFrame(dLoop)}
 function dPlay(){if(draf){dStop();return}if(dT>=dEnd())dT=0;if(dsrc=='a'&&dsnd)aStart();
  dplay.textContent='⏸ 멈춤';dLast=performance.now();draf=1;dSound();draf=requestAnimationFrame(dLoop)}
