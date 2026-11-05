@@ -14,6 +14,10 @@
 :root{--sub:#7c5cd6;--on-sub:#fff;--sub-bg:#efeafd;--sub-bd:#cdbff3;--sub-tx:#5b3fbf}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}}
 :root[data-theme="dark"]{--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}
+/* 해보기(직접 해 보는 활동) 꼬리표와 열기 단추: 생각해 보기(남색)와 구분되는 청록색 */
+:root{--try:#0d8577;--on-try:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--try:#4fd1bf;--on-try:#0b2420}}
+:root[data-theme="dark"]{--try:#4fd1bf;--on-try:#0b2420}
 *{box-sizing:border-box}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:"Pretendard Variable",Pretendard,system-ui,-apple-system,"Noto Sans KR",sans-serif;line-height:1.5;word-break:keep-all}
@@ -122,6 +126,8 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .ask2{margin-top:6px!important}
 .note.ask[hidden],#dask[hidden],.seg[hidden]{display:none}
 .tag{display:inline-block;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.02em;white-space:nowrap}
+.tag.try{background:var(--try);color:var(--on-try)}
+.open-think.try{border-color:var(--try);color:var(--try)}
 .open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none;font-family:inherit}
 .open-think:hover{background:var(--card)}
 .ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
@@ -252,10 +258,10 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  <div id="dask">
  <div class="note ask"><span class="tag">생각해 보기</span><p>음원(구급차)이 관찰자를 향해 올 때와 관찰자로부터 멀어질 때 파장은 어떻게 달라지나요?</p><button type="button" class="open-think" id="thb5">답 보기</button></div>
  <div class="note ask ask2"><span class="tag">생각해 보기</span><p>음원(구급차)이 움직이는 속도가 빨라지면, 파장의 변화 폭은 어떻게 달라지나요?</p><button type="button" class="open-think" id="thb6">답 보기</button></div>
- <div class="note ask ask2"><span class="tag">해보기</span><p>헤엄치는 오리가 만든 물결파에서도 도플러 효과가 나타나는지 확인해 보세요.</p><button type="button" class="open-think" id="dtryb">열기</button></div>
+ <div class="note ask ask2"><span class="tag try">해보기</span><p>헤엄치는 오리가 만든 물결파에서도 도플러 효과가 나타나는지 확인해 보세요.</p><button type="button" class="open-think try" id="dtryb">열기</button></div>
  </div>
  <div class="ov" id="ovd" hidden><div class="think wide" role="dialog" aria-modal="true" aria-label="해보기: 헤엄치는 오리가 만든 물결파">
-  <div class="think-h"><b class="think-t"><span class="tag">해보기</span>헤엄치는 오리가 만든 물결파</b><button type="button" class="x" id="dtryx" aria-label="닫기">닫기 ✕</button></div>
+  <div class="think-h"><b class="think-t"><span class="tag try">해보기</span>헤엄치는 오리가 만든 물결파</b><button type="button" class="x" id="dtryx" aria-label="닫기">닫기 ✕</button></div>
   <p class="exp">물 위에 떠 있는 나뭇잎을 관찰자로 보고, 오리가 정지하고 있을 때, 다가올 때, 멀어질 때 나뭇잎이 흔들리는 빠르기(진동수)를 비교해 보세요.</p>
   <div id="dslot"></div>
  </div></div>
