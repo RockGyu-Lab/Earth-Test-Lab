@@ -283,7 +283,7 @@ function bDraw(){if(bG)bG.remove();bG=mk('g',{},bv);
    arrow(px-Math.cos(a)*4,py-Math.sin(a)*4,px-Math.cos(a)*(4+L),py-Math.sin(a)*(4+L),'#ffb066','ag',bG)})});
   label('별들이 서로 끌어당김',200,28,bG,'middle','#ffb066')}
  else label(bDone?'하나의 큰 덩어리가 됨':'뭉치면서 가운데로 모임',200,28,bG,'middle','#ffd76b');
- label('단순화한 모형: 부딪힌 별은 합쳐진다고 가정',8,330,bG,'start','#a9b1cc',15)}
+ label('우주 전체를 둥근 영역으로 나타냄',8,330,bG,'start','#a9b1cc',15)}
 function bLoop(){for(let k=0;k<4;k++)finStep(1/240);bTime+=1/60;
  if(BS.length==1||bTime>15){bDone=BS.length==1;bDraw();bStop();
   bhint.textContent='별들이 한 점으로 모입니다.';return}
@@ -361,7 +361,7 @@ function eqDraw(){if(nG)nG.remove();nG=mk('g',{},sv);
   arrow(px-c*4,py-s*4,px-c*(4+L),py-s*(4+L),'#ffb066','ag',nG);arrow(px+c*4,py+s*4,px+c*(4+L),py+s*(4+L),'#6fd3ff','ar',nG)})});
  label('중력과 척력이 균형을 이루어 우주의 크기가 변하지 않음',360,28,nG,'middle','#6fd3ff');
  const lg=mk('g',{},nG);legend(66,'#ffb066','ag','중력 (끌어당김)',lg);legend(94,'#6fd3ff','ar','우주 상수에 의한',lg);label('척력 (밀어냄)',58,121,lg,'start','#e8ecff',16);
- label('단순화한 모형: 우주 전체를 둥근 영역으로 나타냄',10,322,nG,'start','#a9b1cc',15)}
+ label('우주 전체를 둥근 영역으로 나타냄',10,322,nG,'start','#a9b1cc',15)}
 function ePlay(){shint.textContent='시간이 지나도 별들은 움직이지 않고 우주의 크기는 그대로입니다(정적 우주).'}
 
 // ---- 프리드만: 처음부터 팽창하고 있는 별 무리. 중력이 팽창을 늦추지만 한곳으로 모이지 않음 ----
@@ -378,7 +378,7 @@ function frDraw(){if(nG)nG.remove();nG=mk('g',{},sv);
  label(fT==0?'우주가 처음부터 팽창하고 있다면?':'중력이 팽창을 늦출 뿐, 별들은 모이지 않고 멀어짐',360,28,nG,'middle','#7be08f');
  const lg=mk('g',{},nG);legend(66,'#7be08f','av','멀어지는 움직임',lg);legend(94,'#ffb066','ag','중력 (끌어당김)',lg);
  label(`우주의 크기: 처음의 ${fa.toFixed(2)}배`,708,71,nG,'end','#e8ecff',16);
- label('단순화한 모형: 우주 전체를 둥근 영역으로 나타냄',10,322,nG,'start','#a9b1cc',15)}
+ label('우주 전체를 둥근 영역으로 나타냄',10,322,nG,'start','#a9b1cc',15)}
 function fInit(){ES=makeStars();fa=1;fv=FV0;fT=0;frDraw();shint.innerHTML=GO}
 function frLoop(){for(let k=0;k<4;k++){const dt=1/240;fv+=-FK/(fa*fa)*dt;fa+=fv*dt}fT+=1/60;
  if(fa>1.75||fT>12){frDraw();stopAll();return}
