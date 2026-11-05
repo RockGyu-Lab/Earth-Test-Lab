@@ -778,10 +778,10 @@ function lPanels(){lspec.innerHTML='';const g=mk('g',{},lspec),W=306,SW=230,sx=w
    LLINE.forEach(w=>{const ww=w*k;if(ww>SPMIN&&ww<SPMAX)mk('rect',{x:x0+sx(ww)-1.4,y,width:2.8,height:h,fill:'#05060c'},g)})};
   strip(34,13,'기준',1);
   if(!r){txt('재생하면 기록됩니다',{x:x0,y:74,fill:'#a9b1cc','font-size':11,opacity:.75},g);return}
-  strip(56,22,'관측',rt);
-  // 기준 흡수선 → 관측 흡수선으로 옮겨 간 방향을 화살표로 표시
-  if(m)LLINE.forEach(w=>{const a=x0+sx(w),bb=x0+sx(w*rt);mk('line',{x1:a,y1:48,x2:a,y2:56,stroke:'#fff','stroke-width':1,'stroke-dasharray':'2 2',opacity:.6},g);
-   mk('line',{x1:a,y1:84,x2:bb,y2:84,stroke:m>0?'#8fb8ff':'#ff8a7a','stroke-width':1.8,'marker-end':'url(#aw)'},g)});
+  strip(60,20,'관측',rt);
+  // 같은 흡수선끼리 기준 → 관측을 흰 선으로 이어, 어느 쪽으로 옮겨 갔는지 보여 줌 (아래 화살표도 같은 방향)
+  if(m)LLINE.forEach(w=>{const a=x0+sx(w),bb=x0+sx(w*rt);mk('line',{x1:a,y1:47,x2:bb,y2:60,stroke:'#fff','stroke-width':1.5,opacity:.9},g);
+   mk('line',{x1:a,y1:86,x2:bb,y2:86,stroke:m>0?'#8fb8ff':'#ff8a7a','stroke-width':1.8,'marker-end':'url(#aw)'},g)});
   txt('← 짧은 파장',{x:x0,y:98,fill:'#8f98c4','font-size':10},g);txt('긴 파장 →',{x:x0+SW,y:98,'text-anchor':'end',fill:'#8f98c4','font-size':10},g);
   const tt=txt('',{x:X+12,y:116,fill:'#e8ecff','font-size':11.5,'font-weight':700},g);
   tt.innerHTML=m>0?'흡수선이 <tspan fill="#8fb8ff">짧은 파장 쪽</tspan>으로 이동 · 청색 편이 (0.9배)':m<0?'흡수선이 <tspan fill="#ff8a7a">긴 파장 쪽</tspan>으로 이동 · 적색 편이 (1.1배)':'흡수선이 기준과 같은 자리 (1배)'})}
