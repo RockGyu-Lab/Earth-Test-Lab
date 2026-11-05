@@ -222,10 +222,10 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  </div></div>
 </section>
 
-<!-- ② 도플러 효과: 작은 학습 화면 2개 [소리(음파)와 물결파의 도플러 효과] [빛의 도플러 효과] (내용 준비 중) -->
+<!-- ② 도플러 효과: 작은 학습 화면 2개 [소리(음파)와 물결파의 도플러 효과] [빛(전자기파)의 도플러 효과] (내용 준비 중) -->
 <section id="p2" role="tabpanel" aria-labelledby="tab2" hidden>
  <div class="srow" style="margin-bottom:8px">
-  <div class="subtabs" id="hsel"><button data-v="s" class="on">소리(음파)와 물결파의 도플러 효과</button><button data-v="l">빛의 도플러 효과</button></div>
+  <div class="subtabs" id="hsel"><button data-v="s" class="on">소리(음파)와 물결파의 도플러 효과</button><button data-v="l">빛(전자기파)의 도플러 효과</button></div>
  </div>
  <div class="note" id="hnote"></div>
  <!-- 소리(음파)와 물결파의 도플러 효과: 위 칸 구급차(소리) 또는 오리(물결파)를 골라 봄, 아래 칸 파동의 모습 -->
@@ -235,7 +235,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
    <button type="button" class="sndb on" id="sndb" aria-pressed="true">🔊 소리 켬</button></div>
   <svg id="dwave" viewBox="0 0 960 130"></svg>
  </div>
- <!-- 빛의 도플러 효과 (준비 중) -->
+ <!-- 빛(전자기파)의 도플러 효과 (준비 중) -->
  <svg id="hv" viewBox="0 0 960 340" hidden></svg>
  <div class="ctl" id="dctl">
   <button class="pb" id="dplay">▶ 재생</button><button class="pb" id="dreset">↺ 처음으로</button>
@@ -597,9 +597,9 @@ dsrcb.onclick=e=>{const b=e.target.closest('button');if(!b)return;dsrc=b.dataset
 sndb.onclick=()=>{dsnd=dsnd?0:1;sndb.classList.toggle('on',!!dsnd);sndb.textContent=dsnd?'🔊 소리 켬':'🔇 소리 끔';sndb.setAttribute('aria-pressed',!!dsnd);
  if(dsnd&&draf){aStart();dSound()}if(!dsnd)aSet(0,0)};
 
-// ==== ② 도플러 효과: 작은 학습 화면 2개 [소리(음파)와 물결파의 도플러 효과] [빛의 도플러 효과(준비 중)] ====
+// ==== ② 도플러 효과: 작은 학습 화면 2개 [소리(음파)와 물결파의 도플러 효과] [빛(전자기파)의 도플러 효과(준비 중)] ====
 const HN={
- l:{t:'빛의 도플러 효과',d:'빛을 내는 천체가 다가오거나 멀어질 때 스펙트럼의 흡수선이 이동하는 현상(청색 편이, 적색 편이)을 살펴봅니다.'}};
+ l:{t:'빛(전자기파)의 도플러 효과',d:'빛을 내는 천체가 다가오거나 멀어질 때 스펙트럼의 흡수선이 이동하는 현상(청색 편이, 적색 편이)을 살펴봅니다.'}};
 let hcur='s';
 function hpick(v){hcur=v;hsel.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v==v));
  dStop();dctl.hidden=sview.hidden=dask.hidden=v!='s';lctl.hidden=hv.hidden=v=='s';
