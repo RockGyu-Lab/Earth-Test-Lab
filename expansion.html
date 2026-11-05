@@ -297,7 +297,7 @@ bInit();
 
 // ==== 오른쪽: 세 과학자의 해결 아이디어 (그림판 sv) ====
 const SN={
- '':'<p>벤틀리의 질문처럼 별들이 한곳에 모이지 않으려면 어떻게 해야 할까요? 위에서 세 과학자 중 한 사람을 골라 그 사람의 생각을 알아보세요.</p>',
+ '':'<p>벤틀리의 질문처럼 별들이 한곳에 모이지 않으려면 어떻게 해야 할까요? <span class="go">위에서 세 과학자 중 한 사람을 골라 그 사람의 생각을 알아보세요.</span></p>',
  n:'<div class="nh">뉴턴의 해결 아이디어 <span class="ex">· 무한하고 균일한 정적 우주 (1692년)</span></div><p>우주가 끝없이 넓고 별이 균일하게 퍼져 있다면, 어느 별이든 모든 방향에서 같은 크기의 힘으로 당겨져 힘의 평형을 이룬다. 그래서 별들은 한곳으로 모이지 않는다. <span class="aside">(속마음: 실제로는 일어나기 어려운 일인 것 같아서, 사실 내 답변이 마음에 들지는 않아.)</span></p>',
  e:'<div class="nh">아인슈타인의 해결 아이디어 <span class="ex">· 우주 상수로 지킨 정적 우주 (1917년)</span></div><p>중력만 있으면 우주는 그대로 있을 수 없다. 그래서 중력과 반대로 밀어내는 효과를 내는 <b>우주 상수</b>를 식에 넣어, 중력과 균형을 이루는 정적 우주를 만들었다. <span class="aside">(속마음: 우주가 팽창하거나 수축하며 변한다니, 그건 도저히 믿을 수 없어!)</span></p>',
  f:'<div class="nh">프리드만의 해결 아이디어 <span class="ex">· 팽창하는 우주 (1922년)</span></div><p>아인슈타인의 방정식을 풀어 우주가 팽창하거나 수축할 수 있음을 보였다. 우주가 <b>팽창하고 있다면</b> 중력은 팽창을 늦출 뿐, 별들이 한곳으로 모이지 않는다. <span class="aside">(속마음: 계산해 보면 우주는 커질 수도 있는데, 꼭 멈춰 있어야 할 이유가 있을까?)</span></p>'};
@@ -493,12 +493,12 @@ function dDraw(){const t=dT;
  label('단순화한 모형: 차이가 잘 드러나도록 구급차는 소리 속력의 0.3배, 오리는 물결파 속력의 0.5배로 빠르게 나타냄',12,142,g,'start','#cfe3f5',14)}
 
 const DN='<div class="nh">소리의 도플러 효과</div><p>위는 구급차의 사이렌 소리, 아래는 헤엄치는 오리가 만드는 물결파입니다. <b>멈춰 있을 때</b>와 <b>움직일 때</b> 소리의 높낮이와 파면(물결) 사이의 간격을 비교해 보세요.</p>';
-const dInitMsg=()=>dmv?'▶ 재생을 누르면 구급차와 오리가 왼쪽에서 오른쪽으로 지나갑니다. 소리의 높낮이와 앞뒤 파장을 비교해 보세요.':'▶ 재생을 눌러 멈춰 있는 구급차의 사이렌 소리를 들어 보세요.';
+const dInitMsg=()=>dmv?'<span class="go">▶ 재생을 눌러 보세요.</span> 구급차와 오리가 왼쪽에서 오른쪽으로 지나갑니다. 소리의 높낮이와 앞뒤 파장을 비교해 보세요.':'<span class="go">▶ 재생을 눌러 멈춰 있는 구급차의 사이렌 소리를 들어 보세요.</span>';
 function dMsg(h){if(!dmv)return'멈춰 있을 때: 파면과 물결이 모든 방향으로 같은 간격(파장)으로 퍼져, 관찰자에게는 원래 높이의 소리가 들립니다.';
  return h.f>1.02?'다가오는 동안: 관찰자 쪽 파장이 짧아져 원래보다 높은 소리가 들립니다. 오리의 물결도 앞쪽이 촘촘합니다.'
   :h.f<.98?'멀어지는 동안: 관찰자 쪽 파장이 길어져 원래보다 낮은 소리가 들립니다. 오리의 물결도 뒤쪽이 성깁니다.'
   :'구급차가 관찰자 앞을 지나는 순간: 소리의 높이가 바뀝니다.'}
-function dSetHint(s){if(dhint.textContent!=s)dhint.textContent=s}
+function dSetHint(s){if(dhint.innerHTML!=s)dhint.innerHTML=s}
 function dStop(){cancelAnimationFrame(draf);draf=0;dplay.textContent='▶ 재생';aSet(0,0)}
 function dSound(){const h=heard(dT);if(dsnd&&draf)aSet(siren(h.te)*h.f,.16*h.vol);else aSet(0,0);return h}
 function dLoop(now){dT+=Math.min(.05,(now-dLast)/1000);dLast=now;const end=DEND[dmv];
