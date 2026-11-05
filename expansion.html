@@ -98,10 +98,10 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 #sview{display:flex;flex-direction:column;gap:8px}
 #sview[hidden],svg[hidden],.sndb[hidden]{display:none}
 .dwrap{position:relative}
-#dsc{max-height:max(170px,calc((100vh - 456px)*.63))}
-#dsc{max-height:max(170px,calc((100dvh - 456px)*.63))}
-#dwave{max-height:max(100px,calc((100vh - 456px)*.37))}
-#dwave{max-height:max(100px,calc((100dvh - 456px)*.37))}
+#dsc{max-height:max(170px,calc((100vh - 400px)*.63))}
+#dsc{max-height:max(170px,calc((100dvh - 400px)*.63))}
+#dwave{max-height:max(100px,calc((100vh - 400px)*.37))}
+#dwave{max-height:max(100px,calc((100dvh - 400px)*.37))}
 /* 해보기 팝업(오리가 만든 물결파): 넓은 팝업 안에서 그림판이 화면 높이에 맞춰 줄어듦 */
 .think.wide{width:min(980px,100%)}
 #dslot{display:flex;flex-direction:column;gap:8px;margin-top:8px}
@@ -119,6 +119,8 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .ask2{margin-top:6px!important}
 .note.ask[hidden],#dask[hidden],.seg[hidden]{display:none}
 .tag{display:inline-block;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.02em;white-space:nowrap}
+.tryb{border:0;cursor:pointer;font-family:inherit}
+.tryb:hover{filter:brightness(1.12)}
 .open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none;font-family:inherit}
 .open-think:hover{background:var(--card)}
 .ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
@@ -142,7 +144,6 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
 <!-- 학습실과 탐구 번호가 정해지면 제목 앞에 <p class="pnum">탐구 NN</p>을 넣고, 돌아가기 링크를 그 학습실 메뉴로 바꿀 것 -->
 <div class="titlebar"><h1>허블-르메트르 법칙과 우주 팽창</h1><a class="back" href="./index.html">← Earth Test Lab</a></div>
-<p class="intro">정적 우주와 팽창 우주를 비교하고, <b>허블-르메트르 법칙</b>으로 우주가 팽창한다는 것을 탐구합니다.</p>
 <div class="tabs" role="tablist" aria-label="학습 메뉴">
  <button role="tab" id="tab1" aria-controls="p1" aria-selected="true">정적 우주와 팽창 우주</button>
  <button role="tab" id="tab2" aria-controls="p2" aria-selected="false" tabindex="-1">도플러 효과</button>
@@ -225,10 +226,10 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  </div></div>
 </section>
 
-<!-- ② 도플러 효과: 작은 학습 화면 2개 [소리(음파)와 물결파의 도플러 효과] [빛(전자기파)의 도플러 효과] (내용 준비 중) -->
+<!-- ② 도플러 효과: 작은 학습 화면 2개 [소리(음파)의 도플러 효과] [빛(전자기파)의 도플러 효과] (내용 준비 중) -->
 <section id="p2" role="tabpanel" aria-labelledby="tab2" hidden>
  <div class="srow" style="margin-bottom:8px">
-  <div class="subtabs" id="hsel"><button data-v="s" class="on">소리(음파)와 물결파의 도플러 효과</button><button data-v="l">빛(전자기파)의 도플러 효과</button></div>
+  <div class="subtabs" id="hsel"><button data-v="s" class="on">소리(음파)의 도플러 효과</button><button data-v="l">빛(전자기파)의 도플러 효과</button></div>
  </div>
  <div class="note" id="hnote"></div>
  <!-- 소리(음파)와 물결파의 도플러 효과: 위 칸 구급차(소리), 아래 칸 파동의 모습
@@ -248,25 +249,25 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  <div class="ctl" id="lctl" hidden><span class="unit">조작 단추가 들어갈 자리</span></div>
  <!-- 해보기(오리가 만든 물결파 팝업) + 생각해 보기 2개 (꼬리표 + 질문 + 답 보기 팝업) -->
  <div id="dask">
- <div class="note ask"><button type="button" class="pb" id="dtryb">해보기</button><p>헤엄치는 오리가 만든 물결파에서도 도플러 효과가 나타나는지 확인해 보세요.</p></div>
- <div class="note ask ask2"><span class="tag">생각해 보기</span><p>파원이 관찰자를 향해 올 때와 파원이 관찰자로부터 멀어질 때 파장은 어떻게 달라지나요?</p><button type="button" class="open-think" id="thb5">답 보기</button></div>
- <div class="note ask ask2"><span class="tag">생각해 보기</span><p>파원이 움직이는 속도가 빨라지면, 파장의 변화 폭은 어떻게 달라지나요?</p><button type="button" class="open-think" id="thb6">답 보기</button></div>
+ <div class="note ask"><span class="tag">생각해 보기</span><p>음원(구급차)이 관찰자를 향해 올 때와 관찰자로부터 멀어질 때 파장은 어떻게 달라지나요?</p><button type="button" class="open-think" id="thb5">답 보기</button></div>
+ <div class="note ask ask2"><span class="tag">생각해 보기</span><p>음원(구급차)이 움직이는 속도가 빨라지면, 파장의 변화 폭은 어떻게 달라지나요?</p><button type="button" class="open-think" id="thb6">답 보기</button></div>
+ <div class="note ask ask2"><button type="button" class="tag tryb" id="dtryb">해보기</button><p>헤엄치는 오리가 만든 물결파에서도 도플러 효과가 나타나는지 확인해 보세요.</p></div>
  </div>
  <div class="ov" id="ovd" hidden><div class="think wide" role="dialog" aria-modal="true" aria-label="해보기: 헤엄치는 오리가 만든 물결파">
   <div class="think-h"><b class="think-t"><span class="tag">해보기</span>헤엄치는 오리가 만든 물결파</b><button type="button" class="x" id="dtryx" aria-label="닫기">닫기 ✕</button></div>
   <p class="exp">물 위에 떠 있는 두 나뭇잎을 관찰자로 보고, 오리가 멈춰 있을 때와 움직일 때 나뭇잎이 흔들리는 빠르기(진동수)를 비교해 보세요.</p>
   <div id="dslot"></div>
  </div></div>
- <div class="ov" id="ov5" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 파원이 관찰자를 향해 올 때와 파원이 관찰자로부터 멀어질 때 파장은 어떻게 달라지나요?">
-  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>파원이 관찰자를 향해 올 때와 파원이 관찰자로부터 멀어질 때 파장은 어떻게 달라지나요?</b><button type="button" class="x" id="thx5" aria-label="닫기">닫기 ✕</button></div>
-  <p class="ans">파원이 다가올 때는 관찰자 쪽의 파장이 짧아지고, 멀어질 때는 파장이 길어집니다.</p>
-  <p class="exp">파원은 파면 하나를 내보낸 뒤 다음 파면을 내보낼 때까지 앞으로 이동합니다. 그래서 파원이 나아가는 앞쪽에서는 파면 사이의 간격(파장)이 좁아지고, 뒤쪽에서는 넓어집니다.</p>
+ <div class="ov" id="ov5" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 음원(구급차)이 관찰자를 향해 올 때와 관찰자로부터 멀어질 때 파장은 어떻게 달라지나요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>음원(구급차)이 관찰자를 향해 올 때와 관찰자로부터 멀어질 때 파장은 어떻게 달라지나요?</b><button type="button" class="x" id="thx5" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">음원이 다가올 때는 관찰자 쪽의 파장이 짧아지고, 멀어질 때는 파장이 길어집니다.</p>
+  <p class="exp">음원은 파면 하나를 내보낸 뒤 다음 파면을 내보낼 때까지 앞으로 이동합니다. 그래서 음원이 나아가는 앞쪽에서는 파면 사이의 간격(파장)이 좁아지고, 뒤쪽에서는 넓어집니다.</p>
   <p class="exp">파동이 퍼지는 속력은 그대로이므로, 파장이 짧아진 쪽에서는 진동수가 커지고(소리는 높게 들림), 파장이 길어진 쪽에서는 진동수가 작아집니다(소리는 낮게 들림).</p>
  </div></div>
- <div class="ov" id="ov6" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 파원이 움직이는 속도가 빨라지면, 파장의 변화 폭은 어떻게 달라지나요?">
-  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>파원이 움직이는 속도가 빨라지면, 파장의 변화 폭은 어떻게 달라지나요?</b><button type="button" class="x" id="thx6" aria-label="닫기">닫기 ✕</button></div>
-  <p class="ans">파원이 빠르게 움직일수록 파장의 변화 폭이 커집니다. 앞쪽의 파장은 더 짧아지고, 뒤쪽의 파장은 더 길어집니다.</p>
-  <p class="exp">파원은 파면을 한 번 내보내고 다음 파면을 내보낼 때까지(한 주기 동안) 일정한 거리를 이동하고, 앞쪽 파장은 이 거리만큼 짧아지고 뒤쪽 파장은 이 거리만큼 길어집니다. 파원이 빨라지면 한 주기 동안 이동하는 거리가 늘어나므로 파장의 변화도 커집니다.</p>
+ <div class="ov" id="ov6" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 음원(구급차)이 움직이는 속도가 빨라지면, 파장의 변화 폭은 어떻게 달라지나요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>음원(구급차)이 움직이는 속도가 빨라지면, 파장의 변화 폭은 어떻게 달라지나요?</b><button type="button" class="x" id="thx6" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">음원이 빠르게 움직일수록 파장의 변화 폭이 커집니다. 앞쪽의 파장은 더 짧아지고, 뒤쪽의 파장은 더 길어집니다.</p>
+  <p class="exp">음원은 파면을 한 번 내보내고 다음 파면을 내보낼 때까지(한 주기 동안) 일정한 거리를 이동하고, 앞쪽 파장은 이 거리만큼 짧아지고 뒤쪽 파장은 이 거리만큼 길어집니다. 음원이 빨라지면 한 주기 동안 이동하는 거리가 늘어나므로 파장의 변화도 커집니다.</p>
   <p class="exp">예를 들어 구급차가 소리 속력의 0.3배로 움직이면 앞쪽 파장은 원래의 0.7배, 뒤쪽 파장은 1.3배가 됩니다. 속력을 2배(소리 속력의 0.6배)로 하면 앞쪽은 0.4배, 뒤쪽은 1.6배가 됩니다. <span class="go">'천천히 움직일 때'와 '빨리 움직일 때(2배)'를 눌러 비교해 보세요.</span></p>
  </div></div>
 </section>
@@ -442,7 +443,7 @@ fitNote();pick('');
 // 위 그림판: 파원과 파면 / 아래 그림판: 파원이 지나는 직선을 따라 본 파동의 모습(마루와 골)
 // 파원은 일정한 시간 간격(T)마다 파면(마루)을 내보내고, 각 파면은 내보낸 자리에서 일정한 속력(c)으로 둥글게 퍼짐
 // 재생 전부터 소리가 나고 있었던 것으로 보고, 처음부터 파면이 그림판을 채운 채 시작함 (재생하자마자 소리가 들리도록)
-const DS={a:{c:300,v:90,T:.35,x0:-60,xs:300,y:75,R:950,m:54,end:13.5},
+const DS={a:{c:300,v:90,T:.35,x0:90,xs:90,rest:1,y:75,R:950,m:54,end:11.8},
           d:{c:160,v:64,T:.5,x0:60,xs:480,y:80,R:900,m:44,end:14.5}};
 const OBS={x:480,y:212};
 // 오리 그림의 관찰자: 물 위에 떠 있는 나뭇잎 두 장 (오리가 지나가는 길에서 조금 떨어진 곳)
@@ -450,7 +451,8 @@ const LEAF=[{x:170,y:128,n:'나뭇잎 1'},{x:790,y:128,n:'나뭇잎 2'}];
 let dsrc='a',dmv=0,dsnd=1,dk=1,dT=0,draf=0,dLast=0;
 // 파원의 속력: 기본 또는 2배(dk)
 const vS=P=>dmv?P.v*dk:0,vr=P=>+(P.v*dk/P.c).toFixed(1);
-const srcX=(P,te)=>dmv?P.x0+vS(P)*te:P.xs;
+// rest: 재생 전에는 멈춰 있다가 0초에 출발함 (구급차)
+const srcX=(P,te)=>dmv?(P.rest&&te<0?P.x0:P.x0+vS(P)*te):P.xs;
 const kMin=P=>-Math.ceil(P.R/P.c/P.T);
 const dEnd=()=>dmv?DS[dsrc].end/dk:10;
 
@@ -460,7 +462,7 @@ const EAR={x:490,y:OBS.y-100};
 // (ox, oy) 지점이 시각 t에 받는 파동: 진동수 배율 f, 크기 vol, 변위 y(마루 1, 골 -1)
 function recv(P,ox,oy,t){let te=t,d=0;
  for(let i=0;i<30;i++){d=Math.hypot(ox-srcX(P,te),oy-P.y);te=t-d/P.c}
- const ux=(ox-srcX(P,te))/Math.max(d,1e-6),v=vS(P);
+ const ux=(ox-srcX(P,te))/Math.max(d,1e-6),v=P.rest&&te<0?0:vS(P);
  return{te,f:1/(1-v*ux/P.c),vol:1/(1+d/260),y:Math.cos(2*Math.PI*te/P.T)}}
 const heard=t=>recv(DS.a,EAR.x,EAR.y,t);
 
@@ -575,9 +577,9 @@ function waveStrip(P,t){dwave.innerHTML='';const g=mk('g',{},dwave),Y0=80,A=22,x
  mk('path',{d,fill:'none',stroke:col,'stroke-width':2.2,'stroke-linejoin':'round'},g);
  mk('line',{x1:x,y1:48,x2:x,y2:110,stroke:'#ffb066','stroke-width':1.5,'stroke-dasharray':'3 4',opacity:.9},g);
  // 아래 왼쪽 제목, 파원 자리, 관찰자 자리 (글씨가 겹치면 파원 이름은 잠시 숨김)
- const tl=txt(dsrc=='a'?'파동의 모습 (마루: 공기가 빽빽한 곳)':'물결의 옆모습',{x:12,y:122,fill:'#a9b1cc','font-size':12,'font-weight':600},g),tr=tl.getBBox?tl.getBBox().width+22:0;
+ const tl=txt(dsrc=='a'?'파동의 모습 (마루: 공기가 빽빽한 곳)':'물결의 옆모습',{x:948,y:122,'text-anchor':'end',fill:'#a9b1cc','font-size':12,'font-weight':600},g),tr=948-(tl.getBBox?tl.getBBox().width:0)-22;
  const obs=dsrc=='a'?[{x:EAR.x,n:'관찰자'}]:LEAF;
- const hideS=x-24<tr||obs.some(o=>Math.abs(o.x-x)<56);
+ const hideS=x+24>tr||obs.some(o=>Math.abs(o.x-x)<56);
  txt(dsrc=='a'?'구급차':'오리',{x,y:123,'text-anchor':'middle',fill:'#ffb066','font-size':12,'font-weight':700,opacity:hideS?0:1},g);
  obs.forEach(o=>txt('▲ '+o.n,{x:o.x,y:123,'text-anchor':'middle',fill:'#ffd76b','font-size':12,'font-weight':700},g));
  spans(g,P,x,t,40)}
@@ -641,7 +643,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!ovd.hidden)dTry(0)
 sndb.onclick=()=>{dsnd=dsnd?0:1;sndb.classList.toggle('on',!!dsnd);sndb.textContent=dsnd?'🔊 소리 켬':'🔇 소리 끔';sndb.setAttribute('aria-pressed',!!dsnd);
  if(dsnd&&draf){aStart();dSound()}if(!dsnd)aSet(0,0)};
 
-// ==== ② 도플러 효과: 작은 학습 화면 2개 [소리(음파)와 물결파의 도플러 효과] [빛(전자기파)의 도플러 효과(준비 중)] ====
+// ==== ② 도플러 효과: 작은 학습 화면 2개 [소리(음파)의 도플러 효과] [빛(전자기파)의 도플러 효과(준비 중)] ====
 const HN={
  l:{t:'빛(전자기파)의 도플러 효과',d:'빛을 내는 천체가 다가오거나 멀어질 때 스펙트럼의 흡수선이 이동하는 현상(청색 편이, 적색 편이)을 살펴봅니다.'}};
 let hcur='s';
