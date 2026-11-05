@@ -443,7 +443,7 @@ fitNote();pick('');
 // 위 그림판: 파원과 파면 / 아래 그림판: 파원이 지나는 직선을 따라 본 파동의 모습(마루와 골)
 // 파원은 일정한 시간 간격(T)마다 파면(마루)을 내보내고, 각 파면은 내보낸 자리에서 일정한 속력(c)으로 둥글게 퍼짐
 // 재생 전부터 소리가 나고 있었던 것으로 보고, 처음부터 파면이 그림판을 채운 채 시작함 (재생하자마자 소리가 들리도록)
-const DS={a:{c:300,v:90,T:.35,x0:90,xs:90,rest:1,y:75,R:950,m:54,end:11.8},
+const DS={a:{c:300,v:90,T:.35,x0:55,xs:55,y:75,R:950,m:54,end:12.2},
           d:{c:160,v:64,T:.5,x0:60,xs:480,y:80,R:900,m:44,end:14.5}};
 const OBS={x:480,y:212};
 // 오리 그림의 관찰자: 물 위에 떠 있는 나뭇잎 두 장 (오리가 지나가는 길에서 조금 떨어진 곳)
@@ -451,8 +451,8 @@ const LEAF=[{x:170,y:128,n:'나뭇잎 1'},{x:790,y:128,n:'나뭇잎 2'}];
 let dsrc='a',dmv=0,dsnd=1,dk=1,dT=0,draf=0,dLast=0;
 // 파원의 속력: 기본 또는 2배(dk)
 const vS=P=>dmv?P.v*dk:0,vr=P=>+(P.v*dk/P.c).toFixed(1);
-// rest: 재생 전에는 멈춰 있다가 0초에 출발함 (구급차)
-const srcX=(P,te)=>dmv?(P.rest&&te<0?P.x0:P.x0+vS(P)*te):P.xs;
+// 움직일 때는 재생 전부터 같은 속력으로 달려오고 있던 것으로 보고, 화면 밖에서 낸 파면까지 그림판을 채운 채 시작함
+const srcX=(P,te)=>dmv?P.x0+vS(P)*te:P.xs;
 const kMin=P=>-Math.ceil(P.R/P.c/P.T);
 const dEnd=()=>dmv?DS[dsrc].end/dk:10;
 
@@ -462,7 +462,7 @@ const EAR={x:490,y:OBS.y-100};
 // (ox, oy) 지점이 시각 t에 받는 파동: 진동수 배율 f, 크기 vol, 변위 y(마루 1, 골 -1)
 function recv(P,ox,oy,t){let te=t,d=0;
  for(let i=0;i<30;i++){d=Math.hypot(ox-srcX(P,te),oy-P.y);te=t-d/P.c}
- const ux=(ox-srcX(P,te))/Math.max(d,1e-6),v=P.rest&&te<0?0:vS(P);
+ const ux=(ox-srcX(P,te))/Math.max(d,1e-6),v=vS(P);
  return{te,f:1/(1-v*ux/P.c),vol:1/(1+d/260),y:Math.cos(2*Math.PI*te/P.T)}}
 const heard=t=>recv(DS.a,EAR.x,EAR.y,t);
 
