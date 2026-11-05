@@ -94,7 +94,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 #hnote p{margin:2px 0 0}
 #hv{max-height:max(240px,calc(100vh - 365px))}
 #hv{max-height:max(240px,calc(100dvh - 365px))}
-/* 소리의 도플러 효과: 위 그림판(구급차 또는 오리)과 아래 파동의 모습이 함께 화면 높이에 맞춰 줄어듦 */
+/* 소리(음파)와 물결파의 도플러 효과: 위 그림판(구급차 또는 오리)과 아래 파동의 모습이 함께 화면 높이에 맞춰 줄어듦 */
 #sview{display:flex;flex-direction:column;gap:8px}
 #sview[hidden],svg[hidden],.sndb[hidden]{display:none}
 .dwrap{position:relative}
@@ -222,13 +222,13 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  </div></div>
 </section>
 
-<!-- ② 도플러 효과: 작은 학습 화면 2개 [소리의 도플러 효과] [빛의 도플러 효과] (내용 준비 중) -->
+<!-- ② 도플러 효과: 작은 학습 화면 2개 [소리(음파)와 물결파의 도플러 효과] [빛의 도플러 효과] (내용 준비 중) -->
 <section id="p2" role="tabpanel" aria-labelledby="tab2" hidden>
  <div class="srow" style="margin-bottom:8px">
-  <div class="subtabs" id="hsel"><button data-v="s" class="on">소리의 도플러 효과</button><button data-v="l">빛의 도플러 효과</button></div>
+  <div class="subtabs" id="hsel"><button data-v="s" class="on">소리(음파)와 물결파의 도플러 효과</button><button data-v="l">빛의 도플러 효과</button></div>
  </div>
  <div class="note" id="hnote"></div>
- <!-- 소리의 도플러 효과: 위 칸 구급차(소리) 또는 오리(물결파)를 골라 봄, 아래 칸 파동의 모습 -->
+ <!-- 소리(음파)와 물결파의 도플러 효과: 위 칸 구급차(소리) 또는 오리(물결파)를 골라 봄, 아래 칸 파동의 모습 -->
  <div id="sview">
   <div class="dwrap"><svg id="dsc" viewBox="0 0 960 220"></svg>
    <div class="subtabs dsel" id="dsrcb"><button data-v="a" class="on">구급차의 사이렌 소리</button><button data-v="d">헤엄치는 오리</button></div>
@@ -421,7 +421,7 @@ function fitNote(){snote.style.minHeight='';let m=0;for(const k in SN){snote.inn
 addEventListener('resize',fitNote);
 fitNote();pick('');
 
-// ---- 소리의 도플러 효과: [구급차] 사이렌 소리를 듣고 파면을 봄 / [오리] 물결파의 파장을 봄 (둘 중 하나를 골라 봄) ----
+// ---- 소리(음파)와 물결파의 도플러 효과: [구급차] 사이렌 소리를 듣고 파면을 봄 / [오리] 물결파의 파장을 봄 (둘 중 하나를 골라 봄) ----
 // 위 그림판: 파원과 파면 / 아래 그림판: 파원이 지나는 직선을 따라 본 파동의 모습(마루와 골)
 // 파원은 일정한 시간 간격(T)마다 파면(마루)을 내보내고, 각 파면은 내보낸 자리에서 일정한 속력(c)으로 둥글게 퍼짐
 // 재생 전부터 소리가 나고 있었던 것으로 보고, 처음부터 파면이 그림판을 채운 채 시작함 (재생하자마자 소리가 들리도록)
@@ -567,10 +567,10 @@ function dDraw(){const t=dT,P=DS[dsrc];dsc.innerHTML='';const g=mk('g',{},dsc),x
   mk('rect',{x:-3000,y:-1000,width:7000,height:3000,fill:'#0a2840'},g);mk('rect',{x:-200,y:-120,width:1360,height:460,fill:'url(#gPond)'},g);
   fronts(g,P,t,'#e6f4ff');duck(g,x,P.y);
   pl('위에서 본 연못의 오리',948,28,g,'end','#e8ecff',14);
-  txt('차이가 잘 드러나도록 오리를 물결파 속력의 0.5배로 빠르게 나타냄',{x:12,y:210,fill:'#cfe3f5','font-size':12,opacity:.85},g)}
+  txt('물결이 같은 속력으로 퍼진다고 가정하고, 차이가 잘 드러나도록 오리를 물결파 속력의 0.5배로 빠르게 나타냄',{x:12,y:210,fill:'#cfe3f5','font-size':12,opacity:.85},g)}
  waveStrip(P,t)}
 
-const DN='<div class="nh">소리의 도플러 효과</div><p>파원이 <b>멈춰 있을 때</b>와 <b>움직일 때</b> 파면 사이의 간격과 아래에 그린 파동의 모습(파장)을 비교해 보세요. <span class="go">그림 왼쪽 위에서 구급차와 오리 중 하나를 고르세요.</span></p>';
+const DN='<div class="nh">소리(음파)와 물결파의 도플러 효과</div><p>파원이 <b>멈춰 있을 때</b>와 <b>움직일 때</b> 파면 사이의 간격과 아래에 그린 파동의 모습(파장)을 비교해 보세요. <span class="go">그림 왼쪽 위에서 구급차와 오리 중 하나를 고르세요.</span></p>';
 const dInitMsg=()=>dsrc=='a'?(dmv?'<span class="go">▶ 재생을 눌러 보세요.</span> 구급차가 왼쪽에서 오른쪽으로 지나갑니다. 소리의 높낮이와 앞뒤 파장을 비교해 보세요.':'<span class="go">▶ 재생을 눌러 멈춰 있는 구급차의 사이렌 소리를 들어 보세요.</span>')
  :(dmv?'<span class="go">▶ 재생을 눌러 보세요.</span> 오리가 왼쪽에서 오른쪽으로 헤엄칩니다. 앞뒤 물결의 파장을 비교해 보세요.':'<span class="go">▶ 재생을 눌러 보세요.</span> 제자리에서 물을 젓는 오리가 물결을 만듭니다.');
 function dMsg(h){if(dsrc=='d')return dmv?'오리가 나아가는 앞쪽은 물결의 파장이 짧고, 뒤쪽은 파장이 깁니다. 오리 앞쪽에서는 물결이 더 자주(진동수가 크게) 지나갑니다.':'멈춰 있을 때: 물결이 모든 방향으로 같은 간격(파장)으로 퍼집니다.';
@@ -597,7 +597,7 @@ dsrcb.onclick=e=>{const b=e.target.closest('button');if(!b)return;dsrc=b.dataset
 sndb.onclick=()=>{dsnd=dsnd?0:1;sndb.classList.toggle('on',!!dsnd);sndb.textContent=dsnd?'🔊 소리 켬':'🔇 소리 끔';sndb.setAttribute('aria-pressed',!!dsnd);
  if(dsnd&&draf){aStart();dSound()}if(!dsnd)aSet(0,0)};
 
-// ==== ② 도플러 효과: 작은 학습 화면 2개 [소리의 도플러 효과] [빛의 도플러 효과(준비 중)] ====
+// ==== ② 도플러 효과: 작은 학습 화면 2개 [소리(음파)와 물결파의 도플러 효과] [빛의 도플러 효과(준비 중)] ====
 const HN={
  l:{t:'빛의 도플러 효과',d:'빛을 내는 천체가 다가오거나 멀어질 때 스펙트럼의 흡수선이 이동하는 현상(청색 편이, 적색 편이)을 살펴봅니다.'}};
 let hcur='s';
