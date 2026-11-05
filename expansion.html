@@ -98,10 +98,10 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 #sview{display:flex;flex-direction:column;gap:8px}
 #sview[hidden],svg[hidden],.sndb[hidden]{display:none}
 .dwrap{position:relative}
-#dsc{max-height:max(170px,calc((100vh - 394px)*.63))}
-#dsc{max-height:max(170px,calc((100dvh - 394px)*.63))}
-#dwave{max-height:max(100px,calc((100vh - 394px)*.37))}
-#dwave{max-height:max(100px,calc((100dvh - 394px)*.37))}
+#dsc{max-height:max(170px,calc((100vh - 416px)*.63))}
+#dsc{max-height:max(170px,calc((100dvh - 416px)*.63))}
+#dwave{max-height:max(100px,calc((100vh - 416px)*.37))}
+#dwave{max-height:max(100px,calc((100dvh - 416px)*.37))}
 /* 그림판 왼쪽 위의 구급차·오리 고르기 단추 (연보라) */
 .dsel{position:absolute;top:8px;left:8px}
 .dsel button{padding:4px 12px;font-size:.85rem}
@@ -426,8 +426,10 @@ fitNote();pick('');
 // 파원은 일정한 시간 간격(T)마다 파면(마루)을 내보내고, 각 파면은 내보낸 자리에서 일정한 속력(c)으로 둥글게 퍼짐
 // 재생 전부터 소리가 나고 있었던 것으로 보고, 처음부터 파면이 그림판을 채운 채 시작함 (재생하자마자 소리가 들리도록)
 const DS={a:{c:300,v:90,T:.35,x0:-60,xs:300,y:75,R:950,m:54,end:13.5},
-          d:{c:160,v:80,T:.5,x0:60,xs:480,y:110,R:900,m:44,end:11.5}};
+          d:{c:160,v:80,T:.5,x0:60,xs:480,y:80,R:900,m:44,end:11.5}};
 const OBS={x:480,y:212};
+// 오리 그림의 관찰자: 물 위에 떠 있는 나뭇잎 두 장 (오리가 지나가는 길에서 조금 떨어진 곳)
+const LEAF=[{x:170,y:128,n:'나뭇잎 1'},{x:790,y:128,n:'나뭇잎 2'}];
 let dsrc='a',dmv=0,dsnd=1,dT=0,draf=0,dLast=0;
 const srcX=(P,te)=>dmv?P.x0+P.v*te:P.xs;
 const kMin=P=>-Math.ceil(P.R/P.c/P.T);
@@ -436,10 +438,12 @@ const dEnd=()=>dmv?DS[dsrc].end:10;
 // 관찰자에게 지금 들리는 소리: 이 순간 관찰자의 귀에 도착한 파면을 내보낸 때(te)와 자리를 찾아 진동수 배율을 구함
 // 배율 = 1 / (1 - (관찰자 쪽으로 다가오는 속력) / 소리 속력)
 const EAR={x:490,y:OBS.y-100};
-function heard(t){const P=DS.a;let te=t,d=0;
- for(let i=0;i<30;i++){d=Math.hypot(EAR.x-srcX(P,te),EAR.y-P.y);te=t-d/P.c}
- const ux=(EAR.x-srcX(P,te))/d,v=dmv?P.v:0;
- return{te,f:1/(1-v*ux/P.c),vol:1/(1+d/260)}}
+// (ox, oy) 지점이 시각 t에 받는 파동: 진동수 배율 f, 크기 vol, 변위 y(마루 1, 골 -1)
+function recv(P,ox,oy,t){let te=t,d=0;
+ for(let i=0;i<30;i++){d=Math.hypot(ox-srcX(P,te),oy-P.y);te=t-d/P.c}
+ const ux=(ox-srcX(P,te))/Math.max(d,1e-6),v=dmv?P.v:0;
+ return{te,f:1/(1-v*ux/P.c),vol:1/(1+d/260),y:Math.cos(2*Math.PI*te/P.T)}}
+const heard=t=>recv(DS.a,EAR.x,EAR.y,t);
 
 // 사이렌 소리 (Web Audio). 높은음·낮은음을 번갈아 내며, 들리는 진동수 = 원래 진동수 × 배율
 let AC=null,osc=null,gn=null,aOn=false;
@@ -521,17 +525,24 @@ function fronts(g,P,t,col){const fg=mk('g',{},g);for(let k=Math.floor(t/P.T);k>=
  const o=Math.max(.08,1-r/P.R),cx=srcX(P,te),rr=Math.max(r,.1);
  mk('circle',{cx,cy:P.y,r:rr,fill:'none',stroke:col,'stroke-width':6,opacity:o*.12},fg);
  mk('circle',{cx,cy:P.y,r:rr,fill:'none',stroke:col,'stroke-width':1.6,opacity:o*.95},fg)}}
-// 관찰자에게 들리는 소리의 높낮이 (원래 진동수의 몇 배인지)
-function gauge(g,h){const b=mk('g',{},g),x0=704,x1=936,y=154,xm=(x0+x1)/2;
- mk('rect',{x:686,y:112,width:266,height:94,rx:14,fill:'rgba(8,12,32,.78)',stroke:'rgba(143,156,240,.35)'},b);
- txt('관찰자에게 들리는 소리',{x:702,y:136,fill:'#e8ecff','font-size':15,'font-weight':700},b);
- mk('rect',{x:x0,y:y-3,width:x1-x0,height:6,rx:3,fill:'url(#gGauge)',opacity:.9},b);
- [x0,xm,x1].forEach(xx=>mk('line',{x1:xx,y1:y-9,x2:xx,y2:y+9,stroke:'rgba(255,255,255,.35)','stroke-width':1.5},b));
- [['낮음',x0,'start'],['원래',xm,'middle'],['높음',x1,'end']].forEach(([s,x,a])=>txt(s,{x,y:y+24,'text-anchor':a,fill:'#a9b1cc','font-size':13},b));
- const p=Math.max(0,Math.min(1,.5+Math.log(h.f)/(2*Math.log(1.5)))),col=h.f>1.02?'#ff8a7a':h.f<.98?'#6fd3ff':'#ffd76b';
- mk('circle',{cx:x0+p*(x1-x0),cy:y,r:8,fill:'#fff',stroke:col,'stroke-width':3.5,filter:'url(#fGlow)'},b);
- const tv=txt('',{x:xm,y:y+44,'text-anchor':'middle',fill:'#e8ecff','font-size':14,'font-weight':600},b);
- tv.innerHTML=`원래 진동수의 <tspan fill="${col}" font-weight="800">${h.f.toFixed(2)}</tspan>배`}
+// 진동 기록계: 관찰자 자리(ox, oy)에서 시간에 따라 파동이 오르내리는 모습(최근 2초)을 그리고, 진동수가 원래의 몇 배인지 보여 줌
+// (아래 그림판이 '한 순간의 파동 → 파장'이라면, 이것은 '한 지점의 시간에 따른 진동 → 진동수')
+function recorder(g,P,ox,oy,t,bx,by,bw,bh,title,sound){const b=mk('g',{},g),h=recv(P,ox,oy,t),W=2,x0=bx+12,x1=bx+bw-14,A=bh>80?11:8,yc=by+(bh>80?45:35);
+ const col=h.f>1.02?'#ff8a7a':h.f<.98?'#6fd3ff':'#ffd76b';
+ mk('rect',{x:bx,y:by,width:bw,height:bh,rx:12,fill:'rgba(8,12,32,.8)',stroke:'rgba(143,156,240,.35)'},b);
+ txt(title,{x:x0,y:by+(bh>80?20:17),fill:'#e8ecff','font-size':bh>80?14:13,'font-weight':700},b);
+ txt('시간 →',{x:x1,y:by+(bh>80?20:17),'text-anchor':'end',fill:'#a9b1cc','font-size':11},b);
+ mk('line',{x1:x0,y1:yc,x2:x1,y2:yc,stroke:'rgba(143,156,240,.3)','stroke-width':1,'stroke-dasharray':'3 4'},b);
+ let d='';for(let i=0;i<=96;i++){const s=t-W+W*i/96;d+=(i?'L':'M')+(x0+(x1-x0)*i/96).toFixed(1)+','+(yc-A*recv(P,ox,oy,s).y).toFixed(1)}
+ mk('path',{d,fill:'none',stroke:col,'stroke-width':2,'stroke-linejoin':'round'},b);
+ mk('circle',{cx:x1,cy:yc-A*h.y,r:3.5,fill:'#fff',stroke:col,'stroke-width':2},b);
+ const tv=txt('',{x:x0,y:by+bh-9,fill:'#e8ecff','font-size':bh>80?13:12,'font-weight':600},b);
+ tv.innerHTML=`진동수: 원래의 <tspan fill="${col}" font-weight="800">${h.f.toFixed(2)}</tspan>배`+(sound?` · ${h.f>1.02?'높은 소리':h.f<.98?'낮은 소리':'원래 높이의 소리'}`:'')}
+// 물 위에 떠 있는 나뭇잎 (물결에 따라 오르내리는 것을 크기 변화로 나타냄)
+function leaf(g,L,s){const b=mk('g',{transform:`translate(${L.x},${L.y}) rotate(-25) scale(${1+.14*s})`},g);
+ mk('ellipse',{cx:1,cy:2,rx:13,ry:6,fill:'#000',opacity:.25},b);
+ mk('path',{d:'M-13,0C-7,-8 7,-8 13,0C7,8 -7,8 -13,0Z',fill:'#6cc25a',stroke:'#3f8a33','stroke-width':1},b);
+ mk('path',{d:'M-13,0L13,0',stroke:'#3f8a33','stroke-width':1},b);mk('path',{d:'M-17,1L-13,0',stroke:'#3f8a33','stroke-width':1.5},b)}
 // 아래 그림판: 파원이 지나는 직선 위의 각 지점에 지금 와 있는 파동을 언제 내보냈는지(te) 찾아 마루와 골을 그림
 // (파면을 내보낸 때 te = k·T 인 곳이 마루. 위 그림판의 파면과 같은 자리에 마루가 옴)
 function waveStrip(P,t){dwave.innerHTML='';const g=mk('g',{},dwave),Y0=80,A=22,x=srcX(P,t),col=dsrc=='a'?'#8fd3ff':'#e6f4ff';let d='';
@@ -545,10 +556,11 @@ function waveStrip(P,t){dwave.innerHTML='';const g=mk('g',{},dwave),Y0=80,A=22,x
  mk('path',{d,fill:'none',stroke:col,'stroke-width':2.2,'stroke-linejoin':'round'},g);
  mk('line',{x1:x,y1:48,x2:x,y2:110,stroke:'#ffb066','stroke-width':1.5,'stroke-dasharray':'3 4',opacity:.9},g);
  // 아래 왼쪽 제목, 파원 자리, 관찰자 자리 (글씨가 겹치면 파원 이름은 잠시 숨김)
- const tl=txt(dsrc=='a'?'파동의 모습 (마루: 공기가 빽빽한 곳)':'물결의 옆모습 (마루와 골)',{x:12,y:122,fill:'#a9b1cc','font-size':12,'font-weight':600},g),tr=tl.getBBox?tl.getBBox().width+22:0;
- const hideS=x-24<tr||(dsrc=='a'&&Math.abs(EAR.x-x)<56);
+ const tl=txt(dsrc=='a'?'파동의 모습 (마루: 공기가 빽빽한 곳)':'물결의 옆모습',{x:12,y:122,fill:'#a9b1cc','font-size':12,'font-weight':600},g),tr=tl.getBBox?tl.getBBox().width+22:0;
+ const obs=dsrc=='a'?[{x:EAR.x,n:'관찰자'}]:LEAF;
+ const hideS=x-24<tr||obs.some(o=>Math.abs(o.x-x)<56);
  txt(dsrc=='a'?'구급차':'오리',{x,y:123,'text-anchor':'middle',fill:'#ffb066','font-size':12,'font-weight':700,opacity:hideS?0:1},g);
- if(dsrc=='a')txt('▲ 관찰자',{x:EAR.x,y:123,'text-anchor':'middle',fill:'#ffd76b','font-size':12,'font-weight':700},g);
+ obs.forEach(o=>txt('▲ '+o.n,{x:o.x,y:123,'text-anchor':'middle',fill:'#ffd76b','font-size':12,'font-weight':700},g));
  spans(g,P,x,t,40)}
 
 function dDraw(){const t=dT,P=DS[dsrc];dsc.innerHTML='';const g=mk('g',{},dsc),x=srcX(P,t);
@@ -560,20 +572,24 @@ function dDraw(){const t=dT,P=DS[dsrc];dsc.innerHTML='';const g=mk('g',{},dsc),x
   mk('line',{x1:-3000,y1:75,x2:4000,y2:75,stroke:'#e8ecff','stroke-dasharray':'22 18',opacity:.35,'stroke-width':1.6},g);
   mk('rect',{x:-3000,y:100,width:7000,height:5,fill:'#3a4262'},g);
   mk('rect',{x:-3000,y:105,width:7000,height:115,fill:'url(#gWalk)'},g);
-  fronts(g,P,t,'#8fd3ff');ambulance(g,x,P.y,t);observer(g);gauge(g,heard(t));
+  fronts(g,P,t,'#8fd3ff');ambulance(g,x,P.y,t);observer(g);recorder(g,P,EAR.x,EAR.y,t,686,112,266,94,'관찰자가 받는 소리의 진동',1);
   txt('차이가 잘 드러나도록 구급차를 소리 속력의 0.3배로 빠르게 나타냄',{x:12,y:210,fill:'#a9b1cc','font-size':12,opacity:.85},g);
  }else{
   // 연못의 오리 (위에서 본 모습)
   mk('rect',{x:-3000,y:-1000,width:7000,height:3000,fill:'#0a2840'},g);mk('rect',{x:-200,y:-120,width:1360,height:460,fill:'url(#gPond)'},g);
-  fronts(g,P,t,'#e6f4ff');duck(g,x,P.y);
+  fronts(g,P,t,'#e6f4ff');
+  LEAF.forEach(L=>{leaf(g,L,recv(P,L.x,L.y,t).y);pl(L.n,L.x,L.y-16,g,'middle','#ffd76b',12,700)});
+  duck(g,x,P.y);
   pl('위에서 본 연못의 오리',948,28,g,'end','#e8ecff',14);
-  txt('물결이 같은 속력으로 퍼진다고 가정하고, 차이가 잘 드러나도록 오리를 물결파 속력의 0.5배로 빠르게 나타냄',{x:12,y:210,fill:'#cfe3f5','font-size':12,opacity:.85},g)}
+  LEAF.forEach((L,i)=>recorder(g,P,L.x,L.y,t,i?706:14,148,240,68,L.n+'의 진동',0));
+  txt('물결이 같은 속력으로 퍼진다고 가정하고,',{x:480,y:196,'text-anchor':'middle',fill:'#cfe3f5','font-size':12,opacity:.85},g);
+  txt('차이가 잘 드러나도록 오리를 물결파 속력의 0.5배로 빠르게 나타냄',{x:480,y:211,'text-anchor':'middle',fill:'#cfe3f5','font-size':12,opacity:.85},g)}
  waveStrip(P,t)}
 
-const DN='<div class="nh">소리(음파)와 물결파의 도플러 효과</div><p>파원이 <b>멈춰 있을 때</b>와 <b>움직일 때</b> 파면 사이의 간격과 아래에 그린 파동의 모습(파장)을 비교해 보세요. <span class="go">그림 왼쪽 위에서 구급차와 오리 중 하나를 고르세요.</span></p>';
+const DN='<div class="nh">소리(음파)와 물결파의 도플러 효과</div><p><span class="go">그림 왼쪽에 있는 구급차와 오리 중 하나를 고르세요.</span><br>파원이 <b>멈춰 있을 때</b>와 <b>움직일 때</b> 파면 사이의 거리(파장)가 어떻게 달라지는지 살펴보세요. 파원이 관찰자를 향해 다가올 때와 멀어질 때의 파동의 차이(파장과 진동수)를 비교해 보세요.</p>';
 const dInitMsg=()=>dsrc=='a'?(dmv?'<span class="go">▶ 재생을 눌러 보세요.</span> 구급차가 왼쪽에서 오른쪽으로 지나갑니다. 소리의 높낮이와 앞뒤 파장을 비교해 보세요.':'<span class="go">▶ 재생을 눌러 멈춰 있는 구급차의 사이렌 소리를 들어 보세요.</span>')
- :(dmv?'<span class="go">▶ 재생을 눌러 보세요.</span> 오리가 왼쪽에서 오른쪽으로 헤엄칩니다. 앞뒤 물결의 파장을 비교해 보세요.':'<span class="go">▶ 재생을 눌러 보세요.</span> 제자리에서 물을 젓는 오리가 물결을 만듭니다.');
-function dMsg(h){if(dsrc=='d')return dmv?'오리가 나아가는 앞쪽은 물결의 파장이 짧고, 뒤쪽은 파장이 깁니다. 오리 앞쪽에서는 물결이 더 자주(진동수가 크게) 지나갑니다.':'멈춰 있을 때: 물결이 모든 방향으로 같은 간격(파장)으로 퍼집니다.';
+ :(dmv?'<span class="go">▶ 재생을 눌러 보세요.</span> 물 위의 두 나뭇잎을 관찰자로 보고, 흔들리는 빠르기(진동수)를 비교해 보세요.':'<span class="go">▶ 재생을 눌러 보세요.</span> 제자리에서 물을 젓는 오리가 물결을 만듭니다.');
+function dMsg(h){if(dsrc=='d')return dmv?'오리가 다가오는 나뭇잎 2는 진동수가 크고, 오리가 멀어지는 나뭇잎 1은 진동수가 작습니다.':'멈춰 있을 때: 물결이 모든 방향으로 같은 간격으로 퍼져, 두 나뭇잎이 같은 진동수로 흔들립니다.';
  if(!dmv)return'멈춰 있을 때: 파면이 모든 방향으로 같은 간격(파장)으로 퍼져, 관찰자에게는 원래 높이의 소리가 들립니다.';
  return h.f>1.02?'다가오는 동안: 관찰자 쪽 파장이 짧아지고 진동수가 커져, 원래보다 높은 소리가 들립니다.'
   :h.f<.98?'멀어지는 동안: 관찰자 쪽 파장이 길어지고 진동수가 작아져, 원래보다 낮은 소리가 들립니다.'
