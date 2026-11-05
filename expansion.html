@@ -114,7 +114,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .note.ask{margin:10px 0 0;padding:0;border-radius:0;background:none;display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;font-size:.95rem}
 .note.ask p{margin:0;font-weight:600}
 .ask2{margin-top:6px!important}
-.note.ask[hidden]{display:none}
+.note.ask[hidden],#dask[hidden],.seg[hidden]{display:none}
 .tag{display:inline-block;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.02em;white-space:nowrap}
 .open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none;font-family:inherit}
 .open-think:hover{background:var(--card)}
@@ -240,17 +240,26 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  <div class="ctl" id="dctl">
   <button class="pb" id="dplay">▶ 재생</button><button class="pb" id="dreset">↺ 처음으로</button>
   <div class="seg"><div class="bs" id="dmov"><button data-v="0" class="on">멈춰 있을 때</button><button data-v="1">움직일 때</button></div></div>
+  <div class="seg" id="dspdw" hidden><div class="bs" id="dspd"><button data-v="1" class="on">기본 속력</button><button data-v="2">속력 2배</button></div></div>
   <span class="hint" id="dhint"></span>
  </div>
  <div class="ctl" id="lctl" hidden><span class="unit">조작 단추가 들어갈 자리</span></div>
- <!-- 심화: 파장과 진동수의 관계 (생각해 보기와 같은 형식: 꼬리표 + 질문 + 답 보기 팝업) -->
- <div class="note ask" id="dask"><span class="tag">심화</span><p>파동의 파장과 진동수는 어떤 관계일까요?</p><button type="button" class="open-think" id="thb4">답 보기</button></div>
- <div class="ov" id="ov4" hidden><div class="think" role="dialog" aria-modal="true" aria-label="심화: 파동의 파장과 진동수는 어떤 관계일까요?">
-  <div class="think-h"><b class="think-t"><span class="tag">심화</span>파동의 파장과 진동수는 어떤 관계일까요?</b><button type="button" class="x" id="thx4" aria-label="닫기">닫기 ✕</button></div>
-  <p class="ans">파동의 속력이 일정하면 파장과 진동수는 반비례합니다. (파동의 속력 = 진동수 × 파장, <i>v</i> = <i>f</i><i>λ</i>)</p>
-  <p class="exp">진동수(<i>f</i>)는 한 지점을 1초 동안 지나가는 마루의 개수이고, 파장(<i>λ</i>)은 이웃한 마루 사이의 간격입니다. 1초 동안 파동이 나아가는 거리는 <i>f</i> × <i>λ</i>이므로 파동의 속력은 <i>v</i> = <i>f</i><i>λ</i>입니다.</p>
-  <p class="exp">소리는 구급차가 움직여도 공기 속에서 같은 속력으로 퍼집니다. 그래서 앞쪽처럼 파장이 짧아지면 진동수가 커져 높은 소리로, 뒤쪽처럼 파장이 길어지면 진동수가 작아져 낮은 소리로 들립니다. 오리가 만드는 물결파도 마찬가지입니다.</p>
-  <p class="exp">이 그림에서 구급차는 소리 속력의 0.3배로 움직이므로, 구급차 바로 앞쪽의 파장은 원래의 0.7배가 되고 진동수는 원래의 약 1.43배(1 ÷ 0.7)가 됩니다.</p>
+ <!-- 생각해 보기 2개 (꼬리표 + 질문 + 답 보기 팝업) -->
+ <div id="dask">
+ <div class="note ask"><span class="tag">생각해 보기</span><p>파원이 관찰자를 향해 올 때와 파원이 관찰자로부터 멀어질 때 파장은 어떻게 달라지나요?</p><button type="button" class="open-think" id="thb5">답 보기</button></div>
+ <div class="note ask ask2"><span class="tag">생각해 보기</span><p>파원이 움직이는 속도가 빨라지면, 파장의 변화 폭은 어떻게 달라지나요?</p><button type="button" class="open-think" id="thb6">답 보기</button></div>
+ </div>
+ <div class="ov" id="ov5" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 파원이 관찰자를 향해 올 때와 파원이 관찰자로부터 멀어질 때 파장은 어떻게 달라지나요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>파원이 관찰자를 향해 올 때와 파원이 관찰자로부터 멀어질 때 파장은 어떻게 달라지나요?</b><button type="button" class="x" id="thx5" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">파원이 다가올 때는 관찰자 쪽의 파장이 짧아지고, 멀어질 때는 파장이 길어집니다.</p>
+  <p class="exp">파원은 파면 하나를 내보낸 뒤 다음 파면을 내보낼 때까지 앞으로 이동합니다. 그래서 파원이 나아가는 앞쪽에서는 파면 사이의 간격(파장)이 좁아지고, 뒤쪽에서는 넓어집니다.</p>
+  <p class="exp">파동이 퍼지는 속력은 그대로이므로, 파장이 짧아진 쪽에서는 진동수가 커지고(소리는 높게 들림), 파장이 길어진 쪽에서는 진동수가 작아집니다(소리는 낮게 들림).</p>
+ </div></div>
+ <div class="ov" id="ov6" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 파원이 움직이는 속도가 빨라지면, 파장의 변화 폭은 어떻게 달라지나요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>파원이 움직이는 속도가 빨라지면, 파장의 변화 폭은 어떻게 달라지나요?</b><button type="button" class="x" id="thx6" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">파원이 빠르게 움직일수록 파장의 변화 폭이 커집니다. 앞쪽의 파장은 더 짧아지고, 뒤쪽의 파장은 더 길어집니다.</p>
+  <p class="exp">파원은 파면을 한 번 내보내고 다음 파면을 내보낼 때까지(한 주기 동안) 일정한 거리를 이동하고, 앞쪽 파장은 이 거리만큼 짧아지고 뒤쪽 파장은 이 거리만큼 길어집니다. 파원이 빨라지면 한 주기 동안 이동하는 거리가 늘어나므로 파장의 변화도 커집니다.</p>
+  <p class="exp">예를 들어 구급차가 소리 속력의 0.3배로 움직이면 앞쪽 파장은 원래의 0.7배, 뒤쪽 파장은 1.3배가 됩니다. 속력을 2배(소리 속력의 0.6배)로 하면 앞쪽은 0.4배, 뒤쪽은 1.6배가 됩니다. <span class="go">'움직일 때'를 고른 뒤 '속력 2배' 단추를 눌러 확인해 보세요.</span></p>
  </div></div>
 </section>
 
@@ -426,14 +435,16 @@ fitNote();pick('');
 // 파원은 일정한 시간 간격(T)마다 파면(마루)을 내보내고, 각 파면은 내보낸 자리에서 일정한 속력(c)으로 둥글게 퍼짐
 // 재생 전부터 소리가 나고 있었던 것으로 보고, 처음부터 파면이 그림판을 채운 채 시작함 (재생하자마자 소리가 들리도록)
 const DS={a:{c:300,v:90,T:.35,x0:-60,xs:300,y:75,R:950,m:54,end:13.5},
-          d:{c:160,v:80,T:.5,x0:60,xs:480,y:80,R:900,m:44,end:11.5}};
+          d:{c:160,v:64,T:.5,x0:60,xs:480,y:80,R:900,m:44,end:14.5}};
 const OBS={x:480,y:212};
 // 오리 그림의 관찰자: 물 위에 떠 있는 나뭇잎 두 장 (오리가 지나가는 길에서 조금 떨어진 곳)
 const LEAF=[{x:170,y:128,n:'나뭇잎 1'},{x:790,y:128,n:'나뭇잎 2'}];
-let dsrc='a',dmv=0,dsnd=1,dT=0,draf=0,dLast=0;
-const srcX=(P,te)=>dmv?P.x0+P.v*te:P.xs;
+let dsrc='a',dmv=0,dsnd=1,dk=1,dT=0,draf=0,dLast=0;
+// 파원의 속력: 기본 또는 2배(dk)
+const vS=P=>dmv?P.v*dk:0,vr=P=>+(P.v*dk/P.c).toFixed(1);
+const srcX=(P,te)=>dmv?P.x0+vS(P)*te:P.xs;
 const kMin=P=>-Math.ceil(P.R/P.c/P.T);
-const dEnd=()=>dmv?DS[dsrc].end:10;
+const dEnd=()=>dmv?DS[dsrc].end/dk:10;
 
 // 관찰자에게 지금 들리는 소리: 이 순간 관찰자의 귀에 도착한 파면을 내보낸 때(te)와 자리를 찾아 진동수 배율을 구함
 // 배율 = 1 / (1 - (관찰자 쪽으로 다가오는 속력) / 소리 속력)
@@ -441,7 +452,7 @@ const EAR={x:490,y:OBS.y-100};
 // (ox, oy) 지점이 시각 t에 받는 파동: 진동수 배율 f, 크기 vol, 변위 y(마루 1, 골 -1)
 function recv(P,ox,oy,t){let te=t,d=0;
  for(let i=0;i<30;i++){d=Math.hypot(ox-srcX(P,te),oy-P.y);te=t-d/P.c}
- const ux=(ox-srcX(P,te))/Math.max(d,1e-6),v=dmv?P.v:0;
+ const ux=(ox-srcX(P,te))/Math.max(d,1e-6),v=vS(P);
  return{te,f:1/(1-v*ux/P.c),vol:1/(1+d/260),y:Math.cos(2*Math.PI*te/P.T)}}
 const heard=t=>recv(DS.a,EAR.x,EAR.y,t);
 
@@ -573,7 +584,7 @@ function dDraw(){const t=dT,P=DS[dsrc];dsc.innerHTML='';const g=mk('g',{},dsc),x
   mk('rect',{x:-3000,y:100,width:7000,height:5,fill:'#3a4262'},g);
   mk('rect',{x:-3000,y:105,width:7000,height:115,fill:'url(#gWalk)'},g);
   fronts(g,P,t,'#8fd3ff');ambulance(g,x,P.y,t);observer(g);recorder(g,P,EAR.x,EAR.y,t,686,112,266,94,'관찰자가 받는 소리의 진동',1);
-  txt('차이가 잘 드러나도록 구급차를 소리 속력의 0.3배로 빠르게 나타냄',{x:12,y:210,fill:'#a9b1cc','font-size':12,opacity:.85},g);
+  txt(`차이가 잘 드러나도록 구급차를 소리 속력의 ${vr(P)}배로 빠르게 나타냄`,{x:12,y:210,fill:'#a9b1cc','font-size':12,opacity:.85},g);
  }else{
   // 연못의 오리 (위에서 본 모습)
   mk('rect',{x:-3000,y:-1000,width:7000,height:3000,fill:'#0a2840'},g);mk('rect',{x:-200,y:-120,width:1360,height:460,fill:'url(#gPond)'},g);
@@ -583,10 +594,10 @@ function dDraw(){const t=dT,P=DS[dsrc];dsc.innerHTML='';const g=mk('g',{},dsc),x
   pl('위에서 본 연못의 오리',948,28,g,'end','#e8ecff',14);
   LEAF.forEach((L,i)=>recorder(g,P,L.x,L.y,t,i?706:14,148,240,68,L.n+'의 진동',0));
   txt('물결이 같은 속력으로 퍼진다고 가정하고,',{x:480,y:196,'text-anchor':'middle',fill:'#cfe3f5','font-size':12,opacity:.85},g);
-  txt('차이가 잘 드러나도록 오리를 물결파 속력의 0.5배로 빠르게 나타냄',{x:480,y:211,'text-anchor':'middle',fill:'#cfe3f5','font-size':12,opacity:.85},g)}
+  txt(`차이가 잘 드러나도록 오리를 물결파 속력의 ${vr(P)}배로 빠르게 나타냄`,{x:480,y:211,'text-anchor':'middle',fill:'#cfe3f5','font-size':12,opacity:.85},g)}
  waveStrip(P,t)}
 
-const DN='<div class="nh">소리(음파)와 물결파의 도플러 효과</div><p><span class="go">그림 왼쪽에 있는 구급차와 오리 중 하나를 고르세요.</span><br>파원이 <b>멈춰 있을 때</b>와 <b>움직일 때</b> 파면 사이의 거리(파장)가 어떻게 달라지는지 살펴보세요. 파원이 관찰자를 향해 다가올 때와 멀어질 때의 파동의 차이(파장과 진동수)를 비교해 보세요.</p>';
+const DN='<p style="margin:0"><span class="go">그림 왼쪽에 있는 구급차와 오리 중 하나를 고르세요.</span></p>';
 const dInitMsg=()=>dsrc=='a'?(dmv?'<span class="go">▶ 재생을 눌러 보세요.</span> 구급차가 왼쪽에서 오른쪽으로 지나갑니다. 소리의 높낮이와 앞뒤 파장을 비교해 보세요.':'<span class="go">▶ 재생을 눌러 멈춰 있는 구급차의 사이렌 소리를 들어 보세요.</span>')
  :(dmv?'<span class="go">▶ 재생을 눌러 보세요.</span> 물 위의 두 나뭇잎을 관찰자로 보고, 흔들리는 빠르기(진동수)를 비교해 보세요.':'<span class="go">▶ 재생을 눌러 보세요.</span> 제자리에서 물을 젓는 오리가 물결을 만듭니다.');
 function dMsg(h){if(dsrc=='d')return dmv?'오리가 다가오는 나뭇잎 2는 진동수가 크고, 오리가 멀어지는 나뭇잎 1은 진동수가 작습니다.':'멈춰 있을 때: 물결이 모든 방향으로 같은 간격으로 퍼져, 두 나뭇잎이 같은 진동수로 흔들립니다.';
@@ -605,10 +616,11 @@ function dLoop(now){dT+=DSPD*Math.min(.05,(now-dLast)/1000);dLast=now;const end=
  const h=dSound();dDraw();dSetHint(dMsg(h));draf=requestAnimationFrame(dLoop)}
 function dPlay(){if(draf){dStop();return}if(dT>=dEnd())dT=0;if(dsrc=='a'&&dsnd)aStart();
  dplay.textContent='⏸ 멈춤';dLast=performance.now();draf=1;dSound();draf=requestAnimationFrame(dLoop)}
-function dInit(){dStop();dT=0;hnote.innerHTML=DN;sndb.hidden=dsrc!='a';dDraw();dSetHint(dInitMsg())}
+function dInit(){dStop();dT=0;hnote.innerHTML=DN;sndb.hidden=dsrc!='a';dspdw.hidden=!dmv;dDraw();dSetHint(dInitMsg())}
 function segPick(box,v){box.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v==v))}
 dplay.onclick=dPlay;dreset.onclick=dInit;
 dmov.onclick=e=>{const b=e.target.closest('button');if(!b)return;dmv=+b.dataset.v;segPick(dmov,b.dataset.v);dInit()};
+dspd.onclick=e=>{const b=e.target.closest('button');if(!b)return;dk=+b.dataset.v;segPick(dspd,b.dataset.v);dInit()};
 dsrcb.onclick=e=>{const b=e.target.closest('button');if(!b)return;dsrc=b.dataset.v;segPick(dsrcb,b.dataset.v);dInit()};
 sndb.onclick=()=>{dsnd=dsnd?0:1;sndb.classList.toggle('on',!!dsnd);sndb.textContent=dsnd?'🔊 소리 켬':'🔇 소리 끔';sndb.setAttribute('aria-pressed',!!dsnd);
  if(dsnd&&draf){aStart();dSound()}if(!dsnd)aSet(0,0)};
@@ -626,7 +638,7 @@ hsel.addEventListener('click',e=>{const b=e.target.closest('button');if(b)hpick(
 hpick('s');
 
 // 생각해 보기 답 팝업과 비교 표 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
-[['ovc','cmpb','cxc'],['ov3','thb3','thx3'],['ov1','thb1','thx1'],['ov4','thb4','thx4']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
+[['ovc','cmpb','cxc'],['ov3','thb3','thx3'],['ov1','thb1','thx1'],['ov5','thb5','thx5'],['ov6','thb6','thx6']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
  const closeTh=()=>{ov.hidden=true;btn.focus()};
  btn.addEventListener('click',()=>{ov.hidden=false;cl.focus()});cl.addEventListener('click',closeTh);
  ov.addEventListener('click',e=>{if(e.target===ov)closeTh()});
