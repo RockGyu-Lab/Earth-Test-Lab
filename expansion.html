@@ -533,7 +533,9 @@ function dMsg(h){if(dsrc=='d')return dmv?'오리가 나아가는 앞쪽은 물�
 function dSetHint(s){if(dhint.innerHTML!=s)dhint.innerHTML=s}
 function dStop(){cancelAnimationFrame(draf);draf=0;dplay.textContent='▶ 재생';aSet(0,0)}
 function dSound(){const h=heard(dT);if(dsrc=='a'&&dsnd&&draf)aSet(siren(h.te)*h.f,.16*h.vol);else aSet(0,0);return h}
-function dLoop(now){dT+=Math.min(.05,(now-dLast)/1000);dLast=now;const end=dEnd();
+// 진행 상황을 알아보기 쉽도록 실제 시간의 0.5배 빠르기로 천천히 움직임
+const DSPD=.5;
+function dLoop(now){dT+=DSPD*Math.min(.05,(now-dLast)/1000);dLast=now;const end=dEnd();
  if(dT>=end){dT=end;dDraw();dStop();
   dSetHint(dsrc=='a'&&dmv?'구급차가 다가올 때는 원래보다 높은 소리, 멀어질 때는 낮은 소리가 들립니다. 사이렌이 내는 소리 자체는 바뀌지 않았습니다.':dMsg(heard(dT)));return}
  const h=dSound();dDraw();dSetHint(dMsg(h));draf=requestAnimationFrame(dLoop)}
