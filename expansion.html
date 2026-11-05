@@ -264,6 +264,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  <div class="ctl" id="lctl" hidden>
   <button class="pb" id="lplay">▶ 재생</button><button class="pb" id="lreset">↺ 처음으로</button>
   <div class="seg"><div class="bs" id="lmov"><button data-v="0" class="on">정지하고 있을 때</button><button data-v="1">다가올 때</button><button data-v="-1">멀어질 때</button></div></div>
+  <div class="seg" id="lspdw" hidden><div class="bs" id="lspd"><button data-v="1" class="on">기본 속력</button><button data-v="2">2배</button></div></div>
   <span class="hint" id="lhint"></span>
  </div>
  <!-- 빛의 도플러 효과: 생각해 보기 2개 -->
@@ -714,14 +715,14 @@ sndb.onclick=()=>{dsnd=dsnd?0:1;sndb.classList.toggle('on',!!dsnd);sndb.textCont
 // ==== 빛(전자기파)의 도플러 효과: 별이 망원경(관찰자)을 향해 곧장 다가오거나 곧장 멀어짐 ====
 // 위 그림판: 별, 파면(원), 별빛 가운데 한 가지 파장(초록빛, 540 nm)만 골라 색으로 칠한 빛의 파동, 망원경
 // 아래 그림판: 정지하고 있을 때 / 다가올 때 / 멀어질 때의 흡수 스펙트럼 (위: 정지한 별의 기준 스펙트럼, 아래: 관측한 스펙트럼)
-// 단순화한 모형: 별의 속력을 빛 속력의 0.1배로 매우 빠르게 나타냄 (실제 별은 빛 속력의 1만분의 1 정도)
-//  파장 배율 = 1 - (다가오는 속력)/(빛 속력)  → 다가올 때 0.9배(청색 편이), 멀어질 때 1.1배(적색 편이)
-const LP={c:300,T:.2,y:72,R:1150,B:.1,L0:540,TX:900,end:8};
+// 단순화한 모형: 별의 속력을 빛 속력의 0.05배(기본) 또는 0.1배(2배)로 매우 빠르게 나타냄 (실제 별은 빛 속력의 1만분의 1 정도)
+//  파장 배율 = 1 - (다가오는 속력)/(빛 속력)  → 다가올 때 0.95배·0.9배(청색 편이), 멀어질 때 1.05배·1.1배(적색 편이)
+const LP={c:300,T:.2,y:72,R:1150,B:.05,L0:540,TX:900,end:8};
 const LX0={0:300,1:150,'-1':450};
 const LLINE=[434.0,486.1,656.3];        // 수소의 흡수선 Hγ, Hβ, Hα (nm)
 const SPMIN=380,SPMAX=750;              // 스펙트럼에 그리는 파장 범위 (가시광선)
-let lmv=0,lT=0,lraf=0,lLast=0;const LREC={};
-const lV=()=>lmv*LP.B*LP.c;
+let lmv=0,lk=1,lT=0,lraf=0,lLast=0;const LREC={0:0,1:{},'-1':{}};
+const lV=()=>lmv*lk*LP.B*LP.c;
 const lSrc=te=>LX0[lmv]+lV()*te;
 // 파장(nm) → 색 (가시광선의 대략적인 색)
 function wl2rgb(w){let r=0,g=0,b=0;
@@ -744,7 +745,7 @@ function lScope(g){const b=mk('g',{transform:`translate(${LP.TX},${LP.y})`},g);
  mk('rect',{x:30,y:-5,width:10,height:9,rx:2,fill:'#59607e'},b);
  pl('관찰자(망원경)',10,-26,b,'middle','#ffd76b',12,700)}
 // 망원경이 받는 빛의 파장 배율 (별이 망원경 쪽으로 다가오면 1보다 작음)
-const lRatio=()=>1-lmv*LP.B;
+const lRatio=()=>1-lmv*lk*LP.B;
 function lDraw(){const t=lT,P=LP,x=lSrc(t);lsc.innerHTML='';const g0=mk('g',{},lsc);
  mk('rect',{x:-3000,y:-1000,width:7000,height:3000,fill:'#070b1d'},g0);
  [[60,20],[210,150],[330,30],[470,160],[610,24],[700,140],[800,36],[150,96],[520,118],[380,140],[90,160],[940,20]].forEach(([a,b],i)=>mk('circle',{cx:a,cy:b,r:i%3?1:1.5,fill:'#cfd8ff',opacity:.55},g0));
@@ -754,7 +755,7 @@ function lDraw(){const t=lT,P=LP,x=lSrc(t);lsc.innerHTML='';const g0=mk('g',{},l
  // 별과 망원경을 잇는 직선 위의 빛의 파동 (오른쪽: 망원경 쪽, 왼쪽: 반대쪽), 파장에 맞는 색으로 칠함
  const side=(x1,x2,s)=>{let d='';for(let px=x1;s>0?px<=x2:px>=x2;px+=3*s){let te=t;for(let i=0;i<12;i++)te=t-Math.abs(px-lSrc(te))/P.c;
    d+=(d?'L':'M')+px+','+(P.y-12*Math.cos(2*Math.PI*te/P.T)).toFixed(1)}return d};
- const wr=P.L0*lRatio(),wl=P.L0*(1+lmv*P.B);
+ const wr=P.L0*lRatio(),wl=P.L0*(1+lmv*lk*P.B);
  [[x+14,P.TX-22,1,wr],[x-14,-60,-1,wl]].forEach(([a,b,s,w])=>{if(s>0&&a>=b)return;const d=side(a,b,s),col=wl2rgb(w);
   mk('path',{d,fill:'none',stroke:col,'stroke-width':5,opacity:.25},g0);mk('path',{d,fill:'none',stroke:col,'stroke-width':2.2},g0)});
  lStar(g0,x,P.y);lScope(g0);
@@ -765,26 +766,27 @@ function lDraw(){const t=lT,P=LP,x=lSrc(t);lsc.innerHTML='';const g0=mk('g',{},l
  mk('rect',{x:bx+12,y:by+30,width:26,height:22,rx:4,fill:col},b);
  const tv=txt('',{x:bx+48,y:by+46,fill:'#e8ecff','font-size':12.5,'font-weight':600},b);
  tv.innerHTML=`${Math.round(wr)} nm · 원래의 <tspan fill="${col}" font-weight="800">${rt.toFixed(2)}</tspan>배`+(lmv>0?' · 청색 편이':lmv<0?' · 적색 편이':' · 원래 파장');
- txt('별의 속력: 빛 속력의 0.1배 (실제보다 매우 빠르게 나타냄)',{x:12,y:156,fill:'#a9b1cc','font-size':12,opacity:.85},g0);
+ txt(`별의 속력: 빛 속력의 ${fx(lk*LP.B)}배 (실제보다 매우 빠르게 나타냄)`,{x:12,y:156,fill:'#a9b1cc','font-size':12,opacity:.85},g0);
  txt('별빛 가운데 한 가지 파장(초록빛, 540 nm)만 골라 색으로 나타냄',{x:12,y:172,fill:'#a9b1cc','font-size':12,opacity:.85},g0)}
-// 아래 칸: 세 경우의 흡수 스펙트럼. 재생하면 그 경우가 기록되어 남음
+// 아래 칸: 세 경우의 흡수 스펙트럼. 재생하면 그 경우(다가올 때·멀어질 때는 기본 속력과 2배를 따로)가 기록되어 남음
+// 같은 흡수선끼리 흰 점선으로 이어(기준 → 기본 → 2배), 어느 쪽으로 얼마나 옮겨 갔는지 보여 줌
 function lPanels(){lspec.innerHTML='';const g=mk('g',{},lspec),W=306,SW=230,sx=w=>(w-SPMIN)/(SPMAX-SPMIN)*SW;
- [['정지하고 있을 때',0],['다가올 때',1],['멀어질 때',-1]].forEach(([nm,m],i)=>{const X=12+i*(W+9),on=m==lmv,r=LREC[m],x0=X+62,rt=1-m*LP.B;
+ [['정지하고 있을 때',0],['다가올 때',1],['멀어질 때',-1]].forEach(([nm,m],i)=>{const X=12+i*(W+9),on=m==lmv,x0=X+62;
   mk('rect',{x:X,y:4,width:W,height:122,rx:10,fill:'url(#gStrip)',stroke:on?'#ffd76b':'rgba(255,255,255,.16)','stroke-width':on?1.6:1},g);
   txt(nm,{x:X+12,y:23,fill:on?'#ffd76b':'#e8ecff','font-size':13,'font-weight':700},g);
   txt('수소의 흡수 스펙트럼',{x:X+W-10,y:23,'text-anchor':'end',fill:'#a9b1cc','font-size':10},g);
-  const strip=(y,h,lab,k)=>{txt(lab,{x:X+12,y:y+h/2+4,fill:'#cfd6ee','font-size':11,'font-weight':600},g);
+  const strip=(y,h,lab,k,dim)=>{txt(lab,{x:X+12,y:y+h/2+4,fill:dim?'#a9b1cc':'#cfd6ee','font-size':11,'font-weight':600,opacity:dim?.75:1},g);
+   if(dim){txt('재생하면 기록됩니다',{x:x0,y:y+h/2+4,fill:'#a9b1cc','font-size':11,opacity:.75},g);return}
    mk('rect',{x:x0,y,width:SW,height:h,fill:'url(#gSpec)'},g);
    LLINE.forEach(w=>{const ww=w*k;if(ww>SPMIN&&ww<SPMAX)mk('rect',{x:x0+sx(ww)-1.4,y,width:2.8,height:h,fill:'#05060c'},g)})};
-  strip(34,13,'기준',1);
-  if(!r){txt('재생하면 기록됩니다',{x:x0,y:74,fill:'#a9b1cc','font-size':11,opacity:.75},g);return}
-  strip(60,20,'관측',rt);
-  // 같은 흡수선끼리 기준 → 관측을 흰 선으로 이어, 어느 쪽으로 옮겨 갔는지 보여 줌 (아래 화살표도 같은 방향)
-  if(m)LLINE.forEach(w=>{const a=x0+sx(w),bb=x0+sx(w*rt);mk('line',{x1:a,y1:47,x2:bb,y2:60,stroke:'#fff','stroke-width':1.5,opacity:.9},g);
-   mk('line',{x1:a,y1:86,x2:bb,y2:86,stroke:m>0?'#8fb8ff':'#ff8a7a','stroke-width':1.8,'marker-end':'url(#aw)'},g)});
-  txt('← 짧은 파장',{x:x0,y:98,fill:'#8f98c4','font-size':10},g);txt('긴 파장 →',{x:x0+SW,y:98,'text-anchor':'end',fill:'#8f98c4','font-size':10},g);
-  const tt=txt('',{x:X+12,y:116,fill:'#e8ecff','font-size':11.5,'font-weight':700},g);
-  tt.innerHTML=m>0?'흡수선이 <tspan fill="#8fb8ff">짧은 파장 쪽</tspan>으로 이동 · 청색 편이 (0.9배)':m<0?'흡수선이 <tspan fill="#ff8a7a">긴 파장 쪽</tspan>으로 이동 · 적색 편이 (1.1배)':'흡수선이 기준과 같은 자리 (1배)'})}
+  const link=(k1,y1,k2,y2)=>LLINE.forEach(w=>mk('line',{x1:x0+sx(w*k1),y1,x2:x0+sx(w*k2),y2,stroke:'#fff','stroke-width':1.4,'stroke-dasharray':'2.5 2',opacity:.95},g));
+  strip(32,12,'기준',1);
+  // 줄마다 [이름, 파장 배율, 기록 여부, 띠의 위쪽 y]
+  const rows=m?[['기본',1-m*LP.B,LREC[m][1],54],['2배',1-2*m*LP.B,LREC[m][2],78]]:[['관측',1,LREC[0],54]];
+  let pk=1,py=44;rows.forEach(([lb,k,done,y])=>{strip(y,14,lb,k,!done);if(done){link(pk,py,k,y);pk=k;py=y+14}});
+  txt('← 짧은 파장',{x:x0,y:m?103:81,fill:'#8f98c4','font-size':10},g);txt('긴 파장 →',{x:x0+SW,y:m?103:81,'text-anchor':'end',fill:'#8f98c4','font-size':10},g);
+  const tt=txt('',{x:X+12,y:118,fill:'#e8ecff','font-size':11.5,'font-weight':700},g),bf=fx(1-m*LP.B),df=fx(1-2*m*LP.B);
+  tt.innerHTML=m>0?`<tspan fill="#8fb8ff">청색 편이</tspan> · 기본 ${bf}배, 2배 ${df}배`:m<0?`<tspan fill="#ff8a7a">적색 편이</tspan> · 기본 ${bf}배, 2배 ${df}배`:'흡수선이 기준과 같은 자리 (1배)'})}
 const LN='<p style="margin:0">별이 정지하고 있을 때, 다가올 때, 멀어질 때 관측되는 빛의 파장과 흡수 스펙트럼을 비교해 보세요.</p>';
 const lMsg=()=>lmv>0?'다가오는 동안: 별빛의 파장이 짧아져, 흡수선이 짧은 파장(파란색) 쪽으로 이동합니다(청색 편이).'
  :lmv<0?'멀어지는 동안: 별빛의 파장이 길어져, 흡수선이 긴 파장(빨간색) 쪽으로 이동합니다(적색 편이).'
@@ -794,10 +796,12 @@ function lStop(){cancelAnimationFrame(lraf);lraf=0;lplay.textContent='▶ 재생
 function lLoop(now){lT+=.5*Math.min(.05,(now-lLast)/1000);lLast=now;
  if(lT>=LP.end){lT=LP.end;lDraw();lStop();return}lDraw();lraf=requestAnimationFrame(lLoop)}
 function lPlay(){if(lraf){lStop();return}if(lT>=LP.end)lT=0;lplay.textContent='⏸ 멈춤';
- if(!LREC[lmv]){LREC[lmv]=1;lPanels()}lSetHint(lMsg());lLast=performance.now();lraf=requestAnimationFrame(lLoop)}
+ // 이 경우(다가올 때·멀어질 때는 속력별로)를 처음 재생하면 아래 칸에 기록
+ if(lmv?!LREC[lmv][lk]:!LREC[0]){if(lmv)LREC[lmv][lk]=1;else LREC[0]=1;lPanels()}lSetHint(lMsg());lLast=performance.now();lraf=requestAnimationFrame(lLoop)}
 function lInit(){lStop();lT=0;hnote.innerHTML=LN;lDraw();lPanels();lSetHint('<span class="go">▶ 재생을 눌러 별빛을 관측해 보세요.</span>')}
 lplay.onclick=lPlay;lreset.onclick=lInit;
-lmov.onclick=e=>{const b=e.target.closest('button');if(!b)return;lmv=+b.dataset.v;segPick(lmov,b.dataset.v);lInit()};
+lmov.onclick=e=>{const b=e.target.closest('button');if(!b)return;lmv=+b.dataset.v;segPick(lmov,b.dataset.v);lspdw.hidden=!lmv;lInit()};
+lspd.onclick=e=>{const b=e.target.closest('button');if(!b)return;lk=+b.dataset.v;segPick(lspd,b.dataset.v);lInit()};
 
 // ==== ② 도플러 효과: 작은 학습 화면 2개 [소리(음파)의 도플러 효과] [빛(전자기파)의 도플러 효과] ====
 let hcur='s';
