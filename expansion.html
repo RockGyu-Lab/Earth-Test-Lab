@@ -98,10 +98,10 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 #sview{display:flex;flex-direction:column;gap:8px}
 #sview[hidden],svg[hidden],.sndb[hidden]{display:none}
 .dwrap{position:relative}
-#dsc{max-height:max(170px,calc((100vh - 360px)*.63))}
-#dsc{max-height:max(170px,calc((100dvh - 360px)*.63))}
-#dwave{max-height:max(100px,calc((100vh - 360px)*.37))}
-#dwave{max-height:max(100px,calc((100dvh - 360px)*.37))}
+#dsc{max-height:max(170px,calc((100vh - 394px)*.63))}
+#dsc{max-height:max(170px,calc((100dvh - 394px)*.63))}
+#dwave{max-height:max(100px,calc((100vh - 394px)*.37))}
+#dwave{max-height:max(100px,calc((100dvh - 394px)*.37))}
 /* 그림판 왼쪽 위의 구급차·오리 고르기 단추 (연보라) */
 .dsel{position:absolute;top:8px;left:8px}
 .dsel button{padding:4px 12px;font-size:.85rem}
@@ -114,6 +114,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .note.ask{margin:10px 0 0;padding:0;border-radius:0;background:none;display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;font-size:.95rem}
 .note.ask p{margin:0;font-weight:600}
 .ask2{margin-top:6px!important}
+.note.ask[hidden]{display:none}
 .tag{display:inline-block;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.02em;white-space:nowrap}
 .open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none;font-family:inherit}
 .open-think:hover{background:var(--card)}
@@ -240,6 +241,15 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   <span class="hint" id="dhint"></span>
  </div>
  <div class="ctl" id="lctl" hidden><span class="unit">조작 단추가 들어갈 자리</span></div>
+ <!-- 심화: 파장과 진동수의 관계 (생각해 보기와 같은 형식: 꼬리표 + 질문 + 답 보기 팝업) -->
+ <div class="note ask" id="dask"><span class="tag">심화</span><p>파동의 파장과 진동수는 어떤 관계일까요?</p><button type="button" class="open-think" id="thb4">답 보기</button></div>
+ <div class="ov" id="ov4" hidden><div class="think" role="dialog" aria-modal="true" aria-label="심화: 파동의 파장과 진동수는 어떤 관계일까요?">
+  <div class="think-h"><b class="think-t"><span class="tag">심화</span>파동의 파장과 진동수는 어떤 관계일까요?</b><button type="button" class="x" id="thx4" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">파동의 속력이 일정하면 파장과 진동수는 반비례합니다. (파동의 속력 = 진동수 × 파장, <i>v</i> = <i>f</i><i>λ</i>)</p>
+  <p class="exp">진동수(<i>f</i>)는 한 지점을 1초 동안 지나가는 마루의 개수이고, 파장(<i>λ</i>)은 이웃한 마루 사이의 간격입니다. 1초 동안 파동이 나아가는 거리는 <i>f</i> × <i>λ</i>이므로 파동의 속력은 <i>v</i> = <i>f</i><i>λ</i>입니다.</p>
+  <p class="exp">소리는 구급차가 움직여도 공기 속에서 같은 속력으로 퍼집니다. 그래서 앞쪽처럼 파장이 짧아지면 진동수가 커져 높은 소리로, 뒤쪽처럼 파장이 길어지면 진동수가 작아져 낮은 소리로 들립니다. 오리가 만드는 물결파도 마찬가지입니다.</p>
+  <p class="exp">이 그림에서 구급차는 소리 속력의 0.3배로 움직이므로, 구급차 바로 앞쪽의 파장은 원래의 0.7배가 되고 진동수는 원래의 약 1.43배(1 ÷ 0.7)가 됩니다.</p>
+ </div></div>
 </section>
 
 <!-- ③ 허블-르메트르 법칙 (준비 중) -->
@@ -523,12 +533,12 @@ function gauge(g,h){const b=mk('g',{},g),x0=704,x1=936,y=154,xm=(x0+x1)/2;
 // 아래 그림판: 파원이 지나는 직선 위의 각 지점에 지금 와 있는 파동을 언제 내보냈는지(te) 찾아 마루와 골을 그림
 // (파면을 내보낸 때 te = k·T 인 곳이 마루. 위 그림판의 파면과 같은 자리에 마루가 옴)
 function waveStrip(P,t){dwave.innerHTML='';const g=mk('g',{},dwave),Y0=80,A=22,x=srcX(P,t),col=dsrc=='a'?'#8fd3ff':'#e6f4ff';let d='';
- mk('rect',{x:0,y:0,width:960,height:130,fill:'url(#gStrip)'},g);
- for(let px=0;px<=960;px+=3){let te=t;for(let i=0;i<40;i++)te=t-Math.abs(px-srcX(P,te))/P.c;
-  d+=(px?'L':'M')+px+','+(Y0-A*Math.cos(2*Math.PI*te/P.T)).toFixed(1)}
- [Y0-A,Y0+A].forEach(yy=>mk('line',{x1:0,y1:yy,x2:960,y2:yy,stroke:'rgba(255,255,255,.07)','stroke-width':1},g));
- mk('line',{x1:0,y1:Y0,x2:960,y2:Y0,stroke:'rgba(143,156,240,.35)','stroke-width':1,'stroke-dasharray':'4 6'},g);
- mk('path',{d:d+'L960,'+Y0+'L0,'+Y0+'Z',fill:dsrc=='a'?'url(#gWaveA)':'url(#gWaveD)',opacity:.55},g);
+ mk('rect',{x:-3000,y:-500,width:7000,height:1200,fill:'#090d22'},g);mk('rect',{x:-3000,y:0,width:7000,height:130,fill:'url(#gStrip)'},g);
+ for(let px=-240;px<=1200;px+=3){let te=t;for(let i=0;i<40;i++)te=t-Math.abs(px-srcX(P,te))/P.c;
+  d+=(px>-240?'L':'M')+px+','+(Y0-A*Math.cos(2*Math.PI*te/P.T)).toFixed(1)}
+ [Y0-A,Y0+A].forEach(yy=>mk('line',{x1:-3000,y1:yy,x2:4000,y2:yy,stroke:'rgba(255,255,255,.07)','stroke-width':1},g));
+ mk('line',{x1:-3000,y1:Y0,x2:4000,y2:Y0,stroke:'rgba(143,156,240,.35)','stroke-width':1,'stroke-dasharray':'4 6'},g);
+ mk('path',{d:d+'L1200,'+Y0+'L-240,'+Y0+'Z',fill:dsrc=='a'?'url(#gWaveA)':'url(#gWaveD)',opacity:.55},g);
  mk('path',{d,fill:'none',stroke:col,'stroke-width':5,opacity:.15,'stroke-linejoin':'round'},g);
  mk('path',{d,fill:'none',stroke:col,'stroke-width':2.2,'stroke-linejoin':'round'},g);
  mk('line',{x1:x,y1:48,x2:x,y2:110,stroke:'#ffb066','stroke-width':1.5,'stroke-dasharray':'3 4',opacity:.9},g);
@@ -542,17 +552,17 @@ function waveStrip(P,t){dwave.innerHTML='';const g=mk('g',{},dwave),Y0=80,A=22,x
 function dDraw(){const t=dT,P=DS[dsrc];dsc.innerHTML='';const g=mk('g',{},dsc),x=srcX(P,t);
  if(dsrc=='a'){
   // 구급차와 관찰자: 밤하늘, 찻길, 인도
-  mk('rect',{x:0,y:0,width:960,height:50,fill:'url(#gSky)'},g);
-  mk('rect',{x:0,y:50,width:960,height:50,fill:'url(#gRoad)'},g);
-  mk('line',{x1:0,y1:51,x2:960,y2:51,stroke:'rgba(255,255,255,.18)','stroke-width':1},g);
-  mk('line',{x1:0,y1:75,x2:960,y2:75,stroke:'#e8ecff','stroke-dasharray':'22 18',opacity:.35,'stroke-width':1.6},g);
-  mk('rect',{x:0,y:100,width:960,height:5,fill:'#3a4262'},g);
-  mk('rect',{x:0,y:105,width:960,height:115,fill:'url(#gWalk)'},g);
+  mk('rect',{x:-3000,y:-500,width:7000,height:550,fill:'#0a0f26'},g);mk('rect',{x:-3000,y:0,width:7000,height:50,fill:'url(#gSky)'},g);
+  mk('rect',{x:-3000,y:50,width:7000,height:50,fill:'url(#gRoad)'},g);
+  mk('line',{x1:-3000,y1:51,x2:4000,y2:51,stroke:'rgba(255,255,255,.18)','stroke-width':1},g);
+  mk('line',{x1:-3000,y1:75,x2:4000,y2:75,stroke:'#e8ecff','stroke-dasharray':'22 18',opacity:.35,'stroke-width':1.6},g);
+  mk('rect',{x:-3000,y:100,width:7000,height:5,fill:'#3a4262'},g);
+  mk('rect',{x:-3000,y:105,width:7000,height:115,fill:'url(#gWalk)'},g);
   fronts(g,P,t,'#8fd3ff');ambulance(g,x,P.y,t);observer(g);gauge(g,heard(t));
   txt('차이가 잘 드러나도록 구급차를 소리 속력의 0.3배로 빠르게 나타냄',{x:12,y:210,fill:'#a9b1cc','font-size':12,opacity:.85},g);
  }else{
   // 연못의 오리 (위에서 본 모습)
-  mk('rect',{x:0,y:0,width:960,height:220,fill:'url(#gPond)'},g);
+  mk('rect',{x:-3000,y:-1000,width:7000,height:3000,fill:'#0a2840'},g);mk('rect',{x:-200,y:-120,width:1360,height:460,fill:'url(#gPond)'},g);
   fronts(g,P,t,'#e6f4ff');duck(g,x,P.y);
   pl('위에서 본 연못의 오리',948,28,g,'end','#e8ecff',14);
   txt('차이가 잘 드러나도록 오리를 물결파 속력의 0.5배로 빠르게 나타냄',{x:12,y:210,fill:'#cfe3f5','font-size':12,opacity:.85},g)}
@@ -590,7 +600,7 @@ const HN={
  l:{t:'빛의 도플러 효과',d:'빛을 내는 천체가 다가오거나 멀어질 때 스펙트럼의 흡수선이 이동하는 현상(청색 편이, 적색 편이)을 살펴봅니다.'}};
 let hcur='s';
 function hpick(v){hcur=v;hsel.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v==v));
- dStop();dctl.hidden=sview.hidden=v!='s';lctl.hidden=hv.hidden=v=='s';
+ dStop();dctl.hidden=sview.hidden=dask.hidden=v!='s';lctl.hidden=hv.hidden=v=='s';
  if(v=='s'){dInit();return}
  hnote.innerHTML=`<div class="nh">${HN[v].t} <span class="ex">· 내용 준비 중</span></div><p style="margin:2px 0 0">${HN[v].d}</p>`;
  hv.innerHTML=`<text x="480" y="225" text-anchor="middle" fill="#a9b1cc" font-size="22">그림 준비 중: ${HN[v].t}</text>`}
@@ -598,7 +608,7 @@ hsel.addEventListener('click',e=>{const b=e.target.closest('button');if(b)hpick(
 hpick('s');
 
 // 생각해 보기 답 팝업과 비교 표 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
-[['ovc','cmpb','cxc'],['ov3','thb3','thx3'],['ov1','thb1','thx1']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
+[['ovc','cmpb','cxc'],['ov3','thb3','thx3'],['ov1','thb1','thx1'],['ov4','thb4','thx4']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
  const closeTh=()=>{ov.hidden=true;btn.focus()};
  btn.addEventListener('click',()=>{ov.hidden=false;cl.focus()});cl.addEventListener('click',closeTh);
  ov.addEventListener('click',e=>{if(e.target===ov)closeTh()});
