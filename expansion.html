@@ -18,6 +18,10 @@
 :root{--try:#0d8577;--on-try:#fff}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--try:#4fd1bf;--on-try:#0b2420}}
 :root[data-theme="dark"]{--try:#4fd1bf;--on-try:#0b2420}
+/* 기억하기(꼭 기억할 식) 꼬리표: 생각해 보기(남색), 해보기(청록)와 구분되는 주황색 */
+:root{--mem:#c2620a;--on-mem:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--mem:#ffb357;--on-mem:#2a1600}}
+:root[data-theme="dark"]{--mem:#ffb357;--on-mem:#2a1600}
 *{box-sizing:border-box}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:"Pretendard Variable",Pretendard,system-ui,-apple-system,"Noto Sans KR",sans-serif;line-height:1.5;word-break:keep-all}
@@ -102,8 +106,8 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 /* 빛(전자기파)의 도플러 효과: 위 그림판(별과 망원경)과 아래 스펙트럼 비교 칸 (소리와 같은 높이 규칙) */
 #lview{display:flex;flex-direction:column;gap:8px}
 #lview[hidden],#lask[hidden]{display:none}
-#lsc{max-height:max(170px,calc((100vh - 400px)*.58))}
-#lsc{max-height:max(170px,calc((100dvh - 400px)*.58))}
+#lsc{max-height:max(150px,calc((100vh - 400px)*.58))}
+#lsc{max-height:max(150px,calc((100dvh - 400px)*.58))}
 #lspec{max-height:max(100px,calc((100vh - 400px)*.42))}
 #lspec{max-height:max(100px,calc((100dvh - 400px)*.42))}
 /* 소리(음파)와 물결파의 도플러 효과: 위 그림판(구급차 또는 오리)과 아래 파동의 모습이 함께 화면 높이에 맞춰 줄어듦 */
@@ -133,6 +137,9 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .tag{display:inline-block;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.02em;white-space:nowrap}
 .tag.try{background:var(--try);color:var(--on-try)}
 .open-think.try{border-color:var(--try);color:var(--try)}
+.tag.mem{background:var(--mem);color:var(--on-mem)}
+.memo .eq{font-size:1.35rem;line-height:1.2;font-weight:700;color:var(--mem);font-family:"Times New Roman",serif;white-space:nowrap}
+.memo .eqx{font-weight:400;font-size:.85rem;color:var(--fg);opacity:.8}
 .open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none;font-family:inherit}
 .open-think:hover{background:var(--card)}
 .ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
@@ -269,20 +276,23 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  </div>
  <!-- 빛의 도플러 효과: 생각해 보기 2개 -->
  <div id="lask" hidden>
- <div class="note ask"><span class="tag">생각해 보기</span><p>멀어지는 별에서 적색 편이가 나타나면, 별이 붉게 보일까요?</p><button type="button" class="open-think" id="thb7">답 보기</button></div>
- <div class="note ask ask2"><span class="tag">생각해 보기</span><p>소리의 도플러 효과와 빛의 도플러 효과는 무엇이 같고, 무엇이 다를까요?</p><button type="button" class="open-think" id="thb8">답 보기</button></div>
+ <div class="note ask"><span class="tag">생각해 보기</span><p>별이 다가올 때와 멀어질 때 관측되는 별빛의 파장은 어떻게 변하나요?</p><button type="button" class="open-think" id="thb7">답 보기</button></div>
+ <div class="note ask ask2"><span class="tag">생각해 보기</span><p>별이 멀어지는 속도가 더 커지면, 관측되는 별빛의 파장은 어떻게 변하나요?</p><button type="button" class="open-think" id="thb8">답 보기</button></div>
+ <!-- 기억하기: 도플러 효과의 식 (빛의 속력보다 매우 느리게 움직일 때) -->
+ <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="eq">Δλ / λ<sub>0</sub> = <i>v</i> / <i>c</i></p>
+  <p class="eqx">λ<sub>0</sub>: 원래 파장 · Δλ: 파장의 변화량(관측 파장 − 원래 파장) · <i>v</i>: 다가오거나 멀어지는 속력 · <i>c</i>: 빛의 속력</p></div>
  </div>
- <div class="ov" id="ov7" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 멀어지는 별에서 적색 편이가 나타나면, 별이 붉게 보일까요?">
-  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>멀어지는 별에서 적색 편이가 나타나면, 별이 붉게 보일까요?</b><button type="button" class="x" id="thx7" aria-label="닫기">닫기 ✕</button></div>
-  <p class="ans">아니요. 별빛의 파장이 모두 조금씩 길어질 뿐, 별의 색이 눈에 띄게 붉어지는 것은 아닙니다.</p>
-  <p class="exp">별빛은 여러 파장의 빛이 섞여 있습니다. 파장이 모두 길어지면 파란빛은 초록빛 쪽으로, 초록빛은 노란빛 쪽으로 옮겨 가지만, 그만큼 보라색 바깥(자외선)에 있던 빛이 보라색 쪽으로 들어와 별의 전체 색은 거의 그대로입니다. 게다가 실제 별의 속력은 빛 속력보다 매우 느려서 파장의 변화도 아주 작습니다.</p>
-  <p class="exp">그래서 적색 편이는 별의 색이 아니라, 원래 위치를 알고 있는 <b>흡수선</b>이 파장이 긴 쪽으로 옮겨 간 것을 보고 확인합니다.</p>
+ <div class="ov" id="ov7" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 별이 다가올 때와 멀어질 때 관측되는 별빛의 파장은 어떻게 변하나요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>별이 다가올 때와 멀어질 때 관측되는 별빛의 파장은 어떻게 변하나요?</b><button type="button" class="x" id="thx7" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">다가올 때는 원래보다 짧아지고(청색 편이), 멀어질 때는 원래보다 길어집니다(적색 편이).</p>
+  <p class="exp">별은 파면 하나를 내보낸 뒤 다음 파면을 내보낼 때까지 움직입니다. 그래서 별이 다가오는 쪽에서는 파면 사이의 간격(파장)이 좁아지고, 멀어지는 쪽에서는 넓어집니다.</p>
+  <p class="exp">이 때문에 스펙트럼의 흡수선이 다가올 때는 짧은 파장(파란색) 쪽으로, 멀어질 때는 긴 파장(빨간색) 쪽으로 옮겨 갑니다.</p>
  </div></div>
- <div class="ov" id="ov8" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 소리의 도플러 효과와 빛의 도플러 효과는 무엇이 같고, 무엇이 다를까요?">
-  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>소리의 도플러 효과와 빛의 도플러 효과는 무엇이 같고, 무엇이 다를까요?</b><button type="button" class="x" id="thx8" aria-label="닫기">닫기 ✕</button></div>
-  <p class="ans">파원이 다가오면 파장이 짧아지고, 멀어지면 파장이 길어진다는 점은 같습니다. 소리는 공기 같은 매질이 있어야 전달되지만, 빛은 매질이 없는 우주 공간(진공)에서도 전달된다는 점이 다릅니다.</p>
-  <p class="exp">소리는 진동수의 변화를 소리의 높낮이로 느낍니다. 빛은 파장의 변화를 스펙트럼에서 흡수선이 짧은 파장 쪽(청색 편이)이나 긴 파장 쪽(적색 편이)으로 옮겨 간 것으로 알아냅니다.</p>
-  <p class="exp">별이나 은하는 너무 멀어 직접 가 볼 수 없지만, 흡수선이 옮겨 간 정도를 재면 그 천체가 다가오는지 멀어지는지, 얼마나 빠른지 알 수 있습니다.</p>
+ <div class="ov" id="ov8" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 별이 멀어지는 속도가 더 커지면, 관측되는 별빛의 파장은 어떻게 변하나요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>별이 멀어지는 속도가 더 커지면, 관측되는 별빛의 파장은 어떻게 변하나요?</b><button type="button" class="x" id="thx8" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">파장이 더 많이 길어집니다. 적색 편이가 커져서 흡수선이 긴 파장 쪽으로 더 멀리 옮겨 갑니다.</p>
+  <p class="exp">파장의 변화량은 별이 멀어지는 속력에 비례합니다(Δλ/λ<sub>0</sub> = <i>v</i>/<i>c</i>). 이 그림에서 별이 빛 속력의 0.05배로 멀어지면 파장이 원래의 1.05배가 되고, 그 2배인 0.1배로 멀어지면 1.1배가 됩니다. 곧 속력이 2배가 되면 파장이 늘어난 양도 2배가 됩니다. <span class="go">'멀어질 때'에서 '기본 속력'과 '2배'를 재생해 비교해 보세요.</span></p>
+  <p class="exp">멀리 있는 은하일수록 적색 편이가 크게 관측된다는 사실은 다음 탭(허블-르메트르 법칙)에서 살펴봅니다.</p>
  </div></div>
  <!-- 해보기(오리가 만든 물결파 팝업) + 생각해 보기 2개 (꼬리표 + 질문 + 답 보기 팝업) -->
  <div id="dask">
@@ -785,8 +795,10 @@ function lPanels(){lspec.innerHTML='';const g=mk('g',{},lspec),W=306,SW=230,sx=w
   const rows=m?[['기본',1-m*LP.B,LREC[m][1],54],['2배',1-2*m*LP.B,LREC[m][2],78]]:[['관측',1,LREC[0],54]];
   let pk=1,py=44;rows.forEach(([lb,k,done,y])=>{strip(y,14,lb,k,!done);if(done){link(pk,py,k,y);pk=k;py=y+14}});
   txt('← 짧은 파장',{x:x0,y:m?103:81,fill:'#8f98c4','font-size':10},g);txt('긴 파장 →',{x:x0+SW,y:m?103:81,'text-anchor':'end',fill:'#8f98c4','font-size':10},g);
+  if(!rows.some(r=>r[2]))return;  // 기록된 줄이 없으면 결과 문구를 숨김
   const tt=txt('',{x:X+12,y:118,fill:'#e8ecff','font-size':11.5,'font-weight':700},g),bf=fx(1-m*LP.B),df=fx(1-2*m*LP.B);
-  tt.innerHTML=m>0?`<tspan fill="#8fb8ff">청색 편이</tspan> · 기본 ${bf}배, 2배 ${df}배`:m<0?`<tspan fill="#ff8a7a">적색 편이</tspan> · 기본 ${bf}배, 2배 ${df}배`:'흡수선이 기준과 같은 자리 (1배)'})}
+  const got=rows.filter(r=>r[2]).map(r=>r[0]+' '+fx(r[1])+'배').join(', ');  // 기록된 줄의 값만 보여 줌
+  tt.innerHTML=m>0?'<tspan fill="#8fb8ff">청색 편이</tspan> · '+got:m<0?'<tspan fill="#ff8a7a">적색 편이</tspan> · '+got:'흡수선이 기준과 같은 자리 (1배)'})}
 const LN='<p style="margin:0">별이 정지하고 있을 때, 다가올 때, 멀어질 때 관측되는 빛의 파장과 흡수 스펙트럼을 비교해 보세요.</p>';
 const lMsg=()=>lmv>0?'다가오는 동안: 별빛의 파장이 짧아져, 흡수선이 짧은 파장(파란색) 쪽으로 이동합니다(청색 편이).'
  :lmv<0?'멀어지는 동안: 별빛의 파장이 길어져, 흡수선이 긴 파장(빨간색) 쪽으로 이동합니다(적색 편이).'
