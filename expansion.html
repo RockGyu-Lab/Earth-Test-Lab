@@ -166,6 +166,11 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .cmp tbody th{background:var(--card);white-space:nowrap}
 /* 첫째 열(항목 이름)과 짧은 답이 들어가는 둘째·셋째 행은 가운데 정렬 */
 .cmp tbody th,.cmp tbody tr:nth-child(-n+2) td{text-align:center;vertical-align:middle}
+/* ③ 허블-르메트르 법칙: 은하 카드·스펙트럼 측정·그래프를 한 그림판에 (끌어서 조작하므로 터치 스크롤을 막음) */
+#hsv{touch-action:none;max-height:max(280px,calc(100vh - 380px))}
+#hsv{max-height:max(280px,calc(100dvh - 380px))}
+#hsv:focus{outline:none}
+#hmemo{margin-top:4px!important}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
@@ -333,11 +338,32 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  </div></div>
 </section>
 
-<!-- ③ 허블-르메트르 법칙 (준비 중) -->
+<!-- ③ 허블-르메트르 법칙: 은하 5개(A~E)의 스펙트럼에서 수소 흡수선이 옮겨 간 파장을 직접 재어 후퇴 속도를 구하고,
+     거리-후퇴 속도 그래프에 점으로 나타낸 뒤, 원점을 지나는 직선을 끌어 맞춰 기울기(허블 상수)를 구함 -->
 <section id="p3" role="tabpanel" aria-labelledby="tab3" hidden>
- <div class="note"><div class="nh">허블-르메트르 법칙 <span class="ex">· 내용 준비 중</span></div></div>
- <svg viewBox="0 0 960 440"><text x="480" y="225" text-anchor="middle" fill="#a9b1cc" font-size="22">그림 준비 중: 허블-르메트르 법칙</text></svg>
- <div class="ctl"><span class="unit">조작 단추가 들어갈 자리</span></div>
+ <div class="note"><p style="margin:0">은하의 스펙트럼에서 수소 흡수선이 옮겨 간 파장을 재어 후퇴 속도를 구하고, 거리와 후퇴 속도의 관계를 그래프로 나타내 보세요. <span class="go">은하를 고르고, 노란 눈금을 끌어 은하의 흡수선에 맞춘 뒤 '그래프에 기록하기'를 눌러 보세요.</span></p></div>
+ <svg id="hsv" viewBox="0 0 960 370" tabindex="0" aria-label="은하의 스펙트럼 측정과 거리-후퇴 속도 그래프"></svg>
+ <div class="ctl" id="hctl">
+  <div class="seg"><div class="bs" id="hgal"><button data-v="0" class="on">은하 A</button><button data-v="1">은하 B</button><button data-v="2">은하 C</button><button data-v="3">은하 D</button><button data-v="4">은하 E</button></div></div>
+  <button class="pb" id="hrec">그래프에 기록하기</button><button class="pb" id="hrst">↺ 처음으로</button>
+ </div>
+ <div class="note ask"><span class="tag">생각해 보기</span><p>멀리 있는 은하일수록 후퇴 속도는 어떻게 달라지나요?</p><button type="button" class="open-think" id="thb10">답 보기</button></div>
+ <div class="note ask ask2"><span class="tag">생각해 보기</span><p>그래프에서 직선의 기울기는 무엇을 뜻하나요?</p><button type="button" class="open-think" id="thb11">답 보기</button></div>
+ <!-- 기억하기: 허블-르메트르 법칙 -->
+ <div class="note ask ask2 memo" id="hmemo"><span class="tag mem">기억하기</span><p class="eq"><i>v</i><span class="eqs">=</span><i>H</i><span class="eqs">×</span><i>r</i></p>
+  <p class="eqx"><i>v</i>: 은하의 후퇴 속도 · <i>r</i>: 은하까지의 거리 · <i>H</i>: 허블 상수 (약 70 km/s/Mpc)</p></div>
+ <div class="ov" id="ov10" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 멀리 있는 은하일수록 후퇴 속도는 어떻게 달라지나요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>멀리 있는 은하일수록 후퇴 속도는 어떻게 달라지나요?</b><button type="button" class="x" id="thx10" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">멀리 있는 은하일수록 더 빠르게 멀어집니다. 은하의 후퇴 속도는 은하까지의 거리에 비례합니다.</p>
+  <p class="exp">그래프의 점들은 원점을 지나는 직선 가까이에 놓입니다. 거리가 2배인 은하는 후퇴 속도도 약 2배입니다. 이 관계를 허블-르메트르 법칙이라고 하며, <i>v</i> = <i>H</i> × <i>r</i>로 나타냅니다.</p>
+  <p class="exp">점들이 직선에서 조금씩 벗어나는 것은 측정에 오차가 있고, 은하마다 주변 은하의 중력 때문에 조금씩 따로 움직이기도 하기 때문입니다.</p>
+ </div></div>
+ <div class="ov" id="ov11" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 그래프에서 직선의 기울기는 무엇을 뜻하나요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>그래프에서 직선의 기울기는 무엇을 뜻하나요?</b><button type="button" class="x" id="thx11" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">허블 상수(<i>H</i>)입니다. 은하까지의 거리가 1 Mpc 늘어날 때마다 후퇴 속도가 얼마씩 커지는지를 나타냅니다.</p>
+  <p class="exp">이 자료에서 기울기는 약 70 km/s/Mpc입니다. 곧 거리가 1 Mpc 멀어질 때마다 후퇴 속도가 약 70 km/s씩 빨라집니다. 1 Mpc(메가파섹)은 약 326만 광년입니다.</p>
+  <p class="exp">허블 상수는 우주가 얼마나 빠르게 팽창하는지를 나타내는 값입니다. 실제 관측으로 구한 허블 상수는 약 67~73 km/s/Mpc입니다.</p>
+ </div></div>
 </section>
 
 <!-- ④ 팽창하는 우주 (준비 중) -->
@@ -838,8 +864,120 @@ function hpick(v){hcur=v;hsel.querySelectorAll('button').forEach(b=>b.classList.
 hsel.addEventListener('click',e=>{const b=e.target.closest('button');if(b)hpick(b.dataset.v)});
 hpick('s');
 
+// ==== ③ 허블-르메트르 법칙 ====
+// 가상의 관측 자료: 은하까지의 거리(다른 방법으로 구한 값, Mpc)와 은하 스펙트럼에서 관측한 수소 흡수선(원래 656.3 nm)의 파장
+// 후퇴 속도 v = (Δλ / λ0) × c, 기울기가 약 70 km/s/Mpc가 되도록 정하고 은하마다 조금씩 흩어지게 함
+const HL0=656.3,HC=300000;
+const GAL=[{n:'A',d:30,lam:661.2},{n:'B',d:60,lam:665.2},{n:'C',d:100,lam:671.6},{n:'D',d:140,lam:676.4},{n:'E',d:180,lam:684.0}];
+const ZMIN=650,ZMAX=690,ZX0=110,ZW=460;          // 확대한 스펙트럼의 파장 범위와 그림 위치
+const FX0=110,FW=460;                             // 전체 스펙트럼(380~750 nm) 띠의 위치
+const PX0=672,PY0=320,PW=262,PH=268,RMAX=200,VMAX=16000;  // 그래프 영역과 축의 범위
+let hg=0,hcurL=660,hS=40,hMsg=null,hDrag=null;const HREC={};
+const zx=w=>ZX0+(w-ZMIN)/(ZMAX-ZMIN)*ZW,fxp=w=>FX0+(w-SPMIN)/(SPMAX-SPMIN)*FW;
+const gx=r=>PX0+r/RMAX*PW,gy=v=>PY0-v/VMAX*PH;
+const hV=l=>Math.round((l-HL0)/HL0*HC/10)*10;   // 관측 파장 → 후퇴 속도 (10 km/s 단위로 반올림)
+const kfmt=n=>n.toLocaleString('ko-KR');
+// 확대한 스펙트럼의 색(650~690 nm)과 은하의 빛 번짐
+(function(){const df=document.querySelector('svg defs');const lg=mk('linearGradient',{id:'gZoom',x1:0,y1:0,x2:1,y2:0},df);
+ for(let w=ZMIN;w<=ZMAX;w+=4)mk('stop',{offset:((w-ZMIN)/(ZMAX-ZMIN)).toFixed(3),'stop-color':wl2rgb(w)},lg);
+ const rg=mk('radialGradient',{id:'gGal'},df);
+ [[0,'#fffbe8',1],[.25,'#ffe9b8',.85],[.6,'#b9b4ff',.35],[1,'#8f9cf0',0]].forEach(([o,c,a])=>mk('stop',{offset:o,'stop-color':c,'stop-opacity':a},rg))})();
+// 은하 그림: 먼 은하일수록 작고 흐리게 (크기는 실제 비율이 아님)
+function hGalaxy(g,cx,cy,d,rot){const s=30*Math.pow(30/d,.6),b=.45+.55*Math.sqrt(30/d),e=mk('g',{transform:`translate(${cx},${cy}) rotate(${rot})`,opacity:b},g);
+ mk('ellipse',{rx:s,ry:s*.42,fill:'url(#gGal)'},e);
+ mk('path',{d:`M${-s*.9},${s*.05}C${-s*.5},${-s*.45} ${s*.2},${-s*.35} ${s*.15},0M${s*.9},${-s*.05}C${s*.5},${s*.45} ${-s*.2},${s*.35} ${-s*.15},0`,fill:'none',stroke:'#e6e2ff','stroke-width':Math.max(.8,s*.06),opacity:.55},e);
+ mk('ellipse',{rx:s*.18,ry:s*.12,fill:'#fffbe8'},e)}
+function hDraw(){hsv.innerHTML='';const g=mk('g',{},hsv),G=GAL[hg];
+ mk('rect',{x:-3000,y:-1000,width:7000,height:3000,fill:'#070b1d'},g);
+ // 은하 카드 5개
+ GAL.forEach((q,i)=>{const X=12+i*115,on=i==hg,c=mk('g',{style:'cursor:pointer'},g);
+  mk('rect',{x:X,y:8,width:108,height:92,rx:10,fill:'url(#gStrip)',stroke:on?'#ffd76b':'rgba(255,255,255,.16)','stroke-width':on?1.6:1},c);
+  hGalaxy(c,X+54,40,q.d,[-18,24,-35,10,-8][i]);
+  txt('은하 '+q.n,{x:X+54,y:78,'text-anchor':'middle',fill:on?'#ffd76b':'#e8ecff','font-size':12.5,'font-weight':700},c);
+  txt('거리 '+q.d+' Mpc',{x:X+54,y:93,'text-anchor':'middle',fill:'#a9b1cc','font-size':11},c);
+  if(HREC[i])txt('✓',{x:X+98,y:24,'text-anchor':'end',fill:'#7be08f','font-size':13,'font-weight':800},c)});
+ // 스펙트럼 측정 칸
+ mk('rect',{x:12,y:108,width:573,height:254,rx:10,fill:'url(#gStrip)',stroke:'rgba(255,255,255,.16)'},g);
+ txt(`은하 ${G.n}의 스펙트럼`,{x:24,y:128,fill:'#ffd76b','font-size':13,'font-weight':700},g);
+ txt('수소 흡수선 (원래 파장 656.3 nm)',{x:573,y:128,'text-anchor':'end',fill:'#a9b1cc','font-size':10.5},g);
+ // 전체 스펙트럼(가시광선): 위 기준, 아래 은하
+ const k=G.lam/HL0,full=(y,lab,kk)=>{txt(lab,{x:24,y:y+8,fill:'#cfd6ee','font-size':10.5,'font-weight':600},g);
+  mk('rect',{x:FX0,y,width:FW,height:9,fill:'url(#gSpec)'},g);
+  LLINE.forEach(w=>{const ww=w*kk;if(ww<SPMAX)mk('rect',{x:fxp(ww)-1,y,width:2,height:9,fill:'#05060c'},g)})};
+ full(136,'기준',1);full(149,'은하 '+G.n,k);
+ // 확대할 부분 표시 (650~690 nm)
+ mk('rect',{x:fxp(ZMIN),y:134,width:fxp(ZMAX)-fxp(ZMIN),height:26,fill:'none',stroke:'#e8ecff','stroke-width':1,opacity:.7},g);
+ mk('path',{d:`M${fxp(ZMIN)},160L${ZX0},176M${fxp(ZMAX)},160L${ZX0+ZW},176`,stroke:'#e8ecff','stroke-width':1,'stroke-dasharray':'3 3',opacity:.6},g);
+ txt('확대',{x:fxp(ZMAX)+6,y:151,fill:'#a9b1cc','font-size':10},g);
+ // 확대한 스펙트럼: 위 기준, 가운데 눈금자, 아래 은하
+ const zoom=(y,lab,w)=>{txt(lab,{x:24,y:y+14,fill:'#cfd6ee','font-size':11,'font-weight':600},g);
+  mk('rect',{x:ZX0,y,width:ZW,height:20,fill:'url(#gZoom)'},g);mk('rect',{x:zx(w)-1.6,y,width:3.2,height:20,fill:'#05060c'},g)};
+ zoom(178,'기준',HL0);zoom(218,'은하 '+G.n,G.lam);
+ for(let w=ZMIN;w<=ZMAX;w++){const big=w%5==0;mk('line',{x1:zx(w),y1:198,x2:zx(w),y2:198+(w%10==0?7:big?5:3),stroke:'#cfd6ee','stroke-width':1,opacity:.8},g);
+  if(w%10==0)txt(w,{x:zx(w),y:214,'text-anchor':'middle',fill:'#cfd6ee','font-size':9.5},g)}
+ txt('nm',{x:ZX0+ZW+14,y:214,fill:'#a9b1cc','font-size':9.5},g);
+ // 노란 눈금(끌어서 움직임)
+ const cx=zx(hcurL),cg=mk('g',{style:'cursor:ew-resize'},g);
+ mk('line',{x1:cx,y1:174,x2:cx,y2:242,stroke:'#ffd76b','stroke-width':1.6},cg);
+ mk('path',{d:`M${cx},242l-8,11h16z`,fill:'#ffd76b'},cg);
+ const rw=70,rx=Math.min(Math.max(cx-rw/2,ZX0-30),ZX0+ZW+30-rw);
+ mk('rect',{x:rx,y:255,width:rw,height:18,rx:5,fill:'#ffd76b'},cg);
+ txt(hcurL.toFixed(1)+' nm',{x:rx+rw/2,y:268,'text-anchor':'middle',fill:'#1b1f2a','font-size':11.5,'font-weight':800},cg);
+ // 계산 과정 (눈금의 위치로 계산)
+ const dl=hcurL-HL0,v=hV(hcurL),L=(s,y)=>{const t=txt('',{x:24,y,fill:'#e8ecff','font-size':12.5},g);t.innerHTML=s};
+ L(`관측한 흡수선의 파장: λ = <tspan fill="#ffd76b" font-weight="700">${hcurL.toFixed(1)} nm</tspan>`,294);
+ L(`파장의 변화량: Δλ = ${hcurL.toFixed(1)} − 656.3 = <tspan font-weight="700">${dl.toFixed(1)} nm</tspan>`,314);
+ L(`후퇴 속도: <tspan font-style="italic">v</tspan> = (Δλ ÷ λ₀) × <tspan font-style="italic">c</tspan> = (${dl.toFixed(1)} ÷ 656.3) × 300,000 km/s ≈ <tspan fill="#7be08f" font-weight="800">${kfmt(v)} km/s</tspan>`,334);
+ if(hMsg)txt(hMsg[0],{x:24,y:354,fill:hMsg[1],'font-size':12,'font-weight':700},g);
+ hGraph(g)}
+// 거리-후퇴 속도 그래프
+function hGraph(g){mk('rect',{x:600,y:8,width:348,height:354,rx:10,fill:'url(#gStrip)',stroke:'rgba(255,255,255,.16)'},g);
+ txt('거리와 후퇴 속도',{x:612,y:28,fill:'#e8ecff','font-size':13,'font-weight':700},g);
+ txt('가상의 관측 자료',{x:938,y:28,'text-anchor':'end',fill:'#a9b1cc','font-size':10},g);
+ for(let r=0;r<=RMAX;r+=50){mk('line',{x1:gx(r),y1:PY0,x2:gx(r),y2:PY0-PH,stroke:'rgba(143,156,240,.15)'},g);txt(r,{x:gx(r),y:PY0+15,'text-anchor':'middle',fill:'#cfd6ee','font-size':10},g)}
+ for(let v=0;v<=VMAX;v+=4000){mk('line',{x1:PX0,y1:gy(v),x2:PX0+PW,y2:gy(v),stroke:'rgba(143,156,240,.15)'},g);txt(kfmt(v),{x:PX0-5,y:gy(v)+3.5,'text-anchor':'end',fill:'#cfd6ee','font-size':10},g)}
+ mk('path',{d:`M${PX0},${PY0-PH}V${PY0}H${PX0+PW}`,fill:'none',stroke:'#cfd6ee','stroke-width':1.2},g);
+ txt('거리 (Mpc)',{x:PX0+PW/2,y:PY0+33,'text-anchor':'middle',fill:'#e8ecff','font-size':11.5,'font-weight':600},g);
+ txt('후퇴 속도 (km/s)',{x:0,y:0,transform:`translate(616,${PY0-PH/2}) rotate(-90)`,'text-anchor':'middle',fill:'#e8ecff','font-size':11.5,'font-weight':600},g);
+ const n=Object.keys(HREC).length;
+ if(n>=3){// 원점을 지나는 직선: 끝의 동그라미를 끌어 기울기를 바꿈
+  const ex=hS*RMAX<=VMAX?[RMAX,hS*RMAX]:[VMAX/hS,VMAX];
+  mk('line',{x1:PX0,y1:PY0,x2:gx(ex[0]),y2:gy(ex[1]),stroke:'#7be08f','stroke-width':2,opacity:.9},g);
+  const hd=mk('g',{style:'cursor:grab'},g);mk('circle',{cx:gx(ex[0]),cy:gy(ex[1]),r:11,fill:'#7be08f',opacity:.25},hd);mk('circle',{cx:gx(ex[0]),cy:gy(ex[1]),r:6.5,fill:'#7be08f',stroke:'#fff','stroke-width':1.5},hd);
+  const t=txt('',{x:PX0+10,y:PY0-PH+18,fill:'#e8ecff','font-size':12.5,'font-weight':700},g);t.innerHTML=`직선의 기울기 = <tspan fill="#7be08f">${Math.round(hS)} km/s/Mpc</tspan>`;
+  txt('초록 동그라미를 끌어 점들에 가장 잘 맞게',{x:PX0+10,y:PY0-PH+38,fill:'#8f9cf0','font-size':11,'font-weight':700},g);
+  txt('직선을 맞춰 보세요.',{x:PX0+10,y:PY0-PH+53,fill:'#8f9cf0','font-size':11,'font-weight':700},g);
+ }else txt(`은하 3개 이상을 기록하면 직선을 그을 수 있습니다 (${n}/3)`,{x:PX0+PW/2,y:PY0-PH+18,'text-anchor':'middle',fill:'#a9b1cc','font-size':11},g);
+ GAL.forEach((q,i)=>{const R=HREC[i];if(!R)return;const x=gx(q.d),y=gy(R.v);
+  mk('circle',{cx:x,cy:y,r:5,fill:'#ffd76b',stroke:'#070b1d','stroke-width':1},g);
+  txt(q.n,{x:x-9,y:y-7,'text-anchor':'middle',fill:'#ffd76b','font-size':11,'font-weight':800},g)})}
+// 끌기: 노란 눈금(확대한 스펙트럼 부근)과 그래프의 직선
+function hPt(e){const p=hsv.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(hsv.getScreenCTM().inverse())}
+function hMove(p){if(hDrag=='c'){hcurL=Math.round(Math.min(ZMAX,Math.max(ZMIN,ZMIN+(p.x-ZX0)/ZW*(ZMAX-ZMIN)))*10)/10;hMsg=null}
+ else if(hDrag=='s'){const r=Math.max(8,(p.x-PX0)/PW*RMAX),v=Math.max(0,(PY0-p.y)/PH*VMAX);hS=Math.min(300,Math.max(5,v/r))}hDraw()}
+hsv.addEventListener('pointerdown',e=>{const p=hPt(e);
+ if(p.y<100&&p.x<585){const i=Math.floor((p.x-12)/115);if(i>=0&&i<5&&p.x-12-i*115<=108)hSel(i);return}
+ if(p.x>ZX0-40&&p.x<ZX0+ZW+40&&p.y>170&&p.y<278)hDrag='c';
+ else if(Object.keys(HREC).length>=3&&p.x>PX0-10&&p.x<PX0+PW+15&&p.y>PY0-PH-15&&p.y<PY0+10)hDrag='s';
+ if(hDrag){hsv.setPointerCapture(e.pointerId);hMove(p);e.preventDefault()}});
+hsv.addEventListener('pointermove',e=>{if(hDrag)hMove(hPt(e))});
+['pointerup','pointercancel'].forEach(t=>hsv.addEventListener(t,()=>{hDrag=null}));
+// 키보드: 왼쪽·오른쪽 화살표로 노란 눈금을 0.1 nm씩(Shift: 1 nm씩) 움직임
+hsv.addEventListener('keydown',e=>{if(e.key!='ArrowLeft'&&e.key!='ArrowRight')return;e.preventDefault();
+ hcurL=Math.round(Math.min(ZMAX,Math.max(ZMIN,hcurL+(e.key=='ArrowRight'?1:-1)*(e.shiftKey?1:.1)))*10)/10;hMsg=null;hDraw()});
+function hSel(i){hg=i;hcurL=HREC[i]?HREC[i].lam:660;hMsg=null;segPick(hgal,i);hDraw()}
+hgal.onclick=e=>{const b=e.target.closest('button');if(b)hSel(+b.dataset.v)};
+// 기록: 눈금이 흡수선에서 0.5 nm 안에 있으면 학생이 잰 값으로 그래프에 점을 찍음
+hrec.onclick=()=>{const G=GAL[hg];
+ if(Math.abs(hcurL-G.lam)>.5){hMsg=['노란 눈금이 은하의 흡수선에서 벗어나 있습니다. 눈금을 흡수선에 더 정확히 맞춰 보세요.','#ff8a7a']}
+ else{HREC[hg]={lam:hcurL,v:hV(hcurL)};const n=Object.keys(HREC).length;
+  hMsg=[n==5?'다섯 은하를 모두 기록했습니다. 거리와 후퇴 속도 사이의 관계를 살펴보세요.':n>=3?`은하 ${G.n}를 기록했습니다. 그래프에 직선을 맞춰 보세요.`:`은하 ${G.n}를 기록했습니다. 다른 은하도 재어 보세요.`,'#7be08f']}
+ hDraw()};
+hrst.onclick=()=>{for(const k in HREC)delete HREC[k];hS=40;hSel(0)};
+hDraw();
+
 // 생각해 보기 답 팝업과 비교 표 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
-[['ovc','cmpb','cxc'],['ov3','thb3','thx3'],['ov1','thb1','thx1'],['ov5','thb5','thx5'],['ov6','thb6','thx6'],['ov7','thb7','thx7'],['ov8','thb8','thx8'],['ov9','thb9','thx9']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
+[['ovc','cmpb','cxc'],['ov3','thb3','thx3'],['ov1','thb1','thx1'],['ov5','thb5','thx5'],['ov6','thb6','thx6'],['ov7','thb7','thx7'],['ov8','thb8','thx8'],['ov9','thb9','thx9'],['ov10','thb10','thx10'],['ov11','thb11','thx11']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
  const closeTh=()=>{ov.hidden=true;btn.focus()};
  btn.addEventListener('click',()=>{ov.hidden=false;cl.focus()});cl.addEventListener('click',closeTh);
  ov.addEventListener('click',e=>{if(e.target===ov)closeTh()});
