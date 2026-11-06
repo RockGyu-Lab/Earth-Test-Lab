@@ -995,7 +995,8 @@ hsv.addEventListener('pointermove',e=>{if(hDrag)hMove(hPt(e))});
 // 키보드: 왼쪽·오른쪽 화살표로 노란 눈금을 0.1 nm씩(Shift: 1 nm씩) 움직임
 hsv.addEventListener('keydown',e=>{if(e.key!='ArrowLeft'&&e.key!='ArrowRight')return;e.preventDefault();
  hcurL=Math.round(Math.min(ZMAX,Math.max(ZMIN,hcurL+(e.key=='ArrowRight'?1:-1)*(e.shiftKey?1:.1)))*10)/10;hMsg=null;hDraw()});
-function hSel(i){hg=i;if(i==hNext)hNext=-1;hcurL=HREC[i]?HREC[i].lam:660;hMsg=null;segPick(hgal,i);hDraw()}
+// 은하를 고르면: 이미 표시한 은하는 기록한 위치로, 아직 표시하지 않은 은하는 눈금을 앞에서 맞춘 자리에 그대로 둠
+function hSel(i){hg=i;if(i==hNext)hNext=-1;hcurL=HREC[i]?HREC[i].lam:hcurL;hMsg=null;segPick(hgal,i);hDraw()}
 hgal.onclick=e=>{const b=e.target.closest('button');if(b)hSel(+b.dataset.v)};
 // 표시: 눈금이 흡수선에서 0.5 nm 안에 있으면 학생이 잰 값으로 그래프에 점을 찍음
 // 다섯 은하를 모두 표시하면 '직선 긋기' 단추가 나타나 반짝이며 다음 단계를 알려 줌
@@ -1013,7 +1014,7 @@ hlin.onclick=()=>{let a=0,b=0;GAL.forEach((q,i)=>{if(HREC[i]){a+=q.d*HREC[i].v;b
 hall.onclick=()=>{GAL.forEach((q,i)=>{HREC[i]={lam:q.lam,v:hV(q.lam)}});hcurL=GAL[hg].lam;hNext=-1;hlin.hidden=false;hlin.onclick()};
 // 반짝임: .blink가 붙은 단추(다음 은하, 직선 긋기)에 0.45초마다 .fl을 붙였다 뗌
 setInterval(()=>document.querySelectorAll('.blink').forEach(e=>e.classList.toggle('fl')),450);
-hrst.onclick=()=>{for(const k in HREC)delete HREC[k];hNext=-1;hS=40;hLine=false;hlin.hidden=true;hlin.disabled=false;hlin.classList.remove('blink');hSel(0)};
+hrst.onclick=()=>{for(const k in HREC)delete HREC[k];hNext=-1;hS=40;hLine=false;hlin.hidden=true;hlin.disabled=false;hlin.classList.remove('blink');hcurL=660;hSel(0)};
 hDraw();
 
 // 생각해 보기 답 팝업과 비교 표 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
