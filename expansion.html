@@ -885,7 +885,7 @@ hpick('s');
 // 가상의 관측 자료: 은하까지의 거리(다른 방법으로 구한 값, Mpc)와 은하 스펙트럼에서 관측한 수소 흡수선(원래 656.3 nm)의 파장
 // 후퇴 속도 v = (Δλ / λ0) × c, 기울기가 약 70 km/s/Mpc가 되도록 정하고 은하마다 조금씩 흩어지게 함
 const HL0=656.3,HC=300000;
-const GAL=[{n:'A',d:30,lam:661.2},{n:'B',d:60,lam:665.2},{n:'C',d:100,lam:671.6},{n:'D',d:140,lam:676.4},{n:'E',d:180,lam:684.0}];
+const GAL=[{n:'A',d:30,lam:661.2},{n:'B',d:60,lam:665.4},{n:'C',d:100,lam:671.7},{n:'D',d:140,lam:677.0},{n:'E',d:180,lam:684.4}];
 const ZMIN=650,ZMAX=690,ZX0=110,ZW=460;          // 확대한 스펙트럼의 파장 범위와 그림 위치
 const FX0=110,FW=460;                             // 전체 스펙트럼(380~750 nm) 띠의 위치
 const PX0=672,PY0=350,PW=262,PH=292,RMAX=200,VMAX=16000;  // 그래프 영역과 축의 범위
@@ -1001,7 +1001,8 @@ hgal.onclick=e=>{const b=e.target.closest('button');if(b)hSel(+b.dataset.v)};
 // 다섯 은하를 모두 표시하면 '직선 긋기' 단추가 나타나 반짝이며 다음 단계를 알려 줌
 hrec.onclick=()=>{const G=GAL[hg];
  if(Math.abs(hcurL-G.lam)>.5){hMsg=['노란 눈금이 은하의 흡수선에서 벗어나 있습니다. 눈금을 흡수선에 더 정확히 맞춰 보세요.','#ff8a7a']}
- else{HREC[hg]={lam:hcurL,v:hV(hcurL)};const n=Object.keys(HREC).length;
+ // 0.5 nm 안으로 맞추면 눈금을 흡수선 위치에 딱 맞춰 기록함 (누가 재어도 기울기가 70 km/s/Mpc로 같게 나오도록)
+ else{hcurL=G.lam;HREC[hg]={lam:G.lam,v:hV(G.lam)};const n=Object.keys(HREC).length;
   hMsg=[n==5?"다섯 은하를 모두 표시했습니다. '직선 긋기'를 눌러 보세요.":`은하 ${G.n}를 그래프에 표시했습니다. 다른 은하도 재어 보세요.`,'#7be08f'];
   if(n==5&&!hLine){hlin.hidden=false;hlin.classList.add('blink')}
   // 다음에 재야 할 은하(아직 표시하지 않은 은하 가운데 다음 차례)를 반짝이게 함
