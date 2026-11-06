@@ -1073,7 +1073,7 @@ hDraw();
 // 풍선 반지름이 10초 동안 처음의 2배가 되므로, 개미 사이의 거리(표면을 따라 잰 거리)도 모두 2배가 됨
 // → 멀어지는 속도 = 늘어난 거리 ÷ 10초 = 처음 거리 × 0.1 /s (거리에 비례)
 const ANT=[{n:'A',k:-2},{n:'B',k:-1},{n:'C',k:1},{n:'D',k:2}],ECOL=['#ffd76b','#6fd3ff','#ff8a7a','#c9a7ff'];
-const ECX=280,ECY=284,ER0=100,EDT=Math.PI/10,ETEND=10;
+const ECX=280,ECY=332,ER0=120,EDT=Math.PI/10,ETEND=10;
 let ecur='i',eref=0,et=0,eraf=0,eLast=0;const EDONE=[];  // EDONE: 다 부풀린 뒤 그래프에 나타낸 기준 개미(순서대로)
 const eR=()=>ER0*(1+et/ETEND);
 const ep=(r,a)=>[ECX+r*Math.sin(a),ECY-r*Math.cos(a)];
@@ -1086,21 +1086,29 @@ function antG(g,x,y,deg,on){const a=mk('g',{transform:`translate(${x.toFixed(1)}
  mk('ellipse',{cx:-7,cy:-6.5,rx:5,ry:3.8,fill:'#d27a3c',stroke:'#3a1d0c','stroke-width':.8},a);
  mk('ellipse',{cx:0,cy:-6,rx:3.2,ry:2.4,fill:'#d27a3c',stroke:'#3a1d0c','stroke-width':.8},a);
  mk('circle',{cx:6,cy:-7,r:2.9,fill:'#d27a3c',stroke:'#3a1d0c','stroke-width':.8},a)}
+// 눈금 간격 표시: 풍선 표면 안쪽에 칸마다 호(양 끝 짧은 선)를 긋고, 지금 길이를 적음
+function eScale(g,R){const L=(1+et/ETEND).toFixed(1),r=R-16;
+ for(let k=-2;k<2;k++){const a0=k*EDT,a1=(k+1)*EDT,[x0,y0]=ep(r,a0+.012),[x1,y1]=ep(r,a1-.012);
+  mk('path',{d:`M${x0},${y0}A${r},${r} 0 0 1 ${x1},${y1}`,fill:'none',stroke:'#ffd76b','stroke-width':2},g);
+  for(const a of[a0+.012,a1-.012]){const[p,q]=ep(r-5,a),[u,w]=ep(r+5,a);mk('line',{x1:p,y1:q,x2:u,y2:w,stroke:'#ffd76b','stroke-width':2},g)}
+  const am=(a0+a1)/2,[lx,ly]=ep(r-14,am);txt(L,{x:lx,y:ly,'text-anchor':'middle','dominant-baseline':'middle',transform:`rotate(${(am*180/Math.PI).toFixed(1)} ${lx.toFixed(1)} ${ly.toFixed(1)})`,fill:'#fff3c4','font-size':12.5,'font-weight':800},g)}}
 function eDraw(){esv.innerHTML='';const g=mk('g',{},esv),R=eR(),s=R/ER0;
  txt('부푸는 풍선 위의 개미 (풍선의 단면)',{x:14,y:26,fill:'#e8ecff','font-size':14,'font-weight':700},g);
  txt('3차원 우주를 2차원 풍선 표면으로 단순화한 모형',{x:14,y:44,fill:'#a9b1cc','font-size':11},g);
  txt(`시간 ${et.toFixed(1)}초`,{x:546,y:26,'text-anchor':'end',fill:'#ffd76b','font-size':14,'font-weight':700},g);
  txt(`풍선 반지름 ${s.toFixed(2)}배`,{x:546,y:44,'text-anchor':'end',fill:'#a9b1cc','font-size':11.5},g);
- // 풍선(위쪽 절반): 고무 몸통, 입체감을 주는 둘레선과 빛 반사
+ txt('노란 숫자: 눈금 사이의 거리(cm)',{x:546,y:62,'text-anchor':'end',fill:'#ffd76b','font-size':11.5,'font-weight':600},g);
+ // 풍선(아래쪽은 잘라 냄): 고무 몸통, 앞쪽만 보이는 위도선과 빛 반사로 입체감을 줌
  mk('circle',{cx:ECX,cy:ECY,r:R,fill:'url(#gBal)',stroke:'#ff9fb2','stroke-width':2},g);
- for(const f of[-.5,0,.5]){const rx=R*Math.sqrt(1-f*f);mk('ellipse',{cx:ECX,cy:ECY+f*R,rx,ry:rx*.2,fill:'none',stroke:'rgba(255,255,255,.16)'},g)}
- mk('ellipse',{cx:ECX,cy:ECY,rx:R*.22,ry:R,fill:'none',stroke:'rgba(255,255,255,.12)'},g);
- const hx=ECX-R*.4,hy=ECY-R*.45;mk('ellipse',{cx:hx,cy:hy,rx:R*.15,ry:R*.08,transform:`rotate(-38 ${hx} ${hy})`,fill:'rgba(255,255,255,.35)'},g);
+ for(const f of[-.8,-.6,-.4,-.2]){const rx=R*Math.sqrt(1-f*f),y=ECY+f*R;mk('path',{d:`M${ECX-rx},${y}A${rx},${rx*.2} 0 0 0 ${ECX+rx},${y}`,fill:'none',stroke:'rgba(255,255,255,.2)','stroke-width':1.2},g)} const hx=ECX-R*.4,hy=ECY-R*.45;mk('ellipse',{cx:hx,cy:hy,rx:R*.15,ry:R*.08,transform:`rotate(-38 ${hx} ${hy})`,fill:'rgba(255,255,255,.35)'},g);
  // 풍선 표면의 눈금 (1칸마다): 풍선과 함께 간격이 넓어짐
  for(let k=0;k<20;k++){const a=k*EDT,[x1,y1]=ep(R-5,a),[x2,y2]=ep(R+5,a);mk('line',{x1,y1,x2,y2,stroke:'#fff','stroke-width':1.6,opacity:.75},g)}
- if(ecur=='c'){mk('circle',{cx:ECX,cy:ECY,r:3.5,fill:'#fff'},g);txt('풍선의 중심',{x:ECX,y:ECY-10,'text-anchor':'middle',fill:'#fff','font-size':11.5,'font-weight':600,opacity:.9},g)}
- // 기준 개미에게서 본 다른 개미의 멀어지는 방향과 속도 (화살표 길이 ∝ 속도)
- if(et>0)ANT.forEach((q,i)=>{if(i==eref)return;const a=q.k*EDT,dir=Math.sign(q.k-ANT[eref].k),L=eD0(i,eref)*.1*160,
+ // 개미 A~D 사이의 눈금 간격(1칸): 풍선 표면을 따라 잰 길이가 처음 1 cm에서 10초 뒤 2 cm로 늘어남
+ eScale(g,R);
+ // 풍선의 중심은 그림 아래쪽(잘라 낸 부분)에 있음
+ if(ecur=='c'){arrow(ECX,262,ECX,284,'#ffffff','aw',g);txt('풍선의 중심 방향',{x:ECX+10,y:278,fill:'#fff','font-size':11.5,'font-weight':600},g)}
+ // 다 부풀린 뒤(10초): 기준 개미에게서 본 다른 개미의 멀어지는 방향과 속도 (화살표 길이 ∝ 속도)
+ if(et>=ETEND)ANT.forEach((q,i)=>{if(i==eref)return;const a=q.k*EDT,dir=Math.sign(q.k-ANT[eref].k),L=eD0(i,eref)*.1*160,
   [x,y]=ep(R+12,a),tx=Math.cos(a)*dir,ty=Math.sin(a)*dir,x0=x+tx*12,y0=y+ty*12;arrow(x0,y0,x0+tx*L,y0+ty*L,'#7be08f','av',g)});
  ANT.forEach((q,i)=>{const a=q.k*EDT,[x,y]=ep(R+1,a),on=i==eref;antG(g,x,y,a*180/Math.PI,on);
   const[lx,ly]=ep(R+34,a);
@@ -1119,7 +1127,7 @@ function eGraph(){egr.innerHTML='';const g=mk('g',{},egr),rn=ANT[eref].n,f=1+et/
   txt('개미 '+q.n,{x:44,y,'text-anchor':'middle',fill:'#e8ecff','font-size':12.5,'font-weight':700},g);
   txt(d+' cm',{x:124,y,'text-anchor':'middle',fill:'#e8ecff','font-size':12.5},g);
   txt((d*f).toFixed(1)+' cm',{x:214,y,'text-anchor':'middle',fill:'#ffd76b','font-size':12.5,'font-weight':700},g);
-  txt(et>0?(d*.1).toFixed(1)+' cm/s':'–',{x:306,y,'text-anchor':'middle',fill:'#7be08f','font-size':12.5,'font-weight':700},g)});
+  txt(et>=ETEND?(d*.1).toFixed(1)+' cm/s':'–',{x:306,y,'text-anchor':'middle',fill:'#7be08f','font-size':12.5,'font-weight':700},g)});
  txt('멀어지는 속도 = 늘어난 거리 ÷ 걸린 시간',{x:190,y:132,'text-anchor':'middle',fill:'#a9b1cc','font-size':11},g);
  // 그래프 눈금과 축
  for(let d=0;d<=GDM;d++){mk('line',{x1:egx(d),y1:GY0,x2:egx(d),y2:GY0-GH,stroke:'rgba(143,156,240,.15)'},g);txt(d,{x:egx(d),y:GY0+15,'text-anchor':'middle',fill:'#cfd6ee','font-size':10.5},g)}
