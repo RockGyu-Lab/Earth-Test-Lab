@@ -394,11 +394,11 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 </section>
 
 <!-- ④ 팽창하는 우주: 작은 학습 화면 2개
-     [허블-르메트르 법칙의 해석] 부푸는 풍선 위의 개미 A~D: 개미 A에게서 멀리 있는 개미일수록 빨리 멀어짐 → 거리-속도 그래프가 원점을 지나는 직선
+     [허블-르메트르 법칙의 의미] 부푸는 풍선 위의 개미 A~D: 개미 A에게서 멀리 있는 개미일수록 빨리 멀어짐 → 거리-속도 그래프가 원점을 지나는 직선
      [팽창하는 우주의 중심] 기준 개미를 바꿔도 같은 결과 → 팽창하는 우주에는 특별한 중심이 없음 -->
 <section id="p4" role="tabpanel" aria-labelledby="tab4" hidden>
  <div class="srow" style="margin-bottom:8px">
-  <div class="subtabs" id="esel"><button data-v="i" class="on">허블-르메트르 법칙의 해석</button><button data-v="c">팽창하는 우주의 중심</button></div>
+  <div class="subtabs" id="esel"><button data-v="i" class="on">허블-르메트르 법칙의 의미</button><button data-v="c">팽창하는 우주의 중심</button></div>
  </div>
  <div class="note" id="enote"></div>
  <div class="hpair"><svg id="esv" viewBox="0 0 560 290" aria-label="부푸는 풍선 위의 개미"></svg><svg id="egr" viewBox="0 0 380 290" aria-label="개미 사이의 거리와 멀어지는 속도"></svg></div>
@@ -406,11 +406,11 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   <button class="pb" id="eplay">▶ 부풀리기</button><button class="pb" id="erst">↺ 처음으로</button><span class="go" id="ecue"></span>
   <div class="seg" id="eseg" hidden><span>기준 개미</span><div class="bs" id="erefs"><button data-v="0" class="on">개미 A</button><button data-v="1">개미 B</button><button data-v="2">개미 C</button><button data-v="3">개미 D</button></div></div>
  </div>
- <!-- 허블-르메트르 법칙의 해석: 생각해 보기 2개 + 기억하기 -->
+ <!-- 허블-르메트르 법칙의 의미: 생각해 보기 2개 + 기억하기 -->
  <div id="eask1">
  <div class="note ask"><span class="tag">생각해 보기</span><p>풍선이 부푸는 동안 개미는 걸어가지 않았습니다. 그런데도 개미들이 서로 멀어지는 까닭은 무엇일까요?</p><button type="button" class="open-think" id="thb12">정답 확인</button></div>
  <div class="note ask ask2"><span class="tag">생각해 보기</span><p>개미 A에게서 멀리 있는 개미일수록 더 빨리 멀어지는 까닭은 무엇일까요?</p><button type="button" class="open-think" id="thb13">정답 확인</button></div>
- <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="mtx">허블-르메트르 법칙(멀리 있는 은하일수록 빠르게 멀어짐)은 우주가 팽창하고 있다는 증거이다.</p></div>
+ <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="mtx">멀리 있는 은하일수록 빠르게 멀어지는 허블-르메트르 법칙은 <b style="font-size:1.25em;font-weight:800">우주가 팽창</b>하고 있다는 증거이다.</p></div>
  </div>
  <!-- 팽창하는 우주의 중심: 생각해 보기 2개 + 기억하기 -->
  <div id="eask2" hidden>
@@ -1102,11 +1102,13 @@ hrst.onclick=()=>{for(const k in HREC)delete HREC[k];hNext=-1;hS=40;hLine=false;
 hDraw();
 
 // ---- ④ 팽창하는 우주: 부푸는 풍선 위의 개미 ----
-// 풍선의 단면(원) 테두리에 개미 A~D가 붙어 있음. 눈금 1칸 = 18°이며 처음에 1 cm.
+// 풍선(단면을 원으로 그림) 테두리에 개미 A~D가 붙어 있음. 눈금 1칸 = 18°이며 처음에 1 cm.
 // 풍선 반지름이 10초 동안 처음의 2배가 되므로, 개미 사이의 거리(표면을 따라 잰 거리)도 모두 2배가 됨
 // → 멀어지는 속도 = 늘어난 거리 ÷ 10초 = 처음 거리 × 0.1 /s (거리에 비례)
 const ANT=[{n:'A',k:-2},{n:'B',k:-1},{n:'C',k:1},{n:'D',k:2}],ECOL=['#ffd76b','#6fd3ff','#ff8a7a','#c9a7ff'];
-const ECX=280,ECY=332,ER0=120,EDT=Math.PI/10,ETEND=10;
+const ECX=280,ER0=170,EDT=Math.PI/10,ETEND=10;
+// 풍선 중심의 높이: 풍선이 커지는 동안 그림이 풍선 윗부분을 따라가도록 중심을 아래로 옮김(풍선 꼭대기는 거의 제자리)
+let ECY=295;
 let ecur='i',eref=0,et=0,eraf=0,eLast=0;const EDONE=[];  // EDONE: 다 부풀린 뒤 그래프에 나타낸 기준 개미(순서대로)
 const eR=()=>ER0*(1+et/ETEND);
 const ep=(r,a)=>[ECX+r*Math.sin(a),ECY-r*Math.cos(a)];
@@ -1125,26 +1127,26 @@ function eScale(g,R){const L=(1+et/ETEND).toFixed(1),r=R-16;
   mk('path',{d:`M${x0},${y0}A${r},${r} 0 0 1 ${x1},${y1}`,fill:'none',stroke:'#ffd76b','stroke-width':2},g);
   for(const a of[a0+.012,a1-.012]){const[p,q]=ep(r-5,a),[u,w]=ep(r+5,a);mk('line',{x1:p,y1:q,x2:u,y2:w,stroke:'#ffd76b','stroke-width':2},g)}
   const am=(a0+a1)/2,[lx,ly]=ep(r-14,am);txt(L,{x:lx,y:ly,'text-anchor':'middle','dominant-baseline':'middle',transform:`rotate(${(am*180/Math.PI).toFixed(1)} ${lx.toFixed(1)} ${ly.toFixed(1)})`,fill:'#fff3c4','font-size':12.5,'font-weight':800},g)}}
-function eDraw(){esv.innerHTML='';const g=mk('g',{},esv),R=eR(),s=R/ER0;
- txt('부푸는 풍선 위의 개미 (풍선의 단면)',{x:14,y:26,fill:'#e8ecff','font-size':14,'font-weight':700},g);
+function eDraw(){esv.innerHTML='';ECY=295+140*et/ETEND;const g=mk('g',{},esv),R=eR(),s=R/ER0;
+ txt('부푸는 풍선 위의 개미',{x:14,y:26,fill:'#e8ecff','font-size':14,'font-weight':700},g);
  txt('3차원 우주를 2차원 풍선 표면으로 단순화한 모형',{x:14,y:44,fill:'#a9b1cc','font-size':11},g);
  txt(`시간 ${et.toFixed(1)}초`,{x:546,y:26,'text-anchor':'end',fill:'#ffd76b','font-size':14,'font-weight':700},g);
  txt(`풍선 반지름 ${s.toFixed(2)}배`,{x:546,y:44,'text-anchor':'end',fill:'#a9b1cc','font-size':11.5},g);
  txt('노란 숫자: 눈금 사이의 거리(cm)',{x:546,y:62,'text-anchor':'end',fill:'#ffd76b','font-size':11.5,'font-weight':600},g);
  // 풍선(아래쪽은 잘라 냄): 고무 몸통, 앞쪽만 보이는 위도선과 빛 반사로 입체감을 줌
  mk('circle',{cx:ECX,cy:ECY,r:R,fill:'url(#gBal)',stroke:'#ff9fb2','stroke-width':2},g);
- for(const f of[-.8,-.6,-.4,-.2]){const rx=R*Math.sqrt(1-f*f),y=ECY+f*R;mk('path',{d:`M${ECX-rx},${y}A${rx},${rx*.2} 0 0 0 ${ECX+rx},${y}`,fill:'none',stroke:'rgba(255,255,255,.2)','stroke-width':1.2},g)} const hx=ECX-R*.4,hy=ECY-R*.45;mk('ellipse',{cx:hx,cy:hy,rx:R*.15,ry:R*.08,transform:`rotate(-38 ${hx} ${hy})`,fill:'rgba(255,255,255,.35)'},g);
+ for(const f of[-.9,-.78,-.64,-.5]){const rx=R*Math.sqrt(1-f*f),y=ECY+f*R;mk('path',{d:`M${ECX-rx},${y}A${rx},${rx*.2} 0 0 0 ${ECX+rx},${y}`,fill:'none',stroke:'rgba(255,255,255,.2)','stroke-width':1.2},g)} const hx=ECX-R*.35,hy=ECY-R*.75;mk('ellipse',{cx:hx,cy:hy,rx:R*.15,ry:R*.08,transform:`rotate(-38 ${hx} ${hy})`,fill:'rgba(255,255,255,.35)'},g);
  // 풍선 표면의 눈금 (1칸마다): 풍선과 함께 간격이 넓어짐
  for(let k=0;k<20;k++){const a=k*EDT,[x1,y1]=ep(R-5,a),[x2,y2]=ep(R+5,a);mk('line',{x1,y1,x2,y2,stroke:'#fff','stroke-width':1.6,opacity:.75},g)}
  // 개미 A~D 사이의 눈금 간격(1칸): 풍선 표면을 따라 잰 길이가 처음 1 cm에서 10초 뒤 2 cm로 늘어남
  eScale(g,R);
  // 풍선의 중심은 그림 아래쪽(잘라 낸 부분)에 있음
- if(ecur=='c'){arrow(ECX,262,ECX,284,'#ffffff','aw',g);txt('풍선의 중심 방향',{x:ECX+10,y:278,fill:'#fff','font-size':11.5,'font-weight':600},g)}
+ if(ecur=='c'){arrow(ECX,272,ECX,289,'#ffffff','aw',g);txt('풍선의 중심 방향',{x:ECX+10,y:286,fill:'#fff','font-size':11.5,'font-weight':600},g)}
  // 다 부풀린 뒤(10초): 기준 개미에게서 본 다른 개미의 멀어지는 방향과 속도 (화살표 길이 ∝ 속도)
- if(et>=ETEND)ANT.forEach((q,i)=>{if(i==eref)return;const a=q.k*EDT,dir=Math.sign(q.k-ANT[eref].k),L=eD0(i,eref)*.1*160,
+ if(et>=ETEND)ANT.forEach((q,i)=>{if(i==eref)return;const a=q.k*EDT,dir=Math.sign(q.k-ANT[eref].k),L=eD0(i,eref)*.1*120,
   [x,y]=ep(R+12,a),tx=Math.cos(a)*dir,ty=Math.sin(a)*dir,x0=x+tx*12,y0=y+ty*12;arrow(x0,y0,x0+tx*L,y0+ty*L,'#7be08f','av',g)});
  ANT.forEach((q,i)=>{const a=q.k*EDT,[x,y]=ep(R+1,a),on=i==eref;antG(g,x,y,a*180/Math.PI,on);
-  const[lx,ly]=ep(R+34,a);
+  const[lx,ly]=ep(R+30,a);
   if(on){mk('circle',{cx:lx,cy:ly-5,r:11,fill:'#ffd76b'},g);txt(q.n,{x:lx,y:ly,'text-anchor':'middle',fill:'#1b1f2a','font-size':14,'font-weight':800},g);
    txt('기준',{x:lx+15,y:ly-1,'text-anchor':'start',fill:'#ffd76b','font-size':11,'font-weight':700},g)}
   else txt(q.n,{x:lx,y:ly,'text-anchor':'middle',fill:'#e8ecff','font-size':15,'font-weight':800},g)})}
@@ -1188,7 +1190,7 @@ erst.onclick=()=>{eStop();et=0;EDONE.length=0;eAll()};
 erefs.onclick=e=>{const b=e.target.closest('button');if(!b)return;eref=+b.dataset.v;segPick(erefs,b.dataset.v);eMark();eAll()};
 const ENOTE={i:'<p style="margin:0">고무 풍선 위에 개미 A, B, C, D가 붙어 있습니다. 풍선이 부풀 때 개미 A에게서 다른 개미들이 어떻게 멀어지는지 살펴봅시다.</p>',
  c:'<p style="margin:0">이번에는 기준이 되는 개미를 바꾸어 봅시다. 어느 개미의 입장에서 보아도 같은 결과가 나올까요?</p>'};
-const ECUE={i:"'▶ 부풀리기'를 눌러 개미 A와 다른 개미 사이의 거리가 어떻게 변하는지 살펴보세요.",
+const ECUE={i:"부풀리기를 눌러 개미 A와 다른 개미 사이의 거리가 어떻게 변하는지 살펴보세요.",
  c:"기준 개미를 바꿔 가며 부풀려 보세요."};
 function epick(v){ecur=v;segPick(esel,v);eStop();et=0;EDONE.length=0;eref=0;segPick(erefs,'0');
  enote.innerHTML=ENOTE[v];ecue.textContent=ECUE[v];eseg.hidden=v!='c';eask1.hidden=v!='i';eask2.hidden=v!='c';eAll()}
