@@ -138,7 +138,14 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .tag.try{background:var(--try);color:var(--on-try)}
 .open-think.try{border-color:var(--try);color:var(--try)}
 .tag.mem{background:var(--mem);color:var(--on-mem)}
-.memo .eq{font-size:1.35rem;line-height:1.2;font-weight:700;color:var(--mem);font-family:"Times New Roman",serif;white-space:nowrap}
+.memo .eq{font-size:1.15rem;line-height:1;font-weight:700;color:var(--mem);font-family:"Times New Roman",serif;display:flex;align-items:center;gap:6px;white-space:nowrap}
+/* 분수: 분자와 분모를 위아래로 쌓고 가운데 가로줄 */
+.frac{display:inline-flex;flex-direction:column;align-items:center}
+.frac>span{padding:0 4px}
+.frac>span:first-child{border-bottom:1.6px solid currentColor;padding-bottom:1px}
+.frac>span:last-child{padding-top:2px}
+.memo .eqs{font-size:1.2em}
+#lask .memo{margin-top:4px!important}
 .memo .eqx{font-weight:400;font-size:.85rem;color:var(--fg);opacity:.8}
 .open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none;font-family:inherit}
 .open-think:hover{background:var(--card)}
@@ -264,12 +271,12 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   <svg id="lspec" viewBox="0 0 960 130"></svg>
  </div>
  <div class="ctl" id="dctl">
-  <button class="pb" id="dplay">▶ 재생</button><button class="pb" id="dreset">↺ 처음으로</button>
+  <button class="pb" id="dplay">▶ 재생</button>
   <div class="seg"><div class="bs" id="dmov"><button data-v="0" class="on">정지하고 있을 때</button><button data-v="1">천천히 움직일 때</button><button data-v="2">빨리 움직일 때(2배)</button></div></div>
   <span class="hint" id="dhint"></span>
  </div>
  <div class="ctl" id="lctl" hidden>
-  <button class="pb" id="lplay">▶ 재생</button><button class="pb" id="lreset">↺ 처음으로</button>
+  <button class="pb" id="lplay">▶ 재생</button>
   <div class="seg"><div class="bs" id="lmov"><button data-v="0" class="on">정지하고 있을 때</button><button data-v="1">다가올 때</button><button data-v="-1">멀어질 때</button></div></div>
   <div class="seg" id="lspdw" hidden><div class="bs" id="lspd"><button data-v="1" class="on">기본 속력</button><button data-v="2">2배</button></div></div>
   <span class="hint" id="lhint"></span>
@@ -279,7 +286,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  <div class="note ask"><span class="tag">생각해 보기</span><p>별이 다가올 때와 멀어질 때 관측되는 별빛의 파장은 어떻게 변하나요?</p><button type="button" class="open-think" id="thb7">답 보기</button></div>
  <div class="note ask ask2"><span class="tag">생각해 보기</span><p>별이 멀어지는 속도가 더 커지면, 관측되는 별빛의 파장은 어떻게 변하나요?</p><button type="button" class="open-think" id="thb8">답 보기</button></div>
  <!-- 기억하기: 도플러 효과의 식 (빛의 속력보다 매우 느리게 움직일 때) -->
- <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="eq">Δλ / λ<sub>0</sub> = <i>v</i> / <i>c</i></p>
+ <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="eq"><span class="frac"><span>Δλ</span><span>λ<sub>0</sub></span></span><span class="eqs">=</span><span class="frac"><span><i>v</i></span><span><i>c</i></span></span></p>
   <p class="eqx">λ<sub>0</sub>: 원래 파장 · Δλ: 파장의 변화량(관측 파장 − 원래 파장) · <i>v</i>: 다가오거나 멀어지는 속력 · <i>c</i>: 빛의 속력</p></div>
  </div>
  <div class="ov" id="ov7" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 별이 다가올 때와 멀어질 때 관측되는 별빛의 파장은 어떻게 변하나요?">
@@ -309,7 +316,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>음원(구급차)이 관찰자를 향해 올 때와 관찰자로부터 멀어질 때 파장은 어떻게 달라지나요?</b><button type="button" class="x" id="thx5" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">음원이 다가올 때는 관찰자 쪽의 파장이 짧아지고, 멀어질 때는 파장이 길어집니다.</p>
   <p class="exp">음원은 파면 하나를 내보낸 뒤 다음 파면을 내보낼 때까지 앞으로 이동합니다. 그래서 음원이 나아가는 앞쪽에서는 파면 사이의 간격(파장)이 좁아지고, 뒤쪽에서는 넓어집니다.</p>
-  <p class="exp">파동이 퍼지는 속력은 그대로이므로, 파장이 짧아진 쪽에서는 진동수가 커지고(소리는 높게 들림), 파장이 길어진 쪽에서는 진동수가 작아집니다(소리는 낮게 들림).</p>
+  <p class="exp">파동이 퍼지는 속력은 그대로이므로, 파장이 짧아진 쪽에서는 진동수가 커지고(소리는 높게 들림), 파장이 길어진 쪽에서는 진동수가 작아집니다(소리는 낮게 들림). 이때 구급차의 사이렌이 내는 소리 자체는 바뀌지 않습니다.</p>
  </div></div>
  <div class="ov" id="ov6" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 음원(구급차)이 움직이는 속도가 빨라지면, 파장의 변화 폭은 어떻게 달라지나요?">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>음원(구급차)이 움직이는 속도가 빨라지면, 파장의 변화 폭은 어떻게 달라지나요?</b><button type="button" class="x" id="thx6" aria-label="닫기">닫기 ✕</button></div>
@@ -696,15 +703,15 @@ if(dsrc=='a'&&dsnd&&draf)aSet(siren(h.te)*h.f,.16*h.vol);else aSet(0,0);return h
 // 진행 상황을 알아보기 쉽도록 실제 시간의 0.5배 빠르기로 천천히 움직임
 const DSPD=.5;
 function dLoop(now){dT+=DSPD*Math.min(.05,(now-dLast)/1000);dLast=now;const end=dEnd();
- if(dT>=end){dT=end;dDraw();dStop();
-  dSetHint(dsrc=='a'&&dmv?'사이렌 소리는 그대로인데, 다가올 때는 높게, 멀어질 때는 낮게 들립니다. 아래 칸의 기록을 비교해 보세요.':dMsg(heard(dT)));return}
+ if(dT>=end)dT=0;  // 끝까지 가면 처음부터 다시 반복 (멈춤을 누를 때까지)
  const h=dSound();dDraw();dSetHint(dMsg(h));draf=requestAnimationFrame(dLoop)}
 function dPlay(){if(draf){dStop();return}if(dT>=dEnd())dT=0;if(dsrc=='a'&&dsnd)aStart();
  dplay.textContent='⏸ 멈춤';dLast=performance.now();draf=1;dSound();draf=requestAnimationFrame(dLoop)}
 function dInit(){dStop();dT=0;dDropPartial();hnote.innerHTML=DN;sndb.hidden=dsrc!='a';dDraw();dSetHint(dInitMsg())}
 function segPick(box,v){box.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v==v))}
-dplay.onclick=dPlay;dreset.onclick=dInit;
-dmov.onclick=e=>{const b=e.target.closest('button');if(!b)return;dmv=+b.dataset.v?1:0;dk=b.dataset.v=='2'?2:1;segPick(dmov,b.dataset.v);dInit()};
+// 경우를 고르면 처음부터 바로 재생 (재생 단추는 멈춤·다시 재생에만 씀)
+dplay.onclick=dPlay;
+dmov.onclick=e=>{const b=e.target.closest('button');if(!b)return;dmv=+b.dataset.v?1:0;dk=b.dataset.v=='2'?2:1;segPick(dmov,b.dataset.v);dInit();dPlay()};
 // 해보기: 그림판(sview)과 조작 줄(dctl)을 팝업 안으로 옮겨 오리(물결파)를 보여 주고, 닫으면 제자리로 돌려 구급차를 보여 줌
 // 팝업이 열려 있는 동안 뒤쪽 화면이 줄어들지 않도록 같은 높이의 빈 칸을 남겨 둠
 const dhold=document.createElement('div');let dSaved=null;
@@ -806,14 +813,15 @@ const lMsg=()=>lmv>0?'다가오는 동안: 별빛의 파장이 짧아져, 흡수
 function lSetHint(s){if(lhint.innerHTML!=s){lhint.innerHTML=s;lhint.classList.toggle('tri',s.includes('▶'))}}
 function lStop(){cancelAnimationFrame(lraf);lraf=0;lplay.textContent='▶ 재생'}
 function lLoop(now){lT+=.5*Math.min(.05,(now-lLast)/1000);lLast=now;
- if(lT>=LP.end){lT=LP.end;lDraw();lStop();return}lDraw();lraf=requestAnimationFrame(lLoop)}
+ if(lT>=LP.end)lT=0;lDraw();  // 끝까지 가면 처음부터 다시 반복
+ lraf=requestAnimationFrame(lLoop)}
 function lPlay(){if(lraf){lStop();return}if(lT>=LP.end)lT=0;lplay.textContent='⏸ 멈춤';
  // 이 경우(다가올 때·멀어질 때는 속력별로)를 처음 재생하면 아래 칸에 기록
  if(lmv?!LREC[lmv][lk]:!LREC[0]){if(lmv)LREC[lmv][lk]=1;else LREC[0]=1;lPanels()}lSetHint(lMsg());lLast=performance.now();lraf=requestAnimationFrame(lLoop)}
 function lInit(){lStop();lT=0;hnote.innerHTML=LN;lDraw();lPanels();lSetHint('<span class="go">▶ 재생을 눌러 별빛을 관측해 보세요.</span>')}
-lplay.onclick=lPlay;lreset.onclick=lInit;
-lmov.onclick=e=>{const b=e.target.closest('button');if(!b)return;lmv=+b.dataset.v;segPick(lmov,b.dataset.v);lspdw.hidden=!lmv;lInit()};
-lspd.onclick=e=>{const b=e.target.closest('button');if(!b)return;lk=+b.dataset.v;segPick(lspd,b.dataset.v);lInit()};
+lplay.onclick=lPlay;
+lmov.onclick=e=>{const b=e.target.closest('button');if(!b)return;lmv=+b.dataset.v;segPick(lmov,b.dataset.v);lspdw.hidden=!lmv;lInit();lPlay()};
+lspd.onclick=e=>{const b=e.target.closest('button');if(!b)return;lk=+b.dataset.v;segPick(lspd,b.dataset.v);lInit();lPlay()};
 
 // ==== ② 도플러 효과: 작은 학습 화면 2개 [소리(음파)의 도플러 효과] [빛(전자기파)의 도플러 효과] ====
 let hcur='s';
