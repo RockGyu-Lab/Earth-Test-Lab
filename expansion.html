@@ -177,9 +177,12 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .hcue{margin:6px 2px 0;font-size:.92rem}
 .pb[hidden]{display:none}
 /* 다섯 은하를 모두 표시하면 나타나는 '직선 긋기' 단추: 다음 단계임을 알리도록 반짝임 */
-@keyframes blink{0%,100%{box-shadow:0 0 0 0 rgba(84,104,212,.0);filter:none}50%{box-shadow:0 0 0 6px rgba(84,104,212,.35),0 0 14px 2px rgba(123,224,143,.7);filter:brightness(1.25)}}
-.pb.blink{animation:blink 1s ease-in-out infinite}
-@media (prefers-reduced-motion:reduce){.pb.blink{animation:none;box-shadow:0 0 0 3px rgba(123,224,143,.8)}}
+/* 다음에 누를 단추를 알려 주는 반짝임: 노란빛으로 크게 깜빡임 (다음 은하 단추, '직선 긋기' 단추) */
+@keyframes blink{0%,100%{box-shadow:0 0 0 0 rgba(255,215,107,0);transform:none}50%{box-shadow:0 0 0 4px #ffd76b,0 0 20px 8px rgba(255,215,107,.85);transform:scale(1.08)}}
+.pb.blink{animation:blink .9s ease-in-out infinite}
+@keyframes blinkS{0%,100%{background:var(--sub-bg);color:var(--sub-tx)}50%{background:#ffd76b;color:#1b1f2a;box-shadow:inset 0 0 0 2px #d99a00}}
+.seg .bs button.blink{animation:blinkS .9s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.pb.blink{animation:none;box-shadow:0 0 0 4px #ffd76b}.seg .bs button.blink{animation:none;background:#ffd76b;color:#1b1f2a}}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
@@ -882,7 +885,7 @@ const GAL=[{n:'A',d:30,lam:661.2},{n:'B',d:60,lam:665.2},{n:'C',d:100,lam:671.6}
 const ZMIN=650,ZMAX=690,ZX0=110,ZW=460;          // 확대한 스펙트럼의 파장 범위와 그림 위치
 const FX0=110,FW=460;                             // 전체 스펙트럼(380~750 nm) 띠의 위치
 const PX0=672,PY0=350,PW=262,PH=292,RMAX=200,VMAX=16000;  // 그래프 영역과 축의 범위
-let hg=0,hcurL=660,hS=40,hMsg=null,hDrag=null,hLine=false;const HREC={};
+let hg=0,hcurL=660,hS=40,hMsg=null,hDrag=null,hLine=false,hNext=-1;const HREC={};  // hNext: 다음에 고를 은하(반짝임)
 const zx=w=>ZX0+(w-ZMIN)/(ZMAX-ZMIN)*ZW,fxp=w=>FX0+(w-SPMIN)/(SPMAX-SPMIN)*FW;
 const gx=r=>PX0+r/RMAX*PW,gy=v=>PY0-v/VMAX*PH;
 const hV=l=>Math.round((l-HL0)/HL0*HC/10)*10;   // 관측 파장 → 후퇴 속도 (10 km/s 단위로 반올림)
@@ -900,7 +903,10 @@ function hGalaxy(g,cx,cy,d,rot){const s=30*Math.pow(30/d,.6),b=.45+.55*Math.sqrt
 function hDraw(){hsv.innerHTML='';const g=mk('g',{},hsv),G=GAL[hg];
  mk('rect',{x:-3000,y:-1000,width:7000,height:3000,fill:'#070b1d'},g);
  // 은하 카드 5개
+ hgal.querySelectorAll('button').forEach(b=>b.classList.toggle('blink',+b.dataset.v==hNext));
  GAL.forEach((q,i)=>{const X=12+i*115,on=i==hg,c=mk('g',{style:'cursor:pointer'},g);
+  // 다음에 고를 은하 카드: 노란 빛 테두리가 깜빡임
+  if(i==hNext){const gl=mk('rect',{x:X-3,y:5,width:114,height:98,rx:12,fill:'none',stroke:'#ffd76b','stroke-width':3},c);mk('animate',{attributeName:'opacity',values:'1;.1;1',dur:'.9s',repeatCount:'indefinite'},gl)}
   mk('rect',{x:X,y:8,width:108,height:92,rx:10,fill:'url(#gStrip)',stroke:on?'#ffd76b':'rgba(255,255,255,.16)','stroke-width':on?1.6:1},c);
   hGalaxy(c,X+54,40,q.d,[-18,24,-35,10,-8][i]);
   txt('은하 '+q.n,{x:X+54,y:78,'text-anchor':'middle',fill:on?'#ffd76b':'#e8ecff','font-size':12.5,'font-weight':700},c);
@@ -985,7 +991,7 @@ hsv.addEventListener('pointermove',e=>{if(hDrag)hMove(hPt(e))});
 // 키보드: 왼쪽·오른쪽 화살표로 노란 눈금을 0.1 nm씩(Shift: 1 nm씩) 움직임
 hsv.addEventListener('keydown',e=>{if(e.key!='ArrowLeft'&&e.key!='ArrowRight')return;e.preventDefault();
  hcurL=Math.round(Math.min(ZMAX,Math.max(ZMIN,hcurL+(e.key=='ArrowRight'?1:-1)*(e.shiftKey?1:.1)))*10)/10;hMsg=null;hDraw()});
-function hSel(i){hg=i;hcurL=HREC[i]?HREC[i].lam:660;hMsg=null;segPick(hgal,i);hDraw()}
+function hSel(i){hg=i;if(i==hNext)hNext=-1;hcurL=HREC[i]?HREC[i].lam:660;hMsg=null;segPick(hgal,i);hDraw()}
 hgal.onclick=e=>{const b=e.target.closest('button');if(b)hSel(+b.dataset.v)};
 // 표시: 눈금이 흡수선에서 0.5 nm 안에 있으면 학생이 잰 값으로 그래프에 점을 찍음
 // 다섯 은하를 모두 표시하면 '직선 긋기' 단추가 나타나 반짝이며 다음 단계를 알려 줌
@@ -993,10 +999,12 @@ hrec.onclick=()=>{const G=GAL[hg];
  if(Math.abs(hcurL-G.lam)>.5){hMsg=['노란 눈금이 은하의 흡수선에서 벗어나 있습니다. 눈금을 흡수선에 더 정확히 맞춰 보세요.','#ff8a7a']}
  else{HREC[hg]={lam:hcurL,v:hV(hcurL)};const n=Object.keys(HREC).length;
   hMsg=[n==5?"다섯 은하를 모두 표시했습니다. '직선 긋기'를 눌러 보세요.":`은하 ${G.n}를 그래프에 표시했습니다. 다른 은하도 재어 보세요.`,'#7be08f'];
-  if(n==5&&!hLine){hlin.hidden=false;hlin.classList.add('blink')}}
+  if(n==5&&!hLine){hlin.hidden=false;hlin.classList.add('blink')}
+  // 다음에 재야 할 은하(아직 표시하지 않은 은하 가운데 다음 차례)를 반짝이게 함
+  hNext=-1;for(let j=1;j<=5;j++){const c=(hg+j)%5;if(!HREC[c]){hNext=c;break}}}
  hDraw()};
 hlin.onclick=()=>{let a=0,b=0;GAL.forEach((q,i)=>{if(HREC[i]){a+=q.d*HREC[i].v;b+=q.d*q.d}});hS=a/b;hLine=true;hlin.classList.remove('blink');hlin.disabled=true;hMsg=null;hDraw()};
-hrst.onclick=()=>{for(const k in HREC)delete HREC[k];hS=40;hLine=false;hlin.hidden=true;hlin.disabled=false;hlin.classList.remove('blink');hSel(0)};
+hrst.onclick=()=>{for(const k in HREC)delete HREC[k];hNext=-1;hS=40;hLine=false;hlin.hidden=true;hlin.disabled=false;hlin.classList.remove('blink');hSel(0)};
 hDraw();
 
 // 생각해 보기 답 팝업과 비교 표 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
