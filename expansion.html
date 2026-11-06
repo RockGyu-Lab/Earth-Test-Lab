@@ -174,6 +174,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 #hsv,#hgr{max-height:max(280px,calc(100dvh - 380px))}
 #hsv:focus{outline:none}
 #hmemo{margin-top:4px!important}
+.hcue{margin:6px 2px 0;font-size:.92rem}
 .pb[hidden]{display:none}
 /* 다섯 은하를 모두 표시하면 나타나는 '직선 긋기' 단추: 다음 단계임을 알리도록 반짝임 */
 @keyframes blink{0%,100%{box-shadow:0 0 0 0 rgba(84,104,212,.0);filter:none}50%{box-shadow:0 0 0 6px rgba(84,104,212,.35),0 0 14px 2px rgba(123,224,143,.7);filter:brightness(1.25)}}
@@ -349,8 +350,9 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 <!-- ③ 허블-르메트르 법칙: 은하 5개(A~E)의 스펙트럼에서 수소 흡수선이 옮겨 간 파장을 직접 재어 후퇴 속도를 구하고,
      거리-후퇴 속도 그래프에 점으로 나타낸 뒤, 원점을 지나는 직선을 끌어 맞춰 기울기(허블 상수)를 구함 -->
 <section id="p3" role="tabpanel" aria-labelledby="tab3" hidden>
- <div class="note"><p style="margin:0">은하의 스펙트럼에서 수소 흡수선이 옮겨 간 파장을 재어 후퇴 속도를 구하고, 거리와 후퇴 속도의 관계를 그래프로 나타내 보세요. <span class="go">은하를 고르고, 노란 눈금을 끌어 은하의 흡수선에 맞춘 뒤 '그래프에 표시하기'를 눌러 보세요.</span></p></div>
+ <div class="note"><p style="margin:0">거리가 다른 은하의 수소 흡수선을 분석하여 거리와 후퇴 속도 사이의 관계를 구해 봅시다.</p></div>
  <div class="hpair"><svg id="hsv" viewBox="4 0 589 400" tabindex="0" aria-label="은하의 스펙트럼 측정"></svg><svg id="hgr" viewBox="592 0 364 400" aria-label="거리-후퇴 속도 그래프"></svg></div>
+ <p class="go hcue">은하를 고르고, 노란 눈금선을 끌어 은하의 흡수선에 맞춘 뒤 '그래프에 표시하기'를 눌러 보세요.</p>
  <div class="ctl" id="hctl">
   <div class="seg"><div class="bs" id="hgal"><button data-v="0" class="on">은하 A</button><button data-v="1">은하 B</button><button data-v="2">은하 C</button><button data-v="3">은하 D</button><button data-v="4">은하 E</button></div></div>
   <button class="pb" id="hrec">그래프에 표시하기</button><button class="pb" id="hlin" hidden>직선 긋기</button><button class="pb" id="hrst">↺ 처음으로</button>
@@ -906,21 +908,20 @@ function hDraw(){hsv.innerHTML='';const g=mk('g',{},hsv),G=GAL[hg];
   if(HREC[i])txt('✓',{x:X+98,y:24,'text-anchor':'end',fill:'#7be08f','font-size':13,'font-weight':800},c)});
  // 스펙트럼 측정 칸
  mk('rect',{x:12,y:108,width:573,height:284,rx:10,fill:'url(#gStrip)',stroke:'rgba(255,255,255,.16)'},g);
- txt(`은하 ${G.n}의 스펙트럼`,{x:24,y:128,fill:'#ffd76b','font-size':13,'font-weight':700},g);
  txt('수소 흡수선 (원래 파장 656.3 nm)',{x:573,y:128,'text-anchor':'end',fill:'#a9b1cc','font-size':10.5},g);
  // 전체 스펙트럼(가시광선): 위 기준(정지), 아래 은하
- const k=G.lam/HL0,full=(y,lab,kk)=>{txt(lab,{x:24,y:y+8,fill:'#cfd6ee','font-size':10.5,'font-weight':600},g);
+ const k=G.lam/HL0,full=(y,lab,kk,hi)=>{txt(lab,{x:24,y:y+8.5,fill:hi?'#ffd76b':'#cfd6ee','font-size':hi?12.5:10.5,'font-weight':hi?800:600},g);
   mk('rect',{x:FX0,y,width:FW,height:9,fill:'url(#gSpec)'},g);
   LLINE.forEach(w=>{const ww=w*kk;if(ww<SPMAX)mk('rect',{x:fxp(ww)-1,y,width:2,height:9,fill:'#05060c'},g)})};
- full(136,'기준(정지)',1);full(149,'은하 '+G.n,k);
+ full(136,'기준(정지)',1);full(149,'은하 '+G.n,k,1);
  // 확대할 부분 표시 (650~690 nm)
  mk('rect',{x:fxp(ZMIN),y:134,width:fxp(ZMAX)-fxp(ZMIN),height:26,fill:'none',stroke:'#fff','stroke-width':2,opacity:.95},g);
  mk('path',{d:`M${fxp(ZMIN)},160L${ZX0},176M${fxp(ZMAX)},160L${ZX0+ZW},176`,stroke:'#fff','stroke-width':1.8,'stroke-dasharray':'4 3',opacity:.85},g);
  txt('확대',{x:fxp(ZMAX)+6,y:151,fill:'#cfd6ee','font-size':10.5,'font-weight':600},g);
  // 확대한 스펙트럼: 위 기준(정지), 가운데 눈금자, 아래 은하
- const zoom=(y,lab,w)=>{txt(lab,{x:24,y:y+14,fill:'#cfd6ee','font-size':11,'font-weight':600},g);
+ const zoom=(y,lab,w,hi)=>{txt(lab,{x:24,y:y+14.5,fill:hi?'#ffd76b':'#cfd6ee','font-size':hi?14:11,'font-weight':hi?800:600},g);
   mk('rect',{x:ZX0,y,width:ZW,height:20,fill:'url(#gZoom)'},g);mk('rect',{x:zx(w)-1.6,y,width:3.2,height:20,fill:'#05060c'},g)};
- zoom(178,'기준(정지)',HL0);zoom(218,'은하 '+G.n,G.lam);
+ zoom(178,'기준(정지)',HL0);zoom(218,'은하 '+G.n,G.lam,1);
  for(let w=ZMIN;w<=ZMAX;w++){const big=w%5==0;mk('line',{x1:zx(w),y1:198,x2:zx(w),y2:198+(w%10==0?7:big?5:3),stroke:'#cfd6ee','stroke-width':1,opacity:.8},g);
   if(w%10==0)txt(w,{x:zx(w),y:214,'text-anchor':'middle',fill:'#cfd6ee','font-size':9.5},g)}
  txt('파장(nm)',{x:24,y:212,fill:'#a9b1cc','font-size':10},g);
