@@ -59,7 +59,8 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .hint{flex:1 1 260px;font-size:.86rem;line-height:1.45}
 .hint.tri{padding-left:1.2em;text-indent:-1.2em}
 /* 도플러 효과 안내 글: 늘 두 줄 높이를 차지해, 글 길이가 바뀌어도 아래 생각해 보기의 위치가 움직이지 않음 */
-#dhint,#lhint{min-height:2.9em}
+/* 단추 옆 안내 글과 결과 설명은 쓰지 않음 (소리·빛 모두) */
+#dhint,#lhint{display:none}
 .pb{padding:6px 14px;border:1px solid var(--acc);border-radius:10px;background:var(--acc);color:var(--on-acc);font-size:.9rem;font-weight:700;cursor:pointer;flex:none}
 /* 탭 안에서 고르는 단추: 라벤더(연보라) */
 .subtabs{display:flex;flex-wrap:wrap;gap:6px}
@@ -277,8 +278,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  </div>
  <div class="ctl" id="lctl" hidden>
   <button class="pb" id="lplay">▶ 재생</button>
-  <div class="seg"><div class="bs" id="lmov"><button data-v="0" class="on">정지하고 있을 때</button><button data-v="1">다가올 때</button><button data-v="-1">멀어질 때</button></div></div>
-  <div class="seg" id="lspdw" hidden><div class="bs" id="lspd"><button data-v="1" class="on">기본 속력</button><button data-v="2">2배</button></div></div>
+  <div class="seg"><div class="bs" id="lmov"><button data-v="0" class="on">정지하고 있을 때</button><button data-v="1">천천히 다가올 때</button><button data-v="2">빨리 다가올 때(2배)</button><button data-v="-1">천천히 멀어질 때</button><button data-v="-2">빨리 멀어질 때(2배)</button></div></div>
   <span class="hint" id="lhint"></span>
  </div>
  <!-- 빛의 도플러 효과: 생각해 보기 2개 -->
@@ -298,7 +298,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  <div class="ov" id="ov8" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 별이 멀어지는 속도가 더 커지면, 관측되는 별빛의 파장은 어떻게 변하나요?">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>별이 멀어지는 속도가 더 커지면, 관측되는 별빛의 파장은 어떻게 변하나요?</b><button type="button" class="x" id="thx8" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">파장이 더 많이 길어집니다. 적색 편이가 커져서 흡수선이 긴 파장 쪽으로 더 멀리 옮겨 갑니다.</p>
-  <p class="exp">파장의 변화량은 별이 멀어지는 속력에 비례합니다(Δλ/λ<sub>0</sub> = <i>v</i>/<i>c</i>). 이 그림에서 별이 빛 속력의 0.05배로 멀어지면 파장이 원래의 1.05배가 되고, 그 2배인 0.1배로 멀어지면 1.1배가 됩니다. 곧 속력이 2배가 되면 파장이 늘어난 양도 2배가 됩니다. <span class="go">'멀어질 때'에서 '기본 속력'과 '2배'를 재생해 비교해 보세요.</span></p>
+  <p class="exp">파장의 변화량은 별이 멀어지는 속력에 비례합니다(Δλ/λ<sub>0</sub> = <i>v</i>/<i>c</i>). 이 그림에서 별이 빛 속력의 0.05배로 멀어지면 파장이 원래의 1.05배가 되고, 그 2배인 0.1배로 멀어지면 1.1배가 됩니다. 곧 속력이 2배가 되면 파장이 늘어난 양도 2배가 됩니다. <span class="go">'천천히 멀어질 때'와 '빨리 멀어질 때(2배)'를 눌러 비교해 보세요.</span></p>
   <p class="exp">멀리 있는 은하일수록 적색 편이가 크게 관측된다는 사실은 다음 탭(허블-르메트르 법칙)에서 살펴봅니다.</p>
  </div></div>
  <!-- 해보기(오리가 만든 물결파 팝업) + 생각해 보기 2개 (꼬리표 + 질문 + 답 보기 팝업) -->
@@ -799,7 +799,7 @@ function lPanels(){lspec.innerHTML='';const g=mk('g',{},lspec),W=306,SW=230,sx=w
   const link=(k1,y1,k2,y2)=>LLINE.forEach(w=>mk('line',{x1:x0+sx(w*k1),y1,x2:x0+sx(w*k2),y2,stroke:'#fff','stroke-width':1.4,'stroke-dasharray':'2.5 2',opacity:.95},g));
   strip(32,12,'기준',1);
   // 줄마다 [이름, 파장 배율, 기록 여부, 띠의 위쪽 y]
-  const rows=m?[['기본',1-m*LP.B,LREC[m][1],54],['2배',1-2*m*LP.B,LREC[m][2],78]]:[['관측',1,LREC[0],54]];
+  const rows=m?[['천천히',1-m*LP.B,LREC[m][1],54],['빨리',1-2*m*LP.B,LREC[m][2],78]]:[['관측',1,LREC[0],54]];
   let pk=1,py=44;rows.forEach(([lb,k,done,y])=>{strip(y,14,lb,k,!done);if(done){link(pk,py,k,y);pk=k;py=y+14}});
   txt('← 짧은 파장',{x:x0,y:m?103:81,fill:'#8f98c4','font-size':10},g);txt('긴 파장 →',{x:x0+SW,y:m?103:81,'text-anchor':'end',fill:'#8f98c4','font-size':10},g);
   if(!rows.some(r=>r[2]))return;  // 기록된 줄이 없으면 결과 문구를 숨김
@@ -820,8 +820,8 @@ function lPlay(){if(lraf){lStop();return}if(lT>=LP.end)lT=0;lplay.textContent='�
  if(lmv?!LREC[lmv][lk]:!LREC[0]){if(lmv)LREC[lmv][lk]=1;else LREC[0]=1;lPanels()}lSetHint(lMsg());lLast=performance.now();lraf=requestAnimationFrame(lLoop)}
 function lInit(){lStop();lT=0;hnote.innerHTML=LN;lDraw();lPanels();lSetHint('<span class="go">▶ 재생을 눌러 별빛을 관측해 보세요.</span>')}
 lplay.onclick=lPlay;
-lmov.onclick=e=>{const b=e.target.closest('button');if(!b)return;lmv=+b.dataset.v;segPick(lmov,b.dataset.v);lspdw.hidden=!lmv;lInit();lPlay()};
-lspd.onclick=e=>{const b=e.target.closest('button');if(!b)return;lk=+b.dataset.v;segPick(lspd,b.dataset.v);lInit();lPlay()};
+// 다섯 경우: 부호는 다가옴(+)·멀어짐(-), 크기는 속력(1: 천천히, 2: 빨리)
+lmov.onclick=e=>{const b=e.target.closest('button');if(!b)return;const v=+b.dataset.v;lmv=Math.sign(v);lk=Math.abs(v)||1;segPick(lmov,b.dataset.v);lInit();lPlay()};
 
 // ==== ② 도플러 효과: 작은 학습 화면 2개 [소리(음파)의 도플러 효과] [빛(전자기파)의 도플러 효과] ====
 let hcur='s';
