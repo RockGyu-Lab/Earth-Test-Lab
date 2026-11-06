@@ -178,11 +178,12 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .pb[hidden]{display:none}
 /* 다섯 은하를 모두 표시하면 나타나는 '직선 긋기' 단추: 다음 단계임을 알리도록 반짝임 */
 /* 다음에 누를 단추를 알려 주는 반짝임: 노란빛으로 크게 깜빡임 (다음 은하 단추, '직선 긋기' 단추) */
-@keyframes blink{0%,100%{box-shadow:0 0 0 0 rgba(255,215,107,0);transform:none}50%{box-shadow:0 0 0 4px #ffd76b,0 0 20px 8px rgba(255,215,107,.85);transform:scale(1.08)}}
-.pb.blink{animation:blink .9s ease-in-out infinite}
-@keyframes blinkS{0%,100%{background:var(--sub-bg);color:var(--sub-tx)}50%{background:#ffd76b;color:#1b1f2a;box-shadow:inset 0 0 0 2px #d99a00}}
-.seg .bs button.blink{animation:blinkS .9s ease-in-out infinite}
-@media (prefers-reduced-motion:reduce){.pb.blink{animation:none;box-shadow:0 0 0 4px #ffd76b}.seg .bs button.blink{animation:none;background:#ffd76b;color:#1b1f2a}}
+/* 스크립트가 0.45초마다 .fl을 붙였다 떼어 주황색과 원래 색을 번갈아 보여 줌 (CSS 애니메이션이 꺼진 기기에서도 보이도록) */
+.pb.blink,.seg .bs button.blink{transition:background .15s,color .15s,box-shadow .15s}
+.pb.blink.fl{background:#ff9f1a;border-color:#ff9f1a;color:#1b1f2a;box-shadow:0 0 0 3px #ffe08a,0 0 18px 6px rgba(255,159,26,.85)}
+.seg .bs button.blink{background:#fff1c2;color:#7a4b00}
+.seg .bs button.blink.fl{background:#ff9f1a;color:#1b1f2a;font-weight:800}
+#hall{margin-left:auto}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
@@ -289,7 +290,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   <svg id="lspec" viewBox="0 0 960 130"></svg>
  </div>
  <div class="ctl" id="dctl">
-  <button class="pb" id="dplay">▶ 재생</button>
+  <button class="pb" id="dplay">▶ 재생</button><button class="pb" id="dreset">↺ 처음으로</button>
   <div class="seg"><div class="bs" id="dmov"><button data-v="0" class="on">정지하고 있을 때</button><button data-v="1">천천히 움직일 때</button><button data-v="2">빨리 움직일 때(2배)</button></div></div>
   <span class="hint" id="dhint"></span>
  </div>
@@ -358,7 +359,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  <p class="go hcue">은하를 고르고, 노란 눈금선을 끌어 은하의 흡수선에 맞춘 뒤 '그래프에 표시하기'를 눌러 보세요.</p>
  <div class="ctl" id="hctl">
   <div class="seg"><div class="bs" id="hgal"><button data-v="0" class="on">은하 A</button><button data-v="1">은하 B</button><button data-v="2">은하 C</button><button data-v="3">은하 D</button><button data-v="4">은하 E</button></div></div>
-  <button class="pb" id="hrec">그래프에 표시하기</button><button class="pb" id="hlin" hidden>직선 긋기</button><button class="pb" id="hrst">↺ 처음으로</button>
+  <button class="pb" id="hrec">그래프에 표시하기</button><button class="pb" id="hlin" hidden>직선 긋기</button><button class="pb" id="hrst">↺ 처음으로</button><button class="pb" id="hall">결과 바로 표시하기</button>
  </div>
  <div class="note ask"><span class="tag">생각해 보기</span><p>멀리 있는 은하일수록 후퇴 속도는 어떻게 달라지나요?</p><button type="button" class="open-think" id="thb10">답 보기</button></div>
  <div class="note ask ask2"><span class="tag">생각해 보기</span><p>그래프에서 직선의 기울기는 무엇을 뜻하나요?</p><button type="button" class="open-think" id="thb11">답 보기</button></div>
@@ -749,7 +750,8 @@ if(dsrc=='a'&&dsnd&&draf)aSet(siren(h.te)*h.f,.16*h.vol);else aSet(0,0);return h
 // 진행 상황을 알아보기 쉽도록 실제 시간의 0.5배 빠르기로 천천히 움직임
 const DSPD=.5;
 function dLoop(now){dT+=DSPD*Math.min(.05,(now-dLast)/1000);dLast=now;const end=dEnd();
- if(dT>=end)dT=0;  // 끝까지 가면 처음부터 다시 반복 (멈춤을 누를 때까지)
+ // 끝까지 가면 마지막 장면에서 멈춤 (반복하지 않음, 다시 ▶를 누르면 처음부터 재생)
+ if(dT>=end){dT=end;const h=dSound();dDraw();dSetHint(dMsg(h));dStop();return}
  const h=dSound();dDraw();dSetHint(dMsg(h));draf=requestAnimationFrame(dLoop)}
 function dPlay(){if(draf){dStop();return}if(dT>=dEnd())dT=0;if(dsrc=='a'&&dsnd)aStart();
  dplay.textContent='⏸ 멈춤';dLast=performance.now();draf=1;dSound();draf=requestAnimationFrame(dLoop)}
@@ -757,6 +759,8 @@ function dInit(){dStop();dT=0;dDropPartial();hnote.innerHTML=DN;sndb.hidden=dsrc
 function segPick(box,v){box.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v==v))}
 // 경우를 고르면 처음부터 바로 재생 (재생 단추는 멈춤·다시 재생에만 씀)
 dplay.onclick=dPlay;
+// 처음으로: 고른 경우는 그대로 두고, 구급차(오리)를 처음 위치로 되돌림
+dreset.onclick=dInit;
 dmov.onclick=e=>{const b=e.target.closest('button');if(!b)return;dmv=+b.dataset.v?1:0;dk=b.dataset.v=='2'?2:1;segPick(dmov,b.dataset.v);dInit();dPlay()};
 // 해보기: 그림판(sview)과 조작 줄(dctl)을 팝업 안으로 옮겨 오리(물결파)를 보여 주고, 닫으면 제자리로 돌려 구급차를 보여 줌
 // 팝업이 열려 있는 동안 뒤쪽 화면이 줄어들지 않도록 같은 높이의 빈 칸을 남겨 둠
@@ -1004,6 +1008,10 @@ hrec.onclick=()=>{const G=GAL[hg];
   hNext=-1;for(let j=1;j<=5;j++){const c=(hg+j)%5;if(!HREC[c]){hNext=c;break}}}
  hDraw()};
 hlin.onclick=()=>{let a=0,b=0;GAL.forEach((q,i)=>{if(HREC[i]){a+=q.d*HREC[i].v;b+=q.d*q.d}});hS=a/b;hLine=true;hlin.classList.remove('blink');hlin.disabled=true;hMsg=null;hDraw()};
+// 결과 바로 표시하기: 다섯 은하의 흡수선 위치(정확한 값)로 모두 표시하고 가장 잘 맞는 직선까지 그음
+hall.onclick=()=>{GAL.forEach((q,i)=>{HREC[i]={lam:q.lam,v:hV(q.lam)}});hcurL=GAL[hg].lam;hNext=-1;hlin.hidden=false;hlin.onclick()};
+// 반짝임: .blink가 붙은 단추(다음 은하, 직선 긋기)에 0.45초마다 .fl을 붙였다 뗌
+setInterval(()=>document.querySelectorAll('.blink').forEach(e=>e.classList.toggle('fl')),450);
 hrst.onclick=()=>{for(const k in HREC)delete HREC[k];hNext=-1;hS=40;hLine=false;hlin.hidden=true;hlin.disabled=false;hlin.classList.remove('blink');hSel(0)};
 hDraw();
 
