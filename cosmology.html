@@ -373,9 +373,16 @@ const BS=[
  ['3단계 · 투명해진 우주','빛과 부딪히던 전자가 원자 속으로 들어가자 빛이 막힘 없이 똑바로 나아갈 수 있게 되었습니다. 이때 우주 전체로 퍼져 나간 빛이 우주 배경 복사입니다.'],
  ['4단계 · 길어진 파장','우주가 계속 팽창하면서 우주 배경 복사의 파장도 함께 늘어났습니다. 약 3000 K였던 복사의 파장이 약 1100배 길어져, 지금은 약 2.7 K에 해당하는 마이크로파로 관측됩니다.'],
  ['5단계 · 관측과 비교','1965년 펜지어스와 윌슨은 하늘의 모든 방향에서 거의 같은 세기로 들어오는 마이크로파를 발견했습니다. 이후 COBE 위성의 관측으로 이 복사가 약 2.7 K 흑체 복사와 정확히 맞는다는 것이 확인되었습니다. 빅뱅 우주론의 예측과 관측이 잘 맞으므로, 우주 배경 복사는 빅뱅 우주론의 증거가 됩니다.']];
-const BNU=[];for(let r=0;r<3;r++)for(let c=0;c<3;c++){const k=r*3+c;BNU.push([110+c*160+((k*37)%29-14),96+r*76+((k*53)%23-11)])}
-const BEL=BNU.map(([x,y],k)=>[20+((x-20+70+(k%3)*12)%480),44+((y-44+40+(k%2)*14)%232)]);   // 떠돌던 전자의 자리
-const BPH=[[150,130],[380,110],[250,230],[440,240],[300,160]],BRAY=[[80,.3,1],[250,-.25,-1],[150,-.12,1],[200,.4,-1],[260,.18,1],[110,-.35,-1]];   // 빛줄기: [출발 높이, 기울기, 1=오른쪽으로 / -1=왼쪽으로]
+// 원자핵 16개(4×4)와 전자 16개(원자핵 사이에 엇갈려 놓음). 2단계에서 전자 k는 원자핵 k로 감
+const BNU=[],BEL=[];for(let r=0;r<4;r++)for(let c=0;c<4;c++){const k=r*4+c;BNU.push([82+c*120+((k*37)%23-11),80+r*64+((k*53)%17-8)]);BEL.push([118+c*112+(r%2)*44+((k*29)%19-9),(r==3?62:114+r*64)+((k*41)%15-7)])}
+const bElPos=(k,t)=>[BEL[k][0]+8*Math.sin(t*3.1+k*2.1),BEL[k][1]+8*Math.cos(t*2.7+k*1.3)];   // 떠도는 전자의 지금 자리
+// 빛이 부딪히는 차례: 가까운 전자 6개 중 하나로 날아가 부딪힌 뒤 다시 다른 전자로 (바로 전에 온 전자로는 되돌아가지 않음)
+const BNB=BEL.map(([x,y],k)=>BEL.map(([u,v],j)=>[j,Math.hypot(u-x,v-y)]).filter(([j])=>j!=k).sort((a,b)=>a[1]-b[1]).slice(0,6).map(([j])=>j));
+let bPh=null;
+function bPhStep(t){if(!bPh)bPh=[0,5,10,15,6].map(e0=>{const n=BNB[e0][0];return{p2:e0,p1:e0,a:e0,b:n,t0:t,D:.8}});
+ for(const q of bPh){while(t-q.t0>q.D){const c=BNB[q.b].filter(j=>j!=q.a),n=c[Math.floor(Math.random()*c.length)];
+   q.p2=q.p1;q.p1=q.a;q.a=q.b;q.b=n;q.t0+=q.D;if(t-q.t0>3)q.t0=t;const [ax,ay]=BEL[q.a],[bx,by]=BEL[q.b];q.D=Math.hypot(bx-ax,by-ay)/120}}}
+const BRAY=[[80,.3,1],[250,-.25,-1],[150,-.12,1],[200,.4,-1],[260,.18,1],[110,-.35,-1]];   // 빛줄기: [출발 높이, 기울기, 1=오른쪽으로 / -1=왼쪽으로]
 let bs=0,bm=0,bw=0,bT=0,bLast=0;   // bm: 원자 결합 정도(0~1), bw: 4단계의 파장 늘어남 정도(0~1)
 const hsh=(a,b)=>{const v=Math.sin(a*127.1+b*311.7)*43758.5453;return v-Math.floor(v)};
 function bWave(g,x,y,ang,L,lam,col,amp=4.5,w=2){const c=Math.cos(ang),s=Math.sin(ang);let d='';
@@ -397,8 +404,8 @@ function bDraw(t){const g=bg;g.innerHTML='';const e=bm<.5?2*bm*bm:1-2*(1-bm)**2;
   const cl=mk('g',{},g);mk('clipPath',{id:'bclip'},cl).appendChild(mk('rect',{x:20,y:44,width:500,height:252,rx:12}));
   const inn=mk('g',{'clip-path':'url(#bclip)'},g);
   // 빛
-  if(bs==0||(bs==1&&e<1)){BPH.forEach(([hx,hy],i)=>{const D=.55,k=Math.floor(t/D),f=t/D-k,P=j=>[Math.min(505,Math.max(35,hx+(hsh(i,j)-.5)*150)),Math.min(285,Math.max(55,hy+(hsh(i+9,j)-.5)*110))];
-    const z=P(k-2),a=P(k-1),b=P(k),c=P(k+1),hx2=b[0]+(c[0]-b[0])*f,hy2=b[1]+(c[1]-b[1])*f;
+  if(bs==0||(bs==1&&e<1)){bPhStep(t);bPh.forEach(q=>{const f=Math.min(1,(t-q.t0)/q.D),P=j=>bElPos(j,t);
+    const z=P(q.p2),a=P(q.p1),b=P(q.a),c=P(q.b),hx2=b[0]+(c[0]-b[0])*f,hy2=b[1]+(c[1]-b[1])*f;
     // 지나온 길(점선)과 부딪힌 자리(고리), 지금 나아가는 빛은 3단계부터와 같은 물결 화살표로
     mk('path',{d:`M${z[0]},${z[1]}L${a[0]},${a[1]}L${b[0]},${b[1]}`,fill:'none',stroke:'#ffd76b','stroke-width':1.4,'stroke-dasharray':'3 4',opacity:.6},inn);
     mk('circle',{cx:b[0],cy:b[1],r:7,fill:'none',stroke:'#ffe9a8','stroke-width':1.2,opacity:.6*(1-f)},inn);
@@ -409,7 +416,7 @@ function bDraw(t){const g=bg;g.innerHTML='';const e=bm<.5?2*bm*bm:1-2*(1-bm)**2;
      x=(dir>0?20:520)+c*u,y=44+y0+s*u;bWave(inn,x,y,a,len,lam,col,4.5,2.2)})}
   // 원자핵과 전자 (2단계부터 전자가 원자핵 둘레를 돎)
   BNU.forEach(([nx,ny],k)=>{const jx=(1-e)*4*Math.sin(t*2.3+k),jy=(1-e)*4*Math.cos(t*1.9+k*1.4),x=nx+jx,y=ny+jy;
-   const [fx,fy]=BEL[k],fjx=fx+12*Math.sin(t*3.1+k*2.1),fjy=fy+12*Math.cos(t*2.7+k*1.3),ang=t*2.2+k*1.1,ox=x+19*Math.cos(ang),oy=y+19*Math.sin(ang)*.6;
+   const [fjx,fjy]=bElPos(k,t),ang=t*2.2+k*1.1,ox=x+19*Math.cos(ang),oy=y+19*Math.sin(ang)*.6;
    if(e>.98)mk('ellipse',{cx:x,cy:y,rx:19,ry:11.4,fill:'none',stroke:'#9cc8ff','stroke-width':1,opacity:.5},inn);
    bNuc(inn,x,y,10);bEl(inn,fjx+(ox-fjx)*e,fjy+(oy-fjy)*e,5)})}
  else{ // 5단계: 2.7 K 흑체 복사 곡선과 관측값
