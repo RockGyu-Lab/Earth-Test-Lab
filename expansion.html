@@ -1306,20 +1306,19 @@ uAll();
 
 // 개미 B 생각해 보기의 그림: 같은 간격으로 놓인 개미(점)들을 기준 개미(ref, 둥근 테두리의 중심)에게서 본 모습
 // 동심원(1칸·2칸·3칸)이 같은 빠르기로 퍼져 나가고, 동심원이 지나가는 때에 그 자리 개미의 화살표(길이 ∝ 거리)가 자라남
-function cFig(svg,ref){svg.innerHTML='';const U=40,T=.45,K=.28,C=160,RF=150,id='cfm'+ref,cp='cfp'+ref;
- // 테두리: 기준 개미를 중심으로 한 원 (그림은 이 원 안에만 보임)
- mk('defs',{},svg).innerHTML=`<marker id="${id}" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0L10,5L0,10z" fill="currentColor"/></marker><clipPath id="${cp}"><circle cx="${C}" cy="${C}" r="${RF}"/></clipPath>`;
- const g=mk('g',{'clip-path':`url(#${cp})`},svg),P=v=>C+U*v;
+function cFig(svg,ref){svg.innerHTML='';const U=40,T=.45,K=.28,C=160,RG=150,RM=3*U,BL='#2f6fe0',RD='#e0306a',id='cfm'+ref,cp='cfp'+ref;
+ // 모눈은 기준 개미 중심의 원 안에만 그림(테두리 선 없음). 점·화살표는 가장 바깥 빨간 원(3칸) 안까지만 그려 잘리는 화살표가 없음
+ mk('defs',{},svg).innerHTML=`<marker id="${id}" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0L10,5L0,10z" fill="currentColor"/></marker><clipPath id="${cp}"><circle cx="${C}" cy="${C}" r="${RG}"/></clipPath>`;
+ const g=mk('g',{'clip-path':`url(#${cp})`},svg),h=mk('g',{},svg),P=v=>C+U*v,bi=ref=='A'?2:0;   // bi: 개미 B의 칸 위치(파랑)
  for(let i=-4;i<=4;i++){mk('line',{x1:P(i),y1:0,x2:P(i),y2:320,stroke:'currentColor','stroke-opacity':.25,'stroke-dasharray':'1 4'},g);
   mk('line',{x1:0,y1:P(i),x2:320,y2:P(i),stroke:'currentColor','stroke-opacity':i?.25:.45,'stroke-dasharray':i?'1 4':'4 3'},g)}
- for(let k=1;k<=3;k++)mk('circle',{cx:C,cy:C,r:k*U,fill:'none',stroke:'#e0306a','stroke-width':2,'stroke-dasharray':'2 4',class:'cfc',style:`transform-origin:${C}px ${C}px;animation-duration:${k*T}s`},g);
- for(let i=-4;i<=4;i++)for(let j=-4;j<=4;j++){const x=P(i),y=P(j),dx=x-C,dy=y-C,d=Math.hypot(dx,dy);if(d>RF+6)continue;
-  if(d>0){const a=mk('g',{class:'cfa',style:`transform-origin:${x}px ${y}px;animation-delay:${(d/U*T).toFixed(2)}s`},g);
+ for(let k=1;k<=3;k++)mk('circle',{cx:C,cy:C,r:k*U,fill:'none',stroke:RD,'stroke-width':2,'stroke-dasharray':'2 4',class:'cfc',style:`transform-origin:${C}px ${C}px;animation-duration:${k*T}s`},h);
+ for(let i=-4;i<=4;i++)for(let j=-4;j<=4;j++){const x=P(i),y=P(j),dx=x-C,dy=y-C,d=Math.hypot(dx,dy);if(d>RM+.5)continue;
+  if(d>0){const a=mk('g',{class:'cfa',style:`transform-origin:${x}px ${y}px;animation-delay:${(d/U*T).toFixed(2)}s`},h);
    mk('line',{x1:x,y1:y,x2:x+dx*K,y2:y+dy*K,stroke:'currentColor','stroke-width':2.4,'marker-end':`url(#${id})`},a)}
-  mk('circle',{cx:x,cy:y,r:d?3:4.5,fill:d?'currentColor':'#e0306a'},g)}
- mk('circle',{cx:C,cy:C,r:RF,fill:'none',stroke:'currentColor','stroke-opacity':.35,'stroke-width':1.5},svg);
- // 이름: 기준 개미(빨강)와, 2칸 떨어진 다른 개미 (A 기준이면 오른쪽 B, B 기준이면 왼쪽 A)
- [[0,ref],[ref=='A'?2:-2,ref=='A'?'B':'A']].forEach(([i,n],o)=>txt(n,{x:P(i)-9,y:C-9,'text-anchor':'end',fill:o?'currentColor':'#e0306a','font-size':17,'font-weight':800},svg))}
+  const isB=i==bi&&j==0;mk('circle',{cx:x,cy:y,r:d&&!isB?3:4.5,fill:isB?BL:d?'currentColor':RD},h)}
+ // 이름: 기준 개미와 2칸 떨어진 다른 개미 (A 기준이면 오른쪽 B, B 기준이면 왼쪽 A). B는 파랑, 기준 개미 A는 빨강
+ [[0,ref],[ref=='A'?2:-2,ref=='A'?'B':'A']].forEach(([i,n],o)=>txt(n,{x:P(i)-9,y:C-9,'text-anchor':'end',fill:n=='B'?BL:o?'currentColor':RD,'font-size':17,'font-weight':800},svg))}
 thb14.addEventListener('click',()=>{cFig(cfA,'A');cFig(cfB,'B')});
 
 // 생각해 보기 답 팝업과 비교 표 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
