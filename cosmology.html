@@ -796,16 +796,47 @@ const FS=[
  ['점점 커지는 밀도 차이','초기 우주의 밀도가 임계 밀도와 조금만 달라도 그 차이는 <em>시간이 지날수록 커집니다</em>. 밀도가 조금 컸다면 우주는 <em>일찍 수축</em>했을 것이고, 조금 작았다면 <em>너무 빨리 팽창</em>하여 별과 은하가 만들어지기 어려웠을 것입니다.'],
  ['평탄성 문제','현재 우주가 이렇게 평탄하려면 초기 우주의 밀도가 임계 밀도와 <em>매우 정밀한 수준으로 같아야</em> 합니다. 끝으로 세운 연필이 138억 년 동안 쓰러지지 않은 것과 같습니다. 그 까닭을 빅뱅 우주론으로 설명하기 어려우며, 이를 <em>평탄성 문제</em>라고 합니다.']];
 const FC=['#ff9d9d','#ffd76b','#7fd3ff'];   // 닫힌 · 평탄한 · 열린 우주
+// 세 가지 우주의 모양: 3차원 면(구면·평면·말안장 면)을 비스듬히 내려다본 모습으로 그리고, 면 위에 삼각형을 그림
+// fP: 3차원 점 [x,y,z] → [화면 x, 화면 y, 깊이(클수록 앞)]. yaw: 수평 회전, el: 내려다보는 각도
+const fP=(cx,cy,s,yaw,el)=>([x,y,z])=>{const x1=x*Math.cos(yaw)-y*Math.sin(yaw),y1=x*Math.sin(yaw)+y*Math.cos(yaw);
+ return[cx+s*x1,cy-s*(y1*Math.sin(el)+z*Math.cos(el)),-y1*Math.cos(el)+z*Math.sin(el)]};
+const fPath=(pts,close)=>pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+','+p[1].toFixed(1)).join('')+(close?'Z':'');
+const FGRID='rgba(205,218,255,.32)',fShapeCache={};
+function fBuildShapes(hi){const g=document.createElementNS(SVGNS,'g'),op=k=>hi<0||hi==k?1:.3;
+ // 닫힌 우주: 구면 + 대원(구면 위의 가장 짧은 선)으로 이은 삼각형 → 바깥으로 부풀어 내각의 합 > 180°
+ let q=mk('g',{opacity:op(0)},g);const PS=fP(105,150,58,0,.35),sv=(la,lo)=>{la*=Math.PI/180;lo*=Math.PI/180;return[Math.cos(la)*Math.cos(lo),Math.cos(la)*Math.sin(lo),Math.sin(la)]};
+ mk('circle',{cx:105,cy:150,r:58,fill:'url(#fsph)'},q);
+ const front=pts=>{let segs=[],cur=[];pts.forEach(p=>{const s=PS(p);if(s[2]>0)cur.push(s);else if(cur.length){segs.push(cur);cur=[]}});if(cur.length)segs.push(cur);
+  segs.forEach(s=>{if(s.length>1)mk('path',{d:fPath(s),fill:'none',stroke:FGRID,'stroke-width':.8},q)})};
+ for(let la=-60;la<=60;la+=30){const a=[];for(let lo=0;lo<=360;lo+=6)a.push(sv(la,lo));front(a)}
+ for(let lo=0;lo<180;lo+=30){const a=[];for(let la=0;la<=360;la+=6)a.push(sv(90-la,lo));front(a)}
+ const slerp=(a,b,t)=>{const d=Math.acos(Math.min(1,a[0]*b[0]+a[1]*b[1]+a[2]*b[2])),s=Math.sin(d);return a.map((v,i)=>(Math.sin((1-t)*d)*v+Math.sin(t*d)*b[i])/s)};
+ const TV=[sv(58,-90),sv(-14,-138),sv(-14,-42)],tri=[];for(let e=0;e<3;e++)for(let k=0;k<20;k++)tri.push(PS(slerp(TV[e],TV[(e+1)%3],k/20)));
+ mk('path',{d:fPath(tri,1),fill:'rgba(255,157,157,.22)',stroke:FC[0],'stroke-width':2.2,'stroke-linejoin':'round'},q);
+ TV.forEach(v=>{const[x,y]=PS(v);mk('circle',{cx:x,cy:y,r:3,fill:'#fff'},q)});
+ // 평탄한 우주: 평면 + 곧은 삼각형 → 내각의 합 = 180°
+ q=mk('g',{opacity:op(1)},g);const PF=fP(270,154,56,.38,.62);
+ mk('path',{d:fPath([[-1,-1,0],[1,-1,0],[1,1,0],[-1,1,0]].map(PF),1),fill:'#33449a',stroke:'#9fb4ff','stroke-width':1.2},q);
+ for(let u=-.75;u<=.76;u+=.25){mk('path',{d:fPath([[u,-1,0],[u,1,0]].map(PF)),stroke:FGRID,'stroke-width':.8},q);mk('path',{d:fPath([[-1,u,0],[1,u,0]].map(PF)),stroke:FGRID,'stroke-width':.8},q)}
+ const FT=[[-.05,.72,0],[-.72,-.58,0],[.72,-.5,0]].map(PF);
+ mk('path',{d:fPath(FT,1),fill:'rgba(255,215,107,.2)',stroke:FC[1],'stroke-width':2.2,'stroke-linejoin':'round'},q);
+ FT.forEach(([x,y])=>mk('circle',{cx:x,cy:y,r:3,fill:'#fff'},q));
+ // 열린 우주: 말안장 면 z = 0.5(x² − y²) + 안쪽으로 오목한 삼각형 → 내각의 합 < 180°
+ q=mk('g',{opacity:op(2)},g);const PA=fP(435,152,52,.72,.62),zs=(x,y)=>.5*(x*x-y*y),N=14,quads=[],L=[-.45,-.55,.7];
+ for(let i=0;i<N;i++)for(let j=0;j<N;j++){const x0=-1+2*i/N,x1=-1+2*(i+1)/N,y0=-1+2*j/N,y1=-1+2*(j+1)/N,cx_=(x0+x1)/2,cy_=(y0+y1)/2;
+  const c=[[x0,y0],[x1,y0],[x1,y1],[x0,y1]].map(([x,y])=>PA([x,y,zs(x,y)]));
+  const nx=-cx_,ny=cy_,nl=Math.hypot(nx,ny,1),sh=Math.max(0,Math.min(1,.45+.55*(nx*L[0]+ny*L[1]+L[2])/nl));
+  quads.push([c.reduce((a,p)=>a+p[2],0)/4,c,sh])}
+ quads.sort((a,b)=>a[0]-b[0]).forEach(([,c,sh])=>{const col=`rgb(${Math.round(34+110*sh)},${Math.round(48+120*sh)},${Math.round(111+125*sh)})`;
+  mk('path',{d:fPath(c,1),fill:col,stroke:col,'stroke-width':.6},q);mk('path',{d:fPath(c,1),fill:'none',stroke:FGRID,'stroke-width':.5},q)});
+ const AV=[[0,.78],[-.76,-.6],[.76,-.6]],AG=[0,-.14],atri=[];
+ for(let e=0;e<3;e++){const P=AV[e],Q=AV[(e+1)%3],M=[(P[0]+Q[0])/2,(P[1]+Q[1])/2];
+  for(let k=0;k<20;k++){const t=k/20,b=4*t*(1-t)*.5,x=P[0]+(Q[0]-P[0])*t+b*(AG[0]-M[0]),y=P[1]+(Q[1]-P[1])*t+b*(AG[1]-M[1]);atri.push(PA([x,y,zs(x,y)]))}}
+ mk('path',{d:fPath(atri,1),fill:'rgba(127,211,255,.22)',stroke:FC[2],'stroke-width':2.2,'stroke-linejoin':'round'},q);
+ AV.forEach(([x,y])=>{const[sx,sy]=PA([x,y,zs(x,y)]);mk('circle',{cx:sx,cy:sy,r:3,fill:'#fff'},q)});
+ return g}
 function fShapes(g,hi){const op=k=>hi<0||hi==k?1:.3;
- // 닫힌 우주: 구면, 바깥으로 부푼 삼각형 (내각의 합 > 180°)
- let q=mk('g',{opacity:op(0)},g);mk('circle',{cx:105,cy:150,r:60,fill:'url(#fsph)'},q);
- mk('path',{d:'M105,108Q132,138 142,176Q105,190 68,176Q78,138 105,108Z',fill:'rgba(255,157,157,.18)',stroke:FC[0],'stroke-width':2},q);
- // 평탄한 우주: 평면, 곧은 삼각형 (= 180°)
- q=mk('g',{opacity:op(1)},g);mk('path',{d:'M200,190L232,110H340L308,190Z',fill:'#3e4fae',stroke:'#9fb4ff','stroke-width':1},q);
- mk('path',{d:'M270,124L304,176H232Z',fill:'rgba(255,215,107,.15)',stroke:FC[1],'stroke-width':2},q);
- // 열린 우주: 말안장 면, 안쪽으로 오목한 삼각형 (< 180°)
- q=mk('g',{opacity:op(2)},g);mk('path',{d:'M372,112Q435,160 498,112Q484,152 498,196Q435,156 372,196Q386,152 372,112Z',fill:'#3e4fae',stroke:'#9fb4ff','stroke-width':1},q);
- mk('path',{d:'M435,128Q440,158 466,178Q435,166 404,178Q430,158 435,128Z',fill:'rgba(127,211,255,.15)',stroke:FC[2],'stroke-width':2},q);
+ g.appendChild((fShapeCache[hi]||(fShapeCache[hi]=fBuildShapes(hi))).cloneNode(true));   // 한 번만 계산하고 복사해서 씀
  [['닫힌 우주','> 180°','밀도 > 임계 밀도',105],['평탄한 우주','= 180°','밀도 = 임계 밀도',270],['열린 우주','< 180°','밀도 < 임계 밀도',435]].forEach(([a,b,c,x],k)=>{
   const o=op(k);txt(a,{x,y:238,'text-anchor':'middle',fill:FC[k],'font-size':15,'font-weight':800,opacity:o},g);
   txt('내각의 합 '+b,{x,y:260,'text-anchor':'middle',fill:'#e8ecff','font-size':12.5,opacity:o},g);
