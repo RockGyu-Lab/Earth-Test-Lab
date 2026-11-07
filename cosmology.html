@@ -405,12 +405,13 @@ function bDraw(t){const g=bg;g.innerHTML='';const e=bm<.5?2*bm*bm:1-2*(1-bm)**2;
   const inn=mk('g',{'clip-path':'url(#bclip)'},g);
   // 빛
   if(bs==0||(bs==1&&e<1)){bPhStep(t);bPh.forEach(q=>{const f=Math.min(1,(t-q.t0)/q.D),P=j=>bElPos(j,t);
-    const z=P(q.p2),a=P(q.p1),b=P(q.a),c=P(q.b),hx2=b[0]+(c[0]-b[0])*f,hy2=b[1]+(c[1]-b[1])*f;
-    // 지나온 길(점선)과 부딪힌 자리(고리), 지금 나아가는 빛은 3단계부터와 같은 물결 화살표로
-    mk('path',{d:`M${z[0]},${z[1]}L${a[0]},${a[1]}L${b[0]},${b[1]}`,fill:'none',stroke:'#ffd76b','stroke-width':1.4,'stroke-dasharray':'3 4',opacity:.6},inn);
+    const a=P(q.p1),b=P(q.a),c=P(q.b),hx2=b[0]+(c[0]-b[0])*f,hy2=b[1]+(c[1]-b[1])*f;
+    // 지금 나아가는 빛은 3단계부터와 같은 물결 화살표, 부딪힌 자리는 고리
+    const ang=Math.atan2(c[1]-b[1],c[0]-b[0]),L=Math.max(8,Math.min(46,Math.hypot(hx2-b[0],hy2-b[1]))),tx=hx2-Math.cos(ang)*L,ty=hy2-Math.sin(ang)*L;
+    // 지나온 길(점선): 빛의 꼬리에 바로 이어서, 바로 전에 부딪힌 전자를 거쳐 그 앞 전자까지만 (한 번 꺾인 곳까지)
+    mk('path',{d:`M${a[0]},${a[1]}L${b[0]},${b[1]}L${tx.toFixed(1)},${ty.toFixed(1)}`,fill:'none',stroke:'#ffd76b','stroke-width':1.7,'stroke-dasharray':'3 4',opacity:.85},inn);
     mk('circle',{cx:b[0],cy:b[1],r:7,fill:'none',stroke:'#ffe9a8','stroke-width':1.2,opacity:.6*(1-f)},inn);
-    const ang=Math.atan2(c[1]-b[1],c[0]-b[0]),L=Math.max(8,Math.min(46,Math.hypot(hx2-b[0],hy2-b[1])));
-    bWave(inn,hx2-Math.cos(ang)*L,hy2-Math.sin(ang)*L,ang,L,9,'#ffd76b',4,2.2)})}
+    bWave(inn,tx,ty,ang,L,9,'#ffd76b',4,2.2)})}
   else{const lam=bs==3?9*Math.pow(4,bw):9,col=bs==3?`rgb(255,${mix(215,110,bw)},${mix(107,90,bw)})`:'#ffd76b';
    BRAY.forEach(([y0,sl,dir],i)=>{const sp=70,len=90,per=700,u=((t*sp+i*131)%per)-110,a=dir>0?sl:Math.PI+sl,c=Math.cos(a),s=Math.sin(a),
      x=(dir>0?20:520)+c*u,y=44+y0+s*u;bWave(inn,x,y,a,len,lam,col,4.5,2.2)})}
