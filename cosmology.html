@@ -118,7 +118,9 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .stepbox em{font-style:normal;font-weight:700;color:#1747c8}   /* 설명 속 중요한 내용 (진한 파란색) */
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .stepbox em{color:#7fb0ff}}
 :root[data-theme="dark"] .stepbox em{color:#7fb0ff}
-#bstep,#zstep,#fstep,#istep,#jstep,#kstep,#rstep,#lstep,#astep,#qstep{min-height:calc(3 * 1.55em + 16px)}
+#bstep,#istep,#jstep,#kstep,#rstep,#lstep,#astep,#qstep{min-height:calc(3 * 1.55em + 16px)}
+#zstep,#fstep{min-height:calc(2 * 1.55em + 16px)}   /* 빅뱅 우주론의 문제점: 설명이 모두 2줄 이하라 2줄 높이만 확보 */
+@media (max-width:900px){#zstep,#fstep{min-height:calc(3 * 1.55em + 16px)}}   /* 좁은 화면에서는 3줄이 되는 설명이 많아 3줄 높이 */
 #zsv,#fsv,#isv,#jsv,#ksv,#rsv,#lsv,#asv,#qsv{max-height:max(240px,calc(100vh - 360px))}
 #zsv,#fsv,#isv,#jsv,#ksv,#rsv,#lsv,#asv,#qsv{max-height:max(240px,calc(100dvh - 360px))}
 #zcue,#fcue,#icue,#jcue,#kcue,#rcue,#lcue,#acue,#qcue{flex:1 1 220px;font-size:.92rem}
@@ -726,7 +728,7 @@ function pPanel(g,title){mk('rect',{x:548,y:44,width:372,height:252,rx:12,fill:'
 // 지평선 문제: 지구를 가운데에 두고 관측 가능한 우주(빛이 138억 년 동안 올 수 있는 범위)를 원으로 나타냄
 // 우주 팽창은 생각하지 않은 단순한 모형 (교과서 그림과 같은 방식)
 const ZS=[
- ['관측 가능한 우주','빛보다 빨리 전달되는 정보는 없습니다. 그래서 지구에서 볼 수 있는 우주는 <em>우주의 나이(약 138억 년) 동안 빛이 지구까지 올 수 있는 범위</em>로 정해지며, 이를 <em>관측 가능한 우주</em>라고 합니다. (그림은 우주 팽창을 생각하지 않고 단순하게 나타낸 것입니다.)'],
+ ['관측 가능한 우주','빛보다 빨리 전달되는 정보는 없습니다. 그래서 지구에서 볼 수 있는 우주는 <em>우주의 나이(약 138억 년) 동안 빛이 지구까지 올 수 있는 범위</em>로 정해지며, 이를 <em>관측 가능한 우주</em>라고 합니다.'],
  ['양 끝에서 온 우주 배경 복사','관측 가능한 우주의 서로 반대편 끝에 있는 A와 B에서 출발한 빛은 각각 <em>약 138억 년</em>이 걸려 지구에 도달합니다. 두 지점에서 온 우주 배경 복사의 온도를 비교해 보면 모두 <em>약 2.7 K</em>로 거의 같습니다.'],
  ['정보를 주고받을 수 없는 A와 B','A에서 출발한 빛은 이제 막 지구에 도달했으므로, B까지 가려면 그만큼의 시간이 더 필요합니다. 즉, A와 B는 지금까지 <em>서로 빛(정보)을 주고받을 수 없었던</em> 영역에 있습니다.'],
  ['지평선 문제','온도가 같아지려면 서로 에너지를 주고받으며 고르게 섞여야 합니다. 그런데 서로 정보를 주고받을 수 없었던 A와 B의 <em>온도가 거의 같은</em> 까닭은 무엇일까요? 빅뱅 우주론으로는 이를 설명하기 어려우며, 이를 <em>지평선 문제</em>라고 합니다.']];
