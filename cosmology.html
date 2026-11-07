@@ -74,13 +74,16 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .think .exp{margin:0;font-size:.93rem;line-height:1.6}
 .think .exp+.exp{margin-top:6px}
 /* ① 현대 우주론: 정상 우주론과 빅뱅 우주론 그림판을 나란히 (좁은 화면에서는 위아래로) */
-/* 각 칸: 위 그림판 + 아래 질량·밀도·온도 고르기 */
+/* 위: 두 그림판 / 가운데: 안내 문장과 정답 확인 / 아래: 두 우주론의 질량·밀도·온도 고르기 */
 .cpair{display:flex;gap:10px}
-.ccol{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:6px}
-.ccol svg{max-height:max(220px,calc(100vh - 430px))}
-.ccol svg{max-height:max(220px,calc(100dvh - 430px))}
-@media (max-width:600px){.cpair{flex-direction:column}}
-#ccue{flex:1 1 200px;font-size:.92rem}
+.cpair>svg,.cpair>.cq{flex:1 1 0;min-width:0}
+.cpair>svg{max-height:max(220px,calc(100vh - 405px))}
+.cpair>svg{max-height:max(220px,calc(100dvh - 405px))}
+.cpair+.cpair{margin-top:6px}
+.cq .th{display:none;grid-column:1/-1;font-size:.9rem}
+@media (max-width:600px){.cpair{flex-direction:column}.cpair>svg,.cpair>.cq{flex:none}.cq .th{display:block}}
+.crow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:8px 2px 0}
+#ccue{flex:1 1 260px;font-size:.95rem}
 /* 고르기 줄: [이름] [증가|일정|감소] (연보라 선택 단추) [맞음·틀림 표시] */
 :root{--ok:#13894a;--no:#d0353b}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ok:#6fe08f;--no:#ff7b7b}}
@@ -93,7 +96,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .bs button.on{background:var(--sub);color:var(--on-sub);font-weight:700}
 .cq .mk{font-size:.86rem;font-weight:700}
 .cq .mk.ok{color:var(--ok)}.cq .mk.no{color:var(--no)}.cq .mk.na{opacity:.7}
-#ccheck{margin-left:auto}
+#ccheck{margin-left:auto;flex:none}
 /* 기억하기는 정답 확인을 누른 뒤에 보임 (자리는 미리 차지해 화면이 움직이지 않음) */
 #cmemo.wait{visibility:hidden}
 </style>
@@ -114,16 +117,10 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
      원 = 우주의 일부분(평면으로 나타냄), 점 = 은하(알아보기 쉽게 규칙적으로 배열). 원의 색 = 온도
      학생이 질량·밀도·온도의 변화를 직접 고른 뒤 정답 확인 -->
 <section id="p1" role="tabpanel" aria-labelledby="tab1">
- <div class="note"><p>정상 우주론과 빅뱅 우주론은 모두 우주가 팽창한다고 봅니다. 원은 우주의 일부분을 평면으로 나타낸 것이고, 점은 은하입니다. 실제 은하는 불규칙하게 분포하지만, 변화를 알아보기 쉽도록 규칙적으로 배열하였습니다.</p></div>
- <div class="cpair">
-  <div class="ccol"><svg id="css" viewBox="0 0 460 290" aria-label="정상 우주론에 따라 팽창하는 우주"></svg><div class="cq" id="cqs"></div></div>
-  <div class="ccol"><svg id="cbb" viewBox="0 0 460 290" aria-label="빅뱅 우주론에 따라 팽창하는 우주"></svg><div class="cq" id="cqb"></div></div>
- </div>
- <div class="ctl">
-  <button class="pb" id="cplay">▶ 팽창시키기</button><button class="pb" id="crst">↺ 처음으로</button>
-  <span class="go" id="ccue"><span class="kb">팽창시키기</span>를 눌러 두 우주를 관찰하고, 질량·밀도·온도의 변화를 골라 보세요.</span>
-  <button type="button" class="open-think" id="ccheck">정답 확인</button>
- </div>
+ <div class="note"><p>정상 우주론과 빅뱅 우주론을 비교해 봅시다. 원은 우주의 일부분을 평면으로 나타낸 것이고, 점은 은하입니다. 실제 은하는 불규칙하게 분포하지만, 변화를 알아보기 쉽도록 규칙적으로 배열하였습니다.</p></div>
+ <div class="cpair"><svg id="css" viewBox="0 0 460 312" aria-label="정상 우주론에 따라 팽창하는 우주"></svg><svg id="cbb" viewBox="0 0 460 312" aria-label="빅뱅 우주론에 따라 팽창하는 우주"></svg></div>
+ <div class="crow"><span class="go" id="ccue">팽창하는 두 우주를 관찰하고, 질량, 밀도, 온도 변화를 골라 보세요.</span><button type="button" class="open-think" id="ccheck">정답 확인</button></div>
+ <div class="cpair"><div class="cq" id="cqs"><b class="th" style="color:#0f9a86">정상 우주론</b></div><div class="cq" id="cqb"><b class="th" style="color:#c2620a">빅뱅 우주론</b></div></div>
  <div class="note ask"><span class="tag">생각해 보기</span><p>두 우주론 중 어느 것이 옳은지 가리려면 무엇을 관측하면 좋을까요?</p><button type="button" class="open-think" id="thb1">정답 확인</button></div>
  <div class="note ask ask2 memo wait" id="cmemo"><span class="tag mem">기억하기</span><p class="mtx">정상 우주론: 질량 증가, 밀도·온도 일정 &nbsp;/&nbsp; 빅뱅 우주론: 질량 일정, 밀도·온도 감소</p></div>
  <div class="ov" id="ov1" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 두 우주론 중 어느 것이 옳은지 가리려면 무엇을 관측하면 좋을까요?">
@@ -178,7 +175,7 @@ function mk(t,a,p){const e=document.createElementNS(SVGNS,t);for(const k in a)e.
 function txt(s,a,p){const e=mk('text',a,p);e.textContent=s;return e}
 
 // ---- ① 현대 우주론: 정상 우주론 vs. 빅뱅 우주론 ----
-// 우주의 크기(배율) cR: 처음 C0 → 1 (2√2 ≈ 2.8배, 넓이 8배). 일정한 비율로 커지도록(지수적으로) 천천히 키우고, 끝나면 잠깐 멈췄다가 처음부터 되풀이
+// 우주의 크기(배율) cR: 처음 C0 → 1 (2√2 ≈ 2.8배, 넓이 8배). 일정한 비율로 커지도록(지수적으로) 천천히 키우고, 끝나면 잠깐 멈췄다가 처음부터 되풀이 (페이지를 열면 바로 시작)
 // 은하는 우주와 함께 늘어나는 좌표(원의 반지름 = 1)의 격자점에 규칙적으로 놓음
 //  빅뱅 우주론: 처음 격자(간격 CA)의 은하만 그대로 → 은하 사이가 벌어짐(질량 일정, 밀도·온도 감소)
 //  정상 우주론: 넓이가 2배가 될 때마다 격자 사이(가운데 점 → 절반 간격 격자 …)에 새 은하가 생겨남 → 밀도 일정, 질량 증가
@@ -205,21 +202,18 @@ function cDraw(svg,ss){svg.innerHTML='';const R=cR,rp=CRM*R,q=R/C0,col=ss?'#6fe0
  // 범례: 원의 색(온도), 새로 생긴 은하
  const lg=mk('linearGradient',{id:'cg'+(ss?'s':'b')},mk('defs',{},svg));
  [['0','rgb(70,100,190)'],['1','rgb(255,140,70)']].forEach(([o,c])=>mk('stop',{offset:o,'stop-color':c},lg));
- mk('rect',{x:16,y:274,width:44,height:8,rx:4,fill:`url(#cg${ss?'s':'b'})`},svg);
- txt('원의 색: 온도 (붉을수록 높음)',{x:66,y:282,fill:'#a9b1cc','font-size':11.5},svg);
- if(ss){mk('circle',{cx:356,cy:278,r:3.6,fill:'#9dffb0'},svg);txt('새로 생긴 은하',{x:444,y:282,'text-anchor':'end',fill:'#9dffb0','font-size':12,'font-weight':700},svg)}
+ mk('rect',{x:16,y:294,width:44,height:8,rx:4,fill:`url(#cg${ss?'s':'b'})`},svg);
+ txt('원의 색: 온도 (붉을수록 높음)',{x:66,y:302,fill:'#a9b1cc','font-size':11.5},svg);
+ if(ss){mk('circle',{cx:356,cy:298,r:3.6,fill:'#9dffb0'},svg);txt('새로 생긴 은하',{x:444,y:302,'text-anchor':'end',fill:'#9dffb0','font-size':12,'font-weight':700},svg)}
 }
 function cAll(){cDraw(css,true);cDraw(cbb,false)}
-function cStop(){cancelAnimationFrame(craf);craf=0;cplay.textContent='▶ 팽창시키기'}
 function cLoop(now){const dt=Math.min(.05,(now-cLast)/1000);cLast=now;
  if(cR>=1){cHold+=dt;if(cHold>=CHOLD){cHold=0;cR=C0}}
  else cR=Math.min(1,cR*Math.pow(1/C0,dt/CGROW));
  cAll();craf=requestAnimationFrame(cLoop)}
-cplay.onclick=()=>{if(craf){cStop();return}cplay.textContent='⏸ 멈춤';cLast=performance.now();craf=requestAnimationFrame(cLoop)};
-crst.onclick=()=>{cStop();cR=C0;cHold=0;cAll()};
 // 질량·밀도·온도 고르기 → 정답 확인
 const CQN=['질량','밀도','온도'],CQV=['증가','일정','감소'],CANS={s:['증가','일정','일정'],b:['일정','감소','감소']},cSel={s:[],b:[]};
-function cMark(clear){for(const t of ['s','b'])CQN.forEach((nm,i)=>{const m=document.getElementById(`cm${t}${i}`);
+function cMark(clear){if(clear){ccue.className='go';ccue.textContent='팽창하는 두 우주를 관찰하고, 질량, 밀도, 온도 변화를 골라 보세요.'}for(const t of ['s','b'])CQN.forEach((nm,i)=>{const m=document.getElementById(`cm${t}${i}`);
  if(clear){m.textContent='';m.className='mk';return}const v=cSel[t][i],a=CANS[t][i];
  m.className='mk '+(v==null?'na':v==a?'ok':'no');m.textContent=v==null?`정답: ${a}`:v==a?'✔ 맞음':`✘ 정답: ${a}`})}
 for(const t of ['s','b']){const box=document.getElementById('cq'+t);
@@ -231,7 +225,7 @@ for(const t of ['s','b']){const box=document.getElementById('cq'+t);
 ccheck.onclick=()=>{cMark(false);cmemo.classList.remove('wait');
  const ok=['s','b'].reduce((a,t)=>a+CANS[t].filter((v,i)=>cSel[t][i]==v).length,0);
  ccue.className='';ccue.textContent=ok==6?'6개를 모두 맞혔습니다!':`6개 중 ${ok}개를 맞혔습니다. 그림을 다시 관찰하며 정답과 비교해 보세요.`};
-cAll();
+cAll();cLast=performance.now();craf=requestAnimationFrame(cLoop);   // 단추 없이 처음부터 천천히 되풀이
 
 // 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
 [['ov1','thb1','thx1']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
