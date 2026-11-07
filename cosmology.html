@@ -111,7 +111,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 /* 우주 배경 복사 단계 표시줄: 과정과 관측 결과 묶음 이름, 사이 세로줄 */
 .grp{font-size:.85rem;font-weight:800;opacity:.7;flex:none}
 .gsep{width:1px;height:28px;background:currentColor;opacity:.25;flex:none}
-#bobs{flex:none}#bobs button{flex:none;padding:6px 14px;white-space:nowrap}
+#bobs,#hobs{flex:none}#bobs button,#hobs button{flex:none;padding:6px 14px;white-space:nowrap}
 #hcue,#bcue{flex:1 1 220px;font-size:.92rem}
 #eva[hidden],#evb[hidden]{display:none}
 </style>
@@ -164,8 +164,12 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   </svg>
   <div class="stepbox" id="hstep"></div>
   <div class="ctl">
+   <span class="grp">과정</span>
    <button class="pb" id="hprev">◀ 이전 단계</button><button class="pb" id="hnext">다음 단계 ▶</button>
    <span class="sn" id="hnum"></span>
+   <span class="gsep" aria-hidden="true"></span>
+   <span class="grp">관측 결과</span>
+   <div class="bs" id="hobs"><button type="button" id="ho1">질량비 비교</button></div>
    <span class="go" id="hcue"><span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.</span>
   </div>
   <div class="note ask"><span class="tag">생각해 보기</span><p>양성자와 중성자의 개수비가 7&nbsp;:&nbsp;1이 아니라 5&nbsp;:&nbsp;1이었다면, 수소와 헬륨의 질량비는 어떻게 되었을까요?</p><button type="button" class="open-think" id="thb2">정답 확인</button></div>
@@ -303,14 +307,14 @@ cAll();cLast=performance.now();craf=requestAnimationFrame(cLoop);   // 단추 �
 [[e2a,eva],[e2b,evb]].forEach(([b,v],i,all)=>b.onclick=()=>all.forEach(([bb,vv])=>{const on=bb==b;bb.classList.toggle('on',on);bb.setAttribute('aria-selected',on);vv.hidden=!on}));
 
 // 수소와 헬륨의 질량비: 입자 16개(양성자 14, 중성자 2 → 7 : 1)를 골라 나타냄
-// 1단계 양성자·중성자 / 2단계 양성자 2 + 중성자 2 → 헬륨 원자핵 / 3단계 남은 양성자 12 = 수소 원자핵 / 4단계 질량비 12 : 4 = 3 : 1 / 5단계 관측과 비교
+// 1단계 양성자·중성자 / 2단계 양성자 2 + 중성자 2 → 헬륨 원자핵 / 3단계 남은 양성자 12 = 수소 원자핵 / 4단계 질량비 12 : 4 = 3 : 1 / 관측 결과: 질량비 비교
 // 양성자와 중성자의 질량은 거의 같다고 보고 입자 1개의 질량을 1로 놓음
 const HS=[
  ['1단계 · 양성자와 중성자','빅뱅 직후 뜨거운 우주에서 양성자와 중성자가 만들어졌습니다. 빅뱅 후 약 3분이 지났을 때 양성자와 중성자의 개수비는 약 7 : 1이었습니다. 그림은 입자 16개를 골라 나타낸 것입니다.'],
  ['2단계 · 헬륨 원자핵의 생성','우주의 온도가 약 10억 K까지 낮아지자 양성자 2개와 중성자 2개가 결합하여 헬륨 원자핵이 만들어졌습니다. 중성자는 거의 모두 헬륨 원자핵 속으로 들어갑니다.'],
  ['3단계 · 수소 원자핵','헬륨 원자핵을 만들고 남은 양성자 12개는 그대로 수소 원자핵이 됩니다. 수소 원자핵은 양성자 1개입니다.'],
  ['4단계 · 질량비 구하기','양성자와 중성자의 질량은 거의 같으므로 입자 1개의 질량을 1로 놓습니다. 수소 원자핵 12개의 질량은 12, 헬륨 원자핵 1개의 질량은 4이므로 수소와 헬륨의 질량비는 12 : 4 = 3 : 1입니다.'],
- ['5단계 · 관측과 비교','실제 우주에서 관측한 수소와 헬륨의 질량비도 약 3 : 1입니다. 빅뱅 우주론으로 예측한 값이 관측과 잘 맞으므로, 수소와 헬륨의 질량비는 빅뱅 우주론의 증거가 됩니다.']];
+ ['관측 결과 · 질량비 비교','실제 우주에서 관측한 수소와 헬륨의 질량비도 약 3 : 1입니다. 빅뱅 우주론으로 예측한 값이 관측과 잘 맞으므로, 수소와 헬륨의 질량비는 빅뱅 우주론의 증거가 됩니다.']];
 const HN=[5,10],HHE=[5,6,9,10],HPB=[];   // 중성자 번호, 헬륨 원자핵이 되는 입자 번호(가운데 2×2)
 for(let r=0;r<4;r++)for(let c=0;c<4;c++){const k=r*4+c;HPB.push([85+c*120+((k*37)%23-11),80+r*62+((k*53)%19-9)])}
 const HCX=HHE.reduce((a,k)=>a+HPB[k][0],0)/4,HCY=HHE.reduce((a,k)=>a+HPB[k][1],0)/4;
@@ -367,10 +371,12 @@ function hDraw(t){const g=hg;g.innerHTML='';const e=hm<.5?2*hm*hm:1-2*(1-hm)**2;
 function hLoop(now){const dt=Math.min(.05,(now-hLast)/1000);hLast=now;const tg=hs>=1?1:0;
  hm=tg>hm?Math.min(tg,hm+dt/1.2):Math.max(tg,hm-dt/1.2);if(!p2.hidden&&!eva.hidden)hDraw(now/1000);hraf=requestAnimationFrame(hLoop)}
 function hGo(s){hs=Math.max(0,Math.min(4,s));const[tt,tx]=HS[hs];hstep.innerHTML=`<b>${tt}</b> ${tx.replace(/ : /g,"\u00a0:\u00a0")}`;   // 비(7 : 1)가 줄바꿈으로 갈라지지 않게
- hprev.disabled=hs==0;hnext.textContent=hs==4?'↺ 처음으로':'다음 단계 ▶';hnum.textContent=`${hs+1} / 5 단계`;
- if(hs==4){hcue.className='';hcue.textContent=''}else{hcue.className='go';hcue.innerHTML='<span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.'}
+ // hs 0~3: 과정 1~4단계 / 4: 관측 결과 · 질량비 비교
+ hprev.disabled=hs==0;hnext.textContent=hs==4?'↺ 처음으로':hs==3?'관측 결과 ▶':'다음 단계 ▶';hnum.textContent=hs==4?'':`${hs+1} / 4 단계`;
+ ho1.classList.toggle('on',hs==4);ho1.setAttribute('aria-pressed',hs==4);
+ if(hs==4){hcue.className='';hcue.textContent=''}else{hcue.className='go';hcue.innerHTML=hs==3?'<span class="kb">관측 결과</span>를 눌러 실제 관측과 비교해 보세요.':'<span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.'}
  hDraw(performance.now()/1000)}
-hprev.onclick=()=>hGo(hs-1);hnext.onclick=()=>hGo(hs==4?0:hs+1);   // 마지막 단계에서는 처음으로
+hprev.onclick=()=>hGo(hs-1);hnext.onclick=()=>hGo(hs==4?0:hs+1);ho1.onclick=()=>hGo(4);   // 관측 결과에서는 처음으로
 hGo(0);hLast=performance.now();hraf=requestAnimationFrame(hLoop);
 
 // 우주 배경 복사: 수소와 헬륨의 질량비와 같은 방식의 4단계 구성
