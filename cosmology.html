@@ -867,18 +867,40 @@ function fDraw(t){const g=flg;g.innerHTML='';const s=F.s;
   txt('138억 년 동안 서 있는 연필?',{x:270,y:284,'text-anchor':'middle',fill:'#ffd76b','font-size':14,'font-weight':800},g)}
  // 오른쪽: 단계별 정리
  pPanel(g,FS[s][0]);const T=PT(g,734);
- if(s==0){[['밀도 > 임계 밀도','닫힌 우주',FC[0]],['밀도 = 임계 밀도','평탄한 우주',FC[1]],['밀도 < 임계 밀도','열린 우주',FC[2]]].forEach(([a,b,c],k)=>{const y=118+k*40;
-   txt(a,{x:584,y,fill:'#e8ecff','font-size':14.5,'font-weight':700},g);txt('→',{x:742,y,'text-anchor':'middle',fill:'#e8ecff','font-size':16},g);txt(b,{x:884,y,'text-anchor':'end',fill:c,'font-size':15,'font-weight':800},g)});
-  T('임계 밀도: 우주가 평탄해지는 밀도',{y:256,'font-size':13,fill:'#a9b1cc','font-weight':400})}
- if(s==1){T('우주 배경 복사 관측 (WMAP · 플랑크 위성)',{y:114,'font-size':13.5,fill:'#cfd6ee','font-weight':400});
-  T('현재 우주는 거의 완벽하게 평탄',{y:160,'font-size':16,fill:FC[1]});T('→ 현재 우주의 밀도 ≈ 임계 밀도',{y:200,'font-size':14.5})}
- if(s==2){T('초기의 아주 작은 밀도 차이도',{y:112,'font-size':14.5});T('시간이 지날수록 점점 커진다',{y:138,'font-size':14.5});
-  mk('line',{x1:572,y1:160,x2:896,y2:160,stroke:'rgba(255,255,255,.15)'},g);
-  T('지금 우주가 거의 평탄하려면',{y:192,'font-size':14.5});T('초기 밀도 = 임계 밀도 (매우 정밀하게)',{y:220,'font-size':14.5,fill:'#ffd76b'});
-  T('(개념도이며, 암흑 에너지는 생각하지 않음)',{y:270,'font-size':12,fill:'#a9b1cc','font-weight':400})}
- if(s==3){T('초기 우주의 밀도는 왜',{y:126,'font-size':15});T('임계 밀도와 이렇게 정밀하게 같았을까?',{y:152,'font-size':15});
-  T('→ 평탄성 문제',{y:196,'font-size':18,'font-weight':800,fill:'#ffd76b'});
-  T('빅뱅 우주론으로는 설명하기 어려움',{y:236,'font-size':13.5,fill:'#cfd6ee','font-weight':400})}
+ // 오른쪽 정리판: 색 상자(카드)와 작은 그림으로 정리
+ const card=(x,y,w,h,c,o)=>mk('rect',{x,y,width:w,height:h,rx:10,fill:c,'fill-opacity':o||.1,stroke:c,'stroke-opacity':.45},g);
+ const pill=(cx,y,s,c,fs,w)=>{w=w||s.length*(fs||13.5)+24;mk('rect',{x:cx-w/2,y,width:w,height:(fs||13.5)+12,rx:((fs||13.5)+12)/2,fill:c,'fill-opacity':.2,stroke:c,'stroke-opacity':.6},g);
+  txt(s,{x:cx,y:y+(fs||13.5)+4,'text-anchor':'middle',fill:c,'font-size':fs||13.5,'font-weight':800},g)};
+ if(s==0){[['밀도 > 임계 밀도','내각의 합 > 180°','닫힌 우주'],['밀도 = 임계 밀도','내각의 합 = 180°','평탄한 우주'],['밀도 < 임계 밀도','내각의 합 < 180°','열린 우주']].forEach(([a,b,n],k)=>{const y=86+k*56,c=FC[k],iy=y+25;
+   card(568,y,332,50,c);
+   if(k==0){mk('circle',{cx:596,cy:iy,r:15,fill:'url(#fsph)'},g);mk('ellipse',{cx:596,cy:iy,rx:15,ry:5,fill:'none',stroke:FGRID},g)}
+   if(k==1)mk('path',{d:`M581,${iy+8}L589,${iy-8}H613L605,${iy+8}Z`,fill:'#33449a',stroke:'#9fb4ff'},g);
+   if(k==2)mk('path',{d:`M580,${iy-6}Q596,${iy+8} 612,${iy-6}Q608,${iy+2} 612,${iy+10}Q596,${iy-2} 580,${iy+10}Q584,${iy+2} 580,${iy-6}Z`,fill:'#6f82d8',stroke:'#9fb4ff','stroke-width':.8},g);
+   txt(a,{x:626,y:y+21,fill:'#e8ecff','font-size':14.5,'font-weight':800},g);txt(b,{x:626,y:y+40,fill:'#a9b1cc','font-size':12},g);
+   pill(844,y+12,n,c,13.5,96)});
+  T('임계 밀도: 우주가 평탄해지는 밀도',{y:278,'font-size':12.5,fill:'#a9b1cc','font-weight':400})}
+ if(s==1){T('우주 배경 복사 관측 (WMAP · 플랑크 위성)',{y:100,'font-size':13,fill:'#cfd6ee','font-weight':400});
+  // 밀도의 눈금: 왼쪽(작음) 열린 우주 · 가운데 평탄 · 오른쪽(큼) 닫힌 우주, 관측값은 가운데
+  txt('밀도 작음',{x:588,y:134,fill:'#a9b1cc','font-size':11.5},g);txt('밀도 큼',{x:880,y:134,'text-anchor':'end',fill:'#a9b1cc','font-size':11.5},g);
+  mk('rect',{x:588,y:142,width:132,height:12,rx:6,fill:FC[2],opacity:.55},g);mk('rect',{x:748,y:142,width:132,height:12,rx:6,fill:FC[0],opacity:.55},g);
+  mk('rect',{x:724,y:139,width:20,height:18,rx:4,fill:FC[1]},g);
+  mk('path',{d:'M734,136L727,124H741Z',fill:'#fff'},g);txt('관측',{x:734,y:118,'text-anchor':'middle',fill:'#fff','font-size':12,'font-weight':800},g);
+  [['열린 우주',654,FC[2]],['평탄',734,FC[1]],['닫힌 우주',814,FC[0]]].forEach(([s_,x,c])=>txt(s_,{x,y:176,'text-anchor':'middle',fill:c,'font-size':12.5,'font-weight':800},g));
+  card(572,198,324,64,FC[1]);T('현재 우주는 거의 완벽하게 평탄',{y:224,'font-size':15.5,fill:FC[1]});T('현재 우주의 밀도 ≈ 임계 밀도',{y:250,'font-size':14})}
+ if(s==2){T('초기의 아주 작은 밀도 차이도',{y:98,'font-size':14});T('시간이 지날수록 점점 커진다',{y:120,'font-size':14,fill:'#ffd76b'});
+  // 부채꼴로 벌어지는 세 갈래 (개념도)
+  [[30,FC[0]],[0,FC[1]],[-30,FC[2]]].forEach(([d,c])=>mk('path',{d:`M604,166C700,166 780,${166+d*.35} 870,${166+d}`,fill:'none',stroke:c,'stroke-width':2.4},g));
+  mk('circle',{cx:604,cy:166,r:4,fill:'#fff'},g);
+  txt('초기: 거의 같음',{x:604,y:212,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},g);txt('지금: 크게 달라짐',{x:850,y:212,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},g);
+  txt('시간 →',{x:732,y:212,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},g);
+  card(572,226,324,56,'#ffd76b');T('지금 우주가 거의 평탄하려면',{y:248,'font-size':13.5});T('초기 밀도 = 임계 밀도 (매우 정밀하게)',{y:270,'font-size':14,fill:'#ffd76b'})}
+ if(s==3){card(572,88,324,72,'#ffffff',.05);
+  mk('circle',{cx:602,cy:124,r:18,fill:'#ffd76b','fill-opacity':.2,stroke:'#ffd76b','stroke-opacity':.6},g);txt('?',{x:602,y:132,'text-anchor':'middle',fill:'#ffd76b','font-size':22,'font-weight':800},g);
+  txt('초기 우주의 밀도는 왜 임계 밀도와',{x:630,y:118,fill:'#e8ecff','font-size':14,'font-weight':800},g);txt('이렇게 정밀하게 같았을까?',{x:630,y:142,fill:'#e8ecff','font-size':14,'font-weight':800},g);
+  txt('▼',{x:734,y:182,'text-anchor':'middle',fill:'#a9b1cc','font-size':13},g);
+  pill(734,192,'평탄성 문제','#ffd76b',18,160);
+  T('빅뱅 우주론으로는 설명하기 어려움',{y:254,'font-size':13.5,fill:'#cfd6ee','font-weight':400});
+  T('→ 급팽창 이론에서 해결 방법을 알아봅니다',{y:278,'font-size':12.5,fill:'#a9b1cc','font-weight':400})}
 }
 const F=stepper(FS,fstep,fprev,fnext,fnum,fcue,fDraw);
 Z.go(0);F.go(0);
