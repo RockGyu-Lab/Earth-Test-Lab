@@ -1223,7 +1223,7 @@ function uDraw(){usv.innerHTML='';const T=uAge(uH),tc=Math.min(ut,T),f=1-tc/T,do
   '<marker id="uwh" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#e8ecff"/></marker>';
  const g=mk('g',{},usv);
  txt('시간을 거꾸로 되돌린 우주',{x:14,y:26,fill:'#e8ecff','font-size':14,'font-weight':700},g);
- txt('우주가 지금과 같은 빠르기로 팽창해 왔다고 가정한 모형',{x:14,y:44,fill:'#a9b1cc','font-size':11},g);
+ txt('우주가 지금과 같은 빠르기로 팽창해 왔다고 가정한 모형',{x:14,y:47,fill:'#8fd8ff','font-size':13.5,'font-weight':700},g);
  txt(tc>0?`지금으로부터 약 ${Math.round(tc)}억 년 전`:'지금',{x:546,y:26,'text-anchor':'end',fill:'#ffd76b','font-size':14,'font-weight':700},g);
  // 시간축 (오른쪽으로 갈수록 과거)
  mk('line',{x1:UXN,y1:UAY,x2:uxt(UTM),y2:UAY,stroke:'#cfd6ee','stroke-width':1.2},g);
@@ -1245,7 +1245,7 @@ function uDraw(){usv.innerHTML='';const T=uAge(uH),tc=Math.min(ut,T),f=1-tc/T,do
 function uSci(x){const e=Math.floor(Math.log10(x)),m=x/10**e,SUP='⁰¹²³⁴⁵⁶⁷⁸⁹';return m.toFixed(1)+'×10'+String(e).split('').map(c=>SUP[c]).join('')}
 function uGraph(){ugr.innerHTML='';const g=mk('g',{},ugr),T=uAge(uH),tc=Math.min(ut,T),f=1-tc/T,done=ut>=T;
  mk('rect',{x:6,y:8,width:368,height:274,rx:10,fill:'url(#gStrip)',stroke:'rgba(255,255,255,.16)'},g);
- txt('두 은하가 한곳에 모이는 데 걸린 시간',{x:18,y:28,fill:'#e8ecff','font-size':13.5,'font-weight':700},g);
+ const tl=txt('',{x:18,y:28,fill:'#e8ecff','font-size':13.5,'font-weight':700},g);tl.innerHTML='두 은하가 한곳에 모이는 데 걸린 시간 = <tspan fill="#ffb357">우주의 나이</tspan>';
  const row=(y,a,b,c)=>{txt(a,{x:18,y,fill:'#cfd6ee','font-size':12},g);txt(b,{x:362,y,'text-anchor':'end',fill:c,'font-size':12.5,'font-weight':700},g)};
  row(54,'지금 두 은하 사이의 거리','r = 1 Mpc','#e8ecff');
  row(74,'두 은하가 멀어지는 속도',`v = H × r = ${uH} km/s`,'#7be08f');
@@ -1257,15 +1257,24 @@ function uGraph(){ugr.innerHTML='';const g=mk('g',{},ugr),T=uAge(uH),tc=Math.min
  const by=160;
  if(!done){txt('두 은하 사이의 거리가 0이 되면',{x:190,y:by+44,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},g);
   txt('우주의 나이를 계산해 봅니다',{x:190,y:by+62,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},g);return}
- // 계산 (기억하기와 같은 주황색 상자)
- mk('rect',{x:16,y:by,width:348,height:112,rx:9,fill:'rgba(255,179,87,.12)',stroke:'#ffb357','stroke-width':1.6},g);
- const e1=txt('',{x:28,y:by+26,fill:'#ffb357','font-size':17,'font-weight':800,'font-family':'Times New Roman,serif'},g);
- e1.innerHTML='<tspan font-style="italic">t</tspan> = <tspan font-style="italic">r</tspan> ÷ <tspan font-style="italic">v</tspan> = <tspan font-style="italic">r</tspan> ÷ (<tspan font-style="italic">H</tspan> × <tspan font-style="italic">r</tspan>) = 1 / <tspan font-style="italic">H</tspan>';
- const s=3.09e19/uH;
- txt(`1/H = 1 Mpc ÷ ${uH} km/s`,{x:28,y:by+50,fill:'#ffd9a8','font-size':12.5,'font-weight':600},g);
- txt(`= 3.09×10¹⁹ km ÷ ${uH} km/s ≈ ${uSci(s)} s`,{x:40,y:by+70,fill:'#ffd9a8','font-size':12.5,'font-weight':600},g);
- const r3=txt('',{x:40,y:by+92,fill:'#ffb357','font-size':14,'font-weight':800},g);r3.textContent=`≈ 약 ${Math.round(T)}억 년 (우주의 나이)`;
- txt('1 Mpc ≈ 3.09×10¹⁹ km, 1년 ≈ 3.16×10⁷ s',{x:356,y:by+106,'text-anchor':'end',fill:'#a9b1cc','font-size':9.5},g)}
+ // 계산 (기억하기와 같은 주황색 상자): 나눗셈은 모두 분수(분자·가로줄·분모)로 나타냄
+ const bx=146;
+ mk('rect',{x:16,y:bx,width:348,height:130,rx:9,fill:'rgba(255,179,87,.12)',stroke:'#ffb357','stroke-width':1.6},g);
+ const I=s=>`<tspan font-style="italic">${s}</tspan>`,s=3.09e19/uH;
+ uEq(g,28,bx+27,[I('t')+' = ',{n:I('r'),d:I('v')},' = ',{n:I('r'),d:I('H')+' × '+I('r')},' = ',{n:'1',d:I('H')}],
+  {fill:'#ffb357','font-size':17,'font-weight':800,'font-family':'Times New Roman,serif'});
+ uEq(g,28,bx+72,[{n:'1',d:I('H')},' = ',{n:'1 Mpc',d:`${uH} km/s`},' = ',{n:'3.09×10¹⁹ km',d:`${uH} km/s`},` ≈ ${uSci(s)} s`],
+  {fill:'#ffd9a8','font-size':13,'font-weight':600});
+ const r3=txt('',{x:40,y:bx+110,fill:'#ffb357','font-size':14,'font-weight':800},g);r3.textContent=`≈ 약 ${Math.round(T)}억 년 (우주의 나이)`;
+ txt('1 Mpc ≈ 3.09×10¹⁹ km, 1년 ≈ 3.16×10⁷ s',{x:356,y:bx+125,'text-anchor':'end',fill:'#a9b1cc','font-size':9.5},g)}
+// 식 한 줄을 왼쪽부터 차례로 놓음: 글자는 그대로, {n,d}는 분자 위·분모 아래에 가로줄을 그은 분수 (cy: 가로줄 높이)
+function uEq(g,x,cy,parts,st){const fs=st['font-size'];let cx=x;
+ for(const p of parts){
+  if(typeof p=='string'){const t=txt('',{...st,x:cx,y:cy+fs*.33,style:'white-space:pre'},g);t.innerHTML=p;cx+=t.getComputedTextLength();continue}
+  const a=txt('',{...st,y:cy-fs*.28,'text-anchor':'middle',style:'white-space:pre'},g),b=txt('',{...st,y:cy+fs*.95,'text-anchor':'middle',style:'white-space:pre'},g);
+  a.innerHTML=p.n;b.innerHTML=p.d;const w=Math.max(a.getComputedTextLength(),b.getComputedTextLength())+8;
+  a.setAttribute('x',cx+w/2);b.setAttribute('x',cx+w/2);
+  mk('line',{x1:cx+2,y1:cy,x2:cx+w-2,y2:cy,stroke:st.fill,'stroke-width':1.3},g);cx+=w}}
 function uAll(){uDraw();uGraph()}
 function uStop(){cancelAnimationFrame(uraf);uraf=0;uplay.textContent='◀ 시간 되감기'}
 // 약 20억 년을 1초로 되감음 (허블 상수 70이면 약 7초)
