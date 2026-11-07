@@ -103,12 +103,12 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .subtabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
 .subtabs button{padding:5px 16px;border:1px solid var(--sub-bd);border-radius:999px;background:var(--sub-bg);color:var(--sub-tx);font-size:.9rem;font-weight:700;cursor:pointer}
 .subtabs button.on{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub)}
-#hsv{max-height:max(240px,calc(100vh - 360px))}
-#hsv{max-height:max(240px,calc(100dvh - 360px))}
+#hsv,#bsv{max-height:max(240px,calc(100vh - 360px))}
+#hsv,#bsv{max-height:max(240px,calc(100dvh - 360px))}
 .stepbox{margin-top:8px;background:var(--card);border-radius:14px;padding:8px 14px;font-size:.92rem;line-height:1.55;min-height:4.4em}
 .stepbox b{color:var(--acc);margin-right:4px}
 .sn{font-size:.9rem;font-weight:700;opacity:.8}
-#hcue{flex:1 1 220px;font-size:.92rem}
+#hcue,#bcue{flex:1 1 220px;font-size:.92rem}
 #eva[hidden],#evb[hidden]{display:none}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
@@ -174,8 +174,27 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   </div></div>
  </div>
  <div id="evb" hidden>
-  <div class="note"><p>우주 배경 복사를 알아봅시다. (준비 중)</p></div>
-  <svg viewBox="0 0 940 300" aria-label="준비 중인 그림판"><text x="470" y="158" text-anchor="middle" fill="#a9b1cc" font-size="18">우주 배경 복사 — 준비 중</text></svg>
+  <svg id="bsv" viewBox="0 0 940 320" aria-label="원자핵과 전자가 결합하여 우주가 투명해지고, 그때의 빛이 우주 배경 복사로 관측되는 과정">
+   <defs>
+    <radialGradient id="bgn" cx=".35" cy=".32" r=".75"><stop offset="0" stop-color="#ffb3b3"/><stop offset=".6" stop-color="#ef5d5d"/><stop offset="1" stop-color="#b8333a"/></radialGradient>
+    <radialGradient id="bge" cx=".35" cy=".32" r=".75"><stop offset="0" stop-color="#d6ecff"/><stop offset=".6" stop-color="#5aa8ff"/><stop offset="1" stop-color="#2a63c4"/></radialGradient>
+      </defs>
+   <g id="bg"></g>
+  </svg>
+  <div class="stepbox" id="bstep"></div>
+  <div class="ctl">
+   <button class="pb" id="bprev">◀ 이전 단계</button><button class="pb" id="bnext">다음 단계 ▶</button>
+   <span class="sn" id="bnum"></span>
+   <span class="go" id="bcue"><span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.</span>
+  </div>
+  <div class="note ask"><span class="tag">생각해 보기</span><p>정상 우주론으로는 우주 배경 복사를 설명하기 어려운 까닭은 무엇일까요?</p><button type="button" class="open-think" id="thb3">정답 확인</button></div>
+  <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="mtx">우주 배경 복사: 약 3000&nbsp;K일 때 퍼져 나간 빛이 우주 팽창으로 파장이 길어져, 지금 약 2.7&nbsp;K로 관측됨 → 빅뱅 우주론의 증거</p></div>
+  <div class="ov" id="ov3" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 정상 우주론으로는 우주 배경 복사를 설명하기 어려운 까닭은 무엇일까요?">
+   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>정상 우주론으로는 우주 배경 복사를 설명하기 어려운 까닭은 무엇일까요?</b><button type="button" class="x" id="thx3" aria-label="닫기">닫기 ✕</button></div>
+   <p class="ans">정상 우주론에서는 우주가 언제나 지금과 같아서, 우주 전체가 뜨겁고 밀도가 컸던 시기가 없기 때문입니다.</p>
+   <p class="exp">우주 배경 복사는 우주 전체가 약 3000&nbsp;K로 뜨거웠던 시기에 퍼져 나간 빛입니다. 우주가 처음부터 지금과 같은 온도와 밀도를 유지했다면, 하늘의 모든 방향에서 거의 같은 세기로 들어오는 이런 복사가 생길 까닭이 없습니다.</p>
+   <p class="exp">반면 빅뱅 우주론은 과거의 우주가 뜨겁고 밀도가 컸다고 보므로 우주 배경 복사를 자연스럽게 설명합니다. 그래서 우주 배경 복사가 발견된 뒤 빅뱅 우주론이 널리 받아들여졌습니다.</p>
+  </div></div>
  </div>
 </section>
 
@@ -344,8 +363,103 @@ function hGo(s){hs=Math.max(0,Math.min(4,s));const[tt,tx]=HS[hs];hstep.innerHTML
 hprev.onclick=()=>hGo(hs-1);hnext.onclick=()=>hGo(hs==4?0:hs+1);   // 마지막 단계에서는 처음으로
 hGo(0);hLast=performance.now();hraf=requestAnimationFrame(hLoop);
 
+// 우주 배경 복사: 수소와 헬륨의 질량비와 같은 5단계 구성
+// 1단계 불투명한 초기 우주(원자핵·전자가 따로, 빛은 전자와 부딪혀 지그재그) / 2단계 약 3000 K, 원자핵 + 전자 → 원자
+// 3단계 빛이 똑바로 나아감(투명) = 우주 배경 복사 / 4단계 우주 팽창으로 파장이 약 1100배 길어짐(3000 K → 2.7 K)
+// 5단계 관측: 1965년 펜지어스·윌슨 발견, COBE 위성 관측값이 2.7 K 흑체 복사 곡선과 일치
+const BS=[
+ ['1단계 · 불투명한 초기 우주','빅뱅 후 약 38만 년까지 우주는 매우 뜨거워서 원자핵과 전자가 따로 떨어져 움직였습니다. 빛은 전자와 계속 부딪혀 똑바로 나아가지 못했으므로, 우주는 안개 속처럼 불투명했습니다.'],
+ ['2단계 · 원자의 생성','우주가 팽창하면서 온도가 약 3000 K까지 낮아지자(빅뱅 후 약 38만 년), 원자핵과 전자가 결합하여 원자가 만들어졌습니다.'],
+ ['3단계 · 투명해진 우주','빛과 부딪히던 전자가 원자 속으로 들어가자 빛이 막힘 없이 똑바로 나아갈 수 있게 되었습니다. 이때 우주 전체로 퍼져 나간 빛이 우주 배경 복사입니다.'],
+ ['4단계 · 길어진 파장','우주가 계속 팽창하면서 우주 배경 복사의 파장도 함께 늘어났습니다. 약 3000 K였던 복사의 파장이 약 1100배 길어져, 지금은 약 2.7 K에 해당하는 마이크로파로 관측됩니다.'],
+ ['5단계 · 관측과 비교','1965년 펜지어스와 윌슨은 하늘의 모든 방향에서 거의 같은 세기로 들어오는 마이크로파를 발견했습니다. 이후 COBE 위성의 관측으로 이 복사가 약 2.7 K 흑체 복사와 정확히 맞는다는 것이 확인되었습니다. 빅뱅 우주론의 예측과 관측이 잘 맞으므로, 우주 배경 복사는 빅뱅 우주론의 증거가 됩니다.']];
+const BNU=[];for(let r=0;r<3;r++)for(let c=0;c<3;c++){const k=r*3+c;BNU.push([110+c*160+((k*37)%29-14),96+r*76+((k*53)%23-11)])}
+const BEL=BNU.map(([x,y],k)=>[20+((x-20+70+(k%3)*12)%480),44+((y-44+40+(k%2)*14)%232)]);   // 떠돌던 전자의 자리
+const BPH=[[150,130],[380,110],[250,230],[440,240],[300,160]],BRAY=[[80,.3,1],[250,-.25,-1],[150,-.12,1],[200,.4,-1],[260,.18,1],[110,-.35,-1]];   // 빛줄기: [출발 높이, 기울기, 1=오른쪽으로 / -1=왼쪽으로]
+let bs=0,bm=0,bw=0,bT=0,bLast=0;   // bm: 원자 결합 정도(0~1), bw: 4단계의 파장 늘어남 정도(0~1)
+const hsh=(a,b)=>{const v=Math.sin(a*127.1+b*311.7)*43758.5453;return v-Math.floor(v)};
+function bWave(g,x,y,ang,L,lam,col,amp=4.5,w=2){const c=Math.cos(ang),s=Math.sin(ang);let d='';
+ for(let u=0;u<=L;u+=1.5){const o=amp*Math.sin(2*Math.PI*u/lam),px=x+c*u-s*o,py=y+s*u+c*o;d+=(u?'L':'M')+px.toFixed(1)+','+py.toFixed(1)}
+ mk('path',{d,fill:'none',stroke:col,'stroke-width':w,'stroke-linecap':'round'},g);
+ const hx=x+c*L,hy=y+s*L,f=n=>n.toFixed(1);   // 화살촉
+ mk('path',{d:`M${f(hx+c*8)},${f(hy+s*8)}L${f(hx-s*4.5)},${f(hy+c*4.5)}L${f(hx+s*4.5)},${f(hy-c*4.5)}Z`,fill:col},g)}
+function bNuc(g,x,y,r=10){mk('circle',{cx:x,cy:y,r,fill:'url(#bgn)',stroke:'#ffc4c4','stroke-width':1},g);txt('+',{x,y:y+r*.38,'text-anchor':'middle',fill:'#fff','font-size':r*1.2,'font-weight':800},g)}
+function bEl(g,x,y,r=5){mk('circle',{cx:x,cy:y,r,fill:'url(#bge)',stroke:'#cfe6ff','stroke-width':.8},g);if(r>4)txt('−',{x,y:y+r*.42,'text-anchor':'middle',fill:'#fff','font-size':r*1.6,'font-weight':800},g)}
+function bDraw(t){const g=bg;g.innerHTML='';const e=bm<.5?2*bm*bm:1-2*(1-bm)**2;
+ txt(['빅뱅 후 약 38만 년 이전','빅뱅 후 약 38만 년 (약 3000 K)','빅뱅 후 약 38만 년 (약 3000 K)','우주가 팽창하는 동안','지금 관측한 우주 배경 복사'][bs],{x:22,y:30,fill:'#ffd76b','font-size':14,'font-weight':700},g);
+ if(bs<4){bNuc(g,330,25,7);txt('원자핵',{x:341,y:30,fill:'#ffc4c4','font-size':12.5,'font-weight':700},g);
+  bEl(g,398,25,5);txt('전자',{x:408,y:30,fill:'#cfe6ff','font-size':12.5,'font-weight':700},g);
+  bWave(g,446,25,0,18,6,'#ffd76b',3,1.6);txt('빛',{x:478,y:30,fill:'#ffd76b','font-size':12.5,'font-weight':700},g)}
+ // 왼쪽 상자: 뜨거울수록 붉은 안개(불투명), 원자가 생기면 맑아짐
+ const fog=bs>=2?0:1-e,mix=(a,b,k)=>Math.round(a+(b-a)*k);
+ mk('rect',{x:20,y:44,width:500,height:252,rx:12,fill:`rgb(${mix(16,74,fog)},${mix(18,34,fog)},${mix(40,30,fog)})`,stroke:'rgba(255,255,255,.18)'},g);
+ if(bs<4){
+  const cl=mk('g',{},g);mk('clipPath',{id:'bclip'},cl).appendChild(mk('rect',{x:20,y:44,width:500,height:252,rx:12}));
+  const inn=mk('g',{'clip-path':'url(#bclip)'},g);
+  // 빛
+  if(bs==0||(bs==1&&e<1)){BPH.forEach(([hx,hy],i)=>{const D=.55,k=Math.floor(t/D),f=t/D-k,P=j=>[Math.min(505,Math.max(35,hx+(hsh(i,j)-.5)*150)),Math.min(285,Math.max(55,hy+(hsh(i+9,j)-.5)*110))];
+    const z=P(k-2),a=P(k-1),b=P(k),c=P(k+1),hx2=b[0]+(c[0]-b[0])*f,hy2=b[1]+(c[1]-b[1])*f;
+    mk('path',{d:`M${z[0]},${z[1]}L${a[0]},${a[1]}L${b[0]},${b[1]}L${hx2},${hy2}`,fill:'none',stroke:'#ffd76b','stroke-width':1.6,'stroke-dasharray':'4 4',opacity:.75},inn);
+    mk('circle',{cx:b[0],cy:b[1],r:7,fill:'none',stroke:'#ffe9a8','stroke-width':1.2,opacity:.6*(1-f)},inn);
+    mk('circle',{cx:hx2,cy:hy2,r:4.5,fill:'#ffe27a'},inn);mk('circle',{cx:hx2,cy:hy2,r:9,fill:'#ffd76b',opacity:.25},inn)})}
+  else{const lam=bs==3?9*Math.pow(4,bw):9,col=bs==3?`rgb(255,${mix(215,110,bw)},${mix(107,90,bw)})`:'#ffd76b';
+   BRAY.forEach(([y0,sl,dir],i)=>{const sp=70,len=90,per=700,u=((t*sp+i*131)%per)-110,a=dir>0?sl:Math.PI+sl,c=Math.cos(a),s=Math.sin(a),
+     x=(dir>0?20:520)+c*u,y=44+y0+s*u;bWave(inn,x,y,a,len,lam,col,4.5,2.2)})}
+  // 원자핵과 전자 (2단계부터 전자가 원자핵 둘레를 돎)
+  BNU.forEach(([nx,ny],k)=>{const jx=(1-e)*4*Math.sin(t*2.3+k),jy=(1-e)*4*Math.cos(t*1.9+k*1.4),x=nx+jx,y=ny+jy;
+   const [fx,fy]=BEL[k],fjx=fx+12*Math.sin(t*3.1+k*2.1),fjy=fy+12*Math.cos(t*2.7+k*1.3),ang=t*2.2+k*1.1,ox=x+19*Math.cos(ang),oy=y+19*Math.sin(ang)*.6;
+   if(e>.98)mk('ellipse',{cx:x,cy:y,rx:19,ry:11.4,fill:'none',stroke:'#9cc8ff','stroke-width':1,opacity:.5},inn);
+   bNuc(inn,x,y,10);bEl(inn,fjx+(ox-fjx)*e,fjy+(oy-fjy)*e,5)})}
+ else{ // 5단계: 2.7 K 흑체 복사 곡선과 관측값
+  const X=l=>70+l/5*420,Y=v=>262-185*v,B=l=>Math.pow(l,-5)/(Math.exp(14.388/(l*2.725))-1),BM=B(1.0626);
+  mk('line',{x1:70,y1:262,x2:498,y2:262,stroke:'#cfd6ee','stroke-width':1.2},g);mk('line',{x1:70,y1:262,x2:70,y2:66,stroke:'#cfd6ee','stroke-width':1.2},g);
+  for(let l=0;l<=5;l++){mk('line',{x1:X(l),y1:262,x2:X(l),y2:267,stroke:'#cfd6ee'},g);txt(String(l),{x:X(l),y:278,'text-anchor':'middle',fill:'#cfd6ee','font-size':11.5},g)}
+  txt('파장 (mm)',{x:284,y:292,'text-anchor':'middle',fill:'#e8ecff','font-size':12,'font-weight':700},g);
+  txt('복사 세기',{x:76,y:62,fill:'#e8ecff','font-size':12,'font-weight':700},g);
+  let d='';for(let l=.25;l<=5.001;l+=.025)d+=(d?'L':'M')+X(l).toFixed(1)+','+Y(B(l)/BM).toFixed(1);
+  mk('path',{d,fill:'none',stroke:'#ff9d6b','stroke-width':2.6},g);
+  [.55,.65,.8,1,1.2,1.5,1.8,2.2,2.7,3.3,4,4.8].forEach(l=>mk('circle',{cx:X(l),cy:Y(B(l)/BM),r:4,fill:'#fff',stroke:'#1b1f2a','stroke-width':1},g));
+  mk('line',{x1:X(1.06),y1:66,x2:X(1.06),y2:262,stroke:'#ffd76b','stroke-dasharray':'3 3',opacity:.8},g);
+  txt('세기가 가장 큰 파장 약 1 mm',{x:X(1.06)+8,y:66,fill:'#ffd76b','font-size':12,'font-weight':700},g);
+  mk('line',{x1:300,y1:120,x2:324,y2:120,stroke:'#ff9d6b','stroke-width':2.6},g);txt('2.7 K 흑체 복사 곡선',{x:330,y:124,fill:'#ffc9a8','font-size':12,'font-weight':700},g);
+  mk('circle',{cx:312,cy:142,r:4,fill:'#fff'},g);txt('관측값 (COBE 위성)',{x:330,y:146,fill:'#e8ecff','font-size':12,'font-weight':700},g)}
+ // 오른쪽: 단계별 정리
+ mk('rect',{x:548,y:44,width:372,height:252,rx:12,fill:'rgba(255,255,255,.05)',stroke:'rgba(255,255,255,.14)'},g);
+ txt(BS[bs][0],{x:566,y:72,fill:'#ffd76b','font-size':15,'font-weight':800},g);
+ const C=734,T=(s,a)=>txt(s,{x:C,'text-anchor':'middle',fill:'#e8ecff','font-size':15,'font-weight':700,...a},g);
+ const badge=(y,s,col)=>{mk('rect',{x:C-56,y:y-19,width:112,height:28,rx:14,fill:col,opacity:.2},g);T(s,{y,fill:col,'font-size':16,'font-weight':800})};
+ if(bs==0){bNuc(g,640,124,10);txt('원자핵',{x:658,y:129,fill:'#ffc4c4','font-size':14,'font-weight':700},g);
+  bEl(g,770,124,6);txt('전자',{x:784,y:129,fill:'#cfe6ff','font-size':14,'font-weight':700},g);
+  T('따로 떨어져 움직임',{y:160,'font-size':13,fill:'#a9b1cc','font-weight':400});
+  T('빛이 전자와 계속 부딪힘',{y:200});badge(246,'불투명','#ff9d6b')}
+ if(bs==1){bNuc(g,612,132,10);txt('+',{x:640,y:138,'text-anchor':'middle',fill:'#e8ecff','font-size':20,'font-weight':700},g);bEl(g,666,132,6);
+  txt('→',{x:700,y:138,'text-anchor':'middle',fill:'#e8ecff','font-size':22,'font-weight':700},g);
+  mk('ellipse',{cx:770,cy:132,rx:22,ry:13,fill:'none',stroke:'#9cc8ff','stroke-width':1.2},g);bNuc(g,770,132,10);bEl(g,790,124,5);
+  T('원자핵 + 전자 → 원자',{y:190});T('온도 약 3000 K',{y:226,fill:'#ffb357','font-size':17,'font-weight':800});
+  T('빅뱅 후 약 38만 년',{y:256,'font-size':13,fill:'#a9b1cc','font-weight':400})}
+ if(bs==2){bWave(g,600,124,0,250,14,'#ffd76b',5,2.4);T('빛이 똑바로 나아감',{y:174});badge(214,'투명','#7fd3ff');
+  T('→ 이때 퍼져 나간 빛 = 우주 배경 복사',{y:262,'font-size':14,fill:'#ffd76b'})}
+ if(bs==3){txt('그때: 약 3000 K',{x:572,y:104,fill:'#ffb357','font-size':14,'font-weight':700},g);bWave(g,574,124,0,310,10,'#ffd76b',5,2.2);
+  txt('지금: 약 2.7 K (마이크로파)',{x:572,y:170,fill:'#ff8a6b','font-size':14,'font-weight':700},g);bWave(g,574,194,0,310,80,'#ff8a6b',9,2.2);
+  T('우주 팽창으로 파장이 약 1100배 길어짐',{y:246,'font-size':14.5});T('(그림의 파장은 실제 비율과 다름)',{y:270,'font-size':12,fill:'#a9b1cc','font-weight':400})}
+ if(bs==4){mk('circle',{cx:628,cy:150,r:15,fill:'#3d7bd9',stroke:'#b9d6ff'},g);
+  for(let k=0;k<8;k++){const a=k*Math.PI/4;bWave(g,628+Math.cos(a)*58,150+Math.sin(a)*58,a+Math.PI,28,9,'#ff9d6b',2.6,1.6)}
+  [['1965년 펜지어스와 윌슨',128,'#e8ecff'],['모든 방향에서 거의 같은',152,'#cfd6ee'],['세기의 마이크로파 발견',174,'#cfd6ee']].forEach(([s,y,c])=>txt(s,{x:700,y,fill:c,'font-size':13.5,'font-weight':700},g));
+  T('COBE 위성: 약 2.7 K 흑체 복사와 일치',{y:226,'font-size':13.5});
+  T('예측과 관측이 잘 맞는다',{y:256,fill:'#ffd76b'});T('→ 빅뱅 우주론의 증거',{y:282,'font-size':17,'font-weight':800,fill:'#ffd76b'})}
+}
+function bLoop(now){const dt=Math.min(.05,(now-bLast)/1000);bLast=now;const tg=bs>=1?1:0;
+ bm=tg>bm?Math.min(tg,bm+dt/1.6):Math.max(tg,bm-dt/1.6);if(bs==3){bT+=dt;if(bT>6.5)bT=0;bw=Math.min(1,bT/5)}else{bT=0;bw=0}   // 4단계: 5초 동안 파장이 늘어나고 1.5초 멈췄다가 되풀이
+ if(!p2.hidden&&!evb.hidden)bDraw(now/1000);requestAnimationFrame(bLoop)}
+function bGo(s){bs=Math.max(0,Math.min(4,s));bw=0;const[tt,tx]=BS[bs];bstep.innerHTML=`<b>${tt}</b> ${tx.replace(/ (K|mm)\b/g,"\u00a0$1")}`;   // 수와 단위(2.7 K)가 줄바꿈으로 갈라지지 않게
+ bprev.disabled=bs==0;bnext.textContent=bs==4?'↺ 처음으로':'다음 단계 ▶';bnum.textContent=`${bs+1} / 5 단계`;
+ if(bs==4){bcue.className='';bcue.textContent=''}else{bcue.className='go';bcue.innerHTML='<span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.'}
+ bDraw(performance.now()/1000)}
+bprev.onclick=()=>bGo(bs-1);bnext.onclick=()=>bGo(bs==4?0:bs+1);
+bGo(0);bLast=performance.now();requestAnimationFrame(bLoop);
+
 // 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
-[['ov1','thb1','thx1'],['ov2','thb2','thx2']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
+[['ov1','thb1','thx1'],['ov2','thb2','thx2'],['ov3','thb3','thx3']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
  const close=()=>{ov.hidden=true;btn.focus()};btn.onclick=()=>{ov.hidden=false;cl.focus()};cl.onclick=close;
  ov.addEventListener('click',e=>{if(e.target===ov)close()});ov.addEventListener('keydown',e=>{if(e.key=='Escape')close()})});
 </script>
