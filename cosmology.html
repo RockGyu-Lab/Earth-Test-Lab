@@ -107,6 +107,9 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 #hsv,#bsv{max-height:max(240px,calc(100dvh - 360px))}
 .stepbox{margin-top:8px;background:var(--card);border-radius:14px;padding:8px 14px;font-size:.92rem;line-height:1.55;min-height:4.4em}
 .stepbox b{color:var(--acc);margin-right:4px}
+.stepbox .hl{color:#1747c8}   /* 설명 속 중요한 낱말 (진한 파란색) */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .stepbox .hl{color:#7fb0ff}}
+:root[data-theme="dark"] .stepbox .hl{color:#7fb0ff}
 #bstep,#zstep,#fstep,#istep,#jstep,#kstep,#rstep,#lstep,#astep,#qstep{min-height:calc(3 * 1.55em + 16px)}
 #zsv,#fsv,#isv,#jsv,#ksv,#rsv,#lsv,#asv,#qsv{max-height:max(240px,calc(100vh - 360px))}
 #zsv,#fsv,#isv,#jsv,#ksv,#rsv,#lsv,#asv,#qsv{max-height:max(240px,calc(100dvh - 360px))}
@@ -502,8 +505,8 @@ cAll();cLast=performance.now();craf=requestAnimationFrame(cLoop);   // 단추 �
 // 1단계 양성자·중성자 / 2단계 양성자 2 + 중성자 2 → 헬륨 원자핵 / 3단계 남은 양성자 12 = 수소 원자핵 / 4단계 질량비 12 : 4 = 3 : 1 / 관측 결과: 질량비 비교
 // 양성자와 중성자의 질량은 거의 같다고 보고 입자 1개의 질량을 1로 놓음
 const HS=[
- ['1단계 · 양성자와 중성자','빅뱅 직후 뜨거운 우주에서 양성자와 중성자가 만들어졌습니다. 빅뱅 후 약 3분이 지났을 때 양성자와 중성자의 개수비는 약 7 : 1이었습니다. 그림은 입자 16개를 골라 나타낸 것입니다.'],
- ['2단계 · 헬륨 원자핵의 생성','우주의 온도가 약 10억 K까지 낮아지자 양성자 2개와 중성자 2개가 결합하여 헬륨 원자핵이 만들어졌습니다. 중성자는 거의 모두 헬륨 원자핵 속으로 들어갑니다.'],
+ ['1단계','빅뱅 직후 뜨거운 우주에서 <span class="hl">양성자</span>와 <span class="hl">중성자</span>가 만들어졌습니다. 빅뱅 후 약 3분이 지났을 때 양성자와 중성자의 개수비는 약 <span class="hl">7 : 1</span>이었습니다.'],
+ ['2단계(빅뱅 핵융합)','우주의 온도가 약 10억 K까지 낮아지자 양성자 2개와 중성자 2개가 결합하여 헬륨 원자핵이 만들어졌습니다. 중성자는 거의 모두 헬륨 원자핵 속으로 들어갑니다.'],
  ['3단계 · 수소 원자핵','헬륨 원자핵을 만들고 남은 양성자 12개는 그대로 수소 원자핵이 됩니다. 수소 원자핵은 양성자 1개입니다.'],
  ['4단계 · 질량비 구하기','양성자와 중성자의 질량은 거의 같으므로 입자 1개의 질량을 1로 놓습니다. 수소 원자핵 12개의 질량은 12, 헬륨 원자핵 1개의 질량은 4이므로 수소와 헬륨의 질량비는 12 : 4 = 3 : 1입니다.'],
  ['관측 결과 · 질량비 비교','실제 우주에서 관측한 수소와 헬륨의 질량비도 약 3 : 1입니다. 빅뱅 우주론으로 예측한 값이 관측과 잘 맞으므로, 수소와 헬륨의 질량비는 빅뱅 우주론의 증거가 됩니다.']];
