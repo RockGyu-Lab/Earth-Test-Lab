@@ -107,6 +107,7 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 #hsv,#bsv{max-height:max(240px,calc(100dvh - 360px))}
 .stepbox{margin-top:8px;background:var(--card);border-radius:14px;padding:8px 14px;font-size:.92rem;line-height:1.55;min-height:4.4em}
 .stepbox b{color:var(--acc);margin-right:4px}
+#hstep b{margin-right:.4em}
 .stepbox .hl{color:#1747c8}   /* 설명 속 중요한 낱말 (진한 파란색) */
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .stepbox .hl{color:#7fb0ff}}
 :root[data-theme="dark"] .stepbox .hl{color:#7fb0ff}
@@ -506,10 +507,10 @@ cAll();cLast=performance.now();craf=requestAnimationFrame(cLoop);   // 단추 �
 // 양성자와 중성자의 질량은 거의 같다고 보고 입자 1개의 질량을 1로 놓음
 const HS=[
  ['1단계','빅뱅 직후 뜨거운 우주에서 <span class="hl">양성자</span>와 <span class="hl">중성자</span>가 만들어졌습니다. 빅뱅 후 약 3분이 지났을 때 양성자와 중성자의 개수비는 약 <span class="hl">7 : 1</span>이었습니다.'],
- ['2단계(빅뱅 핵융합)','우주의 온도가 약 10억 K까지 낮아지자 양성자 2개와 중성자 2개가 결합하여 헬륨 원자핵이 만들어졌습니다. 중성자는 거의 모두 헬륨 원자핵 속으로 들어갑니다.'],
- ['3단계 · 수소 원자핵','헬륨 원자핵을 만들고 남은 양성자 12개는 그대로 수소 원자핵이 됩니다. 수소 원자핵은 양성자 1개입니다.'],
- ['4단계 · 질량비 구하기','양성자와 중성자의 질량은 거의 같으므로 입자 1개의 질량을 1로 놓습니다. 수소 원자핵 12개의 질량은 12, 헬륨 원자핵 1개의 질량은 4이므로 수소와 헬륨의 질량비는 12 : 4 = 3 : 1입니다.'],
- ['관측 결과 · 질량비 비교','실제 우주에서 관측한 수소와 헬륨의 질량비도 약 3 : 1입니다. 빅뱅 우주론으로 예측한 값이 관측과 잘 맞으므로, 수소와 헬륨의 질량비는 빅뱅 우주론의 증거가 됩니다.']];
+ ['2단계(빅뱅 핵합성)','우주의 온도가 약 10억 K까지 낮아지자 양성자 2개와 중성자 2개가 결합하여 헬륨 원자핵이 만들어졌습니다.'],
+ ['3단계','헬륨 원자핵을 만들고 남은 양성자 12개는 그대로 수소 원자핵이 됩니다. 수소 원자핵은 양성자 1개입니다.'],
+ ['4단계','양성자와 중성자의 질량은 거의 같으므로 입자 1개의 질량을 1로 놓습니다. 수소 원자핵 12개의 질량은 12, 헬륨 원자핵 1개의 질량은 4이므로 수소와 헬륨의 질량비는 12 : 4 = 3 : 1입니다.'],
+ ['관측 결과와의 비교','실제 우주에서 관측한 수소와 헬륨의 질량비도 약 3 : 1입니다. 빅뱅 우주론으로 예측한 값이 관측과 잘 맞으므로, 수소와 헬륨의 질량비는 빅뱅 우주론의 증거가 됩니다.']];
 const HN=[5,10],HHE=[5,6,9,10],HPB=[];   // 중성자 번호, 헬륨 원자핵이 되는 입자 번호(가운데 2×2)
 for(let r=0;r<4;r++)for(let c=0;c<4;c++){const k=r*4+c;HPB.push([85+c*120+((k*37)%23-11),80+r*62+((k*53)%19-9)])}
 const HCX=HHE.reduce((a,k)=>a+HPB[k][0],0)/4,HCY=HHE.reduce((a,k)=>a+HPB[k][1],0)/4;
@@ -565,11 +566,16 @@ function hDraw(t){const g=hg;g.innerHTML='';const e=hm<.5?2*hm*hm:1-2*(1-hm)**2;
 }
 function hLoop(now){const dt=Math.min(.05,(now-hLast)/1000);hLast=now;const tg=hs>=1?1:0;
  hm=tg>hm?Math.min(tg,hm+dt/1.2):Math.max(tg,hm-dt/1.2);if(!p2.hidden&&!eva.hidden)hDraw(now/1000);hraf=requestAnimationFrame(hLoop)}
-function hGo(s){hs=Math.max(0,Math.min(4,s));const[tt,tx]=HS[hs];hstep.innerHTML=`<b>${tt}</b> ${tx.replace(/ : /g,"\u00a0:\u00a0")}`;   // 비(7 : 1)가 줄바꿈으로 갈라지지 않게
- // hs 0~3: 과정 1~4단계 / 4: 관측 결과 · 질량비 비교
+function hGo(s){hs=Math.max(0,Math.min(4,s));const[tt,tx]=HS[hs];hstep.innerHTML=`<b>${tt}</b>${tx.replace(/ : /g,"\u00a0:\u00a0")}`;   // 비(7 : 1)가 줄바꿈으로 갈라지지 않게
+ // hs 0~3: 과정 1~4단계 / 4: 관측 결과와의 비교
  hprev.disabled=hs==0;hnext.textContent=hs==4?'↺ 처음으로':hs==3?'관측 결과 ▶':'다음 단계 ▶';hnum.textContent=hs==4?'관측 결과':`${hs+1} / 4 단계`;
  if(hs==4){hcue.className='';hcue.textContent=''}else{hcue.className='go';hcue.innerHTML=hs==3?'<span class="kb">관측 결과</span>를 눌러 실제 관측과 비교해 보세요.':'<span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.'}
- hDraw(performance.now()/1000)}
+ hIndent();hDraw(performance.now()/1000)}
+// 두 줄 이상인 설명은 둘째 줄부터 들여쓰기: 과정은 '4단계' 글씨 끝, 관측 결과는 제목 끝에 맞춤 (숨겨진 상태에서도 재도록 canvas로 글자 폭을 잼)
+const hCtx=document.createElement('canvas').getContext('2d');
+function hIndent(){const b=hstep.querySelector('b');if(!b)return;const cs=getComputedStyle(b);hCtx.font=`${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+ const w=hCtx.measureText(hs==4?HS[4][0]:'4단계').width+parseFloat(cs.marginRight);hstep.style.paddingLeft=`${14+w}px`;hstep.style.textIndent=`${-w}px`}
+if(document.fonts)document.fonts.ready.then(hIndent);
 hprev.onclick=()=>hGo(hs-1);hnext.onclick=()=>hGo(hs==4?0:hs+1);   // 관측 결과에서는 처음으로
 hGo(0);hLast=performance.now();hraf=requestAnimationFrame(hLoop);
 
