@@ -548,7 +548,7 @@ function hDraw(t){const g=hg;g.innerHTML='';const e=hm<.5?2*hm*hm:1-2*(1-hm)**2;
   txt('헬륨 원자핵',{x:HCX+cx,y:HCY+cy-40,'text-anchor':'middle',fill:'#7fd3ff','font-size':13,'font-weight':800},g)}
  // 오른쪽: 단계별 정리
  mk('rect',{x:548,y:44,width:372,height:252,rx:12,fill:'rgba(255,255,255,.05)',stroke:'rgba(255,255,255,.14)'},g);
- txt(HS[hs][0],{x:566,y:72,fill:'#ffd76b','font-size':15,'font-weight':800},g);
+ txt(HS[hs][0],{x:734,y:72,'text-anchor':'middle',fill:'#ffd76b','font-size':15,'font-weight':800},g);
  const C=734,T=(s,a)=>txt(s,{x:C,'text-anchor':'middle',fill:'#e8ecff','font-size':15,'font-weight':700,...a},g);
  if(hs==0){T('양성자 : 중성자',{y:118,'font-size':17});
   const r=T('',{y:170,'font-size':34,'font-weight':800});r.innerHTML='<tspan fill="#ff9d9d">14</tspan> : <tspan fill="#dfe5f2">2</tspan>';
@@ -664,7 +664,7 @@ function bDraw(t){const g=bg;g.innerHTML='';const e=bm<.5?2*bm*bm:1-2*(1-bm)**2;
   mk('circle',{cx:312,cy:142,r:4,fill:'#fff'},g);txt('관측값 (COBE 위성)',{x:330,y:146,fill:'#e8ecff','font-size':12,'font-weight':700},g)}
  // 오른쪽: 단계별 정리
  mk('rect',{x:548,y:44,width:372,height:252,rx:12,fill:'rgba(255,255,255,.05)',stroke:'rgba(255,255,255,.14)'},g);
- txt(BS[bs][0],{x:566,y:72,fill:'#ffd76b','font-size':15,'font-weight':800},g);
+ txt(BS[bs][0],{x:734,y:72,'text-anchor':'middle',fill:'#ffd76b','font-size':15,'font-weight':800},g);
  const C=734,T=(s,a)=>txt(s,{x:C,'text-anchor':'middle',fill:'#e8ecff','font-size':15,'font-weight':700,...a},g);
  const badge=(y,s,col)=>{const w=s.length*16+28;mk('rect',{x:C-w/2,y:y-19,width:w,height:28,rx:14,fill:col,opacity:.2},g);T(s,{y,fill:col,'font-size':16,'font-weight':800})};
  if(bs==0){bNuc(g,640,124,10);txt('원자핵',{x:658,y:129,fill:'#ffc4c4','font-size':14,'font-weight':700},g);
@@ -723,7 +723,7 @@ function stepper(S,box,prev,next,num,cue,draw){const ST=/^\d+단계/.test(S[0][0
  prev.onclick=()=>o.go(o.s-1);next.onclick=()=>o.go(o.s==S.length-1?0:o.s+1);return o}
 const PT=(g,C)=>(s,a)=>txt(s,{x:C,'text-anchor':'middle',fill:'#e8ecff','font-size':15,'font-weight':700,...a},g);   // 오른쪽 정리판 가운데 글
 function pPanel(g,title){mk('rect',{x:548,y:44,width:372,height:252,rx:12,fill:'rgba(255,255,255,.05)',stroke:'rgba(255,255,255,.14)'},g);
- txt(title,{x:566,y:72,fill:'#ffd76b','font-size':15,'font-weight':800},g)}
+ txt(title,{x:734,y:72,'text-anchor':'middle',fill:'#ffd76b','font-size':15,'font-weight':800},g)}
 
 // 지평선 문제: 지구를 가운데에 두고 관측 가능한 우주(빛이 138억 년 동안 올 수 있는 범위)를 원으로 나타냄
 // 우주 팽창은 생각하지 않은 단순한 모형 (교과서 그림과 같은 방식)
