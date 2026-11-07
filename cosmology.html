@@ -557,13 +557,21 @@ function hDraw(t){const g=hg;g.innerHTML='';const e=hm<.5?2*hm*hm:1-2*(1-hm)**2;
   mk('circle',{cx:786,cy:140,r:22,fill:'none',stroke:'#7fd3ff','stroke-width':1.8},g);
   T('양성자 2개 + 중성자 2개',{y:204});T('→ 헬륨 원자핵 1개',{y:230,fill:'#7fd3ff'});
   T('중성자 2개가 모두 헬륨 원자핵 속으로',{y:266,'font-size':12.5,fill:'#a9b1cc','font-weight':400})}
- if(hs==2){txt('개수비',{x:572,y:100,fill:'#a9b1cc','font-size':13,'font-weight':700},g);
-  const l=(y,a,b,col)=>{txt(a,{x:580,y,fill:col,'font-size':15,'font-weight':700},g);txt(b,{x:888,y,'text-anchor':'end',fill:col,'font-size':15,'font-weight':700},g)};
-  l(124,'수소 원자핵','12개','#ff9d9d');l(148,'헬륨 원자핵','1개','#7fd3ff');T('수소 : 헬륨 = 12 : 1',{y:178,'font-size':17,'font-weight':800});
-  mk('line',{x1:572,y1:192,x2:896,y2:192,stroke:'rgba(255,255,255,.15)'},g);
-  txt('질량비 (입자 1개의 질량을 1로 놓으면)',{x:572,y:214,fill:'#a9b1cc','font-size':13,'font-weight':700},g);
-  T('12 × 1 : 1 × 4 = 12 : 4 = 3 : 1',{y:240,'font-size':17,'font-weight':800,fill:'#ffb357'});
-  hBar(g,254,[[75,'#ff9d9d','수소 75%'],[25,'#7fd3ff','헬륨 25%']])}
+ if(hs==2){   // 위: 개수비(간단히) / 아래: 질량비 그림 - 질량 4씩 네모로 묶으면 수소 3묶음, 헬륨 1묶음
+  txt('개수비',{x:572,y:102,fill:'#a9b1cc','font-size':13,'font-weight':700},g);
+  txt('수소 : 헬륨 = 12 : 1',{x:896,y:103,'text-anchor':'end',fill:'#e8ecff','font-size':16,'font-weight':800},g);
+  mk('line',{x1:572,y1:118,x2:896,y2:118,stroke:'rgba(255,255,255,.15)'},g);
+  txt('질량비 (입자 1개의 질량을 1로 놓으면)',{x:572,y:139,fill:'#a9b1cc','font-size':13,'font-weight':700},g);
+  const box=(x,y)=>mk('rect',{x,y,width:52,height:48,rx:8,fill:'rgba(255,179,87,.08)',stroke:'#ffb357','stroke-width':1.4,'stroke-dasharray':'4 3'},g);
+  txt('수소',{x:572,y:178,fill:'#ff9d9d','font-size':15,'font-weight':800},g);
+  [616,676,736].forEach(x=>{box(x,148);[[-11,-11],[11,-11],[-11,11],[11,11]].forEach(([dx,dy])=>hPart(g,x+26+dx,172+dy,true,6))});
+  txt('질량 12',{x:896,y:178,'text-anchor':'end',fill:'#ff9d9d','font-size':15,'font-weight':800},g);
+  txt('헬륨',{x:572,y:236,fill:'#7fd3ff','font-size':15,'font-weight':800},g);
+  box(616,206);[[-7,-7,1],[7,-7,0],[-7,7,0],[7,7,1]].forEach(([dx,dy,p])=>hPart(g,642+dx,230+dy,!!p,7));
+  mk('circle',{cx:642,cy:230,r:18,fill:'none',stroke:'#7fd3ff','stroke-width':1.6},g);
+  txt('← 네모 1개 = 질량 4',{x:678,y:235,fill:'#a9b1cc','font-size':12},g);
+  txt('질량 4',{x:896,y:236,'text-anchor':'end',fill:'#7fd3ff','font-size':15,'font-weight':800},g);
+  T('수소 : 헬륨 = 12 : 4 = 3 : 1',{y:282,'font-size':17,'font-weight':800,fill:'#ffb357'})}
  if(hs==3){txt('빅뱅 우주론의 예측',{x:568,y:104,fill:'#e8ecff','font-size':13.5,'font-weight':700},g);
   hBar(g,112,[[75,'#ff9d9d','수소 75%'],[25,'#7fd3ff','헬륨 25%']]);
   txt('실제 우주의 관측',{x:568,y:164,fill:'#e8ecff','font-size':13.5,'font-weight':700},g);
