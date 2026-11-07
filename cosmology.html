@@ -99,6 +99,17 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 #ccheck{flex:none}
 /* 기억하기는 정답 확인을 누른 뒤에 보임 (자리는 미리 차지해 화면이 움직이지 않음) */
 #cmemo.wait{visibility:hidden}
+/* ② 빅뱅 우주론의 증거: 작은 메뉴(연보라)와 단계 설명 */
+.subtabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
+.subtabs button{padding:5px 16px;border:1px solid var(--sub-bd);border-radius:999px;background:var(--sub-bg);color:var(--sub-tx);font-size:.9rem;font-weight:700;cursor:pointer}
+.subtabs button.on{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub)}
+#hsv{max-height:max(240px,calc(100vh - 360px))}
+#hsv{max-height:max(240px,calc(100dvh - 360px))}
+.stepbox{margin-top:8px;background:var(--card);border-radius:14px;padding:8px 14px;font-size:.92rem;line-height:1.55;min-height:4.4em}
+.stepbox b{color:var(--acc);margin-right:4px}
+.sn{font-size:.9rem;font-weight:700;opacity:.8}
+#hcue{flex:1 1 220px;font-size:.92rem}
+#eva[hidden],#evb[hidden]{display:none}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
@@ -131,10 +142,41 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  </div></div>
 </section>
 
-<!-- ② 빅뱅 우주론의 증거 (준비 중) -->
+<!-- ② 빅뱅 우주론의 증거: 작은 메뉴(연보라) [수소와 헬륨의 질량비] [우주 배경 복사]
+     수소와 헬륨의 질량비: 5단계로 차례대로 (양성자:중성자 = 7:1 → 헬륨 원자핵 생성 → 남은 양성자 = 수소 원자핵 → 질량비 3:1 → 관측과 비교) -->
 <section id="p2" role="tabpanel" aria-labelledby="tab2" hidden>
- <div class="note"><p>빅뱅 우주론을 뒷받침하는 증거를 살펴봅시다. (준비 중)</p></div>
- <svg viewBox="0 0 940 300" aria-label="준비 중인 그림판"><text x="470" y="158" text-anchor="middle" fill="#a9b1cc" font-size="18">빅뱅 우주론의 증거 — 준비 중</text></svg>
+ <div class="subtabs" role="tablist" aria-label="빅뱅 우주론의 증거">
+  <button type="button" role="tab" id="e2a" class="on" aria-selected="true">수소와 헬륨의 질량비</button>
+  <button type="button" role="tab" id="e2b" aria-selected="false">우주 배경 복사</button>
+ </div>
+ <div id="eva">
+  <svg id="hsv" viewBox="0 0 940 320" aria-label="양성자와 중성자가 결합하여 헬륨 원자핵이 만들어지는 과정">
+   <defs>
+    <radialGradient id="hgp" cx=".35" cy=".32" r=".75"><stop offset="0" stop-color="#ffb3b3"/><stop offset=".6" stop-color="#ef5d5d"/><stop offset="1" stop-color="#b8333a"/></radialGradient>
+    <radialGradient id="hgn" cx=".35" cy=".32" r=".75"><stop offset="0" stop-color="#f1f4fb"/><stop offset=".6" stop-color="#aab4ca"/><stop offset="1" stop-color="#6f7a93"/></radialGradient>
+    <radialGradient id="hgb" cx=".5" cy=".5" r=".75"><stop offset="0" stop-color="#3a1c2e"/><stop offset="1" stop-color="#141026"/></radialGradient>
+   </defs>
+   <g id="hg"></g>
+  </svg>
+  <div class="stepbox" id="hstep"></div>
+  <div class="ctl">
+   <button class="pb" id="hprev">◀ 이전 단계</button><button class="pb" id="hnext">다음 단계 ▶</button>
+   <span class="sn" id="hnum"></span>
+   <span class="go" id="hcue"><span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.</span>
+  </div>
+  <div class="note ask"><span class="tag">생각해 보기</span><p>양성자와 중성자의 개수비가 7&nbsp;:&nbsp;1이 아니라 5&nbsp;:&nbsp;1이었다면, 수소와 헬륨의 질량비는 어떻게 되었을까요?</p><button type="button" class="open-think" id="thb2">정답 확인</button></div>
+  <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="mtx">양성자 : 중성자 = 7&nbsp;:&nbsp;1 → 수소 : 헬륨의 질량비 = 3&nbsp;:&nbsp;1 (관측값과 일치 → 빅뱅 우주론의 증거)</p></div>
+  <div class="ov" id="ov2" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 양성자와 중성자의 개수비가 7 : 1이 아니라 5 : 1이었다면, 수소와 헬륨의 질량비는 어떻게 되었을까요?">
+   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>양성자와 중성자의 개수비가 7 : 1이 아니라 5 : 1이었다면, 수소와 헬륨의 질량비는 어떻게 되었을까요?</b><button type="button" class="x" id="thx2" aria-label="닫기">닫기 ✕</button></div>
+   <p class="ans">수소 : 헬륨 = 2 : 1이 됩니다.</p>
+   <p class="exp">입자 12개로 생각하면 양성자 10개, 중성자 2개입니다. 양성자 2개와 중성자 2개가 헬륨 원자핵 1개(질량 4)를 만들고, 남은 양성자 8개가 수소 원자핵(질량 8)이 되므로 수소 : 헬륨 = 8 : 4 = 2 : 1입니다.</p>
+   <p class="exp">이처럼 중성자의 비율이 클수록 헬륨이 더 많이 만들어집니다. 빅뱅 우주론으로 계산한 양성자와 중성자의 개수비(약 7 : 1)에서 나온 질량비 3 : 1이 실제 관측과 잘 맞는다는 점이 중요합니다.</p>
+  </div></div>
+ </div>
+ <div id="evb" hidden>
+  <div class="note"><p>우주 배경 복사를 알아봅시다. (준비 중)</p></div>
+  <svg viewBox="0 0 940 300" aria-label="준비 중인 그림판"><text x="470" y="158" text-anchor="middle" fill="#a9b1cc" font-size="18">우주 배경 복사 — 준비 중</text></svg>
+ </div>
 </section>
 
 <!-- ③ 빅뱅 우주론의 문제점 (준비 중) -->
@@ -227,8 +269,83 @@ ccheck.onclick=()=>{cMark(false);cmemo.classList.remove('wait');
  ccue.className='';ccue.textContent=ok==6?'6개를 모두 맞혔습니다!':`6개 중 ${ok}개를 맞혔습니다. 그림을 다시 관찰하며 정답과 비교해 보세요.`};
 cAll();cLast=performance.now();craf=requestAnimationFrame(cLoop);   // 단추 없이 처음부터 천천히 되풀이
 
+// ---- ② 빅뱅 우주론의 증거 ----
+// 작은 메뉴: 수소와 헬륨의 질량비 / 우주 배경 복사
+[[e2a,eva],[e2b,evb]].forEach(([b,v],i,all)=>b.onclick=()=>all.forEach(([bb,vv])=>{const on=bb==b;bb.classList.toggle('on',on);bb.setAttribute('aria-selected',on);vv.hidden=!on}));
+
+// 수소와 헬륨의 질량비: 입자 16개(양성자 14, 중성자 2 → 7 : 1)를 골라 나타냄
+// 1단계 양성자·중성자 / 2단계 양성자 2 + 중성자 2 → 헬륨 원자핵 / 3단계 남은 양성자 12 = 수소 원자핵 / 4단계 질량비 12 : 4 = 3 : 1 / 5단계 관측과 비교
+// 양성자와 중성자의 질량은 거의 같다고 보고 입자 1개의 질량을 1로 놓음
+const HS=[
+ ['1단계 · 양성자와 중성자','빅뱅 직후 뜨거운 우주에서 양성자와 중성자가 만들어졌습니다. 빅뱅 후 약 3분이 지났을 때 양성자와 중성자의 개수비는 약 7 : 1이었습니다. 그림은 입자 16개를 골라 나타낸 것입니다.'],
+ ['2단계 · 헬륨 원자핵의 생성','우주의 온도가 약 10억 K까지 낮아지자 양성자 2개와 중성자 2개가 결합하여 헬륨 원자핵이 만들어졌습니다. 중성자는 거의 모두 헬륨 원자핵 속으로 들어갑니다.'],
+ ['3단계 · 수소 원자핵','헬륨 원자핵을 만들고 남은 양성자 12개는 그대로 수소 원자핵이 됩니다. 수소 원자핵은 양성자 1개입니다.'],
+ ['4단계 · 질량비 구하기','양성자와 중성자의 질량은 거의 같으므로 입자 1개의 질량을 1로 놓습니다. 수소 원자핵 12개의 질량은 12, 헬륨 원자핵 1개의 질량은 4이므로 수소와 헬륨의 질량비는 12 : 4 = 3 : 1입니다.'],
+ ['5단계 · 관측과 비교','실제 우주에서 관측한 수소와 헬륨의 질량비도 약 3 : 1입니다. 빅뱅 우주론으로 예측한 값이 관측과 잘 맞으므로, 수소와 헬륨의 질량비는 빅뱅 우주론의 증거가 됩니다.']];
+const HN=[5,10],HHE=[5,6,9,10],HPB=[];   // 중성자 번호, 헬륨 원자핵이 되는 입자 번호(가운데 2×2)
+for(let r=0;r<4;r++)for(let c=0;c<4;c++){const k=r*4+c;HPB.push([85+c*120+((k*37)%23-11),80+r*62+((k*53)%19-9)])}
+const HCX=HHE.reduce((a,k)=>a+HPB[k][0],0)/4,HCY=HHE.reduce((a,k)=>a+HPB[k][1],0)/4;
+const HOFF={5:[11,-11],6:[-11,-11],9:[11,11],10:[-11,11]};   // 헬륨 원자핵 안의 자리 (중성자는 대각선으로)
+let hs=0,hm=0,hraf=0,hLast=0;
+function hPart(g,x,y,p,r){mk('circle',{cx:x,cy:y,r,fill:p?'url(#hgp)':'url(#hgn)',stroke:p?'#ffc4c4':'#eef2fb','stroke-width':1},g);
+ if(p&&r>10)txt('+',{x,y:y+r*.36,'text-anchor':'middle',fill:'#fff','font-size':r*1.15,'font-weight':800},g)}
+function hBar(g,y,parts){let x=568;const W=332;
+ parts.forEach(([v,c,l])=>{const w=W*v/100;mk('rect',{x,y,width:w,height:24,fill:c},g);
+  if(l&&w>40)txt(l,{x:x+w/2,y:y+16.5,'text-anchor':'middle',fill:'#1b1f2a','font-size':12.5,'font-weight':800},g);x+=w})}
+function hDraw(t){const g=hg;g.innerHTML='';const e=hm<.5?2*hm*hm:1-2*(1-hm)**2;
+ // 왼쪽: 입자 상자
+ txt('빅뱅 후 약 3분',{x:22,y:30,fill:'#ffd76b','font-size':14,'font-weight':700},g);
+ hPart(g,388,25,true,7);txt('양성자',{x:400,y:30,fill:'#ffc4c4','font-size':12.5,'font-weight':700},g);
+ hPart(g,458,25,false,7);txt('중성자',{x:470,y:30,fill:'#dfe5f2','font-size':12.5,'font-weight':700},g);
+ mk('rect',{x:20,y:44,width:500,height:252,rx:12,fill:'url(#hgb)',stroke:'rgba(255,190,190,.25)'},g);
+ const jig=(k,a)=>[a*Math.sin(t*2.1+k*1.7),a*Math.cos(t*1.8+k*1.3)];
+ for(let k=0;k<16;k++){if(HHE.includes(k))continue;const [jx,jy]=jig(k,3),x=HPB[k][0]+jx,y=HPB[k][1]+jy;
+  if(hs>=2)mk('circle',{cx:x,cy:y,r:21,fill:'none',stroke:'#ff9d9d','stroke-width':1.4,'stroke-dasharray':'3 3'},g);
+  hPart(g,x,y,true,14)}
+ const [cx,cy]=jig(99,3*(1-e)+1.5*e);
+ for(const k of HHE){const [jx,jy]=jig(k,3*(1-e)),[ox,oy]=HOFF[k];
+  hPart(g,HPB[k][0]+(HCX+ox-HPB[k][0])*e+jx+cx*e,HPB[k][1]+(HCY+oy-HPB[k][1])*e+jy+cy*e,!HN.includes(k),14)}
+ if(hm>=1){mk('circle',{cx:HCX+cx,cy:HCY+cy,r:33,fill:'none',stroke:'#7fd3ff','stroke-width':2},g);
+  txt('헬륨 원자핵',{x:HCX+cx,y:HCY+cy-40,'text-anchor':'middle',fill:'#7fd3ff','font-size':13,'font-weight':800},g)}
+ // 오른쪽: 단계별 정리
+ mk('rect',{x:548,y:44,width:372,height:252,rx:12,fill:'rgba(255,255,255,.05)',stroke:'rgba(255,255,255,.14)'},g);
+ txt(HS[hs][0],{x:566,y:72,fill:'#ffd76b','font-size':15,'font-weight':800},g);
+ const C=734,T=(s,a)=>txt(s,{x:C,'text-anchor':'middle',fill:'#e8ecff','font-size':15,'font-weight':700,...a},g);
+ if(hs==0){T('양성자 : 중성자',{y:118,'font-size':17});
+  const r=T('',{y:170,'font-size':34,'font-weight':800});r.innerHTML='<tspan fill="#ff9d9d">14</tspan> : <tspan fill="#dfe5f2">2</tspan>';
+  T('= 7 : 1',{y:220,'font-size':34,'font-weight':800,fill:'#ffb357'});T('(입자 16개 중)',{y:256,'font-size':12.5,fill:'#a9b1cc','font-weight':400})}
+ if(hs==1){hPart(g,606,140,true,10);hPart(g,630,140,true,10);txt('+',{x:654,y:147,'text-anchor':'middle',fill:'#e8ecff','font-size':20,'font-weight':700},g);
+  hPart(g,678,140,false,10);hPart(g,702,140,false,10);txt('→',{x:736,y:147,'text-anchor':'middle',fill:'#e8ecff','font-size':22,'font-weight':700},g);
+  [[-7,-7,1],[7,-7,0],[-7,7,0],[7,7,1]].forEach(([dx,dy,p])=>hPart(g,786+dx,140+dy,!!p,8.5));
+  mk('circle',{cx:786,cy:140,r:22,fill:'none',stroke:'#7fd3ff','stroke-width':1.8},g);
+  T('양성자 2개 + 중성자 2개',{y:204});T('→ 헬륨 원자핵 1개',{y:230,fill:'#7fd3ff'});
+  T('중성자 2개가 모두 헬륨 원자핵 속으로',{y:266,'font-size':12.5,fill:'#a9b1cc','font-weight':400})}
+ if(hs==2){const row=(y,a,b,c,col)=>{txt(a,{x:572,y,fill:col,'font-size':17,'font-weight':800},g);txt(b,{x:896,y,'text-anchor':'end',fill:col,'font-size':22,'font-weight':800},g);
+   txt(c,{x:572,y:y+24,fill:'#a9b1cc','font-size':12.5},g)};
+  row(130,'헬륨 원자핵','1개','양성자 2개 + 중성자 2개','#7fd3ff');row(206,'수소 원자핵','12개','남은 양성자 1개가 수소 원자핵 1개','#ff9d9d')}
+ if(hs==3){T('입자 1개의 질량을 1로 놓으면',{y:102,'font-size':13,fill:'#a9b1cc','font-weight':400});
+  const l=(y,a,b,col)=>{txt(a,{x:580,y,fill:col,'font-size':15,'font-weight':700},g);txt(b,{x:888,y,'text-anchor':'end',fill:col,'font-size':15,'font-weight':700},g)};
+  l(134,'수소 원자핵','12개 × 1 = 12','#ff9d9d');l(162,'헬륨 원자핵','1개 × 4 = 4','#7fd3ff');
+  T('수소 : 헬륨 = 12 : 4 = 3 : 1',{y:204,'font-size':19,'font-weight':800,fill:'#ffb357'});
+  hBar(g,226,[[75,'#ff9d9d','수소 75%'],[25,'#7fd3ff','헬륨 25%']])}
+ if(hs==4){txt('빅뱅 우주론의 예측',{x:568,y:104,fill:'#e8ecff','font-size':13.5,'font-weight':700},g);
+  hBar(g,112,[[75,'#ff9d9d','수소 75%'],[25,'#7fd3ff','헬륨 25%']]);
+  txt('실제 우주의 관측',{x:568,y:164,fill:'#e8ecff','font-size':13.5,'font-weight':700},g);
+  hBar(g,172,[[74,'#ff9d9d','수소 약 74%'],[24,'#7fd3ff','헬륨 약 24%'],[2,'#a9b1cc','']]);
+  txt('기타 원소 약 2%',{x:900,y:212,'text-anchor':'end',fill:'#a9b1cc','font-size':11.5},g);
+  T('예측과 관측이 잘 맞는다',{y:246,fill:'#ffd76b'});T('→ 빅뱅 우주론의 증거',{y:272,'font-size':17,'font-weight':800,fill:'#ffd76b'})}
+}
+function hLoop(now){const dt=Math.min(.05,(now-hLast)/1000);hLast=now;const tg=hs>=1?1:0;
+ hm=tg>hm?Math.min(tg,hm+dt/1.2):Math.max(tg,hm-dt/1.2);if(!p2.hidden&&!eva.hidden)hDraw(now/1000);hraf=requestAnimationFrame(hLoop)}
+function hGo(s){hs=Math.max(0,Math.min(4,s));const[tt,tx]=HS[hs];hstep.innerHTML=`<b>${tt}</b> ${tx.replace(/ : /g,"\u00a0:\u00a0")}`;   // 비(7 : 1)가 줄바꿈으로 갈라지지 않게
+ hprev.disabled=hs==0;hnext.textContent=hs==4?'↺ 처음으로':'다음 단계 ▶';hnum.textContent=`${hs+1} / 5 단계`;
+ if(hs==4){hcue.className='';hcue.textContent=''}else{hcue.className='go';hcue.innerHTML='<span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.'}
+ hDraw(performance.now()/1000)}
+hprev.onclick=()=>hGo(hs-1);hnext.onclick=()=>hGo(hs==4?0:hs+1);   // 마지막 단계에서는 처음으로
+hGo(0);hLast=performance.now();hraf=requestAnimationFrame(hLoop);
+
 // 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
-[['ov1','thb1','thx1']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
+[['ov1','thb1','thx1'],['ov2','thb2','thx2']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
  const close=()=>{ov.hidden=true;btn.focus()};btn.onclick=()=>{ov.hidden=false;cl.focus()};cl.onclick=close;
  ov.addEventListener('click',e=>{if(e.target===ov)close()});ov.addEventListener('keydown',e=>{if(e.key=='Escape')close()})});
 </script>
