@@ -15,7 +15,7 @@
   - `evolution.html`: 탐구 02 · 별의 진화. 탭 '전주계열 단계', '주계열 단계', '후주계열 단계', '별의 진화와 순환' ('태양의 진화'는 사용자 요청으로 뺌)
   - 두 자료의 돌아가기 링크는 `./Evol_index.html`
 - `spectral_type.html`: 별의 분광형. 정식 사이트로 옮김(`Star/spectrum.html`의 '별의 분광형' 탭)
-- `cosmology.html`: 현대 우주론의 정립. '빅뱅 우주론의 증거' 탭의 우주 배경 복사 하늘 지도는 `lib/cmb_wmap.jpg`(NASA / WMAP Science Team, 퍼블릭 도메인)를 씁니다.
+- `cosmology.html`: 현대 우주론의 정립. '빅뱅 우주론의 증거' 탭의 우주 배경 복사 관측 결과 그림(WMAP 위성)은 `lib/cmb_wmap.jpg`(NASA / WMAP Science Team, 퍼블릭 도메인)를 씁니다.
 - 자료는 들어갈 위치가 정해지지 않았으면 루트에 두고, 돌아가기 링크는 `./index.html`로 둡니다.
 - 학습실 단위로 시험할 때는 정식 사이트와 같은 방식으로 만듭니다.
   ```
