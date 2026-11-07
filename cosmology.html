@@ -73,6 +73,12 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 .think .ans{margin:0 0 8px;font-size:1rem;font-weight:700}
 .think .exp{margin:0;font-size:.93rem;line-height:1.6}
 .think .exp+.exp{margin-top:6px}
+/* ① 현대 우주론: 정상 우주론과 빅뱅 우주론 그림판을 나란히 (좁은 화면에서는 위아래로) */
+.cpair{display:flex;gap:10px}
+.cpair svg{flex:1 1 0;min-width:0;max-height:max(250px,calc(100vh - 330px))}
+.cpair svg{max-height:max(250px,calc(100dvh - 330px))}
+@media (max-width:600px){.cpair{flex-direction:column}}
+#ccue{flex:1 1 200px;font-size:.92rem}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></head><body><main>
@@ -87,10 +93,23 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
  <button role="tab" id="tab6" aria-controls="p6" aria-selected="false" tabindex="-1">우주의 가속 팽창</button>
 </div>
 
-<!-- ① 현대 우주론 (준비 중) -->
+<!-- ① 현대 우주론: 정상 우주론(왼쪽)과 빅뱅 우주론(오른쪽)을 같은 팽창으로 나란히 비교
+     네모 = 우주의 일부분(평면으로 나타냄), 점 = 은하. 정상 우주론은 새 은하가 생겨 밀도 일정, 빅뱅 우주론은 은하 수 일정 → 밀도·온도 감소 -->
 <section id="p1" role="tabpanel" aria-labelledby="tab1">
- <div class="note"><p>정상 우주론과 빅뱅 우주론을 비교해 봅시다. (준비 중)</p></div>
- <svg viewBox="0 0 940 300" aria-label="준비 중인 그림판"><text x="470" y="158" text-anchor="middle" fill="#a9b1cc" font-size="18">현대 우주론 — 준비 중</text></svg>
+ <div class="note"><p>정상 우주론과 빅뱅 우주론은 모두 우주가 팽창한다고 보지만, 팽창하는 동안 우주의 질량·밀도·온도가 어떻게 되는지에 대한 생각이 다릅니다. 그림의 네모는 우주의 일부분을 평면으로 나타낸 것이고, 점은 은하입니다.</p></div>
+ <div class="cpair"><svg id="css" viewBox="0 0 460 364" aria-label="정상 우주론: 우주가 팽창해도 새 은하가 생겨 밀도가 일정함"></svg><svg id="cbb" viewBox="0 0 460 364" aria-label="빅뱅 우주론: 우주가 팽창하면 은하 수는 그대로이고 밀도와 온도가 낮아짐"></svg></div>
+ <div class="ctl">
+  <button class="pb" id="cplay">▶ 팽창시키기</button><button class="pb" id="crst">↺ 처음으로</button>
+  <span class="go" id="ccue"><span class="kb">팽창시키기</span>를 눌러 두 우주를 비교해 보세요.</span>
+ </div>
+ <div class="note ask"><span class="tag">생각해 보기</span><p>두 우주론 중 어느 것이 옳은지 가리려면 무엇을 관측하면 좋을까요?</p><button type="button" class="open-think" id="thb1">정답 확인</button></div>
+ <div class="note ask ask2 memo"><span class="tag mem">기억하기</span><p class="mtx">정상 우주론: 질량 증가, 밀도·온도 일정 &nbsp;/&nbsp; 빅뱅 우주론: 질량 일정, 밀도·온도 감소</p></div>
+ <div class="ov" id="ov1" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 두 우주론 중 어느 것이 옳은지 가리려면 무엇을 관측하면 좋을까요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>두 우주론 중 어느 것이 옳은지 가리려면 무엇을 관측하면 좋을까요?</b><button type="button" class="x" id="thx1" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">과거의 우주가 지금과 달랐는지를 확인하면 됩니다.</p>
+  <p class="exp">정상 우주론에서는 우주가 언제나 지금과 같은 모습이지만, 빅뱅 우주론에서는 과거의 우주가 지금보다 훨씬 뜨겁고 밀도가 컸습니다. 따라서 뜨거웠던 초기 우주가 남긴 빛(우주 배경 복사)이 관측되거나, 먼 우주(과거의 우주)가 가까운 우주와 다르게 보인다면 빅뱅 우주론을 뒷받침하는 증거가 됩니다.</p>
+  <p class="exp">실제로 1965년에 우주 배경 복사가 발견되면서 빅뱅 우주론이 널리 받아들여졌습니다. 자세한 내용은 <b>빅뱅 우주론의 증거</b>에서 알아봅니다.</p>
+ </div></div>
 </section>
 
 <!-- ② 빅뱅 우주론의 증거 (준비 중) -->
@@ -130,6 +149,54 @@ const TABS=[tab1,tab2,tab3,tab4,tab5,tab6],PANES=[p1,p2,p3,p4,p5,p6];
 function openTab(i){TABS.forEach((t,j)=>{t.setAttribute('aria-selected',i==j);t.tabIndex=i==j?0:-1;PANES[j].hidden=i!=j});
  PANES[i].classList.remove('enter');void PANES[i].offsetWidth;PANES[i].classList.add('enter')}
 TABS.forEach((t,i)=>{t.onclick=()=>openTab(i);t.onkeydown=e=>{if(e.key=='ArrowRight'||e.key=='ArrowLeft'){const j=(i+(e.key=='ArrowRight'?1:TABS.length-1))%TABS.length;TABS[j].focus();openTab(j)}}});
+
+// SVG 그리기 도우미
+const SVGNS='http://www.w3.org/2000/svg';
+function mk(t,a,p){const e=document.createElementNS(SVGNS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function txt(s,a,p){const e=mk('text',a,p);e.textContent=s;return e}
+
+// ---- ① 현대 우주론: 정상 우주론 vs. 빅뱅 우주론 ----
+// 우주의 크기(배율) cR: 처음 C0 → 1. 점(은하)은 우주와 함께 늘어나는 좌표(-1~1)에 고르게 놓음(할턴 수열: 앞에서부터 몇 개를 골라도 고르게 퍼짐)
+// 빅뱅 우주론: 은하 N0개 그대로 → 질량 일정, 밀도 ∝ 1/크기², 온도 ∝ 1/크기 (평면 그림이므로 넓이 기준)
+// 정상 우주론: 은하 수 ∝ 크기² → 밀도 일정, 질량 증가, 온도 일정. 새로 생긴 은하는 잠깐 초록색으로 표시
+const C0=.4,N0=16,NMAX=Math.ceil(N0/(C0*C0)),CCX=230,CCY=172,CHM=95,CDUR=6;
+function hal(i,b){let f=1,r=0;while(i>0){f/=b;r+=f*(i%b);i=Math.floor(i/b)}return r}
+const CPT=Array.from({length:NMAX},(_,k)=>[hal(k+1,2)*2-1,hal(k+1,3)*2-1]);
+let cR=C0,craf=0,cLast=0;
+function cDraw(svg,ss){svg.innerHTML='';const R=cR,h=CHM*R,moved=R>C0+1e-6,col=ss?'#6fe0c8':'#ffb357';
+ const n=ss?Math.min(NMAX,Math.floor(N0*(R/C0)**2+1e-9)):N0;
+ txt(ss?'정상 우주론':'빅뱅 우주론',{x:16,y:29,fill:col,'font-size':20,'font-weight':800},svg);
+ const cn=txt('',{x:444,y:29,'text-anchor':'end',fill:'#e8ecff','font-size':13.5,'font-weight':700},svg);cn.textContent=`은하 수: ${n}개`;
+ (ss?['우주가 팽창하여 생긴 공간에 새로운 물질이 계속 생겨나','밀도가 일정하게 유지된다. 우주의 시작과 끝이 없다.']
+    :['매우 뜨겁고 밀도가 큰 한 점에서 대폭발로 시작되어 팽창한다.','새로 생기는 물질이 없어 밀도와 온도가 점점 낮아진다.'])
+  .forEach((s,i)=>txt(s,{x:16,y:50+i*16,fill:'#c9d0ea','font-size':12.5},svg));
+ // 우주(네모): 색으로 온도를 나타냄 (빅뱅 우주론은 팽창할수록 붉은빛 → 푸른빛으로 식음)
+ const T=ss?1:C0/R,k=(1-T)/(1-C0),mix=(a,b)=>Math.round(a+(b-a)*k);
+ mk('rect',{x:CCX-h,y:CCY-h,width:2*h,height:2*h,rx:6,fill:`rgba(${mix(255,70)},${mix(140,100)},${mix(70,190)},${(.3-.14*k).toFixed(3)})`,stroke:'rgba(200,215,255,.55)','stroke-dasharray':'4 4'},svg);
+ for(let i=0;i<n;i++){const [ux,uy]=CPT[i],x=CCX+ux*.88*h,y=CCY+uy*.88*h,nw=ss&&i>=N0&&R-C0*Math.sqrt(i/N0)<.07;
+  mk('circle',{cx:x,cy:y,r:nw?8:6,fill:nw?'#9dffb0':'#cfd8ff',opacity:.2},svg);mk('circle',{cx:x,cy:y,r:nw?3.8:2.9,fill:nw?'#9dffb0':'#fff'},svg)}
+ if(ss){mk('circle',{cx:350,cy:259,r:3.8,fill:'#9dffb0'},svg);txt('새로 생긴 은하',{x:359,y:263.5,fill:'#9dffb0','font-size':12,'font-weight':700},svg)}
+ // 아래 막대: 처음과 비교한 크기·질량·밀도·온도 (막대 길이는 변화의 방향을 보여 주는 정도로만 나타냄)
+ const q=R/C0,rows=[['크기',q],['질량',ss?q*q:1],['밀도',ss?1:1/(q*q)],['온도',ss?1:1/q]];
+ rows.forEach(([nm,v],i)=>{const y=292+i*21,w=Math.max(4,Math.min(250,120+44*Math.log2(v)));
+  txt(nm,{x:18,y:y+5,fill:'#cfd6ee','font-size':14,'font-weight':700},svg);
+  mk('rect',{x:62,y:y-6,width:250,height:12,rx:6,fill:'rgba(255,255,255,.08)'},svg);
+  mk('rect',{x:62,y:y-6,width:w,height:12,rx:6,fill:col,opacity:.85},svg);
+  const st=!moved?'':v>1.001?'증가 ▲':v<.999?'감소 ▼':'일정 ━';
+  if(st)txt(st,{x:444,y:y+4.5,'text-anchor':'end',fill:v>1.001?'#7be08f':v<.999?'#6fd3ff':'#e8ecff','font-size':13.5,'font-weight':800},svg)});
+}
+function cAll(){cDraw(css,true);cDraw(cbb,false)}
+function cStop(){cancelAnimationFrame(craf);craf=0;cplay.textContent='▶ 팽창시키기'}
+function cLoop(now){cR=Math.min(1,cR+(1-C0)/CDUR*Math.min(.05,(now-cLast)/1000));cLast=now;cAll();
+ if(cR>=1){cStop();ccue.textContent='막대의 변화를 비교해 보세요.';ccue.className='';return}craf=requestAnimationFrame(cLoop)}
+cplay.onclick=()=>{if(craf){cStop();return}if(cR>=1)cR=C0;cplay.textContent='⏸ 멈춤';cLast=performance.now();craf=requestAnimationFrame(cLoop)};
+crst.onclick=()=>{cStop();cR=C0;cAll();ccue.innerHTML='<span class="kb">팽창시키기</span>를 눌러 두 우주를 비교해 보세요.';ccue.className='go'};
+cAll();
+
+// 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
+[['ov1','thb1','thx1']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
+ const close=()=>{ov.hidden=true;btn.focus()};btn.onclick=()=>{ov.hidden=false;cl.focus()};cl.onclick=close;
+ ov.addEventListener('click',e=>{if(e.target===ov)close()});ov.addEventListener('keydown',e=>{if(e.key=='Escape')close()})});
 </script>
 <script src="./copyright.js"></script>
 </body>
