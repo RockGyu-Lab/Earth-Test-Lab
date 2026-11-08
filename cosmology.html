@@ -1097,12 +1097,19 @@ function galaxy(g,cx,cy,R,tilt){const q=mk('g',{transform:`translate(${cx},${cy}
 const RV=u=>.4457*u/Math.pow(u*u+.0144,.75),   // 예상: 빛을 내는 물질만 있을 때 (질량이 중심부에 모임 → 바깥쪽은 느려짐)
       RO=u=>.8*(1-Math.exp(-u/.07))+.03*u;   // 관측: 바깥쪽에서도 거의 일정
 const RU=[.3,.6,.9],RCOL=['#ff9d9d','#7fe0a0','#7fd3ff'];
-function rDraw(t){const g=rgg;g.innerHTML='';const s=DR.s;
+let rLast=-1,rT0=0;   // 단계가 바뀐 시각: 그래프는 한 번만 그리고 그대로 유지
+function rDraw(t){const g=rgg;g.innerHTML='';const s=DR.s;if(s!=rLast){rLast=s;rT0=t}
  iHead(g,['은하의 회전 (비스듬히 본 모습)','예상한 회전 속도 (개념도)','관측한 회전 속도 (개념도)','은하를 둘러싼 암흑 물질 (개념도)'][s]);iBox(g);
  const inn=mk('g',{'clip-path':'url(#rclip)'},g);
  if(s==0){galaxy(inn,270,140,150,.34);
   mk('path',{d:'M322,82Q270,74 218,82',fill:'none',stroke:'#e8ecff','stroke-width':2,'marker-end':'url(#rar)'},inn);   // 회전 방향: 먼 쪽(위)은 왼쪽, 가까운 쪽(아래)은 오른쪽
   mk('path',{d:'M218,198Q270,206 322,198',fill:'none',stroke:'#e8ecff','stroke-width':2,'marker-end':'url(#rar)'},inn);
+  // 관측자(지구)는 은하의 앞쪽(그림의 아래)에 있음: 왼쪽 끝의 별은 관측자 쪽으로, 오른쪽 끝의 별은 관측자에게서 먼 쪽으로 움직임
+  [[122,'#7fb8ff'],[418,'#ff8a8a']].forEach(([x,c])=>mk('line',{x1:270,y1:224,x2:x,y2:146,stroke:c,'stroke-width':1.2,'stroke-dasharray':'3 4',opacity:.75},inn));
+  mk('line',{x1:122,y1:134,x2:136,y2:170,stroke:'#7fb8ff','stroke-width':3,'marker-end':'url(#rar)'},inn);
+  mk('line',{x1:418,y1:146,x2:404,y2:110,stroke:'#ff8a8a','stroke-width':3,'marker-end':'url(#rar)'},inn);
+  mk('circle',{cx:270,cy:234,r:9,fill:'#2f7fd8',stroke:'#fff','stroke-width':1},inn);mk('circle',{cx:267,cy:231,r:3.5,fill:'#bfe6ff',opacity:.7},inn);
+  txt('관측자 (지구)',{x:270,y:260,'text-anchor':'middle',fill:'#cfe6ff','font-size':12,'font-weight':800},inn);
   txt('다가옴',{x:110,y:145,'text-anchor':'end',fill:'#7fb8ff','font-size':15,'font-weight':800},inn);
   txt('멀어짐',{x:430,y:145,fill:'#ff8a8a','font-size':15,'font-weight':800},inn);
   [[60,-24,'청색 편이 (다가오는 쪽)','#7fb8ff'],[300,24,'적색 편이 (멀어지는 쪽)','#ff8a8a']].forEach(([x,d,l,c])=>{const w=180,m=x+w/2;
@@ -1120,7 +1127,7 @@ function rDraw(t){const g=rgg;g.innerHTML='';const s=DR.s;
    mk('circle',{cx:x,cy:y,r:4.5,fill:RCOL[i],stroke:'#fff','stroke-width':1.2},inn)});
   txt(['빛을 내는 물질: 중심부에 집중','바깥쪽 별도 빠르게 회전','보라색: 암흑 물질 (실제로는 보이지 않음)'][s-1],{x:s==3?30:GX,y:290,'text-anchor':s==3?'start':'middle',fill:s==3?'#c9b2ff':'#cfd6ee','font-size':12,'font-weight':700},inn);
   // 오른쪽: 회전 속도 곡선
-  const X=u=>290+u*210,Y=v=>266-v*190,u1=Math.min(1,(t%7)/5);
+  const X=u=>290+u*210,Y=v=>266-v*190,u1=Math.min(1,(t-rT0)/5);
   const path=(f,e)=>{let d='';for(let u=0;u<=e+1e-9;u+=.005)d+=(d?'L':'M')+X(u).toFixed(1)+','+Y(f(u)).toFixed(1);return d};
   if(s==3){let d=path(RO,1);for(let u=1;u>=0;u-=.005)d+='L'+X(u).toFixed(1)+','+Y(RV(u)).toFixed(1);mk('path',{d:d+'Z',fill:'rgba(201,178,255,.22)'},inn)}
   mk('line',{x1:290,y1:266,x2:506,y2:266,stroke:'#cfd6ee','stroke-width':1.2},inn);mk('line',{x1:290,y1:266,x2:290,y2:66,stroke:'#cfd6ee','stroke-width':1.2},inn);
@@ -1152,17 +1159,16 @@ function rDraw(t){const g=rgg;g.innerHTML='';const s=DR.s;
 }
 const DR=stepper(RS,rstep,rprev,rnext,rnum,rcue,rDraw);
 
-// 중력 렌즈: 휘어지는 빛의 경로 → 중력 렌즈 현상(옆에서 본 모습) → 관측되는 모습(호, 아인슈타인 고리) → 은하단의 질량과 암흑 물질
+// 중력 렌즈: 휘어지는 빛의 경로 → 중력 렌즈 현상(옆에서 본 모습, 지구에서 본 모습) → 은하단의 질량과 암흑 물질
 const LS=[
  ['휘어지는 빛의 경로','일반 상대성 이론에 따르면 질량이 큰 천체 주위에서는 <em>공간이 휘어지므로</em>, 그 근처를 지나는 <em>빛의 경로도 휘어집니다</em>. 천체의 <em>질량이 클수록</em> 빛의 경로가 더 많이 휘어집니다.'],
- ['중력 렌즈 현상','멀리 있는 천체와 지구 사이에 질량이 큰 은하나 은하단이 있으면, 천체에서 나온 빛이 그 주위에서 휘어져 지구에 도달합니다. 이처럼 무거운 천체가 렌즈처럼 빛을 휘게 하는 현상을 <em>중력 렌즈 현상</em>이라고 합니다.'],
- ['관측되는 모습','중력 렌즈 현상이 일어나면 멀리 있는 천체가 <em>여러 개</em>로 보이거나 <em>호 모양</em>으로 늘어나 보입니다. 천체와 렌즈, 지구가 거의 일직선에 놓이면 고리 모양으로 보이며, 이를 <em>아인슈타인 고리</em>라고 합니다.'],
+ ['중력 렌즈 현상','멀리 있는 천체와 지구 사이에 질량이 큰 은하나 은하단이 있으면, 천체에서 나온 빛이 휘어져 지구에 도달합니다. 이를 <em>중력 렌즈 현상</em>이라고 합니다. 지구에서는 빛이 들어온 방향에 천체가 보이므로, 하나의 천체가 <em>여러 개</em>로 보이거나 <em>호 모양</em>, <em>고리 모양(아인슈타인 고리)</em>으로 보입니다.'],
  ['은하단의 질량과 암흑 물질','빛이 휘어진 정도를 분석하면 렌즈 역할을 하는 은하단의 <em>전체 질량</em>을 구할 수 있습니다. 이렇게 구한 질량은 <em>보이는 물질의 질량보다 훨씬 커서</em>, 은하단에 보이지 않는 <em>암흑 물질</em>이 많이 있다는 것을 알 수 있습니다.']];
 const LCL=[[0,0,10,7.5],[-19,11,5.5,3.8],[17,-13,5.2,4],[23,15,4.4,3],[-13,-21,4.2,3],[-28,-5,3.6,2.6],[7,25,3.8,3],[30,-2,3,2.2]];   // 은하단의 은하들
 const LST=[];{const r=rnd0(11);for(let i=0;i<46;i++)LST.push([24+r()*492,48+r()*244,.4+r()*.8,.3+r()*.5])}
 function lCluster(g,cx,cy,sc){LCL.forEach(([x,y,a,b],i)=>{const px=cx+x*sc,py=cy+y*sc;mk('ellipse',{cx:px,cy:py,rx:a*sc,ry:b*sc,fill:'url(#lgc)',transform:`rotate(${(i*47)%180} ${px} ${py})`},g)})}
 // 하늘에서 본 모습: 질량이 한 점에 모인 렌즈로 단순화. 원 모양 천체(반지름 rs)의 테두리를 렌즈 방정식으로 옮겨 상 2개(또는 고리)를 그림
-function lSky(g,beta,halo){const CX=270,CY=170,E=62,rs=13,ph=-.6,c=[beta*Math.cos(ph),beta*Math.sin(ph)];
+function lSky(g,beta,halo,ph=-.6){const CX=270,CY=170,E=62,rs=13,c=[beta*Math.cos(ph),beta*Math.sin(ph)];
  mk('rect',{x:20,y:44,width:500,height:252,fill:'#0a0c20'},g);
  LST.forEach(([x,y,r,o])=>mk('circle',{cx:x,cy:y,r,fill:'#fff',opacity:o},g));
  if(halo)mk('ellipse',{cx:CX,cy:CY,rx:150,ry:120,fill:'url(#lgh)'},g);
@@ -1172,43 +1178,42 @@ function lSky(g,beta,halo){const CX=270,CY=170,E=62,rs=13,ph=-.6,c=[beta*Math.co
  mk('circle',{cx:CX+c[0],cy:CY+c[1],r:rs,fill:'none',stroke:'#cfd6ee','stroke-width':1.2,'stroke-dasharray':'3 3',opacity:.8},g);
  lCluster(g,CX,CY,1)}
 function lDot(g,x,y,c,l){mk('circle',{cx:x,cy:y-4,r:4.5,fill:c},g);txt(l,{x:x+10,y,fill:'#cfd6ee','font-size':12,'font-weight':700},g)}
-function lDraw(t){const g=lgg;g.innerHTML='';const s=DL.s;
- iHead(g,['질량이 큰 천체 주위를 지나는 빛','옆에서 본 중력 렌즈 현상','지구에서 본 하늘','중력 렌즈로 알아낸 질량 분포'][s]);iBox(g);
+let lLast=-1,lT0=0;   // 단계가 바뀐 시각
+function lDraw(t){const g=lgg;g.innerHTML='';const s=DL.s;if(s!=lLast){lLast=s;lT0=t}
+ iHead(g,['질량이 큰 천체 주위를 지나는 빛','옆에서 본 중력 렌즈 현상','중력 렌즈로 알아낸 질량 분포'][s]);iBox(g);
  const inn=mk('g',{'clip-path':'url(#lclip)'},g);
- if(s==0){const m=.5-.5*Math.cos(t*Math.PI/4),MX=270,MY=206,A=.18+.32*m;   // 질량이 작아졌다 커졌다 함
+ if(s==0){const MX=270,MY=206,A=.5;   // 질량을 정해 두고, 빛이 한 번 지나간 뒤 그대로 유지
   const W=(x,y)=>{const dx=x-MX,dy=y-MY,k=A*Math.exp(-(dx*dx+dy*dy)/7000);return[x-dx*k,y-dy*k]};   // 휘어진 공간(격자)
   let d='';for(let y=56;y<=296;y+=20){for(let x=20;x<=520;x+=10){const[p,q]=W(x,y);d+=(x==20?'M':'L')+p.toFixed(1)+','+q.toFixed(1)}}
   for(let x=30;x<=510;x+=24){for(let y=44;y<=296;y+=10){const[p,q]=W(x,y);d+=(y==44?'M':'L')+p.toFixed(1)+','+q.toFixed(1)}}
   mk('path',{d,fill:'none',stroke:'rgba(127,170,255,.3)','stroke-width':1},inn);
-  mk('circle',{cx:MX,cy:MY,r:12+10*m,fill:'url(#lgm)'},inn);
-  txt(m<.5?'질량이 작을 때':'질량이 클 때',{x:MX,y:MY+48,'text-anchor':'middle',fill:'#ffd76b','font-size':13,'font-weight':800},inn);
-  mk('line',{x1:20,y1:100,x2:520,y2:100,stroke:'#a9b1cc','stroke-width':1.4,'stroke-dasharray':'5 5'},inn);
-  txt('질량이 없을 때',{x:508,y:92,'text-anchor':'end',fill:'#a9b1cc','font-size':12,'font-weight':700},inn);
-  const S=.06+.2*m,ys=[];let y=100,rd='M20,100';for(let x=20;x<=520;x+=4){ys.push(y);y+=S*(1+Math.tanh((x-MX)/45))/2*4;rd+='L'+(x+4)+','+y.toFixed(1)}
-  mk('path',{d:rd,fill:'none',stroke:'#ffd76b','stroke-width':2.6},inn);
-  const px=20+(t*110)%500;mk('circle',{cx:px,cy:ys[Math.min(ys.length-1,Math.round((px-20)/4))],r:5,fill:'#fff',stroke:'#ffd76b','stroke-width':2},inn);
+  mk('circle',{cx:MX,cy:MY,r:22,fill:'url(#lgm)'},inn);
+  txt('질량이 큰 천체',{x:MX,y:MY+48,'text-anchor':'middle',fill:'#ffd76b','font-size':13,'font-weight':800},inn);
+  mk('line',{x1:20,y1:100,x2:500,y2:100,stroke:'#a9b1cc','stroke-width':1.4,'stroke-dasharray':'5 5'},inn);
+  txt('질량이 없을 때',{x:500,y:92,'text-anchor':'end',fill:'#a9b1cc','font-size':12,'font-weight':700},inn);
+  const xe=20+472*ease((t-lT0-.3)/4.5);let y=100,rd='M20,100';for(let x=20;x<xe;x+=4){const x2=Math.min(xe,x+4);y+=.26*(1+Math.tanh((x-MX)/45))/2*(x2-x);rd+='L'+x2.toFixed(1)+','+y.toFixed(1)}
+  if(xe>24)mk('path',{d:rd,fill:'none',stroke:'#ffd76b','stroke-width':2.6,'marker-end':'url(#rar)'},inn);   // 화살표: 빛의 진행 방향
   txt('빛의 경로',{x:34,y:90,fill:'#ffd76b','font-size':12.5,'font-weight':800},inn);
-  txt('질량이 클수록 빛이 더 많이 휘어짐',{x:270,y:288,'text-anchor':'middle',fill:'#e8ecff','font-size':13,'font-weight':800},inn)}
+  txt('질량이 큰 천체 주위에서 빛의 경로가 휘어짐',{x:270,y:288,'text-anchor':'middle',fill:'#e8ecff','font-size':13,'font-weight':800},inn)}
  if(s==1){mk('rect',{x:20,y:44,width:500,height:252,fill:'#0a0c20'},inn);
-  const SX=66,LX=270,EX=478,CY=170,B=56,gal=(x,y,o,da)=>{mk('ellipse',{cx:x,cy:y,rx:11,ry:6.5,fill:'#8fc2ff',opacity:o,stroke:da?'#8fc2ff':'none','stroke-dasharray':da||''},inn)};
-  [[-1],[1]].forEach(([k])=>{const by=CY+k*B,s1=(by-CY)/(LX-SX),s2=(CY-by)/(EX-LX);
-   mk('line',{x1:EX,y1:CY,x2:58,y2:CY+(58-EX)*s2,stroke:'#a9b1cc','stroke-width':1.2,'stroke-dasharray':'4 4'},inn);   // 지구에서 보면 빛이 온 방향으로 천체가 보임
-   mk('path',{d:`M${SX},${CY}L${LX-20},${(by-20*s1).toFixed(1)}Q${LX},${by} ${LX+20},${(by+20*s2).toFixed(1)}L${EX},${CY}`,fill:'none',stroke:'#8fc2ff','stroke-width':2.2},inn);
-   const p=(t*.32+(k>0?.5:0))%1,L1=Math.hypot(LX-SX,by-CY),L2=Math.hypot(EX-LX,CY-by),d=p*(L1+L2);   // 빛 알갱이
-   const [qx,qy]=d<L1?[SX+(LX-SX)*d/L1,CY+(by-CY)*d/L1]:[LX+(EX-LX)*(d-L1)/L2,by+(CY-by)*(d-L1)/L2];
-   mk('circle',{cx:qx,cy:qy,r:4.5,fill:'#fff',stroke:'#8fc2ff','stroke-width':2},inn);
-   gal(58,CY+(58-EX)*s2,.4,'3 3')});
-  gal(SX-8,CY,1);lCluster(inn,LX,CY,.75);
+  // 천체에서 같이 출발한 빛이 렌즈의 위와 아래로 휘어져 지구에 함께 도착 → 지구에서는 빛이 들어온 방향(위, 아래)에 천체가 보임. 9초마다 천천히 되풀이
+  const SX=66,LX=270,EX=478,CY=170,SY=CY-10,P=((t-lT0)%9)/9,f=ease(P/.5),gS=ease((P-.5)/.2),gI=ease((P-.66)/.1);
+  [CY-56,CY+36].forEach(by=>{const L1=Math.hypot(LX-SX,by-SY),L2=Math.hypot(EX-LX,CY-by),d=f*(L1+L2),s2=(CY-by)/(EX-LX),AY=CY+(58-EX)*s2;
+   mk('path',{d:`M${SX},${SY}L${LX},${by}L${EX},${CY}`,fill:'none',stroke:'#8fc2ff','stroke-width':1.6,opacity:.22,'stroke-linejoin':'round'},inn);
+   const [qx,qy]=d<L1?[SX+(LX-SX)*d/L1,SY+(by-SY)*d/L1]:[LX+(EX-LX)*(d-L1)/L2,by+(CY-by)*(d-L1)/L2];
+   mk('path',{d:`M${SX},${SY}`+(d>L1?`L${LX},${by}`:'')+`L${qx.toFixed(1)},${qy.toFixed(1)}`,fill:'none',stroke:'#8fc2ff','stroke-width':2.4,'stroke-linejoin':'round'},inn);
+   if(f<1)mk('circle',{cx:qx,cy:qy,r:4.5,fill:'#fff',stroke:'#8fc2ff','stroke-width':2},inn);
+   if(gS>0)mk('line',{x1:EX,y1:CY,x2:EX+(58-EX)*gS,y2:CY+(AY-CY)*gS,stroke:'#ffd76b','stroke-width':1.6,'stroke-dasharray':'5 4'},inn);   // 지구에서 바라본 방향
+   if(gI>0){mk('ellipse',{cx:58,cy:AY,rx:11,ry:6.5,fill:'#8fc2ff',opacity:.5*gI,stroke:'#8fc2ff','stroke-dasharray':'3 3'},inn);
+    txt('보이는 위치',{x:76,y:AY+4,fill:'#ffd76b','font-size':12,'font-weight':800,opacity:gI},inn)}});
+  mk('ellipse',{cx:SX-8,cy:SY,rx:11,ry:6.5,fill:'#8fc2ff'},inn);lCluster(inn,LX,CY,.75);
   mk('circle',{cx:EX+8,cy:CY,r:11,fill:'url(#learth)',stroke:'#fff','stroke-width':1},inn);
-  txt('멀리 있는 천체',{x:30,y:196,fill:'#8fc2ff','font-size':12.5,'font-weight':800},inn);
-  txt('보이는 위치',{x:76,y:CY-B*2+8,fill:'#cfd6ee','font-size':12,'font-weight':700},inn);txt('보이는 위치',{x:76,y:CY+B*2+4,fill:'#cfd6ee','font-size':12,'font-weight':700},inn);
-  txt('은하단 (렌즈)',{x:LX,y:CY+38,'text-anchor':'middle',fill:'#ffd76b','font-size':12.5,'font-weight':800},inn);
+  txt('멀리 있는 천체',{x:30,y:194,fill:'#8fc2ff','font-size':12.5,'font-weight':800},inn);
+  txt('은하단 (렌즈)',{x:LX,y:CY+64,'text-anchor':'middle',fill:'#ffd76b','font-size':12.5,'font-weight':800},inn);
   txt('지구',{x:EX+8,y:CY+30,'text-anchor':'middle',fill:'#cfe6ff','font-size':12.5,'font-weight':800},inn);
+  if(gI>0)txt('하나의 천체가 위와 아래 두 곳에 보임',{x:300,y:70,'text-anchor':'middle',fill:'#ffd76b','font-size':13,'font-weight':800,opacity:gI},inn);
   txt('(크기와 거리는 실제 비율과 다름)',{x:270,y:288,'text-anchor':'middle',fill:'#a9b1cc','font-size':12},inn)}
- if(s==2){const m=.5-.5*Math.cos(t*2*Math.PI/9),beta=48*(1-m);lSky(inn,beta,false);   // 천체가 렌즈 뒤로 천천히 들어갔다 나옴
-  txt(beta>13?'여러 개의 상, 호 모양':'아인슈타인 고리',{x:270,y:68,'text-anchor':'middle',fill:'#ffd76b','font-size':14,'font-weight':800},inn);
-  lDot(inn,34,288,'#ffd76b','은하단의 은하');lDot(inn,150,288,'#8fc2ff','멀리 있는 천체의 상')}
- if(s==3){lSky(inn,24,true);
+ if(s==2){lSky(inn,24,true);
   txt('보라색: 중력 렌즈로 알아낸 질량 분포 (대부분 암흑 물질)',{x:270,y:288,'text-anchor':'middle',fill:'#c9b2ff','font-size':12.5,'font-weight':800},inn)}
  pPanel(g,LS[s][0]);const T=PT(g,734);
  if(s==0){pBox(g,88,[['질량이 큰 천체 주위: 공간이 휘어짐'],['→ 빛의 경로도 휘어짐','#ffd76b',14.5]],'#ffffff');
@@ -1218,21 +1223,16 @@ function lDraw(t){const g=lgg;g.innerHTML='';const s=DL.s;
   mk('path',{d:'M758,182Q818,182 880,212',fill:'none',stroke:'#ffd76b','stroke-width':2.4},g);mk('circle',{cx:818,cy:212,r:12,fill:'url(#lgm)'},g);
   txt('질량 큼: 많이 휨',{x:818,y:238,'text-anchor':'middle',fill:'#cfd6ee','font-size':12,'font-weight':700},g);
   pNote(g,274,'(아인슈타인의 일반 상대성 이론)')}
- if(s==1){[[572,'광원','멀리 있는 천체','#8fc2ff'],[682,'렌즈','은하, 은하단','#ffd76b'],[792,'관측자','지구','#cfe6ff']].forEach(([x,a,b,c],i)=>{const cx=x+52;
-   pCard(g,x,88,104,86,c);txt(a,{x:cx,y:110,'text-anchor':'middle',fill:c,'font-size':14,'font-weight':800},g);
-   if(i==0)mk('ellipse',{cx,cy:134,rx:12,ry:7,fill:'#8fc2ff'},g);
-   if(i==1)lCluster(g,cx,134,.55);
-   if(i==2)mk('circle',{cx,cy:134,r:10,fill:'url(#learth)',stroke:'#fff','stroke-width':1},g);
-   txt(b,{x:cx,y:164,'text-anchor':'middle',fill:'#e8ecff','font-size':12,'font-weight':700},g)});
-  pBox(g,188,[['무거운 천체가 렌즈처럼 빛을 휘게 함'],['→ 중력 렌즈 현상','#ffd76b',16]],'#ffd76b')}
- if(s==2){[[572,'어긋나 있을 때','여러 개의 상, 호 모양',0],[740,'거의 일직선일 때','아인슈타인 고리',1]].forEach(([x,a,b,ring])=>{const cx=x+78;
-   pCard(g,x,88,156,116,'#8fc2ff');txt(a,{x:cx,y:108,'text-anchor':'middle',fill:'#cfd6ee','font-size':12,'font-weight':700},g);
-   if(ring)mk('circle',{cx,cy:146,r:24,fill:'none',stroke:'#8fc2ff','stroke-width':4.5},g);
-   else{mk('path',{d:pArc(cx,146,26,-150,-60),fill:'none',stroke:'#8fc2ff','stroke-width':4.5,'stroke-linecap':'round'},g);mk('path',{d:pArc(cx,146,22,40,85),fill:'none',stroke:'#8fc2ff','stroke-width':4,'stroke-linecap':'round'},g)}
-   mk('circle',{cx,cy:146,r:4,fill:'#ffd76b'},g);txt(b,{x:cx,y:192,'text-anchor':'middle',fill:'#8fc2ff','font-size':13.5,'font-weight':800},g)});
-  pNote(g,236,'실제 천체는 하나인데 여러 개나 고리로 보임');
-  pNote(g,262,'(점선 원: 천체의 실제 위치)');pNote(g,282,'(질량이 한 점에 모인 렌즈로 단순화한 모형)')}
- if(s==3){T('빛이 휘어진 정도 → 은하단의 전체 질량',{y:104,'font-size':14});
+ if(s==1){const sky=mk('g',{transform:'translate(582.8,63.4) scale(.56)'},g);lSky(sky,20,false,-Math.PI/2);   // 지구에서 본 모습 (천체가 렌즈의 조금 위쪽 뒤에 있을 때)
+  mk('rect',{x:594,y:88,width:280,height:141,fill:'none',stroke:'#8fc2ff','stroke-opacity':.45},g);
+  txt('지구에서 본 모습',{x:602,y:106,fill:'#ffd76b','font-size':12.5,'font-weight':800},g);txt('점선: 실제 위치',{x:866,y:222,'text-anchor':'end',fill:'#cfd6ee','font-size':11.5},g);
+  [[572,'여러 개의 상',0],[682,'호 모양',1],[792,'아인슈타인 고리',2]].forEach(([x,a,k])=>{const cx=x+52,cy=256;
+   pCard(g,x,238,104,54,'#8fc2ff');mk('circle',{cx,cy,r:3,fill:'#ffd76b'},g);
+   if(k==0){mk('ellipse',{cx:cx-15,cy:cy-6,rx:5,ry:3.5,fill:'#8fc2ff'},g);mk('ellipse',{cx:cx+12,cy:cy+5,rx:4,ry:3,fill:'#8fc2ff'},g)}
+   if(k==1){mk('path',{d:pArc(cx,cy,13,-160,-20),fill:'none',stroke:'#8fc2ff','stroke-width':3.5,'stroke-linecap':'round'},g)}
+   if(k==2)mk('circle',{cx,cy,r:12,fill:'none',stroke:'#8fc2ff','stroke-width':3.5},g);
+   txt(a,{x:cx,y:284,'text-anchor':'middle',fill:'#e8ecff','font-size':12,'font-weight':800},g)})}
+ if(s==2){T('빛이 휘어진 정도 → 은하단의 전체 질량',{y:104,'font-size':14});
   txt('보이는 물질(별, 가스)의 질량',{x:576,y:136,fill:'#e8ecff','font-size':13,'font-weight':700},g);mk('rect',{x:576,y:144,width:56,height:18,rx:4,fill:'#ffd76b'},g);
   txt('중력 렌즈로 구한 전체 질량',{x:576,y:186,fill:'#e8ecff','font-size':13,'font-weight':700},g);
   mk('rect',{x:576,y:194,width:56,height:18,rx:4,fill:'#ffd76b'},g);mk('rect',{x:632,y:194,width:264,height:18,rx:4,fill:'#b58cff'},g);
