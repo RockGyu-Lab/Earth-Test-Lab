@@ -416,6 +416,8 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
   <div class="ov" id="ov11" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 먼 Ia형 초신성이 예상보다 어둡게 관측된 것으로 우주가 가속 팽창한다는 것을 알 수 있는 까닭은 무엇일까요?">
    <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>먼 Ia형 초신성이 예상보다 어둡게 관측된 것으로 우주가 가속 팽창한다는 것을 알 수 있는 까닭은 무엇일까요?</b><button type="button" class="x" id="thx11" aria-label="닫기">닫기 ✕</button></div>
    <p class="ans">예상보다 어둡다는 것은 예상보다 멀리 있다는 뜻이고, 이는 우주가 감속 팽창으로 예상한 것보다 더 많이 팽창했다는 뜻이기 때문입니다.</p>
+   <svg id="th11sv" viewBox="20 44 500 252" style="display:block;width:100%;height:auto;border-radius:12px;margin:4px 0 8px" aria-label="먼 Ia형 초신성의 관측 그래프: 먼 초신성일수록 감속 팽창으로 예상한 거리보다 멀리 있음"><g id="th11g"></g></svg>
+   <p class="exp">그래프의 점선은 우주가 감속 팽창한다고 보고 예상한 거리이고, 노란 점은 실제로 관측한 Ia형 초신성입니다. 가까운 초신성은 점선과 거의 같지만, 먼 초신성일수록 점선보다 위에 있습니다. 즉, 먼 초신성은 예상보다 어둡게 보이므로 예상보다 멀리 있습니다.</p>
    <p class="exp">Ia형 초신성은 최대 밝기가 거의 일정하므로, 어둡게 보일수록 멀리 있습니다. 우주가 물질의 중력 때문에 점점 느리게 팽창(감속 팽창)한다고 보고 계산한 거리보다, 실제 먼 초신성까지의 거리가 더 멀었습니다.</p>
    <p class="exp">초신성의 빛이 출발한 뒤 우주가 예상보다 더 많이 팽창했다는 것은, 우주의 팽창 속도가 과거보다 지금 더 빨라졌다는 뜻입니다. 즉, 우주는 가속 팽창하고 있습니다.</p>
   </div></div>
@@ -423,9 +425,10 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
    <div class="think-h"><b class="think-t"><span class="tag">더 알아보기</span>Ia형 초신성</b><button type="button" class="x" id="thx13" aria-label="닫기">닫기 ✕</button></div>
    <svg id="iasv" viewBox="20 44 500 252" style="display:block;width:100%;height:auto;border-radius:12px;margin-bottom:8px" aria-label="쌍성계에서 백색 왜성이 동반성의 물질을 끌어당겨 질량이 태양의 약 1.4배가 되면 폭발하는 모습"><g id="iagg"></g></svg>
    <div class="ctl" style="margin:0 0 8px"><button type="button" class="pb" id="iare">↺ 다시 보기</button></div>
-   <p class="ans">Ia형 초신성은 쌍성계에서 백색 왜성이 폭발하는 초신성입니다.</p>
+   <p class="ans">Ia형 초신성은 쌍성계에서 백색 왜성이 폭발하는 초신성으로, 매우 밝아서 아주 먼 은하에 있어도 관측할 수 있습니다.</p>
    <p class="exp">백색 왜성이 가까이 있는 동반성(적색 거성)의 물질을 끌어당겨 질량이 늘어나다가, 태양 질량의 약 1.4배에 이르면 폭발합니다.</p>
-   <p class="exp">거의 같은 질량에서 폭발하므로 최대 밝기가 거의 일정합니다. 그래서 겉보기 밝기를 측정하면 거리를 구할 수 있어, 먼 은하까지의 거리를 재는 기준(표준 촛불)으로 씁니다.</p>
+   <p class="exp">Ia형 초신성은 가장 밝을 때 태양보다 수십억 배나 밝아서, 은하 하나가 내는 빛과 맞먹을 정도입니다. 그래서 수십억 광년 떨어진 먼 은하에서 폭발해도 관측할 수 있습니다.</p>
+   <p class="exp">또 거의 같은 질량에서 폭발하므로 최대 밝기가 거의 일정합니다. 그래서 겉보기 밝기를 측정하면 거리를 구할 수 있어, 먼 은하까지의 거리를 재는 기준(표준 촛불)으로 씁니다.</p>
   </div></div>
  </div>
  <div id="avb" hidden>
@@ -662,7 +665,7 @@ function bDraw(t){const g=bg;g.innerHTML='';const e=bm<.5?2*bm*bm:1-2*(1-bm)**2;
   mk('line',{x1:70,y1:262,x2:498,y2:262,stroke:'#cfd6ee','stroke-width':1.2},g);mk('line',{x1:70,y1:262,x2:70,y2:66,stroke:'#cfd6ee','stroke-width':1.2},g);
   for(let l=0;l<=5;l++){mk('line',{x1:X(l),y1:262,x2:X(l),y2:267,stroke:'#cfd6ee'},g);txt(String(l),{x:X(l),y:278,'text-anchor':'middle',fill:'#cfd6ee','font-size':11.5},g)}
   txt('파장 (mm)',{x:284,y:292,'text-anchor':'middle',fill:'#e8ecff','font-size':12,'font-weight':700},g);
-  txt('복사 세기',{x:76,y:62,fill:'#e8ecff','font-size':12,'font-weight':700},g);
+  yLab(g,56,66,262,'복사 세기 →');
   let d='';for(let l=.25;l<=5.001;l+=.025)d+=(d?'L':'M')+X(l).toFixed(1)+','+Y(B(l)/BM).toFixed(1);
   mk('path',{d,fill:'none',stroke:'#ff9d6b','stroke-width':2.6},g);
   [.55,.65,.8,1,1.2,1.5,1.8,2.2,2.7,3.3,4,4.8].forEach(l=>mk('circle',{cx:X(l),cy:Y(B(l)/BM),r:4,fill:'#fff',stroke:'#1b1f2a','stroke-width':1},g));
@@ -732,6 +735,8 @@ function stepper(S,box,prev,next,num,cue,draw){const ST=/^\d+단계/.test(S[0][0
 const PT=(g,C)=>(s,a)=>txt(s,{x:C,'text-anchor':'middle',fill:'#e8ecff','font-size':15,'font-weight':700,...a},g);   // 오른쪽 정리판 가운데 글
 // 오른쪽 정리판 꾸밈 도우미 (함수 선언이라 앞쪽 자료에서도 쓸 수 있음)
 // pCard: 색 상자, pPill: 둥근 꼬리표, pBox: 가운데 정렬 글줄을 담은 상자(lines: [글, 색, 크기]), pRow: 한 줄 상자(왼쪽 이름, 오른쪽 값), pNote: 아래쪽 회색 덧붙임
+// 그래프 세로축 이름: 축 왼쪽에 세로로(아래에서 위로) 쓰고, 축의 가운데에 맞춤
+function yLab(g,x,ya,yb,s){const y=(ya+yb)/2;return txt(s,{x,y,transform:`rotate(-90 ${x} ${y})`,'text-anchor':'middle',fill:'#e8ecff','font-size':12,'font-weight':700},g)}
 function pCard(g,x,y,w,h,c,o){return mk('rect',{x,y,width:w,height:h,rx:10,fill:c,'fill-opacity':o||.1,stroke:c,'stroke-opacity':.45},g)}
 function pPill(g,cx,y,s,c,fs,w){fs=fs||13.5;w=w||s.length*fs+24;mk('rect',{x:cx-w/2,y,width:w,height:fs+12,rx:(fs+12)/2,fill:c,'fill-opacity':.2,stroke:c,'stroke-opacity':.6},g);
  txt(s,{x:cx,y:y+fs+4,'text-anchor':'middle',fill:c,'font-size':fs,'font-weight':800},g)}
@@ -863,7 +868,7 @@ function fDraw(t){const g=flg;g.innerHTML='';const s=F.s;
  if(s==2){   // 시간에 따른 우주의 크기: 처음에는 거의 같다가 점점 벌어짐 (암흑 에너지는 생각하지 않음)
   const X=u=>64+u*420,Y=v=>270-v*200,u1=Math.min(1,(t%7)/5);
   mk('line',{x1:64,y1:270,x2:496,y2:270,stroke:'#cfd6ee','stroke-width':1.2},g);mk('line',{x1:64,y1:270,x2:64,y2:62,stroke:'#cfd6ee','stroke-width':1.2},g);
-  txt('시간',{x:492,y:288,'text-anchor':'end',fill:'#e8ecff','font-size':12,'font-weight':700},g);txt('우주의 크기',{x:70,y:60,fill:'#e8ecff','font-size':12,'font-weight':700},g);
+  txt('시간 →',{x:492,y:288,'text-anchor':'end',fill:'#e8ecff','font-size':12,'font-weight':700},g);yLab(g,50,62,270,'우주의 크기 →');
   const fl=u=>.62*Math.pow(u,2/3),CV=[u=>fl(u)-.75*u*u,fl,u=>fl(u)+.35*Math.pow(u,1.6)];
   CV.forEach((f,k)=>{let d='',end=null;for(let u=0;u<=u1+1e-9;u+=.005){let v=f(u);if(k==0&&u>.4&&v<=0){v=0;d+='L'+X(u).toFixed(1)+','+Y(0).toFixed(1);end=u;break}d+=(d?'L':'M')+X(u).toFixed(1)+','+Y(v).toFixed(1)}
    mk('path',{d,fill:'none',stroke:FC[k],'stroke-width':2.6},g)});
@@ -947,7 +952,7 @@ function iDraw(t){const g=ig;g.innerHTML='';const s=I.s;
   mk('rect',{x:X(.12),y:62,width:X(.2)-X(.12),height:208,fill:'rgba(255,215,107,.13)'},inn);
   txt('급팽창',{x:(X(.12)+X(.2))/2,y:80,'text-anchor':'middle',fill:'#ffd76b','font-size':13,'font-weight':800},inn);
   mk('line',{x1:70,y1:270,x2:500,y2:270,stroke:'#cfd6ee','stroke-width':1.2},inn);mk('line',{x1:70,y1:270,x2:70,y2:62,stroke:'#cfd6ee','stroke-width':1.2},inn);
-  txt('시간',{x:500,y:288,'text-anchor':'end',fill:'#e8ecff','font-size':12,'font-weight':700},inn);txt('우주의 크기',{x:76,y:60,fill:'#e8ecff','font-size':12,'font-weight':700},inn);
+  txt('시간 →',{x:500,y:288,'text-anchor':'end',fill:'#e8ecff','font-size':12,'font-weight':700},inn);yLab(inn,56,62,270,'우주의 크기 →');
   [[yes,'#7faaff',''],[no,'#a9b1cc','5 5']].forEach(([f,c,da])=>{let d='';for(let u=0;u<=u1+1e-9;u+=.004)d+=(d?'L':'M')+X(u).toFixed(1)+','+Y(f(u)).toFixed(1);mk('path',{d,fill:'none',stroke:c,'stroke-width':2.6,'stroke-dasharray':da},inn)});
   if(u1>=1){txt('급팽창이 있었던 우주',{x:X(1)-4,y:Y(yes(1))+22,'text-anchor':'end',fill:'#7faaff','font-size':12.5,'font-weight':800},inn);
    txt('급팽창이 없었다면',{x:X(1)-4,y:Y(no(1))-10,'text-anchor':'end',fill:'#a9b1cc','font-size':12.5,'font-weight':700},inn)}}
@@ -1119,7 +1124,7 @@ function rDraw(t){const g=rgg;g.innerHTML='';const s=DR.s;
   const path=(f,e)=>{let d='';for(let u=0;u<=e+1e-9;u+=.005)d+=(d?'L':'M')+X(u).toFixed(1)+','+Y(f(u)).toFixed(1);return d};
   if(s==3){let d=path(RO,1);for(let u=1;u>=0;u-=.005)d+='L'+X(u).toFixed(1)+','+Y(RV(u)).toFixed(1);mk('path',{d:d+'Z',fill:'rgba(201,178,255,.22)'},inn)}
   mk('line',{x1:290,y1:266,x2:506,y2:266,stroke:'#cfd6ee','stroke-width':1.2},inn);mk('line',{x1:290,y1:266,x2:290,y2:66,stroke:'#cfd6ee','stroke-width':1.2},inn);
-  txt('회전 속도',{x:296,y:64,fill:'#e8ecff','font-size':12,'font-weight':700},inn);txt('중심으로부터의 거리',{x:506,y:284,'text-anchor':'end',fill:'#e8ecff','font-size':12,'font-weight':700},inn);
+  yLab(inn,278,66,266,'회전 속도 →');txt('중심으로부터의 거리 →',{x:506,y:284,'text-anchor':'end',fill:'#e8ecff','font-size':12,'font-weight':700},inn);
   mk('path',{d:path(RV,s==1?u1:1),fill:'none',stroke:s==1?'#e8ecff':'#a9b1cc','stroke-width':2.4,'stroke-dasharray':s==1?'':'6 5'},inn);
   if(s==1&&u1>=1||s>1)txt('예상 (빛을 내는 물질만)',{x:X(1),y:Y(RV(1))+22,'text-anchor':'end',fill:s==1?'#e8ecff':'#a9b1cc','font-size':12.5,'font-weight':800},inn);
   if(s>=2){const e=s==2?u1:1;mk('path',{d:path(RO,e),fill:'none',stroke:'#ffd76b','stroke-width':2.6},inn);
@@ -1246,12 +1251,12 @@ DR.go(0);DL.go(0);
 // AA: 물질 + 암흑 에너지 (처음에는 감속, 뒤에는 가속), AD: 암흑 에너지가 없었다면 (계속 감속)
 const AA=u=>.3*Math.pow(Math.sinh(2.2*u),2/3),AD=u=>.3*Math.pow(2.2*u,2/3),ANOW=.54,AINF=.3;
 const AXES=(g,x0,x1,y0,y1,xl,yl)=>{mk('line',{x1:x0,y1:y0,x2:x1,y2:y0,stroke:'#cfd6ee','stroke-width':1.2},g);mk('line',{x1:x0,y1:y0,x2:x0,y2:y1,stroke:'#cfd6ee','stroke-width':1.2},g);
- txt(xl,{x:x1,y:y0+18,'text-anchor':'end',fill:'#e8ecff','font-size':12,'font-weight':700},g);txt(yl,{x:x0+6,y:y1-2,fill:'#e8ecff','font-size':12,'font-weight':700},g)};
+ txt(xl,{x:x1,y:y0+18,'text-anchor':'end',fill:'#e8ecff','font-size':12,'font-weight':700},g);yLab(g,x0-10,y1,y0,yl)};
 const curve=(f,X,Y,a,b)=>{let d='';for(let u=a;u<=b+1e-9;u+=.004)d+=(d?'L':'M')+X(u).toFixed(1)+','+Y(f(u)).toFixed(1);return d};
 
 // 가속 팽창의 발견: 거리 측정 → 예상보다 어두운 먼 초신성 → 가속 팽창 (Ia형 초신성의 폭발 과정은 'Ia형 초신성 알아보기' 창)
 const AS=[
- ['거리 측정','Ia형 초신성은 <em>최대 밝기가 거의 일정</em>하여 <em>거리를 재는 기준</em>이 됩니다. 같은 밝기의 천체는 멀수록 어둡게 보이므로(밝기는 <em>거리의 제곱에 반비례</em>), 겉보기 밝기를 측정하면 초신성이 있는 은하까지의 <em>거리</em>를 구할 수 있습니다.'],
+ ['거리 측정','Ia형 초신성은 <em>매우 밝아서</em> 아주 먼 은하에 있어도 관측할 수 있고, <em>최대 밝기가 거의 일정</em>하여 <em>거리를 재는 기준</em>이 됩니다. 같은 밝기의 천체는 멀수록 어둡게 보이므로(밝기는 <em>거리의 제곱에 반비례</em>), 겉보기 밝기를 측정하면 초신성이 있는 은하까지의 <em>거리</em>를 구할 수 있습니다.'],
  ['예상보다 어두운 초신성','<em>1998년</em> 두 연구팀이 먼 은하의 Ia형 초신성을 관측했습니다. 먼 초신성은 우주가 감속 팽창한다고 보고 예상한 것보다 <em>어둡게</em> 관측되었습니다. 즉, 먼 초신성은 <em>예상보다 더 멀리</em> 있습니다.'],
  ['우주의 가속 팽창','먼 초신성이 예상보다 멀리 있다는 것은 우주가 <em>예상보다 더 많이 팽창</em>했다는 뜻입니다. 우주는 초기에는 물질의 중력 때문에 팽창 속도가 점점 느려졌지만, 수십억 년 전부터는 팽창 속도가 점점 빨라지는 <em>가속 팽창</em>을 하고 있습니다.']];
 const bz=(p,k)=>[0,1].map(j=>(1-k)**3*p[0][j]+3*(1-k)**2*k*p[1][j]+3*(1-k)*k*k*p[2][j]+k**3*p[3][j]);
@@ -1275,6 +1280,18 @@ function iaDraw(t){const inn=iagg;inn.innerHTML='';const p=t-iaT0,m=Math.min(1,p
   txt('백색 왜성의 질량',{x:40,y:276,fill:'#cfd6ee','font-size':12.5,'font-weight':700},inn);
   mk('rect',{x:150,y:265,width:250,height:14,rx:7,fill:'rgba(255,255,255,.1)'},inn);mk('rect',{x:150,y:265,width:250*(M-1)/.4,height:14,rx:7,fill:M>=1.4?'#ffd76b':'#ffb39a'},inn);
   txt(`태양의 ${M.toFixed(2)}배`,{x:410,y:276,fill:M>=1.4?'#ffd76b':'#e8ecff','font-size':12.5,'font-weight':800},inn)}
+// 먼 Ia형 초신성의 관측 그래프 (u1: 그려진 정도 0~1, near: 가까운 초신성 설명도 씀) — 2단계 그림과 생각해 보기 답 창에서 함께 씀
+function aObs(inn,u1,near){const X=u=>80+u*410,Y=v=>266-v*200,dec=u=>.62*u+.12*u*u,acc=u=>.62*u+.34*u*u;
+  AXES(inn,80,500,266,62,'적색 편이 (멀어지는 속도) →','거리 (어두울수록 멂) →');
+  mk('path',{d:curve(dec,X,Y,0,1),fill:'none',stroke:'#a9b1cc','stroke-width':2.2,'stroke-dasharray':'6 5'},inn);
+  if(u1>=1){mk('path',{d:curve(acc,X,Y,0,1),fill:'none',stroke:'#ffd76b','stroke-width':1.4,opacity:.45},inn);
+   mk('line',{x1:X(.85),y1:Y(dec(.85))-4,x2:X(.85),y2:Y(acc(.85))+6,stroke:'#ff9d9d','stroke-width':2,'marker-start':'url(#aar)','marker-end':'url(#aar)'},inn);
+   txt('먼 초신성: 예상보다 어둡게 관측',{x:500,y:214,'text-anchor':'end',fill:'#ff9d9d','font-size':12.5,'font-weight':800},inn);
+   txt('→ 예상보다 멀리 있음',{x:500,y:234,'text-anchor':'end',fill:'#ff9d9d','font-size':12.5,'font-weight':800},inn)}
+  ASN.forEach(([u,j])=>{if(u<=u1)mk('circle',{cx:X(u),cy:Y(acc(u)+j),r:4,fill:'#ffd76b',stroke:'#fff','stroke-width':.8},inn)});
+  mk('circle',{cx:100,cy:84,r:4,fill:'#ffd76b'},inn);txt('관측한 Ia형 초신성',{x:112,y:88,fill:'#ffd76b','font-size':12.5,'font-weight':800},inn);
+  mk('line',{x1:92,y1:106,x2:108,y2:106,stroke:'#a9b1cc','stroke-width':2.2,'stroke-dasharray':'5 3'},inn);txt('감속 팽창으로 예상한 거리',{x:112,y:110,fill:'#a9b1cc','font-size':12.5,'font-weight':800},inn);
+  if(near&&u1>=1)txt('가까운 초신성: 예상과 거의 같음',{x:236,y:258,fill:'#e8ecff','font-size':12.5,'font-weight':800},inn)}
 let aLast=-1,aT0=0;   // 단계가 바뀐 시각: 애니메이션은 한 번만 진행하고 마지막 모습을 유지
 function aDraw(t){const g=agg;g.innerHTML='';const s=DA.s;if(s!=aLast){aLast=s;aT0=t}
  iHead(g,['같은 밝기의 천체를 멀리서 보면','먼 Ia형 초신성의 관측 (개념도)','우주의 크기 변화 (개념도)'][s]);iBox(g);
@@ -1288,21 +1305,12 @@ function aDraw(t){const g=agg;g.innerHTML='';const s=DA.s;if(s!=aLast){aLast=s;a
    txt('보이는 밝기 '+['1','1/4','1/9'][d-1],{x,y:252,'text-anchor':'middle',fill:'#ffd76b','font-size':12.5,'font-weight':700},inn)});
   txt('모두 같은 Ia형 초신성 (최대 밝기가 같음)',{x:270,y:78,'text-anchor':'middle',fill:'#cfd6ee','font-size':12.5,'font-weight':700},inn);
   txt('밝기는 거리의 제곱에 반비례',{x:270,y:286,'text-anchor':'middle',fill:'#e8ecff','font-size':13,'font-weight':800},inn)}
- if(s==1){const X=u=>80+u*410,Y=v=>266-v*200,u1=Math.min(1,(t-aT0)/5),dec=u=>.62*u+.12*u*u,acc=u=>.62*u+.34*u*u;
-  AXES(inn,80,500,266,62,'적색 편이 (멀어지는 속도) →','거리 (어둡게 보일수록 멂)');
-  mk('path',{d:curve(dec,X,Y,0,1),fill:'none',stroke:'#a9b1cc','stroke-width':2.2,'stroke-dasharray':'6 5'},inn);
-  if(u1>=1){mk('path',{d:curve(acc,X,Y,0,1),fill:'none',stroke:'#ffd76b','stroke-width':1.4,opacity:.45},inn);
-   mk('line',{x1:X(.85),y1:Y(dec(.85))-4,x2:X(.85),y2:Y(acc(.85))+6,stroke:'#ff9d9d','stroke-width':2,'marker-start':'url(#aar)','marker-end':'url(#aar)'},inn);
-   txt('먼 초신성: 예상보다 어둡게 관측',{x:500,y:214,'text-anchor':'end',fill:'#ff9d9d','font-size':12.5,'font-weight':800},inn);
-   txt('→ 예상보다 멀리 있음',{x:500,y:234,'text-anchor':'end',fill:'#ff9d9d','font-size':12.5,'font-weight':800},inn)}
-  ASN.forEach(([u,j])=>{if(u<=u1)mk('circle',{cx:X(u),cy:Y(acc(u)+j),r:4,fill:'#ffd76b',stroke:'#fff','stroke-width':.8},inn)});
-  mk('circle',{cx:100,cy:84,r:4,fill:'#ffd76b'},inn);txt('관측한 Ia형 초신성',{x:112,y:88,fill:'#ffd76b','font-size':12.5,'font-weight':800},inn);
-  mk('line',{x1:92,y1:106,x2:108,y2:106,stroke:'#a9b1cc','stroke-width':2.2,'stroke-dasharray':'5 3'},inn);txt('감속 팽창으로 예상한 거리',{x:112,y:110,fill:'#a9b1cc','font-size':12.5,'font-weight':800},inn)}
+ if(s==1)aObs(inn,Math.min(1,(t-aT0)/5));
  if(s==2){const X=u=>80+u*410,Y=v=>266-v*220,u1=Math.min(1,(t-aT0)/5);
   mk('rect',{x:X(0),y:62,width:X(AINF)-X(0),height:204,fill:'rgba(127,211,255,.07)'},inn);mk('rect',{x:X(AINF),y:62,width:X(1)-X(AINF),height:204,fill:'rgba(201,178,255,.09)'},inn);
   txt('감속 팽창',{x:(X(0)+X(AINF))/2,y:80,'text-anchor':'middle',fill:'#7fd3ff','font-size':13,'font-weight':800},inn);
   txt('가속 팽창',{x:(X(AINF)+X(1))/2,y:80,'text-anchor':'middle',fill:'#c9b2ff','font-size':13,'font-weight':800},inn);
-  AXES(inn,80,500,266,62,'시간 →','우주의 크기');
+  AXES(inn,80,500,266,62,'시간 →','우주의 크기 →');
   mk('path',{d:curve(AD,X,Y,0,1),fill:'none',stroke:'#a9b1cc','stroke-width':2,'stroke-dasharray':'6 5'},inn);
   txt('암흑 에너지가 없었다면',{x:X(1),y:Y(AD(1))+36,'text-anchor':'end',fill:'#a9b1cc','font-size':12,'font-weight':700},inn);
   const e=Math.min(u1,ANOW);mk('path',{d:curve(AA,X,Y,0,e),fill:'none',stroke:'#7faaff','stroke-width':2.8},inn);
@@ -1314,11 +1322,11 @@ function aDraw(t){const g=agg;g.innerHTML='';const s=DA.s;if(s!=aLast){aLast=s;a
   if(u1>=1)txt('미래 (예상)',{x:X(.9),y:Y(AA(.9))-12,'text-anchor':'end',fill:'#7faaff','font-size':12,'font-weight':700},inn)}
  pPanel(g,AS[s][0]);const T=PT(g,734);
  const row=(y,a,b,c)=>pRow(g,y,a,b,c);
- if(s==0){pBox(g,88,[['Ia형 초신성의 최대 밝기는 거의 일정'],['→ 거리를 재는 기준 (표준 촛불)','#ffd76b',14.5]],'#ffd76b');
-  pCard(g,572,164,324,70,'#ffffff',.04);
-  [[610,18,1,'가까움'],[720,12,.6,'멂'],[830,7,.35,'더 멂']].forEach(([x,r,o,l])=>{mk('circle',{cx:x,cy:192,r:r*1.6,fill:'url(#afl)',opacity:o},g);mk('circle',{cx:x,cy:192,r:3,fill:'#fff',opacity:o},g);
-   txt(l,{x,y:226,'text-anchor':'middle',fill:'#cfd6ee','font-size':12,'font-weight':700},g)});
-  pPill(g,734,246,'겉보기 밝기 측정 → 거리 계산','#ffd76b',14,260)}
+ if(s==0){pBox(g,82,[['Ia형 초신성: 매우 밝아 먼 은하에서도 관측됨'],['최대 밝기가 거의 일정'],['→ 거리를 재는 기준 (표준 촛불)','#ffd76b',14.5]],'#ffd76b');
+  pCard(g,572,180,324,58,'#ffffff',.04);
+  [[610,18,1,'가까움'],[720,12,.6,'멂'],[830,7,.35,'더 멂']].forEach(([x,r,o,l])=>{mk('circle',{cx:x,cy:202,r:r*1.2,fill:'url(#afl)',opacity:o},g);mk('circle',{cx:x,cy:202,r:3,fill:'#fff',opacity:o},g);
+   txt(l,{x,y:232,'text-anchor':'middle',fill:'#cfd6ee','font-size':12,'font-weight':700},g)});
+  pPill(g,734,250,'겉보기 밝기 측정 → 거리 계산','#ffd76b',14,260)}
  if(s==1){T('1998년 두 연구팀의 관측',{y:100,'font-size':13,fill:'#a9b1cc','font-weight':400});
   pRow(g,112,'가까운 초신성','예상과 비슷','#e8ecff');pRow(g,150,'먼 초신성','예상보다 어두움','#ff9d9d','#ff9d9d');
   pBox(g,196,[['어둡다 = 예상보다 멀리 있다','#ffd76b',15.5]],'#ffd76b');
@@ -1356,7 +1364,7 @@ function qDraw(t){const g=qgg;g.innerHTML='';const s=DQ.s;
   mk('circle',{cx:42,cy:274,r:4.5,fill:'#ffd76b'},inn);txt('물질 (개수는 그대로)',{x:52,y:278,fill:'#ffd76b','font-size':12,'font-weight':700},inn);
   mk('rect',{x:37,y:283,width:10,height:10,fill:'rgba(181,140,255,.6)'},inn);txt('암흑 에너지 (색의 진하기 그대로)',{x:52,y:292,fill:'#c9b2ff','font-size':12,'font-weight':700},inn);
   const X=u=>294+u*206,Y=v=>262-v*190,DL0=.3,DM=u=>Math.min(1.1,DL0*.45*Math.pow(AA(ANOW)/AA(u),3));
-  AXES(inn,294,504,262,66,'시간 →','밀도');
+  AXES(inn,294,504,262,66,'시간 →','밀도 →');
   mk('path',{d:curve(DM,X,Y,.24,1),fill:'none',stroke:'#ffd76b','stroke-width':2.6},inn);
   mk('line',{x1:X(0),y1:Y(DL0),x2:X(1),y2:Y(DL0),stroke:'#c9b2ff','stroke-width':2.6},inn);
   mk('line',{x1:X(ANOW),y1:84,x2:X(ANOW),y2:262,stroke:'#e8ecff','stroke-width':1,'stroke-dasharray':'4 4',opacity:.6},inn);txt('현재',{x:X(ANOW),y:80,'text-anchor':'middle',fill:'#e8ecff','font-size':12,'font-weight':700},inn);
@@ -1398,7 +1406,8 @@ DA.go(0);DQ.go(0);
  const close=()=>{ov.hidden=true;btn.focus()};btn.onclick=()=>{ov.hidden=false;cl.focus()};cl.onclick=close;
  ov.addEventListener('click',e=>{if(e.target===ov)close()});ov.addEventListener('keydown',e=>{if(e.key=='Escape')close()})});
 // Ia형 초신성 알아보기 창: 열 때와 다시 보기를 누를 때 애니메이션을 처음부터 한 번 진행
-thb13.addEventListener('click',()=>{iaT0=performance.now()/1000});iare.onclick=()=>{iaT0=performance.now()/1000};
+thb13.addEventListener('click',()=>{iaT0=performance.now()/1000});
+thb11.addEventListener('click',()=>{th11g.innerHTML='';iBox(th11g);aObs(th11g,1,true)});   // 생각해 보기 답 창: 관측 그래프를 다 그린 모습으로 다시 보여 줌iare.onclick=()=>{iaT0=performance.now()/1000};
 </script>
 <script src="./copyright.js"></script>
 </body>
