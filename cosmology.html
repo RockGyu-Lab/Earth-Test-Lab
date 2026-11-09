@@ -458,8 +458,12 @@ section svg{max-height:max(300px,calc(100dvh - 300px))}
 // 학습 메뉴 탭 (expansion.html과 같은 방식: 왼쪽·오른쪽 화살표 키로도 이동)
 const TABS=[tab1,tab2,tab3,tab4,tab5,tab6],PANES=[p1,p2,p3,p4,p5,p6];
 function openTab(i){TABS.forEach((t,j)=>{t.setAttribute('aria-selected',i==j);t.tabIndex=i==j?0:-1;PANES[j].hidden=i!=j});
- PANES[i].classList.remove('enter');void PANES[i].offsetWidth;PANES[i].classList.add('enter')}
+ PANES[i].classList.remove('enter');void PANES[i].offsetWidth;PANES[i].classList.add('enter');resetAll()}   // 탭을 누를 때마다 모든 자료를 처음 단계, 처음 장면부터 시작
 TABS.forEach((t,i)=>{t.onclick=()=>openTab(i);t.onkeydown=e=>{if(e.key=='ArrowRight'||e.key=='ArrowLeft'){const j=(i+(e.key=='ArrowRight'?1:TABS.length-1))%TABS.length;TABS[j].focus();openTab(j)}}});
+// 애니메이션 시계: TB는 마지막으로 탭이나 작은 메뉴를 누른 시각. 누를 때마다 시계를 0으로 돌리고 모든 자료를 1단계부터 다시 시작
+let TB=0;const NOW=()=>performance.now()/1000-TB;
+function resetAll(){TB=performance.now()/1000;jLast=rLast=lLast=aLast=qLast=-1;cR=C0;cHold=0;hm=0;bm=0;bT=0;bw=0;
+ hGo(0);bGo(0);[Z,F,I,J,K,DR,DL,DA,DQ].forEach(o=>o.go(0))}
 
 // SVG 그리기 도우미
 const SVGNS='http://www.w3.org/2000/svg';
@@ -523,7 +527,7 @@ cAll();cLast=performance.now();craf=requestAnimationFrame(cLoop);   // 단추 �
 
 // ---- ② 빅뱅 우주론의 증거 ----
 // 작은 메뉴: 수소와 헬륨의 질량비 / 우주 배경 복사
-[[e2a,eva],[e2b,evb]].forEach(([b,v],i,all)=>b.onclick=()=>all.forEach(([bb,vv])=>{const on=bb==b;bb.classList.toggle('on',on);bb.setAttribute('aria-selected',on);vv.hidden=!on}));
+[[e2a,eva],[e2b,evb]].forEach(([b,v],i,all)=>b.onclick=()=>{all.forEach(([bb,vv])=>{const on=bb==b;bb.classList.toggle('on',on);bb.setAttribute('aria-selected',on);vv.hidden=!on});resetAll()});   // 누를 때마다 처음부터
 
 // 수소와 헬륨의 질량비: 입자 16개(양성자 14, 중성자 2 → 7 : 1)를 골라 나타냄
 // 1단계 양성자·중성자 / 2단계 양성자 2 + 중성자 2 → 헬륨 원자핵 / 3단계 남은 양성자 12 = 수소 원자핵 / 4단계 질량비 12 : 4 = 3 : 1 / 관측 결과: 질량비 비교
@@ -593,12 +597,12 @@ function hDraw(t){const g=hg;g.innerHTML='';const e=hm<.5?2*hm*hm:1-2*(1-hm)**2;
   T('예측과 관측이 잘 맞는다',{y:246,fill:'#ffd76b'});T('→ 빅뱅 우주론의 증거',{y:272,'font-size':17,'font-weight':800,fill:'#ffd76b'})}
 }
 function hLoop(now){const dt=Math.min(.05,(now-hLast)/1000);hLast=now;const tg=hs>=1?1:0;
- hm=tg>hm?Math.min(tg,hm+dt/1.2):Math.max(tg,hm-dt/1.2);if(!p2.hidden&&!eva.hidden)hDraw(now/1000);hraf=requestAnimationFrame(hLoop)}
+ hm=tg>hm?Math.min(tg,hm+dt/1.2):Math.max(tg,hm-dt/1.2);if(!p2.hidden&&!eva.hidden)hDraw((now/1000-TB));hraf=requestAnimationFrame(hLoop)}
 function hGo(s){hs=Math.max(0,Math.min(3,s));const[tt,tx]=HS[hs];hstep.innerHTML=stepHTML(tt,tx);
  // hs 0~2: 과정 1~3단계 / 3: 관측 결과와의 비교
  hprev.disabled=hs==0;hnext.textContent=hs==3?'↺ 처음으로':hs==2?'관측 결과 ▶':'다음 단계 ▶';hnum.textContent=hs==3?'관측 결과':`${hs+1} / 3 단계`;hnext.classList.toggle('glow',hs==2);
  if(hs==3){hcue.className='';hcue.textContent=''}else{hcue.className='go';hcue.innerHTML=hs==2?'<span class="kb">관측 결과</span>를 눌러 실제 관측과 비교해 보세요.':'<span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.'}
- hDraw(performance.now()/1000)}
+ hDraw(NOW())}
 hprev.onclick=()=>hGo(hs-1);hnext.onclick=()=>hGo(hs==3?0:hs+1);   // 관측 결과에서는 처음으로
 hGo(0);hLast=performance.now();hraf=requestAnimationFrame(hLoop);
 
@@ -713,24 +717,24 @@ function bDraw(t){const g=bg;g.innerHTML='';const e=bm<.5?2*bm*bm:1-2*(1-bm)**2;
 }
 function bLoop(now){const dt=Math.min(.05,(now-bLast)/1000);bLast=now;const tg=bs>=1?1:0;
  bm=tg>bm?Math.min(tg,bm+dt/1.6):Math.max(tg,bm-dt/1.6);if(bs==2){bT+=dt;if(bT>6.5)bT=0;bw=Math.min(1,bT/5)}else{bT=0;bw=0}   // 3단계: 5초 동안 파장이 늘어나고 1.5초 멈췄다가 되풀이
- if(bs<3&&!p2.hidden&&!evb.hidden)bDraw(now/1000);requestAnimationFrame(bLoop)}   // 관측 결과(그래프·지도)는 움직이지 않으므로 고를 때만 그림
+ if(bs<3&&!p2.hidden&&!evb.hidden)bDraw((now/1000-TB));requestAnimationFrame(bLoop)}   // 관측 결과(그래프·지도)는 움직이지 않으므로 고를 때만 그림
 // bs 0~2: 과정 1~3단계 / 3: 관측 결과 1(스펙트럼) / 4: 관측 결과 2(우주 배경 복사)
 function bGo(s){bs=Math.max(0,Math.min(4,s));bw=0;const[tt,tx]=BS[bs],ob=bs>=3;bstep.innerHTML=stepHTML(tt,tx);
  bprev.disabled=bs==0;bnext.textContent=bs==4?'↺ 처음으로':bs==3?'관측 결과 2 ▶':bs==2?'관측 결과 1 ▶':'다음 단계 ▶';bnum.textContent=ob?`관측 결과 ${bs-2} / 2`:`${bs+1} / 3 단계`;bnext.classList.toggle('glow',bs==2||bs==3);
  if(bs==4){bcue.className='';bcue.textContent=''}else{bcue.className='go';bcue.innerHTML=bs<2?'<span class="kb">다음 단계</span>를 눌러 차례대로 알아보세요.':bs==2?'<span class="kb">관측 결과 1</span>을 눌러 실제 관측 결과를 살펴보세요.':'<span class="kb">관측 결과 2</span>도 눌러 보세요.'}
- bDraw(performance.now()/1000)}
+ bDraw(NOW())}
 bprev.onclick=()=>bGo(bs-1);bnext.onclick=()=>bGo(bs==4?0:bs+1);
 bGo(0);bLast=performance.now();requestAnimationFrame(bLoop);
 
 // ---- ③ 빅뱅 우주론의 문제점 ----
 // 작은 메뉴: 지평선 문제 / 평탄성 문제
-[[z3a,zva],[z3b,zvb]].forEach(([b,v],i,all)=>b.onclick=()=>all.forEach(([bb,vv])=>{const on=bb==b;bb.classList.toggle('on',on);bb.setAttribute('aria-selected',on);vv.hidden=!on}));
+[[z3a,zva],[z3b,zvb]].forEach(([b,v],i,all)=>b.onclick=()=>{all.forEach(([bb,vv])=>{const on=bb==b;bb.classList.toggle('on',on);bb.setAttribute('aria-selected',on);vv.hidden=!on});resetAll()});   // 누를 때마다 처음부터
 // 두 자료가 함께 쓰는 단계 넘기기: 이전·다음 단추, 단계 표시, 안내 문구 (마지막 단계에서 다음 단추는 처음으로)
 // 과정(시간 순서)인 자료는 제목이 'N단계'로 시작 → '다음 단계 ▶', 'n / N 단계'. 과정이 아닌 설명은 내용 제목만 → '다음 ▶', 'n / N'
 function stepper(S,box,prev,next,num,cue,draw){const ST=/^\d+단계/.test(S[0][0]),NX=ST?'다음 단계':'다음';prev.textContent=ST?'◀ 이전 단계':'◀ 이전';
  const o={s:0,go(s){o.s=Math.max(0,Math.min(S.length-1,s));const[tt,tx]=S[o.s],last=o.s==S.length-1;
   box.innerHTML=stepHTML(tt,tx);prev.disabled=o.s==0;next.textContent=last?'↺ 처음으로':NX+' ▶';num.textContent=`${o.s+1} / ${S.length}`+(ST?' 단계':'');
-  if(last){cue.className='';cue.textContent=''}else{cue.className='go';cue.innerHTML=`<span class="kb">${NX}</span>${ST?'를':'을'} 눌러 차례대로 알아보세요.`}draw(performance.now()/1000)}};
+  if(last){cue.className='';cue.textContent=''}else{cue.className='go';cue.innerHTML=`<span class="kb">${NX}</span>${ST?'를':'을'} 눌러 차례대로 알아보세요.`}draw(NOW())}};
  prev.onclick=()=>o.go(o.s-1);next.onclick=()=>o.go(o.s==S.length-1?0:o.s+1);return o}
 const PT=(g,C)=>(s,a)=>txt(s,{x:C,'text-anchor':'middle',fill:'#e8ecff','font-size':15,'font-weight':700,...a},g);   // 오른쪽 정리판 가운데 글
 // 오른쪽 정리판 꾸밈 도우미 (함수 선언이라 앞쪽 자료에서도 쓸 수 있음)
@@ -924,11 +928,11 @@ function fDraw(t){const g=flg;g.innerHTML='';const s=F.s;
 }
 const F=stepper(FS,fstep,fprev,fnext,fnum,fcue,fDraw);
 Z.go(0);F.go(0);
-(function pLoop(now){if(!p3.hidden){if(!zva.hidden)zDraw(now/1000);else fDraw(now/1000)}requestAnimationFrame(pLoop)})(performance.now());
+(function pLoop(now){if(!p3.hidden){if(!zva.hidden)zDraw((now/1000-TB));else fDraw((now/1000-TB))}requestAnimationFrame(pLoop)})(performance.now());
 
 // ---- ④ 급팽창 이론 ----
 // 작은 메뉴: 급팽창 이론 / 지평선 문제 해결 / 평탄성 문제 해결
-[[i4a,iva],[i4b,ivb],[i4c,ivc]].forEach(([b,v],i,all)=>b.onclick=()=>all.forEach(([bb,vv])=>{const on=bb==b;bb.classList.toggle('on',on);bb.setAttribute('aria-selected',on);vv.hidden=!on}));
+[[i4a,iva],[i4b,ivb],[i4c,ivc]].forEach(([b,v],i,all)=>b.onclick=()=>{all.forEach(([bb,vv])=>{const on=bb==b;bb.classList.toggle('on',on);bb.setAttribute('aria-selected',on);vv.hidden=!on});resetAll()});   // 누를 때마다 처음부터
 const iBox=g=>mk('rect',{x:20,y:44,width:500,height:252,rx:12,fill:'#10122a',stroke:'rgba(255,255,255,.18)'},g);
 const iHead=(g,s)=>txt(s,{x:22,y:30,fill:'#ffd76b','font-size':14,'font-weight':700},g);
 const ease=x=>x<0?0:x>1?1:x*x*(3-2*x);
@@ -1070,11 +1074,11 @@ function kDraw(t){const g=kg;g.innerHTML='';const s=K.s;
 }
 const K=stepper(KS,kstep,kprev,knext,knum,kcue,kDraw);
 I.go(0);J.go(0);K.go(0);
-(function iLoop(now){if(!p4.hidden){const t=now/1000;if(!iva.hidden)iDraw(t);else if(!ivb.hidden)jDraw(t);else kDraw(t)}requestAnimationFrame(iLoop)})(performance.now());
+(function iLoop(now){if(!p4.hidden){const t=(now/1000-TB);if(!iva.hidden)iDraw(t);else if(!ivb.hidden)jDraw(t);else kDraw(t)}requestAnimationFrame(iLoop)})(performance.now());
 
 // ---- ⑤ 암흑 물질의 발견 ----
 // 작은 메뉴: 은하의 회전 속도 / 중력 렌즈
-[[d5a,rva],[d5b,rvb]].forEach(([b,v],i,all)=>b.onclick=()=>all.forEach(([bb,vv])=>{const on=bb==b;bb.classList.toggle('on',on);bb.setAttribute('aria-selected',on);vv.hidden=!on}));
+[[d5a,rva],[d5b,rvb]].forEach(([b,v],i,all)=>b.onclick=()=>{all.forEach(([bb,vv])=>{const on=bb==b;bb.classList.toggle('on',on);bb.setAttribute('aria-selected',on);vv.hidden=!on});resetAll()});   // 누를 때마다 처음부터
 function rnd0(seed){let q=seed;return()=>(q=(q*16807)%2147483647)/2147483647}   // 늘 같은 모양을 그리는 의사 난수
 
 // 은하의 회전 속도: 측정 방법(도플러 효과) → 예상(빛을 내는 물질만) → 관측(거의 일정) → 암흑 물질
@@ -1239,11 +1243,11 @@ function lDraw(t){const g=lgg;g.innerHTML='';const s=DL.s;if(s!=lLast){lLast=s;l
 }
 const DL=stepper(LS,lstep,lprev,lnext,lnum,lcue,lDraw);
 DR.go(0);DL.go(0);
-(function dLoop(now){if(!p5.hidden){const t=now/1000;if(!rva.hidden)rDraw(t);else lDraw(t)}requestAnimationFrame(dLoop)})(performance.now());
+(function dLoop(now){if(!p5.hidden){const t=(now/1000-TB);if(!rva.hidden)rDraw(t);else lDraw(t)}requestAnimationFrame(dLoop)})(performance.now());
 
 // ---- ⑥ 우주의 가속 팽창 ----
 // 작은 메뉴: 가속 팽창의 발견 / 암흑 에너지
-[[a6a,ava],[a6b,avb]].forEach(([b,v],i,all)=>b.onclick=()=>all.forEach(([bb,vv])=>{const on=bb==b;bb.classList.toggle('on',on);bb.setAttribute('aria-selected',on);vv.hidden=!on}));
+[[a6a,ava],[a6b,avb]].forEach(([b,v],i,all)=>b.onclick=()=>{all.forEach(([bb,vv])=>{const on=bb==b;bb.classList.toggle('on',on);bb.setAttribute('aria-selected',on);vv.hidden=!on});resetAll()});   // 누를 때마다 처음부터
 // 우주의 크기 (개념도, u: 시간 0~1, 현재 u = 0.54)
 // AA: 물질 + 암흑 에너지 (처음에는 감속, 뒤에는 가속), AD: 암흑 에너지가 없었다면 (계속 감속)
 const AA=u=>.3*Math.pow(Math.sinh(2.2*u),2/3),AD=u=>.3*Math.pow(2.2*u,2/3),ANOW=.54,AINF=.3;
@@ -1402,15 +1406,16 @@ function qDraw(t){const g=qgg;g.innerHTML='';const s=DQ.s;if(s!=qLast){qLast=s;q
 }
 const DQ=stepper(QS,qstep,qprev,qnext,qnum,qcue,qDraw);
 DA.go(0);DQ.go(0);
-(function aLoop(now){if(!p6.hidden){const t=now/1000;if(!ava.hidden)aDraw(t);else qDraw(t);if(!ov13.hidden)iaDraw(t)}requestAnimationFrame(aLoop)})(performance.now());
+(function aLoop(now){if(!p6.hidden){const t=(now/1000-TB);if(!ava.hidden)aDraw(t);else qDraw(t);if(!ov13.hidden)iaDraw(t)}requestAnimationFrame(aLoop)})(performance.now());
 
 // 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
 [['ov1','thb1','thx1'],['ov2','thb2','thx2'],['ov3','thb3','thx3'],['ov4','thb4','thx4'],['ov5','thb5','thx5'],['ov6','thb6','thx6'],['ov7','thb7','thx7'],['ov8','thb8','thx8'],['ov9','thb9','thx9'],['ov10','thb10','thx10'],['ov11','thb11','thx11'],['ov12','thb12','thx12'],['ov13','thb13','thx13']].forEach(([o,bt,x])=>{const ov=document.getElementById(o),btn=document.getElementById(bt),cl=document.getElementById(x);
  const close=()=>{ov.hidden=true;btn.focus()};btn.onclick=()=>{ov.hidden=false;cl.focus()};cl.onclick=close;
  ov.addEventListener('click',e=>{if(e.target===ov)close()});ov.addEventListener('keydown',e=>{if(e.key=='Escape')close()})});
 // Ia형 초신성 알아보기 창: 열 때와 다시 보기를 누를 때 애니메이션을 처음부터 한 번 진행
-thb13.addEventListener('click',()=>{iaT0=performance.now()/1000});
-thb11.addEventListener('click',()=>{th11g.innerHTML='';iBox(th11g);aObs(th11g,1,true)});   // 생각해 보기 답 창: 관측 그래프를 다 그린 모습으로 다시 보여 줌iare.onclick=()=>{iaT0=performance.now()/1000};
+thb13.addEventListener('click',()=>{iaT0=NOW()});
+thb11.addEventListener('click',()=>{th11g.innerHTML='';iBox(th11g);aObs(th11g,1,true)});   // 생각해 보기 답 창: 관측 그래프를 다 그린 모습으로 다시 보여 줌
+iare.onclick=()=>{iaT0=NOW()};
 </script>
 <script src="./copyright.js"></script>
 </body>
