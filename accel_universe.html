@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- 시험용 사이트: 검색 엔진에 싣지 않음. 정식 사이트로 옮길 때 이 줄을 지울 것 -->
+<meta name="robots" content="noindex">
+<title>가속 팽창하는 우주</title>
+<style>
+/* cosmology.html과 같은 규칙
+   색: 남색 하나를 기본 강조색으로 / 상자: 옅은 회색 판 / 모서리: 판 14px, 버튼 10px / 그림판: 밤하늘 남색 */
+:root{--bg:#fff;--fg:#1b1f2a;--card:#f3f4f8;--bd:#d5d8e2;--bline:#d9d9d6;--bcard:#fff;--bfg:#1c1c1c;--acc:#5468d4;--on-acc:#fff;--frame:transparent;box-sizing:border-box}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14161d;--fg:#e8eaf2;--card:#1f222c;--bd:#3a3f50;--bline:#3a3a38;--bcard:#262625;--bfg:#eee;--acc:#8f9cf0;--on-acc:#10142b;--frame:#2c3247}}
+:root[data-theme="dark"]{--bg:#14161d;--fg:#e8eaf2;--card:#1f222c;--bd:#3a3f50;--bline:#3a3a38;--bcard:#262625;--bfg:#eee;--acc:#8f9cf0;--on-acc:#10142b;--frame:#2c3247}
+/* 그림 안에서 고르는 단추는 라벤더(연보라) */
+:root{--sub:#7c5cd6;--on-sub:#fff;--sub-bg:#efeafd;--sub-bd:#cdbff3;--sub-tx:#5b3fbf}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}}
+:root[data-theme="dark"]{--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Pretendard Variable",Pretendard,system-ui,-apple-system,"Noto Sans KR",sans-serif;line-height:1.5;word-break:keep-all}
+button,input{font-family:inherit}
+/* 그림이 한 화면에 들어오도록, 화면 높이가 낮으면 글·단추·그림을 함께 좁힘 (그림 비율 940 : 460) */
+main{max-width:960px;margin:0 auto;padding:14px}
+main{max-width:max(560px,min(960px,calc((100vh - 250px) * 2.043 + 28px)))}
+main{max-width:max(560px,min(960px,calc((100dvh - 250px) * 2.043 + 28px)))}
+.titlebar{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:0 0 8px}
+.titlebar h1{font-size:1.35rem;font-weight:800;line-height:1.35;margin:0}
+.back{margin:0 0 0 auto;flex:none;display:inline-block;padding:8px 14px;border:1px solid var(--bline);border-radius:999px;background:var(--bcard);color:var(--bfg);font-size:.9rem;font-weight:700;text-decoration:none}
+.back:hover{background:var(--bline)}
+.note{margin-bottom:8px;background:var(--card);border-radius:14px;padding:8px 14px;font-size:.92rem}
+.note p{margin:0}
+canvas{display:block;width:100%;height:auto;aspect-ratio:940/460;border-radius:14px;background:#0b1026;box-shadow:0 0 0 1px var(--frame)}
+/* 그림 아래 조작 줄 */
+.ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:8px;padding:8px 12px;border-radius:14px;background:var(--card)}
+.pb{padding:6px 14px;border:1px solid var(--acc);border-radius:10px;background:var(--acc);color:var(--on-acc);font-size:.9rem;font-weight:700;cursor:pointer;flex:none}
+.lb{font-size:.88rem;font-weight:700;opacity:.8}
+.bs{display:flex;border:1px solid var(--sub-bd);border-radius:10px;overflow:hidden;flex:none}
+.bs button{padding:6px 12px;border:0;background:var(--sub-bg);color:var(--sub-tx);font-size:.9rem;font-weight:600;cursor:pointer}
+.bs button+button{border-left:1px solid var(--sub-bd)}
+.bs button.on{background:var(--sub);color:var(--on-sub);font-weight:700}
+.sl{display:flex;align-items:center;gap:8px;font-size:.9rem;font-weight:700}
+.sl input{width:150px;accent-color:var(--sub)}
+.sl b{min-width:4.6em;color:var(--sub-tx)}
+.go{color:var(--acc);font-weight:700}
+#cue{flex:1 1 220px;font-size:.92rem}
+.kb{display:inline-block;padding:0 .45em;margin:0 .1em;border-radius:6px;background:var(--acc);color:var(--on-acc);font-size:.9em;font-weight:700;line-height:1.55;vertical-align:.05em;white-space:nowrap}
+/* 생각해 보기 */
+.ask{margin:10px 0 0;display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;font-size:.95rem}
+.ask p{margin:0;font-weight:600}
+.tag{display:inline-block;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;white-space:nowrap}
+.open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none}
+.open-think:hover{background:var(--card)}
+.ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.ov[hidden]{display:none}
+.think{background:var(--bg);color:var(--fg);width:min(680px,100%);max-height:100%;overflow:auto;padding:14px 18px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.think-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.think-t{display:flex;align-items:center;gap:8px;color:var(--acc);font-size:1rem}
+.think .x{flex:none;font-size:.85rem;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:3px 10px;cursor:pointer;color:var(--fg)}
+.think .ans{margin:0 0 8px;font-size:1rem;font-weight:700}
+.think .exp{margin:0;font-size:.93rem;line-height:1.6}
+.think .exp+.exp{margin-top:6px}
+</style>
+<!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+</head>
+<body>
+<main>
+<!-- 학습실과 탐구 번호가 정해지면 제목 앞에 <p class="pnum">탐구 NN</p>을 넣고, 돌아가기 링크를 그 학습실 메뉴로 바꿀 것 -->
+<div class="titlebar"><h1>가속 팽창하는 우주</h1><a class="back" href="./index.html">← Earth Test Lab</a></div>
+<canvas id="cv" width="940" height="460" aria-label="감속, 등속, 가속 팽창하는 세 고무줄 위를 개미(빛)가 걸어 관측자에게 오는 모습과, 시간에 따른 고무줄 크기 그래프"></canvas>
+<div class="ctl">
+ <button type="button" class="pb" id="play">▶ 재생</button><button type="button" class="pb" id="reset">↺ 처음부터</button>
+ <span class="lb">보기</span>
+ <div class="bs" id="view" role="group" aria-label="비교 방법"><button type="button" class="on" aria-pressed="true">같은 z인 은하</button><button type="button" aria-pressed="false">같은 출발 거리인 은하</button></div>
+ <span class="lb">우주</span>
+ <div class="bs" id="mods" role="group" aria-label="보이는 우주"><button type="button" class="on" aria-pressed="true">감속</button><button type="button" class="on" aria-pressed="true">등속</button><button type="button" class="on" aria-pressed="true">가속</button></div>
+</div>
+<div class="ctl">
+ <label class="sl"><span id="zl">적색 편이</span><input type="range" id="z" min="0.1" max="1.5" step="0.05" value="0.5"><b id="zv">z = 0.50</b></label>
+ <label class="sl">재생 빠르기<input type="range" id="sp" min="0.5" max="4" step="0.5" value="1"><b id="spv">×1</b></label>
+ <span id="cue" class="go"></span>
+</div>
+<div class="ask"><span class="tag">생각해 보기</span><p>적색 편이가 같은 Ia형 초신성이 예상보다 어둡게 보였다는 것은 무엇을 뜻할까요?</p><button type="button" class="open-think" id="thb">정답 확인</button></div>
+<div class="ov" id="ov" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 적색 편이가 같은 Ia형 초신성이 예상보다 어둡게 보였다는 것은 무엇을 뜻할까요?">
+ <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>적색 편이가 같은 Ia형 초신성이 예상보다 어둡게 보였다는 것은 무엇을 뜻할까요?</b><button type="button" class="x" id="thx" aria-label="닫기">닫기 ✕</button></div>
+ <p class="ans">빛이 오는 동안 우주가 같은 배율로 늘어났는데도 예상보다 멀다는 것은, 우주가 그만큼 늘어나는 데 시간이 더 걸렸다는 뜻입니다. 즉, 과거에는 지금보다 느리게 팽창했고 우주는 가속 팽창하고 있습니다.</p>
+ <p class="exp">적색 편이 z는 빛이 출발한 뒤 우주가 몇 배로 늘어났는지를 나타냅니다(늘어난 배율 = 1 + z). z = 0.5이면 빛이 오는 동안 고무줄이 1.5배로 늘어난 것입니다.</p>
+ <p class="exp">세 우주는 지금의 팽창 빠르기(허블 상수)가 같습니다. 가속 팽창하는 우주는 과거에 더 느리게 늘어났으므로 1.5배가 되는 데 시간이 더 오래 걸립니다. 개미(빛)는 늘 같은 빠르기로 걸으므로 더 오래 걸었다는 것은 더 먼 곳에서 출발했다는 뜻이고, 그 은하는 지금도 더 멀리 있어 더 어둡게 보입니다.</p>
+ <p class="exp">이 자료는 단순화한 모형입니다. 감속 팽창은 물질만 있는 우주, 가속 팽창은 암흑 에너지만 있는 우주로 계산했습니다. 실제 우주는 처음에는 감속 팽창하다가 수십억 년 전부터 가속 팽창하고 있습니다. 시간(분)과 거리(칸)도 비유를 위한 단위입니다.</p>
+</div></div>
+<script>
+// ---------- 물리 모형 ----------
+// 시간 s: 지금 = 0인 분 단위(과거는 음수). 고무줄의 크기 a(s): 지금 a(0) = 1.
+// 세 모형 모두 지금의 팽창 빠르기 H0 = (da/ds)/a = 1/300 (1/분)로 같음 → 등속 팽창이면 1 → 1.5배가 되는 데 100분
+// 개미(빛)의 빠르기 C = 0.1칸/분 (10분에 1칸). 거리 단위 '칸' = 지금의 고무줄 눈금 한 칸
+const H0=1/300,C=0.1;
+const M=[
+ {nm:'감속 팽창',sub:'물질만 있는 우주',col:'#5aa9ff',   // a = (t/t0)^(2/3), t0 = 2/(3·H0) = 200분
+  a:s=>s<=-200?0:Math.pow((s+200)/200,2/3),H:s=>2/(3*(s+200)),sOf:a=>200*(Math.pow(a,1.5)-1),
+  DeF:ae=>ae*C*600*(1-Math.sqrt(ae)),lo:4/9},
+ {nm:'등속 팽창',sub:'늘 같은 빠르기로 팽창',col:'#b9c0d4',   // a = 1 + H0·s
+  a:s=>1+s/300,H:s=>1/(300+s),sOf:a=>300*(a-1),DeF:ae=>ae*C*300*Math.log(1/ae),lo:1/Math.E},
+ {nm:'가속 팽창',sub:'암흑 에너지만 있는 우주',col:'#ff6b6b',   // a = exp(H0·s)
+  a:s=>Math.exp(s/300),H:s=>1/300,sOf:a=>300*Math.log(a),DeF:ae=>C*300*(1-ae),lo:.001}];
+// M[i].DeF(ae): 빛이 a = ae일 때 출발해 지금 도착하려면 출발할 때 은하가 얼마나 떨어져 있어야 하는지 (같은 출발 거리 보기에서 ae를 찾을 때 씀)
+const HS=.05;   // 수치 적분 시간 간격(분)
+let view=0,on=[true,true,true],Z=.5,SP=1,tau=0,tStart=0,play=false;
+// 모형마다: 빛이 출발한 시각 se(= a가 ae인 시각), 출발 거리 De, 지금 거리 Dnow, 개미의 위치 표
+function compute(){const ae0=1/(1+Z),target=M[1].DeF(ae0);   // 같은 출발 거리 보기: 등속 우주에서 이 z인 은하의 출발 거리
+ M.forEach(m=>{let ae=ae0;
+  if(view==1){let lo=m.lo,hi=1;for(let k=0;k<60;k++){const mid=(lo+hi)/2;if(m.DeF(mid)>target)lo=mid;else hi=mid}ae=(lo+hi)/2}
+  const se=m.sOf(ae),f=(s,D)=>m.H(s)*D-C;   // dD/ds = H·D − C (공간이 늘어나 멀어짐 + 개미가 C로 다가옴)
+  // 지금(s = 0) 개미는 관측자에게 도착(D = 0) → 시간을 거꾸로 적분하여 빛이 출발할 때의 거리 De를 구함
+  let s=0,D=0;const P=[[0,0]];
+  while(s>se+1e-9){const h=Math.max(-HS,se-s),k1=f(s,D),k2=f(s+h/2,D+h/2*k1),k3=f(s+h/2,D+h/2*k2),k4=f(s+h,D+h*k3);D+=h/6*(k1+2*k2+2*k3+k4);s+=h;P.push([s,D])}
+  Object.assign(m,{ae,se,T:-se,De:D,Dnow:D/ae,z:1/ae-1,P})});
+ M.forEach(m=>m.rel=m.Dnow/M[1].Dnow);
+ const en=M.filter((m,i)=>on[i]);tStart=-Math.max(...en.map(m=>m.T))-6;tau=tStart;play=false;upd()}
+function antD(m,s){const P=m.P;if(s>=0)return 0;let i=Math.min(P.length-2,Math.floor(-s/HS));const[s1,d1]=P[i],[s2,d2]=P[i+1];return d1+(d2-d1)*(s1-s)/(s1-s2)}
+
+// ---------- 그리기 ----------
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d'),W=940,HH=460;
+function fit(){const r=Math.min(3,Math.max(1,window.devicePixelRatio||1));cv.width=W*r;cv.height=HH*r;ctx.setTransform(r,0,0,r,0,0);draw()}
+const F=(sz,w=700)=>`${w} ${sz}px "Pretendard Variable",Pretendard,system-ui,"Noto Sans KR",sans-serif`;
+function T(s,x,y,o={}){ctx.font=F(o.sz||13,o.w||700);ctx.fillStyle=o.c||'#e8ecff';ctx.textAlign=o.al||'left';ctx.textBaseline='alphabetic';ctx.fillText(s,x,y)}
+function rr(x,y,w,h,r,fill,stroke){ctx.beginPath();ctx.roundRect(x,y,w,h,r);if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1;ctx.stroke()}}
+function line(x1,y1,x2,y2,c,w=1,dash){ctx.beginPath();ctx.setLineDash(dash||[]);ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.strokeStyle=c;ctx.lineWidth=w;ctx.stroke();ctx.setLineDash([])}
+function dot(x,y,r,c,st){ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fillStyle=c;ctx.fill();if(st){ctx.strokeStyle=st;ctx.lineWidth=1.4;ctx.stroke()}}
+const f1=v=>v.toFixed(1),f2=v=>v.toFixed(2),mn=v=>Math.round(v)+'분';
+const X0=150,BW=450;   // 고무줄: 왼쪽 끝 = 관측자, 지금 길이 BW(px)
+function draw(){ctx.clearRect(0,0,W,HH);
+ const en=M.map((m,i)=>i).filter(i=>on[i]),n=en.length,sc=BW/(Math.max(...en.map(i=>M[i].Dnow))*1.06);   // px / 칸
+ T('고무줄(우주) 위를 걷는 개미(빛)',18,26,{c:'#ffd76b',sz:14});
+ T(tau>=0?'개미 도착! (지금)':`개미 도착까지 ${Math.ceil(-tau)}분`,X0+BW,26,{al:'right',c:tau>=0?'#ffd76b':'#cfd6ee',sz:13.5});
+ const ys=n==3?[70,150,230]:n==2?[100,200]:[150];
+ en.forEach((i,k)=>{const m=M[i],y=ys[k],sm=Math.max(tau,m.se),a=m.a(sm),gone=tau<m.se;
+  T(m.nm,18,y-2,{c:m.col,sz:15.5,w:800});T(m.sub,18,y+16,{c:'#a9b1cc',sz:11.5,w:600});
+  // 고무줄과 눈금(지금 1칸 간격, 고무줄과 함께 벌어짐)
+  ctx.lineCap='round';line(X0,y,X0+BW*a,y,'rgba(255,255,255,.16)',9);line(X0,y,X0+BW*a,y,m.col+'88',2);ctx.lineCap='butt';
+  for(let j=1;j*sc<=BW+1e-6;j++){const x=X0+j*sc*a,big=j%5==0;line(x,y-(big?7:4),x,y+(big?7:4),big?'rgba(255,255,255,.55)':'rgba(255,255,255,.3)',big?1.4:1)}
+  // 관측자(우리 은하)
+  ctx.save();ctx.translate(X0,y);ctx.scale(1,.5);dot(0,0,9,'rgba(207,230,255,.35)');ctx.restore();dot(X0,y,3.5,'#fff');
+  if(k==0)T('관측자',X0,y-14,{al:'center',c:'#cfe6ff',sz:11.5});
+  // 은하: 고무줄과 함께 멀어짐 (지금 거리 = 출발 거리 × (1 + z))
+  const gx=X0+m.De*a/m.ae*sc,ax=X0+antD(m,sm)*sc;
+  if(!gone){line(ax,y,gx,y,'rgba(255,215,107,.45)',3);}
+  ctx.shadowColor=m.col;ctx.shadowBlur=12;dot(gx,y,7.5,m.col,'#fff');ctx.shadowBlur=0;
+  if(!gone)dot(ax,y,4.6,'#ffd76b','#7a5a00');
+  // 오른쪽 숫자
+  const R=X0+BW+22;
+  if(gone){T('빛 출발 전',R,y-4,{c:m.col,sz:13.5});T(`${Math.ceil(m.se-tau)}분 뒤에 개미가 출발`,R,y+16,{c:'#cfd6ee',sz:12.5,w:600})}
+  else{T(`고무줄 ×${f2(a/m.ae)}   개미 ${mn(sm-m.se)}`,R,y-4,{c:m.col,sz:13.5});
+   T(`출발 거리 ${f1(m.De)}칸 → 은하 ${f1(m.De*a/m.ae)}칸`,R,y+16,{c:'#cfd6ee',sz:12.5,w:600});
+   if(view==1&&tau>=0)T(`관측되는 z = ${f2(m.z)}`,R,y+34,{c:'#ffd76b',sz:12.5})}});
+ graph(en);panel(en)}
+// 아래 왼쪽: 고무줄 크기 a(t) 그래프
+function graph(en){rr(14,268,586,184,12,'#10122a','rgba(255,255,255,.18)');
+ const gX0=80,gX1=588,gY0=424,gY1=296,smin=Math.min(...en.map(i=>M[i].se))*1.08-(view==1?40:0),smax=22;
+ const amin=Math.max(0,Math.min(...en.map(i=>M[i].ae))-.22),amax=1.08;
+ const gx=s=>gX0+(s-smin)/(smax-smin)*(gX1-gX0),gy=a=>gY0-(a-amin)/(amax-amin)*(gY0-gY1);
+ T('고무줄의 크기 a (지금 = 1)',gX0+8,288,{c:'#ffd76b',sz:13});
+ T('점선: 지금 기울기(팽창 빠르기 H₀)는 모두 같음',gX1,288,{al:'right',c:'#cfd6ee',sz:11.5,w:600});
+ line(gX0,gY0,gX1,gY0,'#cfd6ee',1.2);line(gX0,gY0,gX0,gY1-4,'#cfd6ee',1.2);
+ ctx.save();ctx.translate(gX0-34,(gY0+gY1)/2);ctx.rotate(-Math.PI/2);T('고무줄의 크기 →',0,0,{al:'center',c:'#e8ecff',sz:12});ctx.restore();
+ T('시간 (분, 지금 = 0) →',gX1,gY0+22,{al:'right',c:'#e8ecff',sz:12});
+ for(let s=Math.ceil(smin/50)*50;s<=0;s+=50){line(gx(s),gY0,gx(s),gY0+4,'#cfd6ee');if(s<0)T(String(s).replace('-','−'),gx(s),gY0+16,{al:'center',c:'#a9b1cc',sz:11,w:600})}
+ line(gx(smin),gy(1),gX1,gy(1),'rgba(255,255,255,.18)',1,[3,4]);T('1',gX0-6,gy(1)+4,{al:'right',c:'#a9b1cc',sz:11,w:600});
+ line(gx(0),gY0,gx(0),gY1,'rgba(255,215,107,.4)',1,[3,4]);T('지금',gx(0)+4,gY1+6,{c:'#ffd76b',sz:11});
+ ctx.save();ctx.beginPath();ctx.rect(gX0,gY1-6,gX1-gX0,gY0-gY1+6);ctx.clip();
+ if(view==0){const ae=M[en[0]].ae;line(gX0,gy(ae),gx(Math.max(...en.map(i=>M[i].se))),gy(ae),'rgba(255,255,255,.4)',1,[4,4])}
+ en.forEach(i=>{const m=M[i];ctx.beginPath();let st=false;for(let s=Math.max(smin,-199.5);s<=smax;s+=.5){const x=gx(s),y=gy(m.a(s));st?ctx.lineTo(x,y):ctx.moveTo(x,y);st=true}ctx.strokeStyle=m.col;ctx.lineWidth=2.6;ctx.stroke()});
+ line(gx(-70),gy(1-70/300),gx(smax),gy(1+smax/300),'#ffffff',1.6,[6,4]);   // 지금의 접선 (기울기 H0)
+ en.forEach((i,k)=>{const m=M[i];line(gx(m.se),gy(m.ae),gx(m.se),gY0,m.col,1.2,[3,3]);dot(gx(m.se),gy(m.ae),4.5,m.col,'#fff');
+  // 빛이 출발한 시각: 같은 z이면 점이 가로로 붙어 있으므로 이름표를 위·아래로 번갈아 둠
+  if(view==1)T(`${Math.round(m.T)}분 전`,gx(m.se)-8,gy(m.ae)+4,{al:"right",c:m.col,sz:11.5});   // 같은 출발 거리: 점이 비스듬히 늘어서므로 이름표는 점 왼쪽
+  else T(`${Math.round(m.T)}분 전`,gx(m.se),gy(m.ae)+(k%2==0?-10:19),{al:"center",c:m.col,sz:11.5})});
+ if(tau>smin){line(gx(tau),gY1,gx(tau),gY0,'rgba(255,215,107,.8)',1.4);en.forEach(i=>{const m=M[i],a=m.a(tau);if(a>amin)dot(gx(tau),gy(a),3.5,'#ffd76b')})}
+ ctx.restore();
+ if(view==0){const ae=M[en[0]].ae;T(f2(ae),gX0-6,gy(ae)+4,{al:'right',c:'#a9b1cc',sz:11,w:600});
+  T('← 1/(1+z): 빛이 출발할 때의 크기',gx(Math.max(...en.map(i=>M[i].se)))+12,gy(ae)+4,{c:'#cfd6ee',sz:11.5,w:600})}}
+// 아래 오른쪽: 핵심 정리 → 끝나면 결과 표
+function panel(en){const x=612,y=268,w=314;rr(x,y,w,184,12,'#161a35','rgba(255,255,255,.18)');
+ if(tau<0){T('핵심',x+w/2,y+24,{al:'center',c:'#ffd76b',sz:14});
+  [['지금의 팽창 빠르기(H₀)는 셋 다 같음','#e8ecff'],['다른 것은 과거의 팽창 빠르기','#e8ecff'],['개미(빛)는 늘 같은 빠르기 (10분에 1칸)','#ffd76b'],
+   [view==0?'같은 z = 고무줄이 같은 배율로 늘어남':'세 은하는 같은 거리에서 빛을 냄','#cfd6ee']].forEach(([s,c],k)=>{rr(x+12,y+36+k*30,w-24,25,8,'rgba(255,255,255,.05)');T(s,x+w/2,y+53+k*30,{al:'center',c,sz:12.5})});
+  T('(단순화한 모형, 시간·거리는 비유 단위)',x+w/2,y+174,{al:'center',c:'#a9b1cc',sz:11,w:600});return}
+ T(view==0?`결과 (z = ${f2(Z)})`:`결과 (출발 거리 ${f1(M[1].De)}칸)`,x+w/2,y+24,{al:'center',c:'#ffd76b',sz:14});
+ const cols=view==0?[['우주',x+14,'left'],['걸린 시간',x+122,'right'],['출발',x+178,'right'],['지금',x+232,'right'],['등속 대비',x+w-12,'right']]
+  :[['우주',x+14,'left'],['걸린 시간',x+130,'right'],['관측 z',x+200,'right'],['지금 거리',x+w-12,'right']];
+ cols.forEach(([s,cx,al])=>T(s,cx,y+50,{al,c:'#a9b1cc',sz:11.5}));line(x+10,y+57,x+w-10,y+57,'rgba(255,255,255,.2)');
+ en.forEach((i,k)=>{const m=M[i],yy=y+78+k*26,v=view==0?[m.nm,mn(m.T),f1(m.De)+'칸',f1(m.Dnow)+'칸','×'+f2(m.rel)]:[m.nm,mn(m.T),f2(m.z),f1(m.Dnow)+'칸'];
+  v.forEach((s,j)=>T(s,cols[j][1],yy,{al:cols[j][2],c:j==0?m.col:'#e8ecff',sz:13}))});
+ T(view==0?'지금 거리 ÷ 출발 거리 = '+f2(1+Z)+' (모두 같음)':'같은 거리에서 출발해도 관측되는 z가 다름',x+w/2,y+170,{al:'center',c:'#ffd76b',sz:12})}
+
+// ---------- 조작 ----------
+const $=id=>document.getElementById(id),cue=$('cue');
+function upd(){$('play').textContent=play?'⏸ 일시정지':'▶ 재생';
+ if(tau>=0){cue.className='';cue.textContent=view==0?'결과 표에서 걸린 시간과 은하의 지금 거리를 비교해 보세요.':'결과 표에서 세 우주의 관측되는 z를 비교해 보세요.'}
+ else if(!play){cue.className='go';cue.innerHTML='<span class="kb">재생</span>을 눌러 개미가 관측자에게 오는 모습을 보세요.'}
+ else{cue.className='';cue.textContent='세 개미는 지금 같은 순간에 도착하도록 출발 시각을 맞추었습니다.'}draw()}
+$('play').onclick=()=>{if(tau>=0)tau=tStart;play=!play;upd()};
+$('reset').onclick=()=>{tau=tStart;play=false;upd()};
+[...$('view').children].forEach((b,i,all)=>b.onclick=()=>{view=i;all.forEach((x,j)=>{x.classList.toggle('on',j==i);x.setAttribute('aria-pressed',j==i)});
+ const zi=$('z');zi.max=i==1?'0.6':'1.5';Z=Math.min(Z,+zi.max);zi.value=Z;   // 감속 우주는 너무 먼 거리에서 출발한 빛이 지금 도착할 수 없어 z를 0.6까지로 제한
+ $('zl').textContent=i==1?'출발 거리 기준: 등속 우주의':'적색 편이';$('zv').textContent='z = '+f2(Z);compute()});
+[...$('mods').children].forEach((b,i)=>b.onclick=()=>{if(on[i]&&on.filter(Boolean).length==1)return;on[i]=!on[i];b.classList.toggle('on',on[i]);b.setAttribute('aria-pressed',on[i]);compute()});
+$('z').oninput=e=>{Z=+e.target.value;$('zv').textContent='z = '+f2(Z);compute()};
+$('sp').oninput=e=>{SP=+e.target.value;$('spv').textContent='×'+SP};
+let last=performance.now();
+(function loop(now){const dt=Math.min(.1,(now-last)/1000);last=now;
+ if(play){tau=Math.min(0,tau+dt*20*SP);if(tau>=0){play=false;upd()}else draw()}   // 기본 빠르기: 1초에 20분
+ requestAnimationFrame(loop)})(last);
+const ov=$('ov'),close=()=>ov.hidden=true;$('thb').onclick=()=>{ov.hidden=false;$('thx').focus()};$('thx').onclick=close;
+ov.addEventListener('click',e=>{if(e.target===ov)close()});ov.addEventListener('keydown',e=>{if(e.key=='Escape')close()});
+window.addEventListener('resize',fit);
+compute();fit();if(document.fonts)document.fonts.ready.then(draw);
+</script>
+<script src="./copyright.js"></script>
+</body>
+</html>
