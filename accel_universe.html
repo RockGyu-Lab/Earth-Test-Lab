@@ -131,7 +131,7 @@ function draw(){ctx.clearRect(0,0,W,HH);
  T('고무줄(우주) 위를 걷는 개미(빛)',18,26,{c:'#ffd76b',sz:14});
  T(tau>=0?'개미 도착! (지금)':`개미 도착까지 ${Math.ceil(-tau)}분`,X0+BW,26,{al:'right',c:tau>=0?'#ffd76b':'#cfd6ee',sz:13.5});
  const ys=n==3?[70,150,230]:n==2?[100,200]:[150];
- en.forEach((i,k)=>{const m=M[i],y=ys[k],sm=Math.max(tau,m.se),a=m.a(sm),gone=tau<m.se;
+ en.forEach((i,k)=>{const m=M[i],y=ys[k],sm=Math.max(tau,m.se),a=m.a(Math.min(tau,0)),gone=tau<m.se;   // 고무줄은 처음부터 늘 팽창, 개미만 출발 시각(a = ae)을 기다림
   T(m.nm,18,y-2,{c:m.col,sz:15.5,w:800});T(m.sub,18,y+16,{c:'#a9b1cc',sz:11.5,w:600});
   // 고무줄과 눈금(지금 1칸 간격, 고무줄과 함께 벌어짐)
   ctx.lineCap='round';line(X0,y,X0+BW*a,y,'rgba(255,255,255,.16)',9);line(X0,y,X0+BW*a,y,m.col+'88',2);ctx.lineCap='butt';
@@ -146,7 +146,7 @@ function draw(){ctx.clearRect(0,0,W,HH);
   if(!gone)dot(ax,y,4.6,'#ffd76b','#7a5a00');
   // 오른쪽 숫자
   const R=X0+BW+22;
-  if(gone){T('빛 출발 전',R,y-4,{c:m.col,sz:13.5});T(`${Math.ceil(m.se-tau)}분 뒤에 개미가 출발`,R,y+16,{c:'#cfd6ee',sz:12.5,w:600})}
+  if(gone){T(`빛 출발 전   고무줄 ×${f2(a/m.ae)}`,R,y-4,{c:m.col,sz:13.5});T(`${Math.ceil(m.se-tau)}분 뒤 개미 출발 (×1.00이 될 때)`,R,y+16,{c:'#cfd6ee',sz:12.5,w:600})}
   else{T(`고무줄 ×${f2(a/m.ae)}   개미 ${mn(sm-m.se)}`,R,y-4,{c:m.col,sz:13.5});
    T(`출발 거리 ${f1(m.De)}칸 → 은하 ${f1(m.De*a/m.ae)}칸`,R,y+16,{c:'#cfd6ee',sz:12.5,w:600});
    if(view==1&&tau>=0)T(`관측되는 z = ${f2(m.z)}`,R,y+34,{c:'#ffd76b',sz:12.5})}});
@@ -195,7 +195,7 @@ const $=id=>document.getElementById(id),cue=$('cue');
 function upd(){$('play').textContent=play?'⏸ 일시정지':'▶ 재생';
  if(tau>=0){cue.className='';cue.textContent=view==0?'결과 표에서 걸린 시간과 은하의 지금 거리를 비교해 보세요.':'결과 표에서 세 우주의 관측되는 z를 비교해 보세요.'}
  else if(!play){cue.className='go';cue.innerHTML='<span class="kb">재생</span>을 눌러 개미가 관측자에게 오는 모습을 보세요.'}
- else{cue.className='';cue.textContent='세 개미는 지금 같은 순간에 도착하도록 출발 시각을 맞추었습니다.'}draw()}
+ else{cue.className='';cue.textContent='세 우주는 처음부터 계속 팽창합니다. 개미는 빛이 출발한 때에 떠나 지금 같은 순간에 도착합니다.'}draw()}
 $('play').onclick=()=>{if(tau>=0)tau=tStart;play=!play;upd()};
 $('reset').onclick=()=>{tau=tStart;play=false;upd()};
 [...$('view').children].forEach((b,i,all)=>b.onclick=()=>{view=i;all.forEach((x,j)=>{x.classList.toggle('on',j==i);x.setAttribute('aria-pressed',j==i)});
