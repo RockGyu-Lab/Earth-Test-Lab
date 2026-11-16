@@ -19,8 +19,8 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Pretendard Varia
 button,input{font-family:inherit}
 /* 그림이 한 화면에 들어오도록, 화면 높이가 낮으면 글·단추·그림을 함께 좁힘 (그림 비율 940 : 460) */
 main{max-width:960px;margin:0 auto;padding:14px}
-main{max-width:max(560px,min(960px,calc((100vh - 300px) * 2.043 + 28px)))}
-main{max-width:max(560px,min(960px,calc((100dvh - 300px) * 2.043 + 28px)))}
+main{max-width:max(560px,min(960px,calc((100vh - 230px) * 2.043 + 28px)))}
+main{max-width:max(560px,min(960px,calc((100dvh - 230px) * 2.043 + 28px)))}
 .titlebar{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:0 0 8px}
 .titlebar h1{font-size:1.35rem;font-weight:800;line-height:1.35;margin:0}
 .back{margin:0 0 0 auto;flex:none;display:inline-block;padding:8px 14px;border:1px solid var(--bline);border-radius:999px;background:var(--bcard);color:var(--bfg);font-size:.9rem;font-weight:700;text-decoration:none}
@@ -43,21 +43,6 @@ canvas{display:block;width:100%;height:auto;aspect-ratio:940/460;border-radius:1
 .go{color:var(--acc);font-weight:700}
 #cue{flex:1 1 220px;font-size:.92rem}
 .kb{display:inline-block;padding:0 .45em;margin:0 .1em;border-radius:6px;background:var(--acc);color:var(--on-acc);font-size:.9em;font-weight:700;line-height:1.55;vertical-align:.05em;white-space:nowrap}
-/* 생각해 보기 */
-.ask{margin:10px 0 0;display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;font-size:.95rem}
-.ask p{margin:0;font-weight:600}
-.tag{display:inline-block;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;white-space:nowrap}
-.open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none}
-.open-think:hover{background:var(--card)}
-.ov{position:fixed;inset:0;z-index:20;background:rgba(10,14,25,.55);display:flex;align-items:center;justify-content:center;padding:16px}
-.ov[hidden]{display:none}
-.think{background:var(--bg);color:var(--fg);width:min(680px,100%);max-height:100%;overflow:auto;padding:14px 18px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
-.think-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
-.think-t{display:flex;align-items:center;gap:8px;color:var(--acc);font-size:1rem}
-.think .x{flex:none;font-size:.85rem;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:3px 10px;cursor:pointer;color:var(--fg)}
-.think .ans{margin:0 0 8px;font-size:1rem;font-weight:700}
-.think .exp{margin:0;font-size:.93rem;line-height:1.6}
-.think .exp+.exp{margin-top:6px}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -68,19 +53,11 @@ canvas{display:block;width:100%;height:auto;aspect-ratio:940/460;border-radius:1
 <div class="titlebar"><h1>가속 팽창하는 우주</h1><a class="back" href="./index.html">← Earth Test Lab</a></div>
 <div class="note"><p><b class="em">적색 편이 z = 1</b>: 관측한 빛의 파장이 처음의 <b class="em">2배</b>로 늘어났다는 뜻입니다. 빛이 오는 동안 우주(공간)도 <b class="em">2배</b>로 커졌습니다.</p>
 <p>z = (관측한 파장 − 원래 파장) ÷ 원래 파장 = (2 − 1) ÷ 1 = 1</p></div>
-<canvas id="cv" width="940" height="460" aria-label="등속·가속·감속 팽창하는 세 고무줄(우주)이 1에서 2로 늘어나는 동안 걸린 시간과 그동안 빛이 온 거리, 늘어나는 빠르기 그래프"></canvas>
+<canvas id="cv" width="940" height="460" aria-label="등속·가속·감속 팽창하는 세 고무줄(우주)이 1에서 2로 늘어나는 동안 빛이 온 거리, 지난 시간을 나타내는 시계와 늘어나는 빠르기 그래프"></canvas>
 <div class="ctl">
  <button type="button" class="pb" id="play">▶ 재생</button><button type="button" class="pb" id="reset">↺ 처음부터</button>
  <span id="cue"></span>
 </div>
-<div class="ask"><span class="tag">생각해 보기</span><p>z = 1인 Ia형 초신성이 등속 팽창으로 예상한 것보다 어둡게 보였습니다. 우주는 어떻게 팽창해 왔을까요?</p><button type="button" class="open-think" id="thb">정답 확인</button></div>
-<div class="ov" id="ov" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: z = 1인 Ia형 초신성이 등속 팽창으로 예상한 것보다 어둡게 보였습니다. 우주는 어떻게 팽창해 왔을까요?">
- <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>z = 1인 Ia형 초신성이 등속 팽창으로 예상한 것보다 어둡게 보였습니다. 우주는 어떻게 팽창해 왔을까요?</b><button type="button" class="x" id="thx" aria-label="닫기">닫기 ✕</button></div>
- <p class="ans">예상보다 어둡다는 것은 예상보다 멀리 있다는 뜻이고, 우주가 2배로 커지는 데 시간이 더 오래 걸렸다는 뜻입니다. 지금의 팽창 빠르기는 같으므로 과거에는 지금보다 느리게 팽창했던 것입니다. 즉, 우주는 가속 팽창하고 있습니다.</p>
- <p class="exp">z = 1이면 빛이 오는 동안 우주가 2배로 늘어났습니다. 이것은 어느 우주에서나 같습니다. 다른 것은 2배가 되는 데 걸린 시간입니다.</p>
- <p class="exp">빛은 늘 같은 빠르기로 오므로, 오래 걸린 빛일수록 더 먼 곳에서 출발했습니다. 그래서 가속 팽창하는 우주에서는 같은 z인 초신성이 더 멀리 있고 더 어둡게 보입니다.</p>
- <p class="exp">이 자료는 단순화한 모형입니다. 감속 팽창은 물질만 있는 우주, 가속 팽창은 암흑 에너지만 있는 우주로 계산했고, 지금의 허블 상수는 약 70 km/s/Mpc로 맞추었습니다. 실제 우주는 처음에는 감속 팽창하다가 수십억 년 전부터 가속 팽창하고 있으며, z = 1인 빛은 약 80억 년 동안 여행해 왔습니다.</p>
-</div></div>
 <script>
 // ---------- 물리 모형 ----------
 // 시간 t: 빛이 출발한 때(고무줄 길이 L = 1) = 0인 억 년 단위. z = 1이므로 지금은 L = 2.
@@ -116,7 +93,6 @@ function card(x,y,w,h,title){rr(x,y,w,h,12,'#10122a','rgba(255,255,255,.18)');if
 const X0=170,U=190,PL=3.6,BY=[60,134,208];   // U: 고무줄 길이 1의 px, PL: 1억 광년의 px, BY: 고무줄 줄의 y (빛 막대는 그 아래 26px)
 function draw(){ctx.clearRect(0,0,W,HH);
  T('고무줄(우주)이 1에서 2로 늘어나는 동안 빛이 온 거리',18,28,{c:'#ffd76b',sz:14});
- T('시계 (한 바퀴 100억 년)',650,28,{al:'center',c:'#a9b1cc',sz:11.5,w:600});
  M.forEach((m,i)=>{const y=BY[i],ly=y+26,tt=Math.min(t,m.T),L=m.L(tt),done=t>=m.T;
   T(m.nm,18,y+4,{c:m.col,sz:15.5,w:800});T(m.sub,18,y+22,{c:'#a9b1cc',sz:11.5,w:600});
   // 고무줄(우주)과 그 위의 한 파장, 길이 1과 2 표시
@@ -131,24 +107,31 @@ function draw(){ctx.clearRect(0,0,W,HH);
   if(tt>0){ctx.lineCap='round';line(X0,ly,X0+tt*PL,ly,done?'rgba(255,215,107,.85)':'rgba(255,215,107,.6)',5);ctx.lineCap='butt';
    if(!done){ctx.shadowColor='#ffd76b';ctx.shadowBlur=10;dot(X0+tt*PL,ly,5,'#ffd76b','#7a5a00');ctx.shadowBlur=0}
    else T(`${f1(m.T)}억 광년`,X0+tt*PL+10,ly+4,{c:'#ffd76b',sz:12})}
-  // 오른쪽: 시계와 숫자
-  clock(650,y+12,26,tt,m.col,done);
-  T(`${f1(tt)}억 년`,688,y+6,{c:m.col,sz:15,w:800});
-  T(done?'2배 도착!':`길이 ×${f2(L)}`,688,y+25,{c:done?'#ffd76b':'#cfd6ee',sz:12.5,w:600});
-  T(`빠르기 ${f2(m.v(tt))}`,790,y+25,{c:'#cfd6ee',sz:12.5,w:600})});
+  // 오른쪽: 늘어난 길이와 늘어나는 빠르기 (시간은 아래 시계·그래프에 모아 보여 줌)
+  T(done?'2배 도착!':`길이 ×${f2(L)}`,640,y+6,{c:done?'#ffd76b':m.col,sz:15,w:800});
+  T(`늘어나는 빠르기 ${f2(m.v(tt))}`,640,y+25,{c:'#cfd6ee',sz:12.5,w:600});
+  });
  T('빛 막대 눈금: 10억 광년',X0+100*PL,BY[2]+44,{al:'right',c:'#7d86a8',sz:10.5,w:600});
- // 아래 왼쪽: 늘어나는 빠르기 그래프
+ // 아래 왼쪽: 시계 + 늘어나는 빠르기 그래프 (가로축이 시간)
  rr(14,262,586,188,12,'#10122a','rgba(255,255,255,.18)');
- const gx0=70,gx1=580,gy0=420,gy1=296,gx=s=>gx0+s/100*(gx1-gx0),gy=v=>gy0-v/1.6*(gy0-gy1);
- T('고무줄이 늘어나는 빠르기 (마지막 순간 = 1)',28,282,{c:'#ffd76b',sz:13});
+ const tn=Math.min(t,TMAX),CX=76,CY=350;
+ T('지난 시간',CX,298,{al:'center',c:'#cfd6ee',sz:12});
+ clock(CX,CY,38,tn,'#ffd76b',t>=TMAX);
+ M.forEach(m=>{const a=-Math.PI/2+2*Math.PI*m.T/100;dot(CX+Math.cos(a)*42,CY+Math.sin(a)*42,3.6,m.col,t>=m.T?'#fff':null)});   // 시계 테두리: 세 고무줄이 2배가 되는 때
+ T(`${f1(tn)}억 년`,CX,412,{al:'center',c:'#ffd76b',sz:16,w:800});
+ T('한 바퀴 100억 년',CX,432,{al:'center',c:'#7d86a8',sz:10.5,w:600});
+ const gx0=158,gx1=584,gy0=420,gy1=296,gx=s=>gx0+s/100*(gx1-gx0),gy=v=>gy0-v/1.6*(gy0-gy1);
+ T('고무줄이 늘어나는 빠르기 (마지막 순간 = 1)',gx0-30,282,{c:'#ffd76b',sz:13});
  line(gx0,gy0,gx1,gy0,'rgba(255,255,255,.5)',1.2);line(gx0,gy0,gx0,gy1-6,'rgba(255,255,255,.5)',1.2);
  for(let s=0;s<=100;s+=20){line(gx(s),gy0,gx(s),gy0+4,'rgba(255,255,255,.5)');T(s+'',gx(s),gy0+17,{al:'center',sz:11,c:'#a9b1cc',w:600})}
- T('걸린 시간 (억 년) →',gx1,gy0+30,{al:'right',sz:11.5,c:'#cfd6ee',w:600});
+ T('지난 시간 (억 년) →',gx1,gy0+30,{al:'right',sz:11.5,c:'#cfd6ee',w:600});
  [0.5,1,1.5].forEach(v=>{line(gx0-4,gy(v),gx0,gy(v),'rgba(255,255,255,.5)');T(v+'',gx0-8,gy(v)+4,{al:'right',sz:11,c:'#a9b1cc',w:600})});
  line(gx0,gy(1),gx1,gy(1),'rgba(255,215,107,.35)',1,[4,4]);
+ if(tn>0)line(gx(tn),gy1-4,gx(tn),gy0,'rgba(255,215,107,.7)',1.4);   // 지금 시각
+ M.forEach(m=>{if(t>=m.T)line(gx(m.T),gy(1),gx(m.T),gy0,m.col+'99',1,[3,3])});
  M.forEach(m=>{const pth=(b,c,w)=>{ctx.beginPath();for(let s=0;s<=b+1e-9;s+=.5){const q=Math.min(s,b),x=gx(q),y=gy(m.v(q));s?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.strokeStyle=c;ctx.lineWidth=w;ctx.stroke()};
   pth(m.T,m.col+'40',2);const tt=Math.min(t,m.T);if(tt>0)pth(tt,m.col,2.8);dot(gx(tt),gy(m.v(tt)),4.5,m.col,'#fff')});
- if(t>=TMAX)T('마지막 순간의 빠르기는 셋 다 같음',gx(68),gy(1)-10,{al:'center',sz:12,c:'#ffd76b'});
+ if(t>=TMAX)T('마지막 순간의 빠르기는 셋 다 같음',gx(66),gy(1)-10,{al:'center',sz:12,c:'#ffd76b'});
  // 아래 오른쪽: 결과
  card(612,262,314,188,'결과 (z = 1)');
  const cx=[628,782,890,908];
@@ -175,8 +158,6 @@ let last=performance.now();
 (function loop(now){const dt=Math.min(.1,(now-last)/1000);last=now;
  if(play){t=Math.min(TMAX,t+dt*10);if(t>=TMAX){play=false;upd()}else draw()}   // 1초에 10억 년
  requestAnimationFrame(loop)})(last);
-const ov=$('ov'),close=()=>ov.hidden=true;$('thb').onclick=()=>{ov.hidden=false;$('thx').focus()};$('thx').onclick=close;
-ov.addEventListener('click',e=>{if(e.target===ov)close()});ov.addEventListener('keydown',e=>{if(e.key=='Escape')close()});
 window.addEventListener('resize',fit);
 upd();fit();if(document.fonts)document.fonts.ready.then(draw);
 </script>
