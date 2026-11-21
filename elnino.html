@@ -115,7 +115,7 @@ section[hidden]{display:none}
 <div class="subtabs" id="subs1" role="tablist" aria-label="엘니뇨" hidden>
  <button type="button" role="tab" class="on" aria-selected="true">태평양 수온 분포의 변화</button>
  <button type="button" role="tab" aria-selected="false" disabled title="만드는 중">수온 편차로 본 엘니뇨</button>
- <button type="button" role="tab" aria-selected="false" disabled title="만드는 중">대기 순환의 변화</button>
+ <button type="button" role="tab" aria-selected="false">대기 순환의 변화</button>
 </div>
 <div class="subtabs" id="subs" role="tablist" aria-label="평상시">
  <button type="button" role="tab" class="on" aria-selected="true">태평양의 수온 분포</button>
@@ -381,10 +381,10 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
  // 구름과 비 (C: 나타난 정도, cx: 0 서쪽 → 1 동쪽으로 옮겨 감) — 엘니뇨 탭
  if(st.C>0){const cxp=sxp(lerp(.15,.58,st.cx)),cy=SR.y+60;cloud(cxp,cy,a*st.C);rain(cxp,cy+22,SEA-8,t,a*st.C);T('비가 많이 내림',cxp+6,cy-30,{c:'#e8ecff',size:12.5,w:800,halo:1,a:a*st.C})}
  // 무역풍(해수면 위, 동 → 서)
- if(st.W>0.02&&!st.walk){const L=56*st.W,aw=a*Math.min(1,st.W*1.6);   // 동 → 서로 계속 흘러가는 바람 줄기(노란색, 한 줄)
+ if(st.W>0.02&&(!st.walk||st.showW>0)){const L=56*st.W,aw=a*Math.min(1,st.W*1.6);   // 동 → 서로 계속 흘러가는 바람 줄기(노란색, 한 줄)
   PA.forEach(p=>{const x=sxp(p.x),y=SEA-30,f=Math.sin(Math.PI*p.x);arrow(x+L/2,y,x-L/2,y,'#ffd84a',3,10,aw*Math.max(0,Math.min(1,f*2.2)))});
   T(st.W<.6?'약해진 무역풍':'무역풍',sxp(.86),SEA-48,{size:13.5,w:800,halo:1,c:'#ffd84a',a:a*Math.min(1,st.W*2+.3)})}
- if(st.walk)drawWalker(st,t,a);
+ if(st.walk&&(st.wn??1)>0)drawWalker(st,t,a*(st.wn??1));if(st.walkE&&st.walkE.al>0)drawWalker({...st,...st.walkE},t,a*st.walkE.al);
  // 이름표
  T('따뜻한 해수층(혼합층)',sxp(.24),SEA-level(.24,st)+Math.min(thick(.24,st)*.5+5,thick(.24,st)-6),{size:13,w:800,c:'#1b1200',a:a*.9});
  // 점선 = 수온 약층이 시작되는 깊이 (수온 약층은 두께가 있는 층이지만, 이 단원에서는 시작 깊이만 나타냄)
@@ -413,10 +413,11 @@ function qb(P0,C,P2,u){return [(1-u)*(1-u)*P0[0]+2*(1-u)*u*C[0]+u*u*P2[0],(1-u)*
 
 // ---- 워커 순환 (대기의 순환: 그림판 전체 폭 단면 위에) ----
 // wa: 서태평양 상승 기류, ea: 동태평양 하강 기류, loop: 위·아래 흐름까지 이어진 순환
-function drawWalker(st,t,a){const xw=sxp(.15),xe=sxp(.86),yt=SR.y+44,yb=SEA-26,r=26;
+// 상승 기류 자리(rx), 하강 기류 자리(dx)를 바꿀 수 있음(엘니뇨 때는 상승이 동쪽, 하강이 서쪽). 글: rT·dT(하늘), topT·botT(순환), loopT(이름)
+function drawWalker(st,t,a){const xw=sxp(st.rx??.15),xe=sxp(st.dx??.86),s=Math.sign(xe-xw)||1,yt=SR.y+44,yb=SEA-26,r=26,mx=(xw+xe)/2;
  // 순환 경로(시계 반대 방향으로 그림: 서쪽 위로 → 위쪽 동쪽으로 → 동쪽 아래로 → 아래쪽 서쪽으로)
- const P=[[xw,yb-r],[xw,yt+r],[xw+r,yt],[xe-r,yt],[xe,yt+r],[xe,yb-r],[xe-r,yb],[xw+r,yb]];
- const path=new Path2D();path.moveTo(xw,yb-r);path.lineTo(xw,yt+r);path.arcTo(xw,yt,xw+r,yt,r);path.lineTo(xe-r,yt);path.arcTo(xe,yt,xe,yt+r,r);path.lineTo(xe,yb-r);path.arcTo(xe,yb,xe-r,yb,r);path.lineTo(xw+r,yb);path.arcTo(xw,yb,xw,yb-r,r);
+ const P=[[xw,yb-r],[xw,yt+r],[xw+s*r,yt],[xe-s*r,yt],[xe,yt+r],[xe,yb-r],[xe-s*r,yb],[xw+s*r,yb]];
+ const path=new Path2D();path.moveTo(xw,yb-r);path.lineTo(xw,yt+r);path.arcTo(xw,yt,xw+s*r,yt,r);path.lineTo(xe-s*r,yt);path.arcTo(xe,yt,xe,yt+r,r);path.lineTo(xe,yb-r);path.arcTo(xe,yb,xe-s*r,yb,r);path.lineTo(xw+s*r,yb);path.arcTo(xw,yb,xw,yb-r,r);
  // 구간 길이로 위치 찾기(모서리는 직선으로 근사)
  const L=[];let tot=0;for(let i=0;i<8;i++){const p=P[i],q=P[(i+1)%8],d=Math.hypot(q[0]-p[0],q[1]-p[1]);L.push(d);tot+=d}
  const at=u=>{let d=u*tot;for(let i=0;i<8;i++){if(d<=L[i]){const p=P[i],q=P[(i+1)%8],f=d/L[i];return [lerp(p[0],q[0],f),lerp(p[1],q[1],f),q[0]-p[0],q[1]-p[1],i]}d-=L[i]}return [P[0][0],P[0][1],0,-1,0]};
@@ -424,21 +425,23 @@ function drawWalker(st,t,a){const xw=sxp(.15),xe=sxp(.86),yt=SR.y+44,yb=SEA-26,r
  if(st.wa>0){const A=a*st.wa;cloud(xw+6,yt+40,A,1.25);rain(xw+6,yt+66,SEA-6,t,A);
   ctx.save();ctx.setLineDash([8,7]);ctx.lineDashOffset=(t*30)%15;ctx.globalAlpha=A;ctx.strokeStyle='#ff9b7a';ctx.lineWidth=3;[-34,40].forEach(dx=>{ctx.beginPath();ctx.moveTo(xw+dx,SEA-14);ctx.lineTo(xw+dx,yt+80);ctx.stroke()});ctx.restore();
   [-34,40].forEach(dx=>arrow(xw+dx,yt+92,xw+dx,yt+74,'#ff9b7a',3,10,A));
-  T('상승 기류',xw+48,yb-70,{c:'#ff9b7a',size:14,w:800,halo:1,a:A,al:'left'});
-  pill('저기압',xw+3,SEA-12,'#ff9b7a',A,14);T('구름이 많고 비가 많이 내림',xw+4,yt-8+0,{c:'#e8ecff',size:12.5,w:800,halo:1,a:A})}
+  T('상승 기류',xw+48*s,yb-70,{c:'#ff9b7a',size:14,w:800,halo:1,a:A,al:s>0?'left':'right'});
+  pill('저기압',xw+3,SEA-12,'#ff9b7a',A,14);T(st.rT||'구름이 많고 비가 많이 내림',xw+4,yt-8,{c:'#e8ecff',size:12.5,w:800,halo:1,a:A})}
  // 동쪽: 하강 기류, 고기압, 맑음
  if(st.ea>0){const A=a*st.ea;sun(xe-6,yt+6,A);
   ctx.save();ctx.setLineDash([8,7]);ctx.lineDashOffset=-(t*30)%15;ctx.globalAlpha=A;ctx.strokeStyle='#e6e9f2';ctx.lineWidth=3;[-40,34].forEach(dx=>{ctx.beginPath();ctx.moveTo(xe+dx,yt+40);ctx.lineTo(xe+dx,SEA-40);ctx.stroke()});ctx.restore();
   [-40,34].forEach(dx=>arrow(xe+dx,SEA-52,xe+dx,SEA-34,'#e6e9f2',3,10,A));
-  T('하강 기류',xe-50,yb-70,{c:'#e6e9f2',size:14,w:800,halo:1,a:A,al:'right'});
-  pill('고기압',xe-3,SEA-12,'#e6e9f2',A,14);T('맑고 건조함',xe-6,yt-12,{c:'#e8ecff',size:12.5,w:800,halo:1,a:A})}
+  T('하강 기류',xe-50*s,yb-70,{c:'#e6e9f2',size:14,w:800,halo:1,a:A,al:s>0?'right':'left'});
+  pill('고기압',xe-3,SEA-12,'#e6e9f2',A,14);T(st.dT||'맑고 건조함',xe-6,yt-12,{c:'#e8ecff',size:12.5,w:800,halo:1,a:A})}
  // 순환 전체
  if(st.loop>0){const A=a*st.loop;ctx.save();ctx.globalAlpha=A*.55;ctx.strokeStyle='#ffffff';ctx.lineWidth=2;ctx.setLineDash([2,6]);ctx.stroke(path);ctx.restore();
   PW.forEach(p=>{const [x,y,dx,dy]=at(p.u),n=Math.hypot(dx,dy)||1;ctx.globalAlpha=A;ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(x+dx/n*6,y+dy/n*6);ctx.lineTo(x-dx/n*3-dy/n*4,y-dy/n*3+dx/n*4);ctx.lineTo(x-dx/n*3+dy/n*4,y-dy/n*3-dx/n*4);ctx.closePath();ctx.fill()});
   ctx.globalAlpha=1;
-  T('높은 곳: 서 → 동으로 이동',sxp(.5),yt-10,{size:13.5,w:800,halo:1,a:A});
-  T('지표 부근: 동 → 서로 부는 무역풍',sxp(.5),yb-12,{size:13.5,w:800,halo:1,a:A});
-  pill('워커 순환',sxp(.5),yt+64,'#ffd76b',A,16)}
+  T(st.topT||'높은 곳: 서 → 동으로 이동',mx,yt-10,{size:13.5,w:800,halo:1,a:A});
+  T(st.botT||'지표 부근: 동 → 서로 부는 무역풍',mx,yb-12,{size:13.5,w:800,halo:1,a:A});
+  pill(st.loopT||'워커 순환',mx,yt+64,'#ffd76b',A,16)}
+ // 기후 꼬리표(양쪽 땅 위): climW·climE
+ if(st.clim>0){const LT=SEA-56,A=a*st.clim;ctx.font=font(12.5,800);[[st.climW,SR.x+4,'left','#7fd17f'],[st.climE,SR.x+SR.w-4,'right','#ffc36b']].forEach(([s2,x,al,c])=>{if(!s2)return;const w=ctx.measureText(s2).width+18;pill(s2,al=='left'?x+w/2:x-w/2,LT-30,c,A,12.5)})}
  ctx.globalAlpha=a}
 
 // ---- 페루 연안 단면 (해안에 수직으로 자른 단면: 왼쪽 먼바다 → 오른쪽 페루 해안) ----
@@ -624,10 +627,10 @@ const SCENES=[
    xs:[[14.5,'평상시의 모습','그 결과 서태평양은 <em>따뜻한 해수층이 두껍고 수온과 해수면이 높으며</em>, 동태평양은 용승으로 <em>따뜻한 해수층이 얇고 수온이 낮은</em> 평상시의 모습이 됩니다.']],   // 14.5초부터 설명이 바뀜
    s:k=>CAUSE(k*26)}   // 26초 분량을 20초에 재생(정리 이름표가 나온 뒤 약 3초 더 보여 주고 끝)
  ]},
- {draw:sceneWalk,steps:[ // 대기의 순환: 단계 없이 하나의 흐름(16초, 설명은 때에 따라 바뀜)
-  {t:'서태평양의 상승 기류',x:'수온이 높은 서태평양에서는 바다가 공기를 데워 <em>상승 기류</em>가 생기고 <em>저기압</em>이 됩니다. 올라간 공기 속 수증기가 응결하여 <em>구름이 많고 비가 많이 내립니다</em>.',d:16,
-   xs:[[4.5,'동태평양의 하강 기류','수온이 낮은 동태평양에서는 공기가 차가워져 <em>하강 기류</em>가 생기고 <em>고기압</em>이 됩니다. 구름이 잘 생기지 않아 <em>맑고 건조합니다</em>.'],[9,'워커 순환','지표 부근에서는 동쪽(고기압)에서 서쪽(저기압)으로 <em>무역풍</em>이 불고, 높은 곳에서는 공기가 서쪽에서 동쪽으로 이동합니다. 이 동서 방향의 대기 순환을 <em>워커 순환</em>이라고 합니다.']],
-   s:k=>{const g=k*16;return {...NORMAL,W:0,wa:seg(g,0,3),ea:seg(g,4.5,7.5),loop:seg(g,9,12)}}}]}
+ {draw:sceneWalk,steps:[ // 대기의 순환: 단계 없이 하나의 흐름(19초, 설명은 때에 따라 바뀜, 끝에 평상시의 기후)
+  {t:'서태평양의 상승 기류',x:'수온이 높은 서태평양에서는 바다가 공기를 데워 <em>상승 기류</em>가 생기고 <em>저기압</em>이 됩니다. 올라간 공기 속 수증기가 응결하여 <em>구름이 많고 비가 많이 내립니다</em>.',d:19,
+   xs:[[4.5,'동태평양의 하강 기류','수온이 낮은 동태평양에서는 공기가 차가워져 <em>하강 기류</em>가 생기고 <em>고기압</em>이 됩니다. 구름이 잘 생기지 않아 <em>맑고 건조합니다</em>.'],[9,'워커 순환','지표 부근에서는 동쪽(고기압)에서 서쪽(저기압)으로 <em>무역풍</em>이 불고, 높은 곳에서는 공기가 서쪽에서 동쪽으로 이동합니다. 이 동서 방향의 대기 순환을 <em>워커 순환</em>이라고 합니다.'],[13.5,'평상시의 기후','서태평양(인도네시아·오스트레일리아 북부)은 상승 기류로 <em>비가 많고 습하며</em>, 동태평양(페루 연안)은 하강 기류로 <em>비가 적고 건조합니다</em>.']],
+   s:k=>{const g=k*19;return {...NORMAL,W:0,wa:seg(g,0,3),ea:seg(g,4.5,7.5),loop:seg(g,9,12),clim:seg(g,13.5,15),climW:'비가 많고 습함',climE:'비가 적고 건조함'}}}]}
 
 ];
 // 엘니뇨 > 태평양 수온 분포의 변화: 단계 없이 하나의 흐름(g초, 0~19). 기후의 변화(구름·비, 홍수·가뭄)는 '대기 순환의 변화'에서 다룸
@@ -639,11 +642,21 @@ const ESCENES=[
        [9,'용승의 약화','동태평양에서 <em>용승이 약해져</em> 찬 해수가 덜 올라오므로, <em>동태평양 적도 부근의 표층 수온이 평년보다 높아집니다</em>.'],
        [15,'엘니뇨','이처럼 동태평양 적도 부근의 표층 수온이 <em>평년보다 높은 상태가 지속되는 현상</em>을 <em>엘니뇨</em>라고 합니다.']],
    s:k=>ELN(k*19)}]}];
+// 엘니뇨 > 대기 순환의 변화: 평상시 워커 순환 → 사라짐·바다가 엘니뇨로 → 엘니뇨 때 순환(상승 동쪽, 하강 서쪽) → 이상 기후
+function ATM(g){const e=seg(g,4,8),wn=1-seg(g,3.5,5.5),we=seg(g,7.5,10);
+ const sw=Math.min(seg(g,4,5),1-seg(g,8,9));   // 순환이 바뀌는 동안: 약해진 무역풍과 동쪽으로 흐르는 해수
+ return {...NORMAL,W:.3*sw,showW:sw,V:.8*sw,E:e,A:e,U:1-.75*e,wa:1,ea:1,loop:1,wn,climW:wn>.5?'비가 많고 습함':'가뭄·산불',climE:wn>.5?'비가 적고 건조함':'폭우·홍수',clim:Math.max(wn,seg(g,12,13.5)),
+  walkE:{al:we,rx:.6,dx:.1,wa:1,ea:1,loop:1,rT:'구름이 많고 비가 많이 내림',dT:'맑고 건조함',topT:'높은 곳: 동 → 서로 이동',botT:'지표 부근: 무역풍이 약해짐',loopT:'엘니뇨 때의 대기 순환'}}}
+ESCENES.push({draw:sceneWalk,steps:[{t:'평상시의 대기 순환',x:'평상시에는 서태평양에서 공기가 <em>상승</em>하고 동태평양에서 <em>하강</em>하는 <em>워커 순환</em>이 나타납니다.',d:18,
+ xs:[[3.5,'따뜻한 해수의 이동','엘니뇨가 일어나 무역풍이 약해지고 따뜻한 해수가 동쪽으로 이동하면, <em>공기가 상승하는 곳도 동쪽으로 옮겨 갑니다</em>.'],
+     [8,'엘니뇨 때의 대기 순환','수온이 높아진 중앙·동태평양에서 <em>상승 기류(저기압)</em>, 서태평양에서 <em>하강 기류(고기압)</em>가 나타나 대기 순환이 달라집니다.'],
+     [12,'이상 기후','서태평양(인도네시아·오스트레일리아)은 비가 줄어 <em>가뭄과 산불</em>이, 동태평양(페루 연안)은 비가 늘어 <em>폭우와 홍수</em>가 생기기 쉽습니다.']],
+ s:k=>ATM(k*18)}]});
 const ELNINO=ESCENES[0];
 
 let tab=0,sub=0,si=0,ph=0,playing=true,last=performance.now()/1000,quizOK=false,quizT=0;
 const $=id=>document.getElementById(id);
-let sub1=0;const scene=()=>tab==0?SCENES[sub]:ESCENES[sub1];
+let sub1=0;const ESUB=[0,null,1];const scene=()=>tab==0?SCENES[sub]:ESCENES[ESUB[sub1]];   // 엘니뇨 작은 메뉴 → 장면(수온 편차는 만드는 중)
 function stepHTML(tt,tx){return `<b>${tt}</b><span>${tx.replace(/ ([:=→]) /g,' $1 ').replace(/(\d) (°C)/g,'$1 $2')}</span>`}
 // 진행 막대: 칸을 누르거나 끌면 그 단계의 그 때로 이동
 function buildProg(){const P=$('prog');P.innerHTML='';scene().steps.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-label',s.t);b.innerHTML='<i></i>';
