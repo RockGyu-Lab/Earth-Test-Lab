@@ -95,12 +95,6 @@ canvas{width:100%;height:auto;aspect-ratio:940/400;display:block;border-radius:1
  .ctl{margin-top:6px;padding:4px 10px;min-height:40px}.pb{padding:4px 12px;font-size:.86rem}
  .note,.quiz{margin-top:6px}.note+.note{margin-top:4px}
 }
-/* 시험용: 용승 표현 비교 단추 */
-.wcmp{display:flex;align-items:center;gap:4px;margin-left:auto;font-size:.8rem}
-.wcmp span{opacity:.7;font-weight:700;margin-right:2px}
-.wcmp button{padding:3px 9px;border:1px solid var(--sub-bd);border-radius:999px;background:var(--sub-bg);color:var(--sub-tx);font-size:.8rem;font-weight:700;cursor:pointer}
-.wcmp button.on{background:var(--sub);color:var(--on-sub);border-color:var(--sub-tx)}
-.wcmp+.back{margin-left:0}
 section[hidden]{display:none}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
@@ -108,8 +102,6 @@ section[hidden]{display:none}
 </head><body><main>
 <!-- 학습실과 탐구 번호가 정해지면 제목 앞에 <p class="pnum">탐구 NN</p>을 넣고, 돌아가기 링크를 그 학습실 메뉴로 바꿀 것 -->
 <div class="titlebar"><h1>엘니뇨와 라니냐(통합과학)</h1>
- <!-- 시험용: 용승 표현 비교(하나로 정하면 지울 것) -->
- <div class="wcmp" id="ucmp" role="group" aria-label="용승 표현 비교"><span>용승 표현 비교</span><button type="button" data-m="2" class="on">2안 속 빈 화살표</button><button type="button" data-m="3">3안 물 입자</button><button type="button" data-m="5">5안 실선 화살표</button></div>
  <a class="back" href="./index.html">← Earth Test Lab</a></div>
 <div class="tabs" role="tablist" aria-label="학습 메뉴">
  <button role="tab" id="tab0" aria-selected="true">평상시</button>
@@ -357,7 +349,7 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
   ctx.strokeStyle=pc;ctx.lineWidth=2;shaft();ctx.stroke();head();ctx.fillStyle=pc;ctx.fill();ctx.restore()});
  ctx.globalAlpha=a;
  // 용승(동쪽 끝)
- if(st.U>0.02){const ua=st.U,xt=sxp(.93);upDraw([sxp(.68),BOT-18],[xt,BOT-24],[xt,SEA-level(.93,st)+8],ua,t,a);
+ if(st.U>0.02){const ua=st.U,xt=sxp(.93);upDraw([sxp(.66),BOT-14],[xt,BOT-22],[xt,SEA-level(.93,st)+Math.max(26,thick(.93,st)+6)],ua,t,a);   // 엘니뇨 때(따뜻한 해수층이 두꺼움)는 수온 약층 근처까지만
   T(st.U<.6&&st.E>.5?'용승 약화':'용승',sxp(.86),BOT-26,{c:'#8fe3ff',size:13.5,w:800,halo:1,a:a*Math.min(1,ua*1.5+.3)})}
  ctx.globalAlpha=a;
  // 땅: 지형은 의미가 없으므로 단순한 직사각형(해수면 변화를 비교하기 쉽게 해수면보다 충분히 높게)
@@ -410,17 +402,21 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
 function qb(P0,C,P2,u){return [(1-u)*(1-u)*P0[0]+2*(1-u)*u*C[0]+u*u*P2[0],(1-u)*(1-u)*P0[1]+2*(1-u)*u*C[1]+u*u*P2[1]]}
 // 용승: 바닷가 아래의 찬 물이 위로 볼록하게 솟아오른 모습(색) + 짧고 굵은 실선 위쪽 화살표 몇 개가 천천히 올라옴
 //  x0~x1: 솟아오르는 구역(x1이 바닷가), topY(x): 그 자리 해수면, bot: 바닥, str: 세기(약해지면 가라앉고 화살표가 줄어듦)
-let UMODE='2';   // 시험용 용승 표현: 2 속 빈 굵은 곡선 화살표 / 3 작은 물 입자 / 5 실선 곡선 화살표 2개
-// 깊은 곳(P0)에서 휘어 바닷가 해수면(P2)까지. str: 세기(약해지면 가늘고 흐리게, 적게)
+// 용승: 아래가 열린 속 빈 곡선 화살표(꼬리 쪽은 가늘고 흐리게 사라짐) + 그 안에서 천천히 떠오르는 작은 물 입자
+//  깊은 곳(P0)에서 휘어 바닷가 쪽(P2)까지. 화살촉 끝은 해수면보다 조금 아래에서 멈춤. str: 세기(약해지면 가늘고 흐리게, 입자도 적게)
 function qOff(P0,C,P2,u,off){const p=qb(P0,C,P2,u),q=qb(P0,C,P2,Math.min(1,u+.01)),r=qb(P0,C,P2,Math.max(0,u-.01)),dx=q[0]-r[0],dy=q[1]-r[1],n=Math.hypot(dx,dy)||1;return [p[0]-dy/n*off,p[1]+dx/n*off,dx/n,dy/n]}
-function upDraw(P0,C,P2,str,t,a){if(str<=.02)return;const A=a*Math.min(1,.3+str);ctx.save();ctx.lineJoin='round';ctx.lineCap='round';
- if(UMODE=='2'){const w=(6+10*str),E=.8,N=30,L=[],R=[];for(let i=0;i<=N;i++){const u=i/N*E;L.push(qOff(P0,C,P2,u,w));R.push(qOff(P0,C,P2,u,-w))}
-  const b=qOff(P0,C,P2,E,0),hw=w*2;const path=new Path2D();L.forEach((p,i)=>i?path.lineTo(p[0],p[1]):path.moveTo(p[0],p[1]));
-  path.lineTo(b[0]-b[3]*hw,b[1]+b[2]*hw);path.lineTo(P2[0],P2[1]);path.lineTo(b[0]+b[3]*hw,b[1]-b[2]*hw);for(let i=R.length-1;i>=0;i--)path.lineTo(R[i][0],R[i][1]);path.closePath();
-  const pulse=.75+.25*Math.sin(t*1.6);ctx.globalAlpha=A;ctx.fillStyle='rgba(143,227,255,.14)';ctx.fill(path);ctx.globalAlpha=A*pulse;ctx.strokeStyle='#e8f7ff';ctx.lineWidth=2.4;ctx.shadowColor='rgba(0,0,0,.5)';ctx.shadowBlur=3;ctx.stroke(path)}
- else if(UMODE=='3'){const n=Math.round(8+16*str);ctx.fillStyle='#8fe3ff';for(let i=0;i<n;i++){const u=((i/n)+t*.03)%1,off=Math.sin(i*2.7)*10,p=qOff(P0,C,P2,u*.97,off);ctx.globalAlpha=A*Math.sin(Math.PI*u);ctx.beginPath();ctx.arc(p[0],p[1],2.6,0,7);ctx.fill()}}
- else{const pulse=.7+.3*Math.sin(t*1.6);[-9,9].forEach(off=>{ctx.globalAlpha=A*pulse;ctx.strokeStyle='#5fe3d0';ctx.lineWidth=2.4+1.6*str;ctx.shadowColor='rgba(0,0,0,.5)';ctx.shadowBlur=3;ctx.beginPath();
-   for(let i=0;i<=30;i++){const p=qOff(P0,C,P2,i/30*.9,off);i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])}ctx.stroke();const e=qOff(P0,C,P2,.9,off),tip=qOff(P0,C,P2,1,off);ctx.restore();ctx.save();arrow(e[0],e[1],tip[0],tip[1]-4,'#5fe3d0',2.4+1.6*str,11,A*pulse)})}
+function upDraw(P0,C,P2,str,t,a){if(str<=.02)return;const A=a*Math.min(1,.3+str),W=5+8*str,E=.78,N=36,wd=u=>W*(.35+.65*u/E);
+ const L=[],R=[];for(let i=0;i<=N;i++){const u=i/N*E;L.push(qOff(P0,C,P2,u,wd(u)));R.push(qOff(P0,C,P2,u,-wd(u)))}
+ const b=qOff(P0,C,P2,E,0),hw=W*1.9,tip=qb(P0,C,P2,1),hl=[b[0]-b[3]*hw,b[1]+b[2]*hw],hr=[b[0]+b[3]*hw,b[1]-b[2]*hw];
+ const path=new Path2D();L.forEach((p,i)=>i?path.lineTo(p[0],p[1]):path.moveTo(p[0],p[1]));
+ path.lineTo(hl[0],hl[1]);path.quadraticCurveTo(lerp(hl[0],tip[0],.55)-b[3]*W*.3,lerp(hl[1],tip[1],.55)+b[2]*W*.3,tip[0],tip[1]);
+ path.quadraticCurveTo(lerp(hr[0],tip[0],.55)+b[3]*W*.3,lerp(hr[1],tip[1],.55)-b[2]*W*.3,hr[0],hr[1]);for(let i=R.length-1;i>=0;i--)path.lineTo(R[i][0],R[i][1]);   // 아래(꼬리)는 닫지 않음
+ ctx.save();ctx.lineJoin='round';ctx.lineCap='round';
+ const gf=ctx.createLinearGradient(P0[0],P0[1],tip[0],tip[1]);gf.addColorStop(0,'rgba(143,227,255,0)');gf.addColorStop(1,'rgba(143,227,255,.22)');ctx.globalAlpha=A;ctx.fillStyle=gf;ctx.fill(path);
+ const gs=ctx.createLinearGradient(P0[0],P0[1],tip[0],tip[1]);gs.addColorStop(0,'rgba(232,247,255,0)');gs.addColorStop(.35,'rgba(232,247,255,.75)');gs.addColorStop(1,'rgba(240,250,255,1)');
+ ctx.globalAlpha=A*(.8+.2*Math.sin(t*1.6));ctx.strokeStyle=gs;ctx.lineWidth=2.2;ctx.shadowColor='rgba(0,0,0,.45)';ctx.shadowBlur=3;ctx.stroke(path);ctx.shadowBlur=0;
+ // 물 입자
+ const n=Math.round(6+12*str);ctx.fillStyle='#aeeaff';for(let i=0;i<n;i++){const u=((i/n)+t*.03)%1*E,off=Math.sin(i*2.7)*wd(u)*.55,p=qOff(P0,C,P2,u,off);ctx.globalAlpha=A*Math.sin(Math.PI*u/E);ctx.beginPath();ctx.arc(p[0],p[1],2.2,0,7);ctx.fill()}
  ctx.restore()}
 
 // ---- 워커 순환 (대기의 순환: 그림판 전체 폭 단면 위에) ----
@@ -478,7 +474,7 @@ function drawPeru(st,t){const R=SRE,a=1,sea=R.y+150,bot=R.y+R.h,x0=R.x,x1=R.x+R.
  if(st.off>0){PP.forEach(p=>{const f=p.x,y=sea+Math.min(thk(f),40)*p.d*.8+4;dart(px(f),y,-1,st.off*.95)});
   arrow(px(.62),sea-14,px(.3),sea-14,'#ffffff',2.6,10,st.off);T('표층 해수가 먼바다 쪽으로 이동',px(.42),sea-26,{size:12.5,w:800,halo:1,a:st.off})}
  // 용승
- const UP0=[px(.42),bot-22],UPC=[px(.86),bot-30],UP2=[px(.86),sea+12];
+ const UP0=[px(.42),bot-18],UPC=[px(.86),bot-30],UP2=[px(.86),sea+26];
  if(st.up>0){upDraw(UP0,UPC,UP2,st.up,t,1);
   T('찬 해수의 용승',px(.64),bot-96,{c:'#8fe3ff',size:13.5,w:800,halo:1,a:Math.min(1,st.up*1.5)})}
  // 영양염류(노란 점: 깊은 곳에서 용승을 따라 올라옴)
@@ -719,7 +715,6 @@ function frame(nowMs){const now=nowMs/1000,dt=Math.min(.1,now-last);last=now;fit
 // 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
 document.querySelectorAll('.open-think').forEach(btn=>{const ov=$(btn.dataset.ov),cl=ov.querySelector('.x');const close=()=>{ov.hidden=true;btn.focus()};
  btn.onclick=()=>{ov.hidden=false;cl.focus()};cl.onclick=close;ov.addEventListener('click',e=>{if(e.target===ov)close()});ov.addEventListener('keydown',e=>{if(e.key=='Escape')close()})});
-[...document.querySelectorAll('#ucmp button')].forEach(b=>b.onclick=()=>{UMODE=b.dataset.m;document.querySelectorAll('#ucmp button').forEach(x=>x.classList.toggle('on',x==b))});
 openTab(0);requestAnimationFrame(frame);
 </script>
 <script src="./copyright.js"></script>
