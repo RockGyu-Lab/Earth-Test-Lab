@@ -95,6 +95,12 @@ canvas{width:100%;height:auto;aspect-ratio:940/400;display:block;border-radius:1
  .ctl{margin-top:6px;padding:4px 10px;min-height:40px}.pb{padding:4px 12px;font-size:.86rem}
  .note,.quiz{margin-top:6px}.note+.note{margin-top:4px}
 }
+/* 시험용: 용승 표현 비교 단추 */
+.wcmp{display:flex;align-items:center;gap:4px;margin-left:auto;font-size:.8rem}
+.wcmp span{opacity:.7;font-weight:700;margin-right:2px}
+.wcmp button{padding:3px 9px;border:1px solid var(--sub-bd);border-radius:999px;background:var(--sub-bg);color:var(--sub-tx);font-size:.8rem;font-weight:700;cursor:pointer}
+.wcmp button.on{background:var(--sub);color:var(--on-sub);border-color:var(--sub-tx)}
+.wcmp+.back{margin-left:0}
 section[hidden]{display:none}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
@@ -102,6 +108,8 @@ section[hidden]{display:none}
 </head><body><main>
 <!-- 학습실과 탐구 번호가 정해지면 제목 앞에 <p class="pnum">탐구 NN</p>을 넣고, 돌아가기 링크를 그 학습실 메뉴로 바꿀 것 -->
 <div class="titlebar"><h1>엘니뇨와 라니냐(통합과학)</h1>
+ <!-- 시험용: 용승 표현 비교(하나로 정하면 지울 것) -->
+ <div class="wcmp" id="ucmp" role="group" aria-label="용승 표현 비교"><span>용승 표현 비교</span><button type="button" data-m="2" class="on">2안 속 빈 화살표</button><button type="button" data-m="3">3안 물 입자</button><button type="button" data-m="5">5안 실선 화살표</button></div>
  <a class="back" href="./index.html">← Earth Test Lab</a></div>
 <div class="tabs" role="tablist" aria-label="학습 메뉴">
  <button role="tab" id="tab0" aria-selected="true">평상시</button>
@@ -349,7 +357,7 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
   ctx.strokeStyle=pc;ctx.lineWidth=2;shaft();ctx.stroke();head();ctx.fillStyle=pc;ctx.fill();ctx.restore()});
  ctx.globalAlpha=a;
  // 용승(동쪽 끝)
- if(st.U>0.02){const ua=st.U;upDome(sxp(.62),SX1,x=>SEA-level((x-SX0)/(SX1-SX0),st),BOT,ua,t,a,[sxp(.95),sxp(.88),sxp(.81)]);
+ if(st.U>0.02){const ua=st.U,xt=sxp(.93);upDraw([sxp(.68),BOT-18],[xt,BOT-24],[xt,SEA-level(.93,st)+8],ua,t,a);
   T(st.U<.6&&st.E>.5?'용승 약화':'용승',sxp(.86),BOT-26,{c:'#8fe3ff',size:13.5,w:800,halo:1,a:a*Math.min(1,ua*1.5+.3)})}
  ctx.globalAlpha=a;
  // 땅: 지형은 의미가 없으므로 단순한 직사각형(해수면 변화를 비교하기 쉽게 해수면보다 충분히 높게)
@@ -402,16 +410,18 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
 function qb(P0,C,P2,u){return [(1-u)*(1-u)*P0[0]+2*(1-u)*u*C[0]+u*u*P2[0],(1-u)*(1-u)*P0[1]+2*(1-u)*u*C[1]+u*u*P2[1]]}
 // 용승: 바닷가 아래의 찬 물이 위로 볼록하게 솟아오른 모습(색) + 짧고 굵은 실선 위쪽 화살표 몇 개가 천천히 올라옴
 //  x0~x1: 솟아오르는 구역(x1이 바닷가), topY(x): 그 자리 해수면, bot: 바닥, str: 세기(약해지면 가라앉고 화살표가 줄어듦)
-function upDome(x0,x1,topY,bot,str,t,a,ax){if(str<=.02)return;const N=40,yT=x=>{const f=c01((x-x0)/(x1-x0)),h=Math.pow(f,1.6)*str;return lerp(bot,topY(x)+5,h)};
- ctx.save();ctx.beginPath();ctx.moveTo(x0,bot);for(let n=0;n<=N;n++){const x=lerp(x0,x1,n/N);ctx.lineTo(x,yT(x))}ctx.lineTo(x1,bot);ctx.closePath();
- const top=topY(x1),g=ctx.createLinearGradient(0,top,0,bot);g.addColorStop(0,'rgba(120,180,235,.75)');g.addColorStop(.45,'rgba(70,120,205,.55)');g.addColorStop(1,'rgba(43,58,143,0)');
- ctx.globalAlpha=a*Math.min(1,str*1.2);ctx.fillStyle=g;ctx.fill();
- // 솟아오른 찬 물의 윗면(부드러운 하늘색 선)
- ctx.beginPath();for(let n=0;n<=N;n++){const x=lerp(x0,x1,n/N);n?ctx.lineTo(x,yT(x)):ctx.moveTo(x,yT(x))}ctx.strokeStyle='rgba(170,225,255,.8)';ctx.lineWidth=2;ctx.setLineDash([]);ctx.stroke();ctx.restore();
- // 짧은 실선 화살표: 아래에서 위로 천천히 올라오며 나타났다 사라짐
- const n=str<.5?1:3;for(let i=0;i<n;i++){const x=ax[i],y0=topY(x)+16,span=Math.max(20,(bot-y0)*.55),ph=((t*.12+i*.33)%1),y=y0+span*(1-ph);
-  ctx.save();ctx.globalAlpha=a*Math.min(1,str*1.3)*Math.sin(Math.PI*ph);ctx.strokeStyle='rgba(12,20,50,.85)';ctx.lineWidth=8;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x,y+30);ctx.lineTo(x,y+6);ctx.stroke();
-  ctx.restore();arrow(x,y+30,x,y,'#9fe3ff',4.4,13,a*Math.min(1,str*1.3)*Math.sin(Math.PI*ph))}}
+let UMODE='2';   // 시험용 용승 표현: 2 속 빈 굵은 곡선 화살표 / 3 작은 물 입자 / 5 실선 곡선 화살표 2개
+// 깊은 곳(P0)에서 휘어 바닷가 해수면(P2)까지. str: 세기(약해지면 가늘고 흐리게, 적게)
+function qOff(P0,C,P2,u,off){const p=qb(P0,C,P2,u),q=qb(P0,C,P2,Math.min(1,u+.01)),r=qb(P0,C,P2,Math.max(0,u-.01)),dx=q[0]-r[0],dy=q[1]-r[1],n=Math.hypot(dx,dy)||1;return [p[0]-dy/n*off,p[1]+dx/n*off,dx/n,dy/n]}
+function upDraw(P0,C,P2,str,t,a){if(str<=.02)return;const A=a*Math.min(1,.3+str);ctx.save();ctx.lineJoin='round';ctx.lineCap='round';
+ if(UMODE=='2'){const w=(6+10*str),E=.8,N=30,L=[],R=[];for(let i=0;i<=N;i++){const u=i/N*E;L.push(qOff(P0,C,P2,u,w));R.push(qOff(P0,C,P2,u,-w))}
+  const b=qOff(P0,C,P2,E,0),hw=w*2;const path=new Path2D();L.forEach((p,i)=>i?path.lineTo(p[0],p[1]):path.moveTo(p[0],p[1]));
+  path.lineTo(b[0]-b[3]*hw,b[1]+b[2]*hw);path.lineTo(P2[0],P2[1]);path.lineTo(b[0]+b[3]*hw,b[1]-b[2]*hw);for(let i=R.length-1;i>=0;i--)path.lineTo(R[i][0],R[i][1]);path.closePath();
+  const pulse=.75+.25*Math.sin(t*1.6);ctx.globalAlpha=A;ctx.fillStyle='rgba(143,227,255,.14)';ctx.fill(path);ctx.globalAlpha=A*pulse;ctx.strokeStyle='#e8f7ff';ctx.lineWidth=2.4;ctx.shadowColor='rgba(0,0,0,.5)';ctx.shadowBlur=3;ctx.stroke(path)}
+ else if(UMODE=='3'){const n=Math.round(8+16*str);ctx.fillStyle='#8fe3ff';for(let i=0;i<n;i++){const u=((i/n)+t*.03)%1,off=Math.sin(i*2.7)*10,p=qOff(P0,C,P2,u*.97,off);ctx.globalAlpha=A*Math.sin(Math.PI*u);ctx.beginPath();ctx.arc(p[0],p[1],2.6,0,7);ctx.fill()}}
+ else{const pulse=.7+.3*Math.sin(t*1.6);[-9,9].forEach(off=>{ctx.globalAlpha=A*pulse;ctx.strokeStyle='#5fe3d0';ctx.lineWidth=2.4+1.6*str;ctx.shadowColor='rgba(0,0,0,.5)';ctx.shadowBlur=3;ctx.beginPath();
+   for(let i=0;i<=30;i++){const p=qOff(P0,C,P2,i/30*.9,off);i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])}ctx.stroke();const e=qOff(P0,C,P2,.9,off),tip=qOff(P0,C,P2,1,off);ctx.restore();ctx.save();arrow(e[0],e[1],tip[0],tip[1]-4,'#5fe3d0',2.4+1.6*str,11,A*pulse)})}
+ ctx.restore()}
 
 // ---- 워커 순환 (대기의 순환: 그림판 전체 폭 단면 위에) ----
 // wa: 서태평양 상승 기류, ea: 동태평양 하강 기류, loop: 위·아래 흐름까지 이어진 순환
@@ -469,7 +479,7 @@ function drawPeru(st,t){const R=SRE,a=1,sea=R.y+150,bot=R.y+R.h,x0=R.x,x1=R.x+R.
   arrow(px(.62),sea-14,px(.3),sea-14,'#ffffff',2.6,10,st.off);T('표층 해수가 먼바다 쪽으로 이동',px(.42),sea-26,{size:12.5,w:800,halo:1,a:st.off})}
  // 용승
  const UP0=[px(.42),bot-22],UPC=[px(.86),bot-30],UP2=[px(.86),sea+12];
- if(st.up>0){upDome(px(.45),px(1),()=>sea,bot,st.up,t,1,[px(.93),px(.83),px(.73)]);
+ if(st.up>0){upDraw(UP0,UPC,UP2,st.up,t,1);
   T('찬 해수의 용승',px(.64),bot-96,{c:'#8fe3ff',size:13.5,w:800,halo:1,a:Math.min(1,st.up*1.5)})}
  // 영양염류(노란 점: 깊은 곳에서 용승을 따라 올라옴)
  if(st.nut>0){ctx.fillStyle='#ffd76b';PN.forEach(p=>{const u=p.u*.86,q=qb(UP0,UPC,UP2,u),r=qb(UP0,UPC,UP2,Math.min(1,u+.01)),dx=r[0]-q[0],dy=r[1]-q[1],m=Math.hypot(dx,dy)||1,off=(p.o-.5)*20;
@@ -709,6 +719,7 @@ function frame(nowMs){const now=nowMs/1000,dt=Math.min(.1,now-last);last=now;fit
 // 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
 document.querySelectorAll('.open-think').forEach(btn=>{const ov=$(btn.dataset.ov),cl=ov.querySelector('.x');const close=()=>{ov.hidden=true;btn.focus()};
  btn.onclick=()=>{ov.hidden=false;cl.focus()};cl.onclick=close;ov.addEventListener('click',e=>{if(e.target===ov)close()});ov.addEventListener('keydown',e=>{if(e.key=='Escape')close()})});
+[...document.querySelectorAll('#ucmp button')].forEach(b=>b.onclick=()=>{UMODE=b.dataset.m;document.querySelectorAll('#ucmp button').forEach(x=>x.classList.toggle('on',x==b))});
 openTab(0);requestAnimationFrame(frame);
 </script>
 <script src="./copyright.js"></script>
