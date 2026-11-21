@@ -420,12 +420,16 @@ function qb(P0,C,P2,u){return [(1-u)*(1-u)*P0[0]+2*(1-u)*u*C[0]+u*u*P2[0],(1-u)*
 // wa: 서태평양 상승 기류, ea: 동태평양 하강 기류, loop: 위·아래 흐름까지 이어진 순환
 // 상승 기류 자리(rx), 하강 기류 자리(dx)를 바꿀 수 있음(엘니뇨 때는 상승이 동쪽, 하강이 서쪽). 글: rT·dT(하늘), topT·botT(순환), loopT(이름)
 function drawWalker(st,t,a){const xw=sxp(st.rx??.15),xe=sxp(st.dx??.86),s=Math.sign(xe-xw)||1,yt=SR.y+44,yb=SEA-26,r=26,mx=(xw+xe)/2;
- // 순환 경로(시계 반대 방향으로 그림: 서쪽 위로 → 위쪽 동쪽으로 → 동쪽 아래로 → 아래쪽 서쪽으로)
- const P=[[xw,yb-r],[xw,yt+r],[xw+s*r,yt],[xe-s*r,yt],[xe,yt+r],[xe,yb-r],[xe-s*r,yb],[xw+s*r,yb]];
- const path=new Path2D();path.moveTo(xw,yb-r);path.lineTo(xw,yt+r);path.arcTo(xw,yt,xw+s*r,yt,r);path.lineTo(xe-s*r,yt);path.arcTo(xe,yt,xe,yt+r,r);path.lineTo(xe,yb-r);path.arcTo(xe,yb,xe-s*r,yb,r);path.lineTo(xw+s*r,yb);path.arcTo(xw,yb,xw,yb-r,r);
- // 구간 길이로 위치 찾기(모서리는 직선으로 근사)
- const L=[];let tot=0;for(let i=0;i<8;i++){const p=P[i],q=P[(i+1)%8],d=Math.hypot(q[0]-p[0],q[1]-p[1]);L.push(d);tot+=d}
- const at=u=>{let d=u*tot;for(let i=0;i<8;i++){if(d<=L[i]){const p=P[i],q=P[(i+1)%8],f=d/L[i];return [lerp(p[0],q[0],f),lerp(p[1],q[1],f),q[0]-p[0],q[1]-p[1],i]}d-=L[i]}return [P[0][0],P[0][1],0,-1,0]};
+ // 순환 경로: 둥근 모서리 사각형을 촘촘한 점으로 만들어, 점선과 화살촉이 같은 길을 따라가게 함(모서리에서 어긋나지 않게)
+ const corner=(cx,cy,a0,a1,o)=>{for(let k=1;k<=10;k++){const an=a0+(a1-a0)*k/10;o.push([cx+r*Math.cos(an),cy+r*Math.sin(an)])}};
+ const turn=(px,py,qx,qy,cx,cy)=>{let a0=Math.atan2(py-cy,px-cx),a1=Math.atan2(qy-cy,qx-cx),d=a1-a0;while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;return [a0,a0+d]};
+ const PL=[[xw,yb-r],[xw,yt+r]];{let [a0,a1]=turn(xw,yt+r,xw+s*r,yt,xw+s*r,yt+r);corner(xw+s*r,yt+r,a0,a1,PL)}
+ PL.push([xe-s*r,yt]);{let [a0,a1]=turn(xe-s*r,yt,xe,yt+r,xe-s*r,yt+r);corner(xe-s*r,yt+r,a0,a1,PL)}
+ PL.push([xe,yb-r]);{let [a0,a1]=turn(xe,yb-r,xe-s*r,yb,xe-s*r,yb-r);corner(xe-s*r,yb-r,a0,a1,PL)}
+ PL.push([xw+s*r,yb]);{let [a0,a1]=turn(xw+s*r,yb,xw,yb-r,xw+s*r,yb-r);corner(xw+s*r,yb-r,a0,a1,PL)}
+ const path=new Path2D();PL.forEach((p,i)=>i?path.lineTo(p[0],p[1]):path.moveTo(p[0],p[1]));
+ const CL=[0];for(let i=1;i<PL.length;i++)CL.push(CL[i-1]+Math.hypot(PL[i][0]-PL[i-1][0],PL[i][1]-PL[i-1][1]));const tot=CL[CL.length-1];
+ const at=u=>{const d=u*tot;let i=1;while(i<CL.length-1&&CL[i]<d)i++;const f=(d-CL[i-1])/((CL[i]-CL[i-1])||1),p=PL[i-1],q=PL[i];return [lerp(p[0],q[0],f),lerp(p[1],q[1],f),q[0]-p[0],q[1]-p[1]]};
  // 서쪽: 상승 기류, 저기압, 구름과 비
  if(st.wa>0){const A=a*st.wa;cloud(xw+6,yt+40,A,1.25);rain(xw+6,yt+66,SEA-6,t,A);
   ctx.save();ctx.setLineDash([8,7]);ctx.lineDashOffset=(t*30)%15;ctx.globalAlpha=A;ctx.strokeStyle='#ff9b7a';ctx.lineWidth=3;[-34,40].forEach(dx=>{ctx.beginPath();ctx.moveTo(xw+dx,SEA-14);ctx.lineTo(xw+dx,yt+80);ctx.stroke()});ctx.restore();
@@ -452,15 +456,20 @@ function drawWalker(st,t,a){const xw=sxp(st.rx??.15),xe=sxp(st.dx??.86),s=Math.s
 // 엘니뇨 때 동쪽: 순환을 바다 위에서 닫지 않음. 상승 구역이 동태평양까지 넓어져(비구름) 높은 곳의 흐름은 남아메리카 대륙 쪽으로 이어짐(대륙 위에서 하강)
 function drawOpenEast(st,t,a){const xr=sxp(.53),yt=SR.y+44,xe=SR.x+SR.w-6;   // 높은 곳의 흐름은 동쪽(남아메리카 쪽)으로 곧게 이어짐(하강은 그리지 않음: 설명 글에서 다룸)
  // 남아메리카 대륙 바로 앞바다: 바다가 따뜻해져 생긴 작은 비구름
- const cx=sxp(.9),cy=SR.y+96;cloud(cx,cy,a,.8);rain(cx+2,cy+18,SEA-6,t,a*.9);
+ const cx=SX1-34,cy=SR.y+88;
+ // 따뜻해진 바다에서 증발이 늘어남: 해수면에서 수증기(물결 모양 선)가 천천히 올라가 구름이 됨
+ ctx.save();ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=1.6;ctx.lineCap='round';for(let q=0;q<5;q++){const bx=cx-62+q*12,ph=((t*.35+q*.23)%1),y0=SEA-8-ph*50;ctx.globalAlpha=a*Math.sin(Math.PI*ph)*.9;ctx.beginPath();
+  for(let k=0;k<=10;k++){const yy=y0-k*2.2,xx=bx+Math.sin(k*.9+q)*2.5;k?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)}ctx.stroke()}ctx.restore();
+ T('증발량 증가',cx-56,SEA-66,{size:12,w:800,halo:1,a,c:'#ffffff'});
+ cloud(cx,cy,a,.8);rain(cx+4,cy+18,SEA-6,t,a*.9);
  ctx.save();ctx.globalAlpha=a*.55;ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.setLineDash([2,6]);ctx.beginPath();ctx.moveTo(xr+26,yt);ctx.lineTo(xe,yt);ctx.stroke();ctx.restore();
- const L=xe-(xr+26);for(let q=0;q<7;q++){const x=xr+26+((q/7)+WPH*.5)%1*L,y=yt;ctx.globalAlpha=a;ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(x+6,y);ctx.lineTo(x-3,y-4);ctx.lineTo(x-3,y+4);ctx.closePath();ctx.fill()}
+ const L=xe-(xr+26),ph=(t*.05)%1;for(let q=0;q<7;q++){const x=xr+26+((q/7)+ph)%1*L,y=yt;ctx.globalAlpha=a;ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(x+6,y);ctx.lineTo(x-3,y-4);ctx.lineTo(x-3,y+4);ctx.closePath();ctx.fill()}
  // 지표 부근: 약해진 무역풍(동 → 서)이 상승 구역 쪽으로 붊. 동쪽 끝은 닫지 않음(순환이 남아메리카 쪽으로 이어짐)
  const yb=SEA-26,x2=sxp(.97);ctx.save();ctx.globalAlpha=a*.55;ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.setLineDash([2,6]);ctx.beginPath();ctx.moveTo(x2,yb);ctx.lineTo(xr+26,yb);ctx.stroke();ctx.restore();
- const L2=x2-(xr+26);for(let q=0;q<5;q++){const x=x2-((q/5)+WPH*.5)%1*L2;ctx.globalAlpha=a;ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(x-6,yb);ctx.lineTo(x+3,yb-4);ctx.lineTo(x+3,yb+4);ctx.closePath();ctx.fill()}
+ const L2=x2-(xr+26);for(let q=0;q<5;q++){const x=x2-((q/5)+ph*1.4)%1*L2;ctx.globalAlpha=a;ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(x-6,yb);ctx.lineTo(x+3,yb-4);ctx.lineTo(x+3,yb+4);ctx.closePath();ctx.fill()}
  ctx.globalAlpha=1;T('지표 부근: 동 → 서(약한 무역풍)',sxp(.68),yb-12,{size:13,w:800,halo:1,a});
  T('높은 곳: 서 → 동',(xr+xe)/2,yt-10,{size:13.5,w:800,halo:1,a});
- pill('강수량 증가',cx-14,SEA-14,'#8fc8ff',a,12.5)}
+ pill(st.clim>.5&&st.wn<.5?'강수량 증가 → 폭우·홍수':'강수량 증가',cx-40,SEA-14,'#8fc8ff',a,12.5)}
 
 // ---- 페루 연안 단면 (해안에 수직으로 자른 단면: 왼쪽 먼바다 → 오른쪽 페루 해안) ----
 function drawPeru(st,t){const R=SRE,a=1,sea=R.y+150,bot=R.y+R.h,x0=R.x,x1=R.x+R.w,coast=x1-74;
@@ -718,7 +727,7 @@ const ESCENES=[
 // 엘니뇨 > 대기 순환의 변화: 평상시 워커 순환 → 사라짐·바다가 엘니뇨로 → 엘니뇨 때 순환(상승 동쪽, 하강 서쪽) → 이상 기후
 function ATM(g){const e=seg(g,4,8),wn=1-seg(g,3.5,5.5),we=seg(g,7.5,10);
  const sw=Math.min(seg(g,4,5),1-seg(g,8,9));   // 순환이 바뀌는 동안: 약해진 무역풍과 동쪽으로 흐르는 해수
- return {...NORMAL,W:.3*sw,showW:sw,V:.8*sw,E:e,A:e,U:1-.75*e,wa:1,ea:1,loop:1,wn,climW:wn>.5?'비가 많고 습함':'가뭄·산불',climE:wn>.5?'비가 적고 건조함':'폭우·홍수(해안)',clim:Math.max(wn,seg(g,12,13.5)),
+ return {...NORMAL,W:.3*sw,showW:sw,V:.8*sw,E:e,A:e,U:1-.75*e,wa:1,ea:1,loop:1,wn,climW:wn>.5?'비가 많고 습함':'가뭄·산불',climE:wn>.5?'비가 적고 건조함':'',clim:Math.max(wn,seg(g,12,13.5)),
   // 엘니뇨 때: 중앙 태평양(약 150°W)에서 상승해 서쪽은 서태평양에서 하강하는 순환, 동쪽은 남아메리카 대륙 쪽으로 이어지는 흐름(바다 위에서 닫지 않음)
   walkE:{al:we,rx:.53,dx:.11,wa:1,ea:1,loop:1,rT:'구름이 많고 비가 많이 내림',dT:'맑고 건조함',topT:'높은 곳: 동 → 서',botT:'지표 부근: 서 → 동',loopT:'엘니뇨 때의 대기 순환',loopX:.32,loopDY:30},
   openE:we}}
