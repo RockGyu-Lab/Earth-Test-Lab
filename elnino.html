@@ -72,6 +72,7 @@ canvas{width:100%;height:auto;aspect-ratio:940/400;display:block;border-radius:1
 .think .x{flex:none;font-size:.85rem;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:3px 10px;cursor:pointer;color:var(--fg)}
 .think .ans{margin:0 0 8px;font-size:1rem;font-weight:700}
 .think .exp{margin:0;font-size:.93rem;line-height:1.6}
+.fcv{display:block;width:min(100%,330px);height:auto;aspect-ratio:418/368;margin:4px auto 10px;border-radius:12px;background:#0b1026}   /* 생각해 보기 답: 용승과 어장 애니메이션 */
 /* 탭 안에서 고르는 단추는 라벤더(연보라) (위쪽 큰 탭의 남색과 구분) */
 :root{--sub:#7c5cd6;--on-sub:#fff;--sub-bg:#efeafd;--sub-bd:#cdbff3;--sub-tx:#5b3fbf;--ok:#13894a;--no:#d0353b}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff;--ok:#6fe08f;--no:#ff7b7b}}
@@ -114,7 +115,6 @@ section[hidden]{display:none}
  <button type="button" role="tab" class="on" aria-selected="true">태평양의 수온 분포</button>
  <button type="button" role="tab" aria-selected="false">태평양 수온 분포의 원인</button>
  <button type="button" role="tab" aria-selected="false">대기의 순환</button>
- <button type="button" role="tab" aria-selected="false">남아메리카 연안의 용승</button>
 </div>
 
 <!-- 그림판 하나를 모든 메뉴가 함께 씀 (메뉴마다 지도·단면의 배치가 다름) -->
@@ -140,24 +140,22 @@ section[hidden]{display:none}
 <section id="p0" role="tabpanel" aria-labelledby="tab0">
  <div id="n0">
  <div class="note"><span class="tag">생각해 보기</span><p>평상시 서태평양과 동태평양 중 해수면이 더 높은 곳은 어디일까요?</p><button type="button" class="open-think" data-ov="ov0">답 보기</button></div>
+ <div class="note"><span class="tag">생각해 보기</span><p>용승이 일어나는 곳에는 좋은 어장이 발달합니다. 그 까닭은 무엇일까요?</p><button type="button" class="open-think" data-ov="ovf">답 보기</button></div>
  <div class="note memo"><span class="tag mem">기억하기</span><p>평상시: 서태평양은 따뜻한 해수층이 두껍고 수온이 높음, 동태평양은 용승으로 수온이 낮음</p></div>
  </div>
  <div id="n2" hidden>
  <div class="note memo"><span class="tag mem">기억하기</span><p>워커 순환: 서태평양 상승 → 상층 서→동 → 동태평양 하강 → 지표 동→서(무역풍)</p></div>
  </div>
- <div id="n3" hidden>
- <div class="note"><span class="tag">생각해 보기</span><p>페루 연안이 같은 위도의 먼바다보다 수온이 낮은 까닭은 무엇일까요?</p><button type="button" class="open-think" data-ov="ov3">답 보기</button></div>
- <div class="note memo"><span class="tag mem">기억하기</span><p>페루 연안: 용승 → 영양염류 공급 → 플랑크톤 번성 → 좋은 어장(앤초비)</p></div>
- </div>
+  <div class="ov" id="ovf" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 용승이 일어나는 곳에는 좋은 어장이 발달합니다. 그 까닭은 무엇일까요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>용승이 일어나는 곳에는 좋은 어장이 발달합니다. 그 까닭은 무엇일까요?</b><button type="button" class="x" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">용승으로 깊은 곳의 영양염류가 표층으로 올라오기 때문입니다.</p>
+  <canvas id="fcv" class="fcv" width="418" height="368" aria-label="해안에 수직으로 자른 단면에서 표층 해수가 먼바다로 이동하고, 찬 해수가 용승하며 영양염류를 실어 올려 식물성 플랑크톤이 번성하고 물고기가 모이는 모습"></canvas>
+  <p class="exp">깊은 바다에는 영양염류가 많습니다. 표층 해수가 먼바다 쪽으로 이동한 자리를 채우려고 깊은 곳의 찬 해수가 올라오면(용승) 영양염류가 표층으로 공급되고, 이를 이용하는 <b>식물성 플랑크톤</b>이 번성합니다. 플랑크톤을 먹는 물고기가 많이 모여 좋은 어장이 됩니다. 남아메리카 페루 연안의 앤초비(멸치류) 어장이 대표적입니다.</p>
+ </div></div>
  <div class="ov" id="ov0" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 평상시 서태평양과 동태평양 중 해수면이 더 높은 곳은 어디일까요?">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>평상시 서태평양과 동태평양 중 해수면이 더 높은 곳은 어디일까요?</b><button type="button" class="x" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">서태평양의 해수면이 더 높습니다.</p>
   <p class="exp">무역풍이 표층 해수를 서쪽으로 계속 밀어 보내므로, 따뜻한 해수가 서태평양에 쌓여 해수면이 높아지고 따뜻한 해수층도 두꺼워집니다. 실제 높이 차이는 수십 cm 정도로 아주 작아서, 그림에서는 과장하여 나타냈습니다.</p>
- </div></div>
- <div class="ov" id="ov3" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 페루 연안이 같은 위도의 먼바다보다 수온이 낮은 까닭은 무엇일까요?">
-  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>페루 연안이 같은 위도의 먼바다보다 수온이 낮은 까닭은 무엇일까요?</b><button type="button" class="x" aria-label="닫기">닫기 ✕</button></div>
-  <p class="ans">용승으로 깊은 곳의 찬 해수가 올라오기 때문입니다.</p>
-  <p class="exp">해안을 따라 부는 남동 무역풍의 영향으로 해안 부근의 표층 해수가 먼바다로 이동하면, 그 자리를 채우려고 깊은 곳의 찬 해수가 올라옵니다. 지도에서도 페루 연안을 따라 수온이 낮은 띠가 보입니다.</p>
  </div></div>
 </section>
 <section id="p1" role="tabpanel" aria-labelledby="tab1" hidden>
@@ -203,7 +201,7 @@ for(let i=0;i<NR;i++){const la=LATc(i),vals=[];
  vals.sort((x,y)=>y-x);const h=vals.slice(0,Math.max(1,Math.ceil(vals.length/2)));TZ[i]=vals.length?h.reduce((x,y)=>x+y,0)/h.length:0}
 
 // ================= 그림판 =================
-const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+const cv=document.getElementById('cv');let ctx=cv.getContext('2d');   // let: 생각해 보기 답 그림(fcv)을 그릴 때 잠시 바꿔 씀
 const W=940,H=400;
 let SC=1;
 function fit(){const r=Math.max(1,window.devicePixelRatio||1),w=Math.round(cv.clientWidth*r)||W;if(cv.width!==w){cv.width=w;cv.height=Math.round(w*H/W)}SC=cv.width/W}
@@ -226,10 +224,8 @@ const seg=(k,a,b)=>ease((k-a)/(b-a));
 // 전체 지도(태평양 가운데, 30°E~390°E, 70°N~70°S)에서 상자(box)를 잘라 목표 자리(rect)로 확대. z: 0 전체 → 1 확대
 const GR={x:14,y:14,w:912,h:354.7,lo0:30,lo1:390,la0:70,la1:-70};
 const EQB={lo0:120,lo1:290,la0:30,la1:-30};            // 적도 부근의 태평양
-const PEB={lo0:255,lo1:295,la0:2,la1:-23};             // 페루 앞바다
 const FR={x:14,y:16,w:912,h:321.9};                      // 태평양의 수온 분포: 그림판 전체 폭(가로세로 비율 그대로)
 const ZR={x:14,y:16,w:476,h:212};                        // 지도 + 단면 (왼쪽 지도)
-const PR={x:14,y:16,w:476,h:297.5};                      // 페루 앞바다 (가로세로 비율 그대로)
 const SRE={x:508,y:16,w:418,h:368};                      // 오른쪽 단면
 const WR={x:14,y:16,w:912,h:368};                        // 대기의 순환: 그림판 전체 폭 단면
 const LG={x:14,y:282,w:476,h:102};                       // 지도 아래 범례
@@ -601,27 +597,6 @@ function sceneEq(st,t){setSR(SRE);const v=drawMap(st,{box:EQB,R:ZR,z:1,lo:22,hi:
 // ---- 장면: 대기의 순환 (그림판 전체 폭 단면) ----
 function sceneWalk(st,t){field(st);setSR(WR,.6);drawSection({...st,walk:1,sunA:0,ref:0},t)}
 
-// ---- 장면: 남아메리카 연안의 용승 (왼쪽 페루 앞바다 지도 + 오른쪽 해안에 수직인 단면) ----
-function scenePeru(st,t){const v=drawMap(st,{box:PEB,R:PR,z:1,lo:16,hi:28});
- // 단면 위치(12°S, 해안에 수직)
- ctx.globalAlpha=.9;ctx.setLineDash([6,5]);ctx.strokeStyle='#fff';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(v.X(266),v.Y(-12));ctx.lineTo(v.X(283),v.Y(-12));ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
- T('단면 위치',v.X(266),v.Y(-12)-6,{al:'left',size:11.5,halo:1});
- T('페루',v.X(286.5),v.Y(-9),{size:14,w:800,c:'#e7eaf4',halo:1});T('남아메리카',v.X(291),v.Y(-1.5),{size:12.5,w:800,c:'#e7eaf4',halo:1});
- T('적도',v.X(256),v.Y(0)-4,{al:'left',size:11.5,halo:1,a:.9});ctx.globalAlpha=.5;ctx.setLineDash([4,4]);ctx.strokeStyle='#fff';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(PR.x,v.Y(0));ctx.lineTo(PR.x+PR.w,v.Y(0));ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
- // 해안을 따라 부는 남동 무역풍
- if(st.wind>0){[[284,-20],[279,-14],[276,-7]].forEach(([lo,la])=>{const x=v.X(lo),y=v.Y(la);arrow(x+14,y+20,x-14,y-20,'#ffffff',3,10,st.wind)});
-  T('남동 무역풍',v.X(279),v.Y(-21.5),{size:13,w:800,halo:1,a:st.wind})}
- // 먼바다 쪽으로 이동하는 표층 해수
- if(st.off>0){[-6,-12,-18].forEach((la,q)=>{for(let m=0;m<3;m++){const ph=((t*.35+m/3+q*.2)%1),lo=lerp(280-q*.5,264,ph);dart(v.X(lo)+(q==1?0:0),v.Y(la)+(q==1?10:0),-1,st.off*Math.sin(ph*Math.PI))}})}
- // 용승: 해안을 따라 찬 해수 띠
- if(st.up>0){ctx.globalAlpha=st.up;ctx.strokeStyle='#8fe3ff';ctx.lineWidth=2.2;ctx.setLineDash([5,4]);ctx.beginPath();[[279,-2],[280,-6],[281.5,-10],[284,-14],[287,-18],[289,-22]].forEach(([lo,la],i)=>{const x=v.X(lo)-16,y=v.Y(la);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
-  pill('찬 해수(용승)',v.X(268),v.Y(-20),'#8fe3ff',st.up,13)}
- if(st.fish>0)pill('앤초비 어장',v.X(271),v.Y(-9),'#ffd76b',st.fish,13);
- endMap();
- colorbar({x:PR.x+40,y:PR.y+PR.h+16,w:PR.w-80,h:11},16,28,2);
- T('해수면 온도 평년값 (1991~2020년 연평균, NOAA ERSST v5)',PR.x+PR.w/2,PR.y+PR.h+56,{size:11,c:'#a9b1cc',w:500});
- drawPeru(st,t)}
-
 // ================= 탭 · 작은 메뉴 · 단계 =================
 // 상태: zoom(확대), box(자를 곳), sec(단면), hyp(가정 이름표), W(무역풍 세기), V(표층 흐름: −서쪽, +동쪽), F(서쪽에 쌓인 정도),
 //  E(엘니뇨로 바뀐 정도), U(용승 세기), U0(지도에서 동쪽 찬 해수가 나타난 정도), mU(지도의 용승 표시), Hh(서쪽 가열), heat(햇빛 화살표),
@@ -646,16 +621,8 @@ const SCENES=[
  {draw:sceneWalk,steps:[ // 대기의 순환: 단계 없이 하나의 흐름(16초, 설명은 때에 따라 바뀜)
   {t:'서태평양의 상승 기류',x:'수온이 높은 서태평양에서는 바다가 공기를 데워 <em>상승 기류</em>가 생기고 <em>저기압</em>이 됩니다. 올라간 공기 속 수증기가 응결하여 <em>구름이 많고 비가 많이 내립니다</em>.',d:16,
    xs:[[4.5,'동태평양의 하강 기류','수온이 낮은 동태평양에서는 공기가 차가워져 <em>하강 기류</em>가 생기고 <em>고기압</em>이 됩니다. 구름이 잘 생기지 않아 <em>맑고 건조합니다</em>.'],[9,'워커 순환','지표 부근에서는 동쪽(고기압)에서 서쪽(저기압)으로 <em>무역풍</em>이 불고, 높은 곳에서는 공기가 서쪽에서 동쪽으로 이동합니다. 이 동서 방향의 대기 순환을 <em>워커 순환</em>이라고 합니다.']],
-   s:k=>{const g=k*16;return {...NORMAL,W:0,wa:seg(g,0,3),ea:seg(g,4.5,7.5),loop:seg(g,9,12)}}}]},
- {draw:scenePeru,steps:[ // 남아메리카 연안의 용승
-  {t:'1단계(표층 해수의 이동)',x:'페루 연안에서는 해안을 따라 <em>남동 무역풍</em>이 붑니다. 이 바람의 영향으로 해안 부근의 <em>표층 해수가 먼바다 쪽으로 이동</em>합니다.',d:6,
-   s:k=>({...NORMAL,wind:seg(k,0,.4),off:seg(k,.35,.9)})},
-  {t:'2단계(찬 해수의 용승)',x:'빠져나간 표층 해수를 채우려고 깊은 곳의 <em>찬 해수가 올라옵니다(용승)</em>. 그래서 페루 연안은 같은 위도의 먼바다보다 <em>수온이 낮습니다</em>(지도의 해안을 따라 있는 파란 띠).',d:8,
-   s:k=>({...NORMAL,wind:1,off:1,up:ease(k)})},
-  {t:'3단계(영양염류의 공급)',x:'깊은 곳의 해수에는 <em>영양염류</em>가 많습니다. 용승으로 영양염류가 표층으로 공급되면 이를 이용하는 <em>식물성 플랑크톤</em>이 많이 번성합니다.',d:7,
-   s:k=>({...NORMAL,wind:1,off:1,up:1,nut:seg(k,0,.4),plank:seg(k,.45,1)})},
-  {t:'4단계(좋은 어장의 형성)',x:'플랑크톤이 풍부하여 이를 먹는 <em>앤초비(멸치류)</em>가 많이 모이므로, 페루 연안은 <em>세계적인 어장</em>이 됩니다.',d:6,
-   s:k=>({...NORMAL,wind:1,off:1,up:1,nut:1,plank:1,fish:seg(k,0,.6)})}]}
+   s:k=>{const g=k*16;return {...NORMAL,W:0,wa:seg(g,0,3),ea:seg(g,4.5,7.5),loop:seg(g,9,12)}}}]}
+
 ];
 const ELNINO={draw:sceneEq,steps:[
  {t:'1단계(무역풍의 약화)',x:'어떤 해에는 무역풍이 평상시보다 <em>약해집니다</em>. 서쪽으로 해수를 밀어 보내던 힘도 약해집니다.',d:5,
@@ -685,8 +652,8 @@ let TXT=-1;function setText(){const st=scene().steps[si],X=[[0,st.t,st.x],...(st
 function updPlay(){$('play').textContent=playing?'⏸ 멈춤':'▶ 재생'}
 // 작은 메뉴·탭을 누를 때마다 그 자료의 처음부터
 function openSub(i){sub=i;[...$('subs').children].forEach((b,j)=>{b.classList.toggle('on',j==i);b.setAttribute('aria-selected',j==i)});
- $('quiz').hidden=!(tab==0&&i==0);resetQuiz();$('n0').hidden=i!=1;$('n2').hidden=i!=2;$('n3').hidden=i!=3;
- cv.setAttribute('aria-label',['전 세계 연평균 해수면 온도 지도에서 적도 부근의 태평양을 잘라 확대한 지도','적도 태평양의 해수면 온도 지도와 적도를 따라 자른 단면에서 무역풍, 해수의 이동, 용승, 가열로 수온 분포가 만들어지는 모습','적도를 따라 자른 단면 위에서 서태평양의 상승 기류와 동태평양의 하강 기류가 이어지는 워커 순환','페루 앞바다의 해수면 온도 지도와 해안에 수직인 단면에서 용승, 영양염류, 플랑크톤, 앤초비 어장이 나타나는 모습'][i]);
+ $('quiz').hidden=!(tab==0&&i==0);resetQuiz();$('n0').hidden=i!=1;$('n2').hidden=i!=2;
+ cv.setAttribute('aria-label',['전 세계 연평균 해수면 온도 지도에서 적도 부근의 태평양을 잘라 확대한 지도','적도 태평양의 해수면 온도 지도와 적도를 따라 자른 단면에서 무역풍, 해수의 이동, 용승, 가열로 수온 분포가 만들어지는 모습','적도를 따라 자른 단면 위에서 서태평양의 상승 기류와 동태평양의 하강 기류가 이어지는 워커 순환'][i]);
  seed();buildProg();go(0)}
 function openTab(i){tab=i;[0,1].forEach(j=>{const b=$('tab'+j),on=j==i;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1;$('p'+j).hidden=!on});
  $('subs').hidden=i!=0;const p=$('p'+i);p.classList.remove('enter');void p.offsetWidth;p.classList.add('enter');
@@ -699,6 +666,12 @@ $('play').onclick=()=>{playing=!playing;updPlay()};
 function resetQuiz(){quizOK=false}
 document.querySelector('[data-ov="ovq"]').addEventListener('click',()=>{if(!quizOK){quizOK=true;quizT=performance.now()/1000}const S=scene().steps;if(si<S.length-1){go(S.length-1)}ph=S[si].d;setText()});
 
+// 생각해 보기 답(용승과 어장): 해안에 수직인 단면을 작은 그림판에 이어지는 애니메이션으로
+const fcv=document.getElementById('fcv'),fctx=fcv.getContext('2d');let FT=-1;
+document.querySelector('[data-ov="ovf"]').addEventListener('click',()=>{FT=performance.now()/1000;seed()});
+function drawFish(now,dt){if($('ovf').hidden)return;const g=now-FT,r=Math.max(1,window.devicePixelRatio||1),w=Math.round(fcv.clientWidth*r)||418;if(fcv.width!==w){fcv.width=w;fcv.height=Math.round(w*368/418)}
+ const k=fcv.width/418,st={...NORMAL,wind:0,off:seg(g,.3,2.3),up:seg(g,1.5,4.5),nut:seg(g,4,7),plank:seg(g,7,9.5),fish:seg(g,9.5,12)};
+ moveParticles(st,dt);const keep=ctx;ctx=fctx;ctx.setTransform(k,0,0,k,-SRE.x*k,-SRE.y*k);ctx.clearRect(SRE.x,SRE.y,SRE.w,SRE.h);drawPeru(st,now);ctx=keep}
 function frame(nowMs){const now=nowMs/1000,dt=Math.min(.1,now-last);last=now;fit();
  const S=scene().steps,s=S[si];
  if(playing){ph+=dt;if(ph>=s.d){if(si<S.length-1){if(ph>=s.d+(scene().cont?0:1.2)){const r=ph-s.d;go(si+1);if(scene().cont)ph=r}}else ph=s.d}}   // 끝나도 멈추지 않음: 마지막 모습에서 바람·해류·용승이 계속 움직임
@@ -707,7 +680,7 @@ function frame(nowMs){const now=nowMs/1000,dt=Math.min(.1,now-last);last=now;fit
  moveParticles(st,playing?dt:0);
  [...$('prog').children].forEach((b,i)=>{b.firstChild.style.width=(i<si?100:i>si?0:c01(ph/s.d)*100)+'%'});
  ctx.setTransform(SC,0,0,SC,0,0);ctx.clearRect(0,0,W,H);ctx.fillStyle='#0b1026';ctx.fillRect(0,0,W,H);
- scene().draw(st,now);
+ scene().draw(st,now);drawFish(now,dt);
  requestAnimationFrame(frame)}
 // 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
 document.querySelectorAll('.open-think').forEach(btn=>{const ov=$(btn.dataset.ov),cl=ov.querySelector('.x');const close=()=>{ov.hidden=true;btn.focus()};
