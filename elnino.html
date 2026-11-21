@@ -80,17 +80,9 @@ canvas{width:100%;height:auto;aspect-ratio:940/400;display:block;border-radius:1
 .subtabs[hidden]{display:none}
 .subtabs button{flex:1 1 9em;padding:6px 12px;text-align:center;border:1px solid var(--sub-bd);border-radius:999px;background:var(--sub-bg);color:var(--sub-tx);font-size:.92rem;font-weight:700;cursor:pointer}
 .subtabs button.on{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub)}
-/* 질문(태평양의 수온 분포): [질문] 글 [서태평양|동태평양] → 맞음·틀림 */
-.quiz{margin:10px 0 0}
+/* 태평양의 수온 분포의 생각해 보기: 답을 열면 지도에 서·동 수온도 표시 */
+.quiz>.note{margin-top:10px}
 .quiz[hidden]{display:none}
-.qrow{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;font-size:.95rem}
-.qrow p{margin:0;font-weight:600}
-.bs{display:flex;border:1px solid var(--sub-bd);border-radius:10px;overflow:hidden}
-.bs button{padding:5px 16px;border:0;background:var(--sub-bg);color:var(--sub-tx);font-size:.93rem;font-weight:700;cursor:pointer}
-.bs button+button{border-left:1px solid var(--sub-bd)}
-.bs button.on{background:var(--sub);color:var(--on-sub)}
-.qmk{margin:6px 0 0;min-height:1.5em;font-size:.93rem;font-weight:700}
-.qmk.ok{color:var(--ok)}.qmk.no{color:var(--no)}
 #n0[hidden],#n2[hidden],#n3[hidden]{display:none}
 .src{margin:8px 2px 0;font-size:.8rem;opacity:.7}
 /* 세로가 짧은 화면(가로로 놓은 태블릿 등): 글·단추 줄의 여백을 줄여 한 화면에 들어가게 함 */
@@ -101,7 +93,7 @@ canvas{width:100%;height:auto;aspect-ratio:940/400;display:block;border-radius:1
  .subtabs{margin-bottom:6px}.subtabs button{padding:3px 10px;font-size:.88rem}
  .stepbox{margin-top:6px;padding:5px 12px;font-size:.88rem;line-height:1.5;min-height:calc(3 * 1.5em + 10px)}
  .ctl{margin-top:6px;padding:4px 10px;min-height:40px}.pb{padding:4px 12px;font-size:.86rem}
- .note,.quiz{margin-top:6px}.note+.note{margin-top:4px}.qmk{margin-top:3px}
+ .note,.quiz{margin-top:6px}.note+.note{margin-top:4px}
 }
 section[hidden]{display:none}
 </style>
@@ -134,9 +126,12 @@ section[hidden]{display:none}
 
 <!-- 태평양의 수온 분포: 지도를 보고 어느 쪽이 따뜻한지 고르기 -->
 <div class="quiz" id="quiz" hidden>
- <div class="qrow"><span class="tag">질문</span><p>적도 부근에서 해수면 온도가 더 높은 곳은 어디일까요?</p>
-  <div class="bs" id="qbs"><button type="button" data-a="w">서태평양</button><button type="button" data-a="e">동태평양</button></div></div>
- <p class="qmk" id="qmk"></p>
+ <div class="note"><span class="tag">생각해 보기</span><p>적도 부근에서 해수면 온도가 더 높은 곳은 서태평양과 동태평양 중 어디일까요?</p><button type="button" class="open-think" data-ov="ovq">답 보기</button></div>
+ <div class="ov" id="ovq" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 적도 부근에서 해수면 온도가 더 높은 곳은 서태평양과 동태평양 중 어디일까요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>적도 부근에서 해수면 온도가 더 높은 곳은 서태평양과 동태평양 중 어디일까요?</b><button type="button" class="x" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">서태평양의 수온이 더 높습니다.</p>
+  <p class="exp">적도를 따라 보면 서태평양은 약 29~30 °C, 동태평양은 약 25 °C입니다(지도에 표시). 같은 적도인데도 동서로 수온이 다른 까닭은 [온도 분포의 원인]에서 알아봅시다.</p>
+ </div></div>
 </div>
 
 <section id="p0" role="tabpanel" aria-labelledby="tab0">
@@ -560,7 +555,7 @@ const SCENES=[
  {draw:scenePac,steps:[ // 태평양의 수온 분포
   {t:'전 세계의 해수면 온도',x:'전 세계 바다의 <em>연평균 해수면 온도</em>입니다. 적도 부근은 따뜻하고 고위도로 갈수록 차가워집니다. 이 가운데 <em>적도 부근의 태평양</em>을 잘라 확대해 봅시다.',d:6,
    s:k=>({...NORMAL,zoom:0,box:seg(k,.45,.9)})},
-  {t:'적도 부근의 태평양',x:'적도를 따라 <em>서태평양</em>(왼쪽)과 <em>동태평양</em>(오른쪽)의 색을 비교해 보세요. 빨간색일수록 수온이 높습니다. 아래 질문에 답해 보세요.',d:4,
+  {t:'적도 부근의 태평양',x:'적도를 따라 <em>서태평양</em>(왼쪽)과 <em>동태평양</em>(오른쪽)의 색을 비교해 보세요. 빨간색일수록 수온이 높습니다. 아래 생각해 보기에 답해 보세요.',d:4,
    s:k=>({...NORMAL,zoom:ease(k),box:1})}]},
  {draw:sceneEq,steps:[ // 온도 분포의 원인
   {t:'무역풍이 없다면',x:'왼쪽은 적도 부근 태평양의 지도, 오른쪽은 적도를 따라 자른 <em>단면</em>입니다. 먼저 무역풍이 불지 않는다고 가정하면, 해수면 온도와 따뜻한 해수층의 두께가 <em>동서로 거의 같을 것</em>입니다.',d:5,
@@ -626,12 +621,9 @@ function openTab(i){tab=i;[0,1].forEach(j=>{const b=$('tab'+j),on=j==i;b.setAttr
 [0,1].forEach(i=>{const b=$('tab'+i);b.onclick=()=>openTab(i);b.onkeydown=e=>{if(e.key=='ArrowRight'||e.key=='ArrowLeft'){const j=(i+1)%2;$('tab'+j).focus();openTab(j)}}});
 $('prev').onclick=()=>go(si-1);$('next').onclick=()=>go(si+1);$('again').onclick=()=>{seed();resetQuiz();go(0)};
 $('play').onclick=()=>{const S=scene().steps;if(si==S.length-1&&ph>=S[si].d){go(0);return}playing=!playing;updPlay()};
-// 질문: 서태평양 / 동태평양 고르기 (맞히면 지도에 수온 표시)
-function resetQuiz(){quizOK=false;[...$('qbs').children].forEach(b=>b.classList.remove('on'));$('qmk').textContent='';$('qmk').className='qmk'}
-[...$('qbs').children].forEach(b=>b.onclick=()=>{[...$('qbs').children].forEach(x=>x.classList.toggle('on',x==b));const ok=b.dataset.a=='w',mk=$('qmk');
- if(ok){mk.className='qmk ok';mk.textContent='맞아요! 서태평양(약 29~30 °C)이 동태평양(약 25 °C)보다 수온이 높습니다. 까닭은 [온도 분포의 원인]에서!';if(!quizOK){quizOK=true;quizT=performance.now()/1000}
-  if(si<scene().steps.length-1)go(scene().steps.length-1),ph=scene().steps[si].d}
- else{mk.className='qmk no';mk.textContent='다시 살펴보세요. 지도에서 빨간색에 가까울수록 수온이 높습니다.';quizOK=false}});
+// 태평양의 수온 분포: 생각해 보기 답을 열면 지도에도 서·동 수온을 표시(확대가 끝난 화면으로)
+function resetQuiz(){quizOK=false}
+document.querySelector('[data-ov="ovq"]').addEventListener('click',()=>{if(!quizOK){quizOK=true;quizT=performance.now()/1000}const S=scene().steps;if(si<S.length-1){go(S.length-1)}ph=S[si].d});
 
 function frame(nowMs){const now=nowMs/1000,dt=Math.min(.1,now-last);last=now;fit();
  const S=scene().steps,s=S[si];
