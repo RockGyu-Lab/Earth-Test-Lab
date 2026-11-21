@@ -99,6 +99,15 @@ canvas{width:100%;height:auto;aspect-ratio:940/400;display:block;border-radius:1
 }
 /* 설명은 넓은 화면에서 모두 2줄 이내 → 2줄 높이만 확보. 폭이 좁은 화면(세로 태블릿 등)은 3줄이 되는 설명이 있어 3줄 높이 확보(글이 바뀔 때 아래가 움직이지 않게) */
 @media (max-width:900px){.stepbox{min-height:calc(3 * 1.55em + 16px)}}
+.story{margin-left:auto;padding:2px 10px;border:1px solid var(--acc-bd);border-radius:10px;background:var(--acc-bg);color:var(--acc);font-size:.86rem;font-weight:700;cursor:pointer;flex:none}
+.story:hover{border-color:var(--acc)}
+dialog{max-width:min(560px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:auto;border:0;border-radius:14px;padding:0;background:var(--bg);color:var(--fg);box-shadow:0 12px 40px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(10,14,30,.55)}
+dialog h2{font-size:1.1rem;margin:0 0 8px;color:var(--acc)}
+dialog p,dialog li{font-size:.92rem;line-height:1.6}
+dialog ol{margin:8px 0 0;padding-left:1.3em}
+dialog li+li{margin-top:6px}
+dialog .close{display:block;margin:14px 0 0 auto;padding:5px 14px;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--fg);font-weight:700;cursor:pointer;font-family:inherit}
 section[hidden]{display:none}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
@@ -164,13 +173,27 @@ section[hidden]{display:none}
   <p class="exp">무역풍이 표층 해수를 서쪽으로 계속 밀어 보내므로, 따뜻한 해수가 서태평양에 쌓여 해수면이 높아지고 따뜻한 해수층도 두꺼워집니다. 실제 높이 차이는 수십 cm 정도로 아주 작아서, 그림에서는 과장하여 나타냈습니다.</p>
  </div></div>
 </section>
+<!-- 읽을거리(정식 사이트 Star/spectrum.html의 '분광형 이름에 숨은 이야기'와 같은 형식) -->
+<dialog id="story"><div style="padding:18px 20px">
+ <h2>엘니뇨 이름에 숨은 이야기</h2>
+ <p>'엘니뇨(El Niño)'는 에스파냐어로 <b>'남자아이'</b>라는 뜻입니다. 왜 이런 이름이 붙었을까요?</p>
+ <ol>
+  <li>남아메리카 페루와 에콰도르의 어민들은 해마다 <b>크리스마스 무렵</b>이면 바닷가에 따뜻한 바닷물이 흘러들어 고기가 덜 잡힌다는 것을 알고 있었습니다. 그래서 이 따뜻한 바닷물을 아기 예수를 뜻하는 <b>'엘니뇨'</b>라고 불렀습니다.</li>
+  <li>그런데 몇 년에 한 번씩은 이 따뜻한 바닷물이 유난히 강하고 오래 이어져 어장이 무너지고 큰비가 내렸습니다. 과학자들이 이 현상을 연구하면서, 지금은 <b>몇 년마다 동태평양 적도 부근의 수온이 평년보다 높아지는 현상</b>을 엘니뇨라고 부릅니다.</li>
+  <li>반대로 수온이 평년보다 낮아지는 현상은 '여자아이'라는 뜻의 <b>'라니냐(La Niña)'</b>라고 부릅니다. 이 이름은 1980년대에 과학자들이 엘니뇨와 짝을 맞추어 쓰기 시작했습니다.</li>
+  <li>한편 1920년대에 영국의 기상학자 <b>워커</b>는 서태평양과 동태평양의 기압이 시소처럼 서로 반대로 오르내린다는 것(남방 진동)을 발견했습니다. 1960년대 말 기상학자 <b>비에르크네스</b>가 이것이 엘니뇨와 하나로 이어진 현상임을 밝혔고, 적도 태평양의 동서 대기 순환에 워커의 이름을 붙여 <b>워커 순환</b>이라고 불렀습니다. 그래서 두 현상을 함께 <b>엔소(ENSO, 엘니뇨–남방 진동)</b>라고도 합니다.</li>
+ </ol>
+ <button class="close" id="closeStory">닫기</button>
+</div></dialog>
 <section id="p1" role="tabpanel" aria-labelledby="tab1" hidden>
- <div class="note"><span class="tag">생각해 보기</span><p>엘니뇨가 일어나면 페루 연안의 어획량은 어떻게 될까요?</p><button type="button" class="open-think" data-ov="ov1">답 보기</button></div>
+ <div class="note"><span class="tag">생각해 보기</span><p>엘니뇨가 일어나면 페루 연안의 어획량은 어떻게 될까요?</p><button type="button" class="open-think" data-ov="ov1">답 보기</button><button type="button" class="story" id="openStory">엘니뇨 이름에 숨은 이야기 ›</button></div>
  <div class="note memo"><span class="tag mem">기억하기</span><p>엘니뇨: 무역풍 약화 → 따뜻한 해수의 동쪽 이동, 용승 약화 → 동태평양 표층 수온이 평년보다 높음</p></div>
  <div class="ov" id="ov1" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 엘니뇨가 일어나면 페루 연안의 어획량은 어떻게 될까요?">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>엘니뇨가 일어나면 페루 연안의 어획량은 어떻게 될까요?</b><button type="button" class="x" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">어획량이 줄어듭니다.</p>
   <p class="exp">평상시에는 용승으로 깊은 곳의 영양염류가 많은 찬 해수가 올라와 플랑크톤이 많고 좋은 어장이 됩니다. 엘니뇨 때는 용승이 약해져 영양염류가 적게 공급되므로 플랑크톤이 줄고, 물고기도 줄어듭니다.</p>
+  <p class="exp"><b>페루 경제에 주는 영향</b> 페루는 앤초비(멸치류)를 많이 잡아 대부분을 <b>어분</b>(물고기를 말려 간 가루)으로 만들어 수출하는 세계 최대의 어분 생산국입니다. 어획량이 줄면 어민과 수산 가공 공장이 큰 피해를 입고, 수출이 줄어 나라 경제도 어려워집니다.</p>
+  <p class="exp"><b>세계에 주는 영향</b> 어분은 양식장 물고기, 닭, 돼지의 사료로 세계 곳곳에서 쓰입니다. 어분이 부족해지면 국제 어분 가격이 오르고, 대신 쓰는 콩깻묵(대두박) 같은 사료 값도 함께 오를 수 있습니다. 실제로 1972~1973년 엘니뇨 때 페루의 앤초비 어획량이 크게 줄어 국제 사료 시장이 큰 영향을 받았습니다. 이처럼 엘니뇨는 멀리 떨어진 나라의 고기·생선 값에도 영향을 줄 수 있습니다.</p>
  </div></div>
 </section>
 
@@ -811,6 +834,7 @@ function frame(nowMs){const now=nowMs/1000,dt=Math.min(.1,now-last);last=now;fit
 // 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
 document.querySelectorAll('.open-think').forEach(btn=>{const ov=$(btn.dataset.ov),cl=ov.querySelector('.x');const close=()=>{ov.hidden=true;btn.focus()};
  btn.onclick=()=>{ov.hidden=false;cl.focus()};cl.onclick=close;ov.addEventListener('click',e=>{if(e.target===ov)close()});ov.addEventListener('keydown',e=>{if(e.key=='Escape')close()})});
+{const st=$('story');$('openStory').onclick=()=>st.showModal();$('closeStory').onclick=()=>st.close();st.addEventListener('click',e=>{if(e.target==st)st.close()})}
 openTab(0);requestAnimationFrame(frame);
 </script>
 <script src="./copyright.js"></script>
