@@ -339,9 +339,9 @@ const QPTS=QCTRL.map(P=>{let pts=[];for(let i=0;i<P.length-1;i++){const a=P[i],b
 function qAt(n,d){const {out,L}=QPTS[n];d=clamp(d,0,L[L.length-1]);let i=1;while(i<L.length-1&&L[i]<d)i++;const f=(d-L[i-1])/((L[i]-L[i-1])||1),a=out[i-1],b=out[i];return [a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f]}
 // 방향은 앞뒤로 조금 떨어진 두 점으로 구해 꼬리가 흔들리지 않게 함(곡선 표본의 이음매에서 방향이 튀던 문제)
 function qPt(p){const L=QPTS[p.n].L,d=p.s*L[L.length-1],c=qAt(p.n,d),f=qAt(p.n,d+1.5),b=qAt(p.n,d-1.5);return [c[0],c[1],f[0]-b[0],f[1]-b[1]]}
-function dartA(x,y,ux,uy,a){ctx.save();ctx.shadowColor='rgba(0,0,0,.55)';ctx.shadowBlur=3;ctx.globalAlpha=a;ctx.fillStyle='#fff';ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=1.4;
- ctx.beginPath();ctx.moveTo(x+ux*5,y+uy*5);ctx.lineTo(x-ux*2-uy*3,y-uy*2+ux*3);ctx.lineTo(x-ux*2+uy*3,y-uy*2-ux*3);ctx.closePath();ctx.fill();
- ctx.beginPath();ctx.moveTo(x-ux*2,y-uy*2);ctx.lineTo(x-ux*9,y-uy*9);ctx.stroke();ctx.restore()}
+function dartA(x,y,ux,uy,a,g){g=g||1;ctx.save();ctx.shadowColor='rgba(0,0,0,.55)';ctx.shadowBlur=3;ctx.globalAlpha=a;ctx.fillStyle='#fff';ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=1.4*g;   // g: 해류 세기에 따른 크기
+ ctx.beginPath();ctx.moveTo(x+ux*5*g,y+uy*5*g);ctx.lineTo(x-ux*2*g-uy*3*g,y-uy*2*g+ux*3*g);ctx.lineTo(x-ux*2*g+uy*3*g,y-uy*2*g-ux*3*g);ctx.closePath();ctx.fill();
+ ctx.beginPath();ctx.moveTo(x-ux*2*g,y-uy*2*g);ctx.lineTo(x-ux*9*g,y-uy*9*g);ctx.stroke();ctx.restore()}
 function dart(x,y,dir,a,c){ctx.globalAlpha=a;ctx.fillStyle=c||'#fff';ctx.beginPath();ctx.moveTo(x+dir*5,y);ctx.lineTo(x-dir*2,y-3);ctx.lineTo(x-dir*2,y+3);ctx.closePath();ctx.fill();
  ctx.strokeStyle=c||'rgba(255,255,255,.8)';ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(x-dir*2,y);ctx.lineTo(x-dir*9,y);ctx.stroke();ctx.globalAlpha=1}
 // 구름: 원 여러 개를 한 도형으로 합쳐 한 번에 칠함(연할 때 원이 겹쳐 보이지 않게)
@@ -412,9 +412,10 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
   // 화살표 모양·두께는 늘 같게 하고, 3단계에서는 색만 흰색 → 그 자리 수온 색으로 천천히 바뀜(어두운 테두리로 물과 구분)
   const tc=lut(eqT(slon(p.x)),22,30),tn=st.tint||0,pc=`rgb(${Math.round(lerp(255,tc[0],tn))},${Math.round(lerp(255,tc[1],tn))},${Math.round(lerp(255,tc[2],tn))})`;
   ctx.save();ctx.globalAlpha=a*Math.min(1,Math.abs(st.V)*1.4)*(1-p.d*.35)*edge;ctx.lineCap='round';ctx.lineJoin='round';
-  const shaft=()=>{ctx.beginPath();ctx.moveTo(x-dir*9,y);ctx.lineTo(x+dir*2,y)},head=()=>{ctx.beginPath();ctx.moveTo(x+dir*7,y);ctx.lineTo(x,y-4);ctx.lineTo(x,y+4);ctx.closePath()};
-  ctx.strokeStyle='rgba(12,16,40,.85)';ctx.lineWidth=4.2;shaft();ctx.stroke();ctx.lineWidth=2.2;head();ctx.stroke();
-  ctx.strokeStyle=pc;ctx.lineWidth=2;shaft();ctx.stroke();head();ctx.fillStyle=pc;ctx.fill();ctx.restore()});
+  // 해류 세기(|V|)에 따라 굵기·크기: 엘니뇨(약함) 0.7배, 평상시 1배, 라니냐(강함) 1.4배(무역풍과 같은 규칙)
+  const g=wThick(Math.abs(st.V),.7,1.4),shaft=()=>{ctx.beginPath();ctx.moveTo(x-dir*9*g,y);ctx.lineTo(x+dir*2*g,y)},head=()=>{ctx.beginPath();ctx.moveTo(x+dir*7*g,y);ctx.lineTo(x,y-4*g);ctx.lineTo(x,y+4*g);ctx.closePath()};
+  ctx.strokeStyle='rgba(12,16,40,.85)';ctx.lineWidth=4.2*g;shaft();ctx.stroke();ctx.lineWidth=2.2*g;head();ctx.stroke();
+  ctx.strokeStyle=pc;ctx.lineWidth=2*g;shaft();ctx.stroke();head();ctx.fillStyle=pc;ctx.fill();ctx.restore()});
  ctx.globalAlpha=a;
  // 따뜻한 해수가 동쪽으로 퍼짐(되돌아옴): 해류 화살표와 구분되는 넓은 반투명 화살표, 따뜻한 해수층 안에
  if(st.spread>0){const A=a*st.spread,dr=st.sdir||1,f0=dr>0?.12:.88,f1=dr>0?.78:.22,x0=sxp(f0),x1=sxp(f1),ym=x=>SEA-level(x,st)+thick(x,st)*.55,hw=11,ph=(t*.6)%1;   // 라니냐: 동 → 서
@@ -685,8 +686,8 @@ function sceneEq(st,t){setSR(SRE);const v=drawMap(st,{box:EQB,R:ZR,z:1,lo:22,hi:
  T('서태평양',v.X(158),v.Y(23),{size:13.5,w:800,halo:1});T('동태평양',v.X(232),v.Y(23),{size:13.5,w:800,halo:1});
  if(st.W>.02){const aw=Math.min(1,st.W*4),len=.35+.65*st.W,th=wThick(st.W,1.4/2.2,3.3/2.2);[180,222,262].forEach(lo=>[1,-1].forEach(h=>windCurve(v,lo,h,aw,len,th)));   // 세기에 따라 길이와 굵기가 함께 바뀜
   T(st.W<.6?'약해진 무역풍':st.W>1.15?'강해진 무역풍':'무역풍',v.X(262),v.Y(18),{size:12.5,w:800,halo:1,c:'#ffd84a',a:Math.min(1,st.W*2+.3)})}
- if(st.V<-.05){const aa=Math.min(1,-st.V*1.4);PQ.forEach(p=>{const q=qPt(p),dx=q[2]*v.sx,dy=-q[3]*v.sy,n=Math.hypot(dx,dy)||1;
-  dartA(v.X(q[0]),v.Y(q[1]),dx/n,dy/n,aa*c01(p.s*12)*c01((1-p.s)*10))})}   // 서쪽으로 흐른 뒤 북·남으로 빠져나감
+ if(st.V<-.05){const aa=Math.min(1,-st.V*1.4),cg=wThick(-st.V,.7,1.4);PQ.forEach(p=>{const q=qPt(p),dx=q[2]*v.sx,dy=-q[3]*v.sy,n=Math.hypot(dx,dy)||1;
+  dartA(v.X(q[0]),v.Y(q[1]),dx/n,dy/n,aa*c01(p.s*12)*c01((1-p.s)*10),cg)})}   // 서쪽으로 흐른 뒤 북·남으로 빠져나감
  else if(st.V>.05){const aa=Math.min(1,st.V*1.4);PM.forEach(p=>dart(v.X(p.lo),v.Y(p.la),1,aa))}
  if(st.U>.05&&st.mU>0){const x=v.X(272),y=v.Y(-6);ctx.globalAlpha=st.mU;ctx.strokeStyle='#8fe3ff';ctx.lineWidth=2.2;ctx.beginPath();ctx.ellipse(x,y,22,26,0,0,7);ctx.stroke();ctx.globalAlpha=1;
   T(st.E>.5?'용승 약화':(st.L||0)>.5?'용승 강화':'용승',x,y+5,{c:'#8fe3ff',size:13,w:800,halo:1,a:st.mU})}
