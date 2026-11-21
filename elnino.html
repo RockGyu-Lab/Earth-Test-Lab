@@ -448,14 +448,13 @@ function drawWalker(st,t,a){const xw=sxp(st.rx??.15),xe=sxp(st.dx??.86),s=Math.s
  ctx.globalAlpha=a}
 
 // 엘니뇨 때 동쪽: 순환을 바다 위에서 닫지 않음. 상승 구역이 동태평양까지 넓어져(비구름) 높은 곳의 흐름은 남아메리카 대륙 쪽으로 이어짐(대륙 위에서 하강)
-function drawOpenEast(st,t,a){const xr=sxp(.53),yt=SR.y+44,xe=SR.x+SR.w-20,yb=yt+62;   // 대륙 위로 내려가는 흐름은 꼬리표 위에서 멈춤(그 아래는 그림 밖의 일)
- cloud(sxp(.8),yt+46,a,1.05);rain(sxp(.8),yt+68,SEA-6,t,a);
- ctx.save();ctx.globalAlpha=a*.55;ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.setLineDash([2,6]);ctx.beginPath();ctx.moveTo(xr+26,yt);ctx.lineTo(xe-26,yt);ctx.arcTo(xe,yt,xe,yt+26,26);ctx.lineTo(xe,yb);ctx.stroke();ctx.restore();
- const L1=xe-26-(xr+26),L2=yb-yt,tot=L1+L2;for(let q=0;q<7;q++){const d=((q/7)+WPH*.5)%1*tot;let x,y,dx,dy;if(d<L1){x=xr+26+d;y=yt;dx=1;dy=0}else{x=xe;y=yt+(d-L1);dx=0;dy=1}
-  ctx.globalAlpha=a;ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(x+dx*6,y+dy*6);ctx.lineTo(x-dx*3-dy*4,y-dy*3+dx*4);ctx.lineTo(x-dx*3+dy*4,y-dy*3-dx*4);ctx.closePath();ctx.fill()}
+function drawOpenEast(st,t,a){const xr=sxp(.53),yt=SR.y+44,xe=SR.x+SR.w-6;   // 높은 곳의 흐름은 동쪽(남아메리카 쪽)으로 곧게 이어짐(하강은 그리지 않음: 설명 글에서 다룸)
+ // 남아메리카 대륙 바로 앞바다: 바다가 따뜻해져 생긴 작은 비구름
+ const cx=sxp(.9),cy=SR.y+96;cloud(cx,cy,a,.8);rain(cx+2,cy+18,SEA-6,t,a*.9);
+ ctx.save();ctx.globalAlpha=a*.55;ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.setLineDash([2,6]);ctx.beginPath();ctx.moveTo(xr+26,yt);ctx.lineTo(xe,yt);ctx.stroke();ctx.restore();
+ const L=xe-(xr+26);for(let q=0;q<7;q++){const x=xr+26+((q/7)+WPH*.5)%1*L,y=yt;ctx.globalAlpha=a;ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(x+6,y);ctx.lineTo(x-3,y-4);ctx.lineTo(x-3,y+4);ctx.closePath();ctx.fill()}
  ctx.globalAlpha=1;T('높은 곳: 서 → 동',(xr+xe)/2,yt-10,{size:13.5,w:800,halo:1,a});
- T('남아메리카 대륙 쪽으로 이어져 하강',xe-12,yt+26,{size:12,w:800,halo:1,a,al:'right'});
- pill('비가 많아짐',sxp(.8),SEA-14,'#8fc8ff',a,13)}
+ pill('강수량 증가',cx-14,SEA-14,'#8fc8ff',a,12.5)}
 
 // ---- 페루 연안 단면 (해안에 수직으로 자른 단면: 왼쪽 먼바다 → 오른쪽 페루 해안) ----
 function drawPeru(st,t){const R=SRE,a=1,sea=R.y+150,bot=R.y+R.h,x0=R.x,x1=R.x+R.w,coast=x1-74;
@@ -725,8 +724,8 @@ ESCENES.push({draw:sceneAnom,steps:[{t:'평년의 수온',x:'먼저 <em>평년�
  s:k=>{const g=k*22;return {m2:seg(g,2.5,4),pt:seg(g,6.5,7.5),calc:seg(g,7,8.5),m3:seg(g,11,12.5),box:seg(g,13,14),ts:seg(g,16,17),tsk:seg(g,16.5,21)}}}]});
 ESCENES.push({draw:sceneWalk,steps:[{t:'평상시의 대기 순환',x:'평상시에는 서태평양에서 공기가 <em>상승</em>하고 동태평양에서 <em>하강</em>하는 <em>워커 순환</em>이 나타납니다.',d:18,
  xs:[[3.5,'따뜻한 해수의 이동','엘니뇨가 일어나 무역풍이 약해지고 따뜻한 해수가 동쪽으로 이동하면, <em>공기가 상승하는 곳도 동쪽으로 옮겨 갑니다</em>.'],
-     [8,'엘니뇨 때의 대기 순환','수온이 높아진 중앙·동태평양에서 <em>상승 기류(저기압)</em>, 서태평양에서 <em>하강 기류(고기압)</em>가 나타나 대기 순환이 달라집니다.'],
-     [12,'이상 기후','서태평양(인도네시아·오스트레일리아)은 비가 줄어 <em>가뭄과 산불</em>이, 동태평양(페루 연안)은 비가 늘어 <em>폭우와 홍수</em>가 생기기 쉽습니다.']],
+     [8,'엘니뇨 때의 대기 순환','<em>중앙 태평양에서 상승 기류(저기압)</em>가 생기고, 높은 곳의 공기는 서쪽(서태평양에서 <em>하강</em>, 고기압)과 동쪽(남아메리카 대륙 쪽으로 이동해 하강)으로 갈라집니다.'],
+     [12,'이상 기후','서태평양은 비가 줄어 <em>가뭄·산불</em>이 생기기 쉽고, 남아메리카 앞바다는 수온이 높아져 구름이 잘 생기므로 <em>강수량이 늘어 폭우·홍수</em>가 생기기 쉽습니다.']],
  s:k=>ATM(k*18)}]});
 const ELNINO=ESCENES[0];
 
