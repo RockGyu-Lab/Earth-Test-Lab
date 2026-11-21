@@ -544,7 +544,7 @@ function scenePac(st,t){const z=st.zoom,za=c01((z-.6)/.4),v=drawMap(st,{box:EQB,
   if(quizOK){const qa=c01((t-quizT)/.6);pill('약 29~30 °C',v.X(155),v.Y(-4),'#ff8a7a',qa,15);pill('약 25 °C',v.X(255),v.Y(-4),'#8fe3ff',qa,15)}}
  drawGridLabels(v,za);
  endMap();
- colorbar({x:lerp(GR.x+GR.w*.25,FR.x+FR.w*.25,z),y:lerp(374,FR.y+FR.h+16,z),w:GR.w*.5,h:11},lerp(-2,22,z),30,z>.5?2:5,'해수면 온도(°C)');
+ colorbar({x:lerp(GR.x+110,FR.x+FR.w*.25,z),y:lerp(374,FR.y+FR.h+16,z),w:GR.w*.5,h:11},lerp(-2,22,z),30,z>.5?2:5,'해수면 온도(°C)');
  T(z>.5?'적도 부근 태평양의 해수면 온도 평년값 (1991~2020년 연평균, NOAA ERSST v5)':'전 세계의 연평균 해수면 온도 (1991~2020년, NOAA ERSST v5)',W-14,H-2.5,{size:10.5,al:'right',c:'#8d96b3',w:500,bl:'bottom'})}
 
 // 무역풍(교과서 그림처럼 휘어진 화살표): 북반구는 북동쪽에서, 남반구는 남동쪽에서 적도 쪽으로 불어 오며 서쪽으로 휨
