@@ -335,7 +335,7 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
  ctx.beginPath();ctx.moveTo(SX0,SR.y);for(let n=0;n<=40;n++){const xf=n/40;ctx.lineTo(sxp(xf),SEA-level(xf,st))}ctx.lineTo(SX1,SR.y);ctx.closePath();
  ctx.save();ctx.clip();ctx.fillStyle=sky;ctx.fillRect(SR.x,SR.y,SR.w,SEA);ctx.restore();
  ctx.strokeStyle='#bfe6ff';ctx.lineWidth=2;ctx.beginPath();for(let n=0;n<=40;n++){const xf=n/40,y=SEA-level(xf,st);n?ctx.lineTo(sxp(xf),y):ctx.moveTo(sxp(xf),y)}ctx.stroke();
- if(st.F>0&&st.ref!==0){ctx.setLineDash([3,4]);ctx.strokeStyle='rgba(191,230,255,.6)';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(SX0,SEA);ctx.lineTo(SX1,SEA);ctx.stroke();ctx.setLineDash([]);}
+ if(st.F>0&&st.ref!==0&&tab!==1){ctx.setLineDash([3,4]);ctx.strokeStyle='rgba(191,230,255,.6)';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(SX0,SEA);ctx.lineTo(SX1,SEA);ctx.stroke();ctx.setLineDash([]);}
  // 표층 해수의 흐름(입자)
  // 바람이 일으키는 흐름은 해수면에서 가장 빠르고 깊을수록 약해지므로, 해수면 가까이에만 그리고 깊을수록 짧고 흐리게
  if(Math.abs(st.V)>.05)PS.forEach(p=>{const dep=0;   // 해수면을 따라 한 줄로
@@ -358,7 +358,7 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
  ctx.fillStyle='#6d5b43';ctx.strokeStyle='#9b845f';ctx.lineWidth=1.2;const LT=SEA-56;
  ctx.fillRect(SR.x,LT,SX0-SR.x,BOT-LT);ctx.strokeRect(SR.x+.5,LT+.5,SX0-SR.x-1,BOT-LT);ctx.fillRect(SX1,LT,SR.x+SR.w-SX1,BOT-LT);ctx.strokeRect(SX1+.5,LT+.5,SR.x+SR.w-SX1-1,BOT-LT);
  // 땅 위에 해수면 높이 변화 화살표: 기준선(바람이 없을 때의 해수면, 점선)에서 바닷가 해수면 높이까지. 높아지면 위로, 낮아지면 아래로, 차이가 클수록 길게
- if(st.F>0&&st.ref!==0){ctx.setLineDash([3,3]);ctx.strokeStyle='rgba(255,255,255,.75)';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(SR.x+4,SEA);ctx.lineTo(SX0,SEA);ctx.moveTo(SX1,SEA);ctx.lineTo(SR.x+SR.w-4,SEA);ctx.stroke();ctx.setLineDash([]);
+ if(st.F>0&&st.ref!==0&&tab!==1){ctx.setLineDash([3,3]);ctx.strokeStyle='rgba(255,255,255,.75)';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(SR.x+4,SEA);ctx.lineTo(SX0,SEA);ctx.moveTo(SX1,SEA);ctx.lineTo(SR.x+SR.w-4,SEA);ctx.stroke();ctx.setLineDash([]);
   [[0,(SR.x+SX0)/2],[1,(SX1+SR.x+SR.w)/2]].forEach(([xf,x])=>{const h=level(xf,st);if(Math.abs(h)<2.5)return;ctx.save();ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=3;arrow(x,SEA,x,SEA-h,'#ffffff',3.4,Math.min(10,Math.abs(h)*.5+5),a);ctx.restore()})}
  T('인도네시아',SR.x+4,LT-6,{size:11.5,c:'#e9dcc4',al:'left',halo:1});T('남아메리카',SR.x+SR.w-4,LT-6,{size:11.5,c:'#e9dcc4',al:'right',halo:1});
  // 해 · 가열
