@@ -894,10 +894,9 @@ function cmpPanel(R,nm,c,st,t,last){field(st);const x0=R.x+34,x1=R.x+R.w-34,X=xf
   flow(roundPath([[X(.97),yb],[r+8,yb],[r+8,yt],[R.x+R.w+4,yt]],12),t,1,lw,sp);                        // 동쪽: 열린 흐름(남아메리카 쪽으로)
   cloudAt(r+36,.62);cloudAt(X(.93),.42);pill('저기압',r+4,ym,'#ff9b7a',1,11.5);pill('고기압',w,ym,'#e6e9f2',1,11.5)}
  else{const w=X(.15),e=X(.86);flow(roundPath([[w,yb],[w,yt],[e,yt],[e,yb],[w,yb]],12),t,1,lw,sp);cloudAt(w+40,.62+.15*big);pill('저기압',w,ym,'#ff9b7a',1,11.5);pill('고기압',e,ym,'#e6e9f2',1,11.5)}
- ctx.font=font(13,800);const tw=ctx.measureText(nm).width+20;pill(nm,R.x+8+tw/2,R.y+13,c,1,13);
  T('서태평양',R.x+6,BT-6,{size:11,al:'left',c:'#cfd6ee',w:700,halo:1});T('동태평양',R.x+R.w-6,BT-6,{size:11,al:'right',c:'#cfd6ee',w:700,halo:1});
  ctx.restore();ctx.strokeStyle='rgba(255,255,255,.18)';ctx.lineWidth=1;rr(R.x,R.y,R.w,R.h,10);ctx.stroke()}
-function sceneCmpW(st,t){setSR(WR,.6);CMPST.forEach(([nm,c,s2],i)=>cmpPanel({x:14,y:8+i*128,w:912,h:122},nm,c,s2,t));
+function sceneCmpW(st,t){setSR(WR,.6);CMPST.forEach(([nm,c,s2],i)=>{const R={x:166,y:8+i*128,w:608,h:122};cmpPanel(R,nm,c,s2,t);pill(nm,(14+R.x-10)/2,R.y+R.h/2,c,1,15)});   // 이름은 단면 왼쪽 바깥(수온 편차 화면과 같게)
  T('개념도 (해수면 높이·해수층 두께는 과장, 세 단면은 같은 크기)',W-14,H-1,{size:10.5,al:'right',c:'#8d96b3',w:500,bl:'bottom'})}
 const CSCENES=[
  {draw:sceneCmpA,steps:[{t:'수온 편차 비교',x:'위는 <em>엘니뇨 시기</em>(2026년 10월), 아래는 <em>라니냐 시기</em>(2010년 10월)의 해수면 온도 편차(그때의 수온 − 평년 수온)입니다.',d:1,s:k=>({})}]},
