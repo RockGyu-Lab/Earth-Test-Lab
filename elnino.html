@@ -435,7 +435,7 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
  if(st.C>0){const cxp=sxp(lerp(.15,.58,st.cx)),cy=SR.y+60;cloud(cxp,cy,a*st.C);rain(cxp,cy+22,SEA-8,t,a*st.C);T('비가 많이 내림',cxp+6,cy-30,{c:'#e8ecff',size:12.5,w:800,halo:1,a:a*st.C})}
  // 무역풍(해수면 위, 동 → 서)
  if(st.W>0.02&&(!st.walk||st.showW>0)){const L=56*st.W,aw=a*Math.min(1,st.W*4)*(st.walk?st.showW:1);   // 동 → 서로 계속 흘러가는 바람 줄기(노란색, 한 줄)
-  PA.forEach(p=>{const x=sxp(p.x),y=SEA-30,f=Math.sin(Math.PI*p.x);arrow(x+L/2,y,x-L/2,y,'#ffd84a',3,10,aw*Math.max(0,Math.min(1,f*2.2)))});
+  const g=wThick(st.W,2/3,4/3);PA.forEach(p=>{const x=sxp(p.x),y=SEA-30,f=Math.sin(Math.PI*p.x);arrow(x+L/2,y,x-L/2,y,'#ffd84a',3*g,10*g,aw*Math.max(0,Math.min(1,f*2.2)))});
   T(st.W<.6?'약해진 무역풍':st.W>1.15?'강해진 무역풍':'무역풍',sxp(.86),SEA-48,{size:13.5,w:800,halo:1,c:'#ffd84a',a:a*Math.min(1,st.W*2+.3)*(st.walk?st.showW:1)})}
  if(st.walk&&(st.wn??1)>0)drawWalker(st,t,a*(st.wn??1));if(st.walkE&&st.walkE.al>0)drawWalker({...st,...st.walkE},t,a*st.walkE.al);if(st.openE>0)drawOpenEast(st,t,a*st.openE);
  // 이름표
@@ -644,15 +644,17 @@ function scenePac(st,t){const z=st.zoom,za=c01((z-.6)/.4),v=drawMap(st,{box:EQB,
 
 // 무역풍(교과서 그림처럼 휘어진 화살표): 북반구는 북동쪽에서, 남반구는 남동쪽에서 적도 쪽으로 불어 오며 서쪽으로 휨
 // 선을 따라 작은 화살촉이 쉬지 않고 흘러가 바람이 계속 부는 모습을 나타냄(WPH)
-function windCurve(v,lo,h,aw,len){const k=len??1,P2=[lo-9,h*5],P0=[P2[0]+17*k,P2[1]+h*10*k],C=[P2[0]+11*k,P2[1]+h*3*k];   // 짧고 간결하게. 무역풍이 약해지면 길이만 짧아짐(색은 그대로)
+// 무역풍 세기 → 굵기 비율: 엘니뇨(W 0.3)는 가늘게, 평상시(1)는 그대로, 라니냐(1.4)는 굵게. lo·hi: W 0.3과 1.4일 때의 비율
+const wThick=(W,lo,hi)=>{W=Math.max(.3,W);return W<1?lerp(lo,1,(W-.3)/.7):lerp(1,hi,(W-1)/.4)};
+function windCurve(v,lo,h,aw,len,th){const k=len??1,g=th??1,P2=[lo-9,h*5],P0=[P2[0]+17*k,P2[1]+h*10*k],C=[P2[0]+11*k,P2[1]+h*3*k];   // 짧고 간결하게. 무역풍이 약해지면 길이만 짧아짐(색은 그대로)
  const B=u=>[(1-u)*(1-u)*P0[0]+2*(1-u)*u*C[0]+u*u*P2[0],(1-u)*(1-u)*P0[1]+2*(1-u)*u*C[1]+u*u*P2[1]];
  const D=u=>[2*(1-u)*(C[0]-P0[0])+2*u*(P2[0]-C[0]),2*(1-u)*(C[1]-P0[1])+2*u*(P2[1]-C[1])];
- ctx.save();ctx.shadowColor='rgba(0,0,0,.5)';ctx.shadowBlur=3;ctx.globalAlpha=aw*.85;ctx.strokeStyle='#ffd84a';ctx.lineWidth=2.2;ctx.lineCap='round';ctx.beginPath();
+ ctx.save();ctx.shadowColor='rgba(0,0,0,.5)';ctx.shadowBlur=3;ctx.globalAlpha=aw*.85;ctx.strokeStyle='#ffd84a';ctx.lineWidth=2.2*g;ctx.lineCap='round';ctx.beginPath();
  for(let q=0;q<=20;q++){const p=B(q/20);q?ctx.lineTo(v.X(p[0]),v.Y(p[1])):ctx.moveTo(v.X(p[0]),v.Y(p[1]))}ctx.stroke();ctx.restore();
  const head=(u,al,sz)=>{const p=B(u),d=D(u),x=v.X(p[0]),y=v.Y(p[1]),dx=d[0]*v.sx,dy=-d[1]*v.sy,n=Math.hypot(dx,dy)||1,ux=dx/n,uy=dy/n;
   ctx.save();ctx.shadowColor='rgba(0,0,0,.55)';ctx.shadowBlur=3;ctx.globalAlpha=al;ctx.fillStyle='#ffd84a';ctx.beginPath();ctx.moveTo(x+ux*sz,y+uy*sz);ctx.lineTo(x-ux*sz*.6-uy*sz*.6,y-uy*sz*.6+ux*sz*.6);ctx.lineTo(x-ux*sz*.6+uy*sz*.6,y-uy*sz*.6-ux*sz*.6);ctx.closePath();ctx.fill();ctx.restore()};
- for(let q=0;q<2;q++){const u=(WPH+q/2)%1;head(u,aw*Math.sin(Math.PI*u),5)}   // 흘러가는 화살촉 두 개
- head(1,aw,8)}                                                                  // 끝 화살촉
+ for(let q=0;q<2;q++){const u=(WPH+q/2)%1;head(u,aw*Math.sin(Math.PI*u),5*g)}   // 흘러가는 화살촉 두 개
+ head(1,aw,8*g)}                                                                  // 끝 화살촉
 
 // ---- 장면: 적도 지도 + 단면 (태평양 수온 분포의 원인, 엘니뇨) ----
 function sceneEq(st,t){setSR(SRE);const v=drawMap(st,{box:EQB,R:ZR,z:1,lo:22,hi:30}),a=1;
@@ -661,7 +663,7 @@ function sceneEq(st,t){setSR(SRE);const v=drawMap(st,{box:EQB,R:ZR,z:1,lo:22,hi:
  T('오스트레일리아',v.X(134),v.Y(-23),{size:12,w:800,c:'#e7eaf4',halo:1});T('남아메리카',v.X(289),v.Y(-20),{size:12,w:800,c:'#e7eaf4',halo:1,al:'right'});
  T('아시아',v.X(121),v.Y(25),{size:12,w:800,c:'#e7eaf4',halo:1,al:'left'});T('북아메리카',v.X(270),v.Y(26),{size:12,w:800,c:'#e7eaf4',halo:1});
  T('서태평양',v.X(158),v.Y(23),{size:13.5,w:800,halo:1});T('동태평양',v.X(232),v.Y(23),{size:13.5,w:800,halo:1});
- if(st.W>.02){const aw=Math.min(1,st.W*4),len=.35+.65*st.W;[180,222,262].forEach(lo=>[1,-1].forEach(h=>windCurve(v,lo,h,aw,len)));
+ if(st.W>.02){const aw=Math.min(1,st.W*4),len=.35+.65*st.W,th=wThick(st.W,1.4/2.2,3.3/2.2);[180,222,262].forEach(lo=>[1,-1].forEach(h=>windCurve(v,lo,h,aw,len,th)));   // 세기에 따라 길이와 굵기가 함께 바뀜
   T(st.W<.6?'약해진 무역풍':st.W>1.15?'강해진 무역풍':'무역풍',v.X(262),v.Y(18),{size:12.5,w:800,halo:1,c:'#ffd84a',a:Math.min(1,st.W*2+.3)})}
  if(st.V<-.05){const aa=Math.min(1,-st.V*1.4);PQ.forEach(p=>{const q=qPt(p),dx=q[2]*v.sx,dy=-q[3]*v.sy,n=Math.hypot(dx,dy)||1;
   dartA(v.X(q[0]),v.Y(q[1]),dx/n,dy/n,aa*c01(p.s*12)*c01((1-p.s)*10))})}   // 서쪽으로 흐른 뒤 북·남으로 빠져나감
