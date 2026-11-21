@@ -517,12 +517,18 @@ function isoCalc(lo0,lo1,la0,la1,F,LEV){const j0=lo0/2,i0=(70-la0)/2,nj=(lo1-lo0
 const ISO=isoCalc(116,294,34,-34,4,[20,21,22,23,24,25,26,27,28,29,30]);   // 확대 지도: 1 °C 간격
 const ISOG=isoCalc(30,388,70,-70,2,[0,5,10,15,20,25]);              // 전체 지도: 5 °C 간격
 function drawIso(v,a,I,step){I=I||ISO;step=step||2;if(a<=0)return;ctx.save();ctx.globalAlpha=a;ctx.lineJoin='round';
+ // 1) 숫자 자리 정하기: step °C 선 가운데(짧은 선·가장자리는 빼고)
+ const labs=[];ctx.font=font(11.5,800);
+ for(const lev in I){if(lev%step)continue;I[lev].forEach(L=>{let len=0;for(let i=1;i<L.length;i++)len+=Math.hypot(L[i][0]-L[i-1][0],L[i][1]-L[i-1][1]);if(len<20)return;
+  const p=L[Math.floor(L.length/2)],x=v.X(p[0]),y=v.Y(p[1]);if(x<v.clip.x+30||x>v.clip.x+v.clip.w-20||y<v.clip.y+12||y>v.clip.y+v.clip.h-22)return;
+  const w=ctx.measureText(lev).width+8;labs.push({lev,x,y,w,h:15})})}
+ // 2) 숫자 자리만 비워 두고 선을 그림(선이 숫자를 가로지르지 않게 잘라 냄)
+ ctx.save();ctx.beginPath();ctx.rect(v.clip.x-50,v.clip.y-50,v.clip.w+100,v.clip.h+100);labs.forEach(b=>ctx.rect(b.x+b.w/2,b.y-b.h/2,-b.w,b.h));ctx.clip('evenodd');
  for(const lev in I){const major=lev%step==0;ctx.strokeStyle=major?'rgba(15,18,40,.75)':'rgba(15,18,40,.45)';ctx.lineWidth=major?1.4:.9;
   I[lev].forEach(L=>{ctx.beginPath();L.forEach((p,i)=>i?ctx.lineTo(v.X(p[0]),v.Y(p[1])):ctx.moveTo(v.X(p[0]),v.Y(p[1])));ctx.stroke()})}
- // 수온 숫자: 짝수 °C 선 가운데에 (짧은 선은 빼고)
- for(const lev in I){if(lev%step)continue;I[lev].forEach(L=>{let len=0;for(let i=1;i<L.length;i++)len+=Math.hypot(L[i][0]-L[i-1][0],L[i][1]-L[i-1][1]);if(len<20)return;
-  const p=L[Math.floor(L.length/2)];const x=v.X(p[0]),y=v.Y(p[1]);if(x<v.clip.x+30||x>v.clip.x+v.clip.w-20||y<v.clip.y+12||y>v.clip.y+v.clip.h-22)return;
-  T(lev,x,y+4,{size:11.5,w:800,c:'#10142b',a,halo:0});})}
+ ctx.restore();
+ // 3) 숫자
+ labs.forEach(b=>T(b.lev,b.x,b.y+4,{size:11.5,w:800,c:'#10142b',a,halo:0}));
  ctx.restore()}
 // 위도·경도 눈금 글자(선은 긋지 않음): 왼쪽 가장자리에 위도, 아래 가장자리에 경도
 function drawGridLabels(v,a){if(a<=0)return;const o={size:11,w:700,c:'#ffffff',halo:1,a};
@@ -538,7 +544,7 @@ function scenePac(st,t){const z=st.zoom,za=c01((z-.6)/.4),v=drawMap(st,{box:EQB,
    T('적도 부근의 태평양',b.x+b.w/2,b.y-8,{c:'#ffd76b',size:15,w:800,halo:1,a:st.box*(1-z)})}}
  const eqA=1;ctx.globalAlpha=.55;ctx.setLineDash([4,4]);ctx.strokeStyle='#fff';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(v.clip.x,v.Y(0));ctx.lineTo(v.clip.x+v.clip.w,v.Y(0));ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
  T('적도',v.clip.x+8,v.Y(0)-5,{al:'left',size:12,halo:1,a:1-c01((z-.6)/.4)});
- if(z<.5){const a=1-z*2;T('태평양',v.X(200),v.Y(18),{size:15,w:800,halo:1,a:a*.95});T('대서양',v.X(330),v.Y(18),{size:14,w:800,halo:1,a:a*.8});T('인도양',v.X(78),v.Y(-18),{size:14,w:800,halo:1,a:a*.8})}
+ if(z<.5){const a=1-z*2;T('태평양',v.X(200),v.Y(8),{size:15,w:800,halo:1,a:a*.95});T('대서양',v.X(330),v.Y(18),{size:14,w:800,halo:1,a:a*.8});T('인도양',v.X(78),v.Y(-18),{size:14,w:800,halo:1,a:a*.8})}
  if(z>.6){const a=c01((z-.6)/.4);
   T('아시아',v.X(121),v.Y(25),{size:13,w:800,c:'#e7eaf4',halo:1,a,al:'left'});T('오스트레일리아',v.X(134),v.Y(-24),{size:13,w:800,c:'#e7eaf4',halo:1,a});
   T('북아메리카',v.X(268),v.Y(26),{size:13,w:800,c:'#e7eaf4',halo:1,a});T('남아메리카',v.X(288),v.Y(-16),{size:13,w:800,c:'#e7eaf4',halo:1,a,al:'right'});
