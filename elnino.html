@@ -684,18 +684,19 @@ function gridMap(R,val,col,a,label,lc){const v=viewFor(EQB,R,1);for(let i=0;i<NR
  if(label)pill(label,R.x+R.w/2,R.y-10,lc||'#cfe0ff',a,12.5);return v}
 // 한 칸의 값(적도 120°W): 계산 예시에 씀. 표시한 숫자끼리 계산이 맞도록 반올림한 값으로 뺌
 const PK=35*NC+120,PC=Math.round(C10[PK]*10)/10,PT=Math.round((C10[PK]+A10[PK])*10)/10,PD=Math.round((PT-PC)*10)/10;
-const MR1={x:30,y:28,w:396,h:140},MR2={x:514,y:28,w:396,h:140},MR3={x:30,y:228,w:396,h:140},PR3={x:494,y:214,w:432,h:176};
+const MR1={x:8,y:22,w:460,h:162},MR2={x:472,y:22,w:460,h:162},MR3={x:8,y:234,w:460,h:158},PR3={x:472,y:222,w:460,h:170};   // 지도를 최대한 크게
 function sceneAnom(st,t){
  const v1=gridMap(MR1,k=>C10[k],x=>lut(x,22,30),1,'평년값(1991~2020년의 10월 평균)');
  const v2=st.m2>0?gridMap(MR2,k=>C10[k]+A10[k],x=>lut(x,22,30),st.m2,'2026년 10월의 해수면 온도','#ffd76b'):null;
- colorbar({x:340,y:174,w:260,h:8},22,30,2);
+ colorbar({x:340,y:190,w:260,h:8},22,30,2);
  // 계산할 지점 표시
  if(st.pt>0)[v1,v2].forEach((v,n)=>{if(!v)return;const x=v.X(240),y=v.Y(0);ctx.globalAlpha=st.pt;ctx.strokeStyle='#111';ctx.lineWidth=4;ctx.beginPath();ctx.arc(x,y,7,0,7);ctx.stroke();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();ctx.globalAlpha=1;
   pill((n?PT:PC).toFixed(1)+' °C',x+34,y-16,'#ffffff',st.pt,12)});
  // 편차 지도
  if(st.m3>0){const v3=gridMap(MR3,k=>A10[k],dlut,st.m3,'수온 편차 = 2026년 10월 − 평년값','#ff8a7a');
-  for(let q=0;q<120;q++){const x=-4+8*q/119;const c=dlut(x);ctx.globalAlpha=st.m3;ctx.fillStyle=rgb(c);ctx.fillRect(MR3.x+40+300*q/120,MR3.y+MR3.h+5,300/120+.6,8)}
-  [-4,-2,0,2,4].forEach(x=>T((x>0?'+':'')+x,MR3.x+40+(x+4)/8*300,MR3.y+MR3.h+15,{size:10.5,c:'#cfd6ee',a:st.m3,bl:'top'}));T('°C',MR3.x+346,MR3.y+MR3.h+12,{size:10.5,al:'left',c:'#cfd6ee',a:st.m3});
+  {const bx=MR3.x+10,by=MR3.y+MR3.h-30,bw=200;ctx.globalAlpha=st.m3*.85;ctx.fillStyle='rgba(10,16,40,.8)';rr(bx-6,by-5,bw+40,28,8);ctx.fill();   // 편차 색 막대(지도 안 왼쪽 아래)
+  for(let q=0;q<120;q++){const x=-4+8*q/119;const c=dlut(x);ctx.globalAlpha=st.m3;ctx.fillStyle=rgb(c);ctx.fillRect(bx+bw*q/120,by,bw/120+.6,7)}
+  [-4,-2,0,2,4].forEach(x=>T((x>0?'+':'')+x,bx+(x+4)/8*bw,by+9,{size:10,c:'#e8ecff',a:st.m3,bl:'top'}));T('°C',bx+bw+8,by+8,{size:10,al:'left',c:'#e8ecff',a:st.m3})}
   // 엘니뇨 감시 구역(Niño 3.4) 상자
   if(st.box>0){ctx.globalAlpha=st.box*st.m3;ctx.setLineDash([5,3]);ctx.strokeStyle='#ffd76b';ctx.lineWidth=2;ctx.strokeRect(v3.X(190),v3.Y(5),v3.X(240)-v3.X(190),v3.Y(-5)-v3.Y(5));ctx.setLineDash([]);ctx.globalAlpha=1;
    T('엘니뇨 감시 구역',v3.X(215),v3.Y(5)-6,{size:11.5,w:800,c:'#ffd76b',halo:1,a:st.box*st.m3})}
