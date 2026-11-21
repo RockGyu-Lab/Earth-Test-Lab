@@ -456,11 +456,11 @@ function drawWalker(st,t,a){const xw=sxp(st.rx??.15),xe=sxp(st.dx??.86),s=Math.s
 // 엘니뇨 때 동쪽: 순환을 바다 위에서 닫지 않음. 상승 구역이 동태평양까지 넓어져(비구름) 높은 곳의 흐름은 남아메리카 대륙 쪽으로 이어짐(대륙 위에서 하강)
 function drawOpenEast(st,t,a){const xr=sxp(.53),yt=SR.y+44,xe=SR.x+SR.w-6;   // 높은 곳의 흐름은 동쪽(남아메리카 쪽)으로 곧게 이어짐(하강은 그리지 않음: 설명 글에서 다룸)
  // 남아메리카 대륙 바로 앞바다: 바다가 따뜻해져 생긴 작은 비구름
- const cx=SX1-34,cy=SR.y+88;
+ const cx=SX1-34,cy=SR.y+100;
  // 따뜻해진 바다에서 증발이 늘어남: 해수면에서 수증기(물결 모양 선)가 천천히 올라가 구름이 됨
  ctx.save();ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=1.6;ctx.lineCap='round';for(let q=0;q<5;q++){const bx=cx-62+q*12,ph=((t*.35+q*.23)%1),y0=SEA-8-ph*50;ctx.globalAlpha=a*Math.sin(Math.PI*ph)*.9;ctx.beginPath();
   for(let k=0;k<=10;k++){const yy=y0-k*2.2,xx=bx+Math.sin(k*.9+q)*2.5;k?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)}ctx.stroke()}ctx.restore();
- pill('증발량 증가',cx-50,SEA-72,'#ffffff',a,12);   // 늘 보이게(따뜻한 바다 → 증발 → 구름 → 비)
+ pill('증발량 증가',cx-38,SEA+13,'#ffffff',a,12);   // 증발이 일어나는 해수면 바로 아래   // 늘 보이게(따뜻한 바다 → 증발 → 구름 → 비)
  cloud(cx,cy,a,.8);rain(cx+4,cy+18,SEA-6,t,a*.9);
  // 하나의 열린 흐름: 지표(동 → 서) → 저기압에서 위로 꺾여 상승 → 높은 곳에서 동쪽으로 꺾여 남아메리카 쪽으로(동쪽 끝은 닫지 않음)
  const yb=SEA-26,x2=sxp(.97),r=26,PL=[[x2,yb],[xr+r,yb]];for(let k=1;k<=10;k++){const an=Math.PI/2+Math.PI/2*k/10;PL.push([xr+r+r*Math.cos(an),yb-r+r*Math.sin(an)])}
@@ -471,7 +471,7 @@ function drawOpenEast(st,t,a){const xr=sxp(.53),yt=SR.y+44,xe=SR.x+SR.w-6;   // 
   ctx.globalAlpha=a;ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(x+ux*6,y+uy*6);ctx.lineTo(x-ux*3-uy*4,y-uy*3+ux*4);ctx.lineTo(x-ux*3+uy*4,y-uy*3-ux*4);ctx.closePath();ctx.fill()}
  ctx.globalAlpha=1;T('지표 부근: 동 → 서(약한 무역풍)',sxp(.68),yb-12,{size:13,w:800,halo:1,a});
  T('높은 곳: 서 → 동',(xr+xe)/2,yt-10,{size:13.5,w:800,halo:1,a});
- pill(st.clim>.5&&st.wn<.5?'강수량 증가 → 폭우·홍수':'강수량 증가',cx-40,SEA-14,'#8fc8ff',a,12.5)}
+ {const s2=st.clim>.5&&st.wn<.5?'강수량 증가 → 폭우·홍수':'강수량 증가';ctx.font=font(12.5,800);const w=ctx.measureText(s2).width+18;pill(s2,SR.x+SR.w-6-w/2,SR.y+70,'#8fc8ff',a,12.5)}}   // 남아메리카 위쪽
 
 // ---- 페루 연안 단면 (해안에 수직으로 자른 단면: 왼쪽 먼바다 → 오른쪽 페루 해안) ----
 function drawPeru(st,t){const R=SRE,a=1,sea=R.y+150,bot=R.y+R.h,x0=R.x,x1=R.x+R.w,coast=x1-74;
