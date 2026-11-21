@@ -189,14 +189,15 @@ const LATc=i=>70-2*i,LONc=j=>2*j;
 //  TZ는 120°E~290°E의 태평양 바다로만 구함(인도양 쪽 오스트레일리아 북서쪽 바다, 멕시코만·카리브해는 뺌)
 //  고르게 하는 곳(PAC)은 확대 지도에 보이는 모든 바다(가장자리가 자연스럽게 약간 넓게: 112°E~298°E, 36°S~36°N)
 const PAC=new Float32Array(NR*NC),TZ=new Float32Array(NR);
-for(let i=0;i<NR;i++){const la=LATc(i);let s=0,n=0;
+for(let i=0;i<NR;i++){const la=LATc(i),vals=[];
  for(let j=0;j<NC;j++){const lo=LONc(j),k=i*NC+j;if(Math.abs(la)>36)continue;
   if(lo>=112&&lo<=298)PAC[k]=1;   // 육지 칸(가까운 바다 값으로 채운 칸)도 함께 고르게 해야 단면 끝에 줄이 생기지 않음
   if(ISL[k]||lo<120||lo>290)continue;
   if(lo<146&&la<-8)continue;
   if(la>=8&&lo>=(la<10?278:la<14?274:la<18?266:256))continue;
-  s+=TANN[k];n++}
- TZ[i]=n?s/n:0}
+  vals.push(TANN[k])}
+ // 무역풍이 없으면 용승도 없으므로, 용승으로 차가워진 쪽은 빼고 따뜻한 쪽 절반의 평균을 씀(적도 약 28.5~29 °C, 생각 실험이므로 대략적인 값)
+ vals.sort((x,y)=>y-x);const h=vals.slice(0,Math.max(1,Math.ceil(vals.length/2)));TZ[i]=vals.length?h.reduce((x,y)=>x+y,0)/h.length:0}
 
 // ================= 그림판 =================
 const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
@@ -286,7 +287,7 @@ function moveParticles(st,dt){const v=st.V||0;
  PM.forEach(p=>{p.lo+=v*dt*9;if(p.lo<160)p.lo+=112;if(p.lo>272)p.lo-=112});
  PW.forEach(p=>{p.u=(p.u+dt*.06*(st.loop||0))%1});
  PP.forEach(p=>{p.x-=dt*.08*(st.off||0);if(p.x<0)p.x+=1});
- PN.forEach(p=>{p.u+=dt*.12*(st.up||0);if(p.u>1)p.u-=1})}
+ PN.forEach(p=>{p.u+=dt*.035*(st.up||0);if(p.u>1)p.u-=1})}
 
 // ================= 적도 단면 (오른쪽 또는 그림판 전체) =================
 // xf: 0(서쪽 끝, 130°E) → 1(동쪽 끝, 80°W)
@@ -317,7 +318,7 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
  ctx.globalAlpha=a;
  // 용승(동쪽 끝)
  if(st.U>0.02){const ua=st.U;for(let m=0;m<3;m++){const bx=sxp(.83+m*.055),y0=BOT-22,y1=SEA-level(.9,st)+8;
-   ctx.globalAlpha=a*Math.min(1,ua*1.2);ctx.strokeStyle='#8fe3ff';ctx.lineWidth=2.4;ctx.setLineDash([7,6]);ctx.lineDashOffset=-(t*28*ua)%13;
+   ctx.globalAlpha=a*Math.min(1,ua*1.2);ctx.strokeStyle='#8fe3ff';ctx.lineWidth=2.4;ctx.setLineDash([7,6]);ctx.lineDashOffset=-(t*6)%13;   // 용승은 아주 느린 흐름이므로 천천히
    ctx.beginPath();ctx.moveTo(bx-26+m*6,y0);ctx.quadraticCurveTo(bx+4,y0-30,bx+2,y1+10);ctx.stroke();ctx.setLineDash([]);
    arrow(bx+2,y1+16,bx+2,y1+2,'#8fe3ff',2.4,8,a*Math.min(1,ua*1.2))}
   T(st.U<.6&&st.E>.5?'용승 약화':'용승',sxp(.84),BOT-34,{c:'#8fe3ff',size:13.5,w:800,halo:1,a:a*Math.min(1,ua*1.5+.3)})}
@@ -413,7 +414,7 @@ function drawPeru(st,t){const R=SRE,a=1,sea=R.y+150,bot=R.y+R.h,x0=R.x,x1=R.x+R.
  if(st.off>0){PP.forEach(p=>{const f=p.x,y=sea+Math.min(thk(f),40)*p.d*.8+4;dart(px(f),y,-1,st.off*.95)});
   arrow(px(.62),sea-14,px(.3),sea-14,'#ffffff',2.6,10,st.off);T('표층 해수가 먼바다 쪽으로 이동',px(.42),sea-26,{size:12.5,w:800,halo:1,a:st.off})}
  // 용승
- if(st.up>0){for(let m=0;m<3;m++){const xs=px(.5+m*.08),xe2=px(.82+m*.06);ctx.save();ctx.globalAlpha=Math.min(1,st.up*1.3);ctx.strokeStyle='#8fe3ff';ctx.lineWidth=2.4;ctx.setLineDash([7,6]);ctx.lineDashOffset=-(t*28)%13;
+ if(st.up>0){for(let m=0;m<3;m++){const xs=px(.5+m*.08),xe2=px(.82+m*.06);ctx.save();ctx.globalAlpha=Math.min(1,st.up*1.3);ctx.strokeStyle='#8fe3ff';ctx.lineWidth=2.4;ctx.setLineDash([7,6]);ctx.lineDashOffset=-(t*6)%13;
    ctx.beginPath();ctx.moveTo(xs,bot-20+m*-6);ctx.quadraticCurveTo(xe2-10,bot-40,xe2,sea+16);ctx.stroke();ctx.restore();arrow(xe2,sea+24,xe2,sea+8,'#8fe3ff',2.4,8,Math.min(1,st.up*1.3))}
   T('찬 해수의 용승',px(.36),bot-112,{c:'#8fe3ff',size:13.5,w:800,halo:1,a:Math.min(1,st.up*1.5)})}
  // 영양염류(노란 점: 깊은 곳에서 용승을 따라 올라옴)
@@ -562,11 +563,11 @@ const SCENES=[
   {t:'적도 부근의 태평양',x:'적도를 따라 <em>서태평양</em>(왼쪽)과 <em>동태평양</em>(오른쪽)의 색을 비교해 보세요. 빨간색일수록 수온이 높습니다. 아래 생각해 보기에 답해 보세요.',d:4,
    s:k=>({...NORMAL,zoom:ease(k),box:1})}]},
  {draw:sceneEq,steps:[ // 태평양 수온 분포의 원인
-  {t:'무역풍이 없다면',x:'왼쪽은 적도 부근 태평양의 지도, 오른쪽은 적도를 따라 자른 <em>단면</em>입니다. 무역풍이 불지 않는다고 가정하면 해수면 온도는 <em>위도에 따라서만 달라지고</em>(같은 위도는 동서로 수온이 같음), 따뜻한 해수층의 두께도 <em>동서로 거의 같을 것</em>입니다.',d:5,
+  {t:'무역풍이 없다면',x:'왼쪽은 적도 부근 태평양의 지도, 오른쪽은 적도를 따라 자른 <em>단면</em>입니다. 무역풍이 불지 않는다고 가정하면 해수면 온도는 <em>위도에 따라서만 달라지고</em>(같은 위도는 동서로 수온이 같음), 따뜻한 해수층의 두께도 <em>동서로 거의 같을 것</em>입니다. (생각 실험이므로 수온은 대략적인 값입니다.)',d:5,
    s:k=>({...HYP})},
   {t:'1단계(무역풍과 따뜻한 해수의 이동)',x:'적도 부근에서 <em>무역풍</em>이 동쪽에서 서쪽으로 불면, 따뜻한 표층 해수가 <em>서쪽으로 이동</em>하여 서태평양에 쌓입니다. 서태평양은 <em>따뜻한 해수층이 두꺼워지고 해수면이 높아집니다</em>.',d:8,
    s:k=>({...HYP,W:seg(k,0,.22),hyp:1-seg(k,.7,1),V:-seg(k,.12,.35),F:seg(k,.18,1)})},
-  {t:'2단계(찬 해수의 용승)',x:'표층 해수가 빠져나간 동태평양에서는 깊은 곳의 <em>찬 해수가 올라옵니다(용승)</em>. 그래서 동태평양은 <em>따뜻한 해수층이 얇고 수온이 낮습니다</em>.',d:7,
+  {t:'2단계(찬 해수의 용승)',x:'표층 해수가 빠져나간 동태평양에서는 깊은 곳의 <em>찬 해수가 올라옵니다(용승)</em>. 그래서 동태평양은 <em>따뜻한 해수층이 얇고 수온이 낮습니다</em>.',d:9,
    s:k=>({...NORMAL,U:ease(k),U0:seg(k,.15,1),mU:seg(k,0,.3),Hh:0})},
   {t:'3단계(햇빛에 의한 가열)',x:'서쪽으로 이동하는 동안 해수는 <em>햇빛을 받아 계속 데워지므로</em>, 따뜻한 해수가 쌓이는 <em>서태평양의 수온이 가장 높아집니다</em>.',d:7,
    s:k=>({...NORMAL,Hh:seg(k,.1,1),heat:Math.min(seg(k,0,.15),1-seg(k,.85,1))})},
@@ -582,7 +583,7 @@ const SCENES=[
  {draw:scenePeru,steps:[ // 남아메리카 연안의 용승
   {t:'1단계(표층 해수의 이동)',x:'페루 연안에서는 해안을 따라 <em>남동 무역풍</em>이 붑니다. 이 바람의 영향으로 해안 부근의 <em>표층 해수가 먼바다 쪽으로 이동</em>합니다.',d:6,
    s:k=>({...NORMAL,wind:seg(k,0,.4),off:seg(k,.35,.9)})},
-  {t:'2단계(찬 해수의 용승)',x:'빠져나간 표층 해수를 채우려고 깊은 곳의 <em>찬 해수가 올라옵니다(용승)</em>. 그래서 페루 연안은 같은 위도의 먼바다보다 <em>수온이 낮습니다</em>(지도의 해안을 따라 있는 파란 띠).',d:6,
+  {t:'2단계(찬 해수의 용승)',x:'빠져나간 표층 해수를 채우려고 깊은 곳의 <em>찬 해수가 올라옵니다(용승)</em>. 그래서 페루 연안은 같은 위도의 먼바다보다 <em>수온이 낮습니다</em>(지도의 해안을 따라 있는 파란 띠).',d:8,
    s:k=>({...NORMAL,wind:1,off:1,up:ease(k)})},
   {t:'3단계(영양염류의 공급)',x:'깊은 곳의 해수에는 <em>영양염류</em>가 많습니다. 용승으로 영양염류가 표층으로 공급되면 이를 이용하는 <em>식물성 플랑크톤</em>이 많이 번성합니다.',d:7,
    s:k=>({...NORMAL,wind:1,off:1,up:1,nut:seg(k,0,.4),plank:seg(k,.45,1)})},
