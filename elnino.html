@@ -460,7 +460,7 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
  {const wx=st.E>.5&&st.lab>0?.5:.24;T('따뜻한 해수층(혼합층)',sxp(wx),SEA-level(wx,st)+Math.min(thick(wx,st)*.5+5,thick(wx,st)-6),{size:13,w:800,c:'#1b1200',a:a*.9*(1-(st.spread||0))});}
  // 점선 = 수온 약층이 시작되는 깊이 (수온 약층은 두께가 있는 층이지만, 이 단원에서는 시작 깊이만 나타냄)
  {const xf=.46,y=SEA-level(xf,st)+thick(xf,st);T('수온 약층이 시작되는 깊이',sxp(xf),y+16,{size:12,w:800,c:'#dfe9ff',halo:1,a:a*.95})}
- T('찬 해수',sxp(.42),BOT-34,{size:13,w:800,c:'#cfe0ff'});
+ T('찬 해수',sxp(BOT-SEA<120?.64:.42),BOT-34,{size:13,w:800,c:'#cfe0ff'});
  if(st.lab>0){const la=st.lab,ln=(st.L||0)>.5,el=st.E>.5||ln;const yb=x=>SEA-level(x,st);
   // 엘니뇨 때 이름표는 평상시와 비교한 변화: 윗줄에 작게 '평상시보다'(두 줄)
   const T2=(s1,x,y,al,c)=>{if(el){T('평상시보다',x,y-14,{size:10.5,w:700,c:c||'#fff',halo:1,a:a*la,al});T(s1,x,y,{size:12.5,w:800,c:c||'#fff',halo:1,a:a*la,al})}else T(s1,x,y,{size:12.5,w:800,c:c||'#fff',halo:1,a:a*la,al})};
@@ -505,13 +505,13 @@ function drawWalker(st,t,a){const xw=sxp(st.rx??CW),xe=sxp(st.dx??CE),s=Math.sig
  if(st.wa>0){const A=a*st.wa;cloud(xw+6,yt+40,A,1.25+.3*bg);rain(xw+6,yt+66,SEA-6,t,A);
   ctx.save();ctx.setLineDash([8,7]);ctx.lineDashOffset=(t*30)%15;ctx.globalAlpha=A;ctx.strokeStyle='#ff9b7a';ctx.lineWidth=3+1.5*bg;[-34,40].forEach(dx=>{ctx.beginPath();ctx.moveTo(xw+dx,SEA-14);ctx.lineTo(xw+dx,yt+80);ctx.stroke()});ctx.restore();
   [-34,40].forEach(dx=>arrow(xw+dx,yt+92,xw+dx,yt+74,'#ff9b7a',3,10,A));
-  T('상승 기류',xw+48*s,yb-70,{c:'#ff9b7a',size:14,w:800,halo:1,a:A,al:s>0?'left':'right'});
+  T('상승 기류',xw+48*s,yb-(SEA-SR.y<200?40:70),{c:'#ff9b7a',size:14,w:800,halo:1,a:A,al:s>0?'left':'right'});
   pill('저기압',xw+3,SEA-12,'#ff9b7a',A,14);T(st.rT??'구름이 많고 비가 많이 내림',xw+4+(st.rTdx??56),yt-8+(st.rTdy??4),{c:'#e8ecff',size:12.5,w:800,halo:1,a:A})}
  // 동쪽: 하강 기류, 고기압, 맑음
  if(st.ea>0){const A=a*st.ea;sun(xe-6,yt+6,A);
   ctx.save();ctx.setLineDash([8,7]);ctx.lineDashOffset=-(t*30)%15;ctx.globalAlpha=A;ctx.strokeStyle='#e6e9f2';ctx.lineWidth=3+1.5*bg;[-40,34].forEach(dx=>{ctx.beginPath();ctx.moveTo(xe+dx,yt+40);ctx.lineTo(xe+dx,SEA-40);ctx.stroke()});ctx.restore();
   [-40,34].forEach(dx=>arrow(xe+dx,SEA-52,xe+dx,SEA-34,'#e6e9f2',3,10,A));
-  T('하강 기류',xe-50*s,yb-70,{c:'#e6e9f2',size:14,w:800,halo:1,a:A,al:s>0?'right':'left'});
+  T('하강 기류',xe-50*s,yb-(SEA-SR.y<200?40:70),{c:'#e6e9f2',size:14,w:800,halo:1,a:A,al:s>0?'right':'left'});
   pill('고기압',xe-3,SEA-12,'#e6e9f2',A,14);T(st.dT??'맑고 건조함',xe-6+(st.dTdx||0),yt-12+(st.dTdy||0),{c:'#e8ecff',size:12.5,w:800,halo:1,a:A})}
  // 순환 전체
  if(st.loop>0){const A=a*st.loop;ctx.save();ctx.globalAlpha=A*(.55+.3*bg);ctx.strokeStyle='#ffffff';ctx.lineWidth=2+1.5*bg;ctx.setLineDash([2,6]);ctx.stroke(path);ctx.restore();
@@ -706,7 +706,8 @@ function sceneEq(st,t){setSR(SRE);const v=drawMap(st,{box:EQB,R:ZR,z:1,lo:22,hi:
  drawSection(st,t)}
 
 // ---- 장면: 대기의 순환 (그림판 전체 폭 단면) ----
-function sceneWalk(st,t){field(st);setSR(WR,.6);drawSection({...st,walk:1,sunA:0,ref:0},t);
+function sceneWalk(st,t,R){field(st);setSR(R||WR,R?R.sky/R.h:.6);   // R: 다른 크기의 단면(비교 탭은 위아래로 납작하게)
+ drawSection({...st,walk:1,sunA:0,ref:0},t);
  if(st.tagL){ctx.font=font(13,800);const w=ctx.measureText(st.tagL).width+20;pill(st.tagL,SR.x+10+w/2,SR.y+16,st.tagC||'#ffd76b',st.tagA??1,13)}}   // 왼쪽 위: 지금 보이는 것이 평상시인지 엘니뇨 시기인지
 
 // ================= 엘니뇨 > 수온 편차로 본 엘니뇨 =================
@@ -876,14 +877,15 @@ function sceneCmpA(st,t){
  T('자료: NOAA ERSST v5',14,H-18,{size:10.5,al:'left',c:'#8d96b3',w:500,bl:'bottom'});T('평년값 = 1991~2020년의 10월 평균',14,H-3,{size:10.5,al:'left',c:'#8d96b3',w:500,bl:'bottom'})}
 // 대기 순환: 평상시 · 엘니뇨 · 라니냐 탭의 '대기의 순환'·'대기 순환의 변화' 마지막 모습을 그대로 위아래로 쌓음(한 화면에 맞추지 않음, 그림판 940×1200)
 // 순환 화살촉(PW)은 단면마다 제 빠르기로(라니냐는 빠르게): 시간으로 자리를 정함
-// 두 시기만 골라 위아래로(조금 줄여서: 0.78배, 그림판 940×628). PAIR: 0 평상시 vs. 엘니뇨, 1 평상시 vs. 라니냐, 2 엘니뇨 vs. 라니냐
-const PAIRS=[[0,1],[0,2],[1,2]],PNAME=['평상시','엘니뇨 시기','라니냐 시기'],CK=.78;let PAIR=0;
+// 두 시기만 골라 위아래로. 패드 한 화면에 들어가게 단면을 위아래로 납작하게(하늘 175, 바다 85, 원래 221·147) 그리고 0.85배로 줄임(그림판 940×454)
+// PAIR: 0 평상시 vs. 엘니뇨, 1 평상시 vs. 라니냐, 2 엘니뇨 vs. 라니냐
+const PAIRS=[[0,1],[0,2],[1,2]],PNAME=['평상시','엘니뇨 시기','라니냐 시기'],CK=.85,CR={x:14,y:0,w:912,h:260,sky:175};let PAIR=0;
 function sceneCmpW(st,t){const S=[{...SCENES[2].steps[0].s(1),tagL:'평상시',tagC:'#cfe0ff'},ESCENES[2].steps[0].s(1),LSCENES[2].steps[0].s(1)];
  PAIRS[PAIR].forEach((k,i)=>{const s2=S[k],sp=1+.8*(s2.big||0);PW.forEach((p,n)=>{p.u=(n/PW.length+t*.06*sp)%1});
-  ctx.save();ctx.translate((W-W*CK)/2,2+i*400*CK);ctx.scale(CK,CK);sceneWalk(s2,t);ctx.restore()})}
+  ctx.save();ctx.translate((W-W*CK)/2,2+i*(CR.h+6)*CK);ctx.scale(CK,CK);sceneWalk(s2,t,CR);ctx.restore()})}
 const CSCENES=[
  {draw:sceneCmpA,steps:[{t:'수온 편차 비교',x:'위는 <em>엘니뇨 시기</em>(2026년 10월), 아래는 <em>라니냐 시기</em>(2010년 10월)의 해수면 온도 편차(그때의 수온 − 평년 수온)입니다.',d:1,s:k=>({})}]},
- {draw:sceneCmpW,h:628,steps:[{t:'대기 순환 비교',x:'',d:1,s:k=>({V:-1,loop:1})}]}];
+ {draw:sceneCmpW,h:454,steps:[{t:'대기 순환 비교',x:'',d:1,s:k=>({V:-1,loop:1})}]}];
 
 let tab=0,sub=0,si=0,ph=0,playing=true,last=performance.now()/1000,quizOK=false,quizT=0;
 const $=id=>document.getElementById(id);
