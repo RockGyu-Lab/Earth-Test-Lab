@@ -322,7 +322,7 @@ let SR=SRE,SX0,SX1,SEA,BOT,KH;
 function setSR(r,skyFrac){SR=r;SX0=r.x+38;SX1=r.x+r.w-46;SEA=r.y+Math.round(r.h*(skyFrac||.364));BOT=r.y+r.h;KH=(BOT-SEA)/234}
 setSR(SRE);
 // 땅(직사각형) 윗면: 해수면 변화를 보는 자료는 높게, 대기의 순환에서는 바닷가 해수면보다 조금만 높게
-const landTop=st=>st.walk?SEA-Math.max(level(0,st),level(1,st),0)-10:SEA-56;
+const landTop=st=>st.walk?SEA-35:SEA-56;   // 대기의 순환: 높이는 늘 같게(가장 높은 해수면 25px보다 조금 높게)
 const sxp=xf=>SX0+xf*(SX1-SX0),slon=xf=>130+xf*150;
 // 따뜻한 해수층 두께(px)와 해수면 높이(px, 위로 +): 가정(바람 없음) → 평상시 → 엘니뇨
 const thick=(xf,st)=>{const h0=70,hN=24+108*Math.pow(1-xf,1.3),hE=60+20*(1-xf);return KH*lerp(lerp(h0,hN,st.F),hE,st.E)};
@@ -460,13 +460,15 @@ function drawOpenEast(st,t,a){const xr=sxp(.53),yt=SR.y+44,xe=SR.x+SR.w-6;   // 
  // 따뜻해진 바다에서 증발이 늘어남: 해수면에서 수증기(물결 모양 선)가 천천히 올라가 구름이 됨
  ctx.save();ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=1.6;ctx.lineCap='round';for(let q=0;q<5;q++){const bx=cx-62+q*12,ph=((t*.35+q*.23)%1),y0=SEA-8-ph*50;ctx.globalAlpha=a*Math.sin(Math.PI*ph)*.9;ctx.beginPath();
   for(let k=0;k<=10;k++){const yy=y0-k*2.2,xx=bx+Math.sin(k*.9+q)*2.5;k?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)}ctx.stroke()}ctx.restore();
- T('증발량 증가',cx-56,SEA-66,{size:12,w:800,halo:1,a,c:'#ffffff'});
+ pill('증발량 증가',cx-50,SEA-72,'#ffffff',a,12);   // 늘 보이게(따뜻한 바다 → 증발 → 구름 → 비)
  cloud(cx,cy,a,.8);rain(cx+4,cy+18,SEA-6,t,a*.9);
- ctx.save();ctx.globalAlpha=a*.55;ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.setLineDash([2,6]);ctx.beginPath();ctx.moveTo(xr+26,yt);ctx.lineTo(xe,yt);ctx.stroke();ctx.restore();
- const L=xe-(xr+26),ph=(t*.05)%1;for(let q=0;q<7;q++){const x=xr+26+((q/7)+ph)%1*L,y=yt;ctx.globalAlpha=a;ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(x+6,y);ctx.lineTo(x-3,y-4);ctx.lineTo(x-3,y+4);ctx.closePath();ctx.fill()}
- // 지표 부근: 약해진 무역풍(동 → 서)이 상승 구역 쪽으로 붊. 동쪽 끝은 닫지 않음(순환이 남아메리카 쪽으로 이어짐)
- const yb=SEA-26,x2=sxp(.97);ctx.save();ctx.globalAlpha=a*.55;ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.setLineDash([2,6]);ctx.beginPath();ctx.moveTo(x2,yb);ctx.lineTo(xr+26,yb);ctx.stroke();ctx.restore();
- const L2=x2-(xr+26);for(let q=0;q<5;q++){const x=x2-((q/5)+ph*1.4)%1*L2;ctx.globalAlpha=a;ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(x-6,yb);ctx.lineTo(x+3,yb-4);ctx.lineTo(x+3,yb+4);ctx.closePath();ctx.fill()}
+ // 하나의 열린 흐름: 지표(동 → 서) → 저기압에서 위로 꺾여 상승 → 높은 곳에서 동쪽으로 꺾여 남아메리카 쪽으로(동쪽 끝은 닫지 않음)
+ const yb=SEA-26,x2=sxp(.97),r=26,PL=[[x2,yb],[xr+r,yb]];for(let k=1;k<=10;k++){const an=Math.PI/2+Math.PI/2*k/10;PL.push([xr+r+r*Math.cos(an),yb-r+r*Math.sin(an)])}
+ PL.push([xr,yt+r]);for(let k=1;k<=10;k++){const an=Math.PI+Math.PI/2*k/10;PL.push([xr+r+r*Math.cos(an),yt+r+r*Math.sin(an)])}PL.push([xe,yt]);
+ const CL=[0];for(let i=1;i<PL.length;i++)CL.push(CL[i-1]+Math.hypot(PL[i][0]-PL[i-1][0],PL[i][1]-PL[i-1][1]));const tot=CL[CL.length-1];
+ ctx.save();ctx.globalAlpha=a*.55;ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.setLineDash([2,6]);ctx.beginPath();PL.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();ctx.restore();
+ const n=Math.round(tot/44),ph=(t*.05*700/tot)%1;for(let q=0;q<n;q++){const d=((q/n)+ph)%1*tot;let i=1;while(i<CL.length-1&&CL[i]<d)i++;const f=(d-CL[i-1])/((CL[i]-CL[i-1])||1),p=PL[i-1],qq=PL[i],x=lerp(p[0],qq[0],f),y=lerp(p[1],qq[1],f),dx=qq[0]-p[0],dy=qq[1]-p[1],m=Math.hypot(dx,dy)||1,ux=dx/m,uy=dy/m;
+  ctx.globalAlpha=a;ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(x+ux*6,y+uy*6);ctx.lineTo(x-ux*3-uy*4,y-uy*3+ux*4);ctx.lineTo(x-ux*3+uy*4,y-uy*3-ux*4);ctx.closePath();ctx.fill()}
  ctx.globalAlpha=1;T('지표 부근: 동 → 서(약한 무역풍)',sxp(.68),yb-12,{size:13,w:800,halo:1,a});
  T('높은 곳: 서 → 동',(xr+xe)/2,yt-10,{size:13.5,w:800,halo:1,a});
  pill(st.clim>.5&&st.wn<.5?'강수량 증가 → 폭우·홍수':'강수량 증가',cx-40,SEA-14,'#8fc8ff',a,12.5)}
@@ -725,9 +727,9 @@ const ESCENES=[
        [15,'엘니뇨','이처럼 동태평양 적도 부근의 표층 수온이 <em>평년보다 높은 상태가 지속되는 현상</em>을 <em>엘니뇨</em>라고 합니다.']],
    s:k=>ELN(k*19)}]}];
 // 엘니뇨 > 대기 순환의 변화: 평상시 워커 순환 → 사라짐·바다가 엘니뇨로 → 엘니뇨 때 순환(상승 동쪽, 하강 서쪽) → 이상 기후
-function ATM(g){const e=seg(g,4,8),wn=1-seg(g,3.5,5.5),we=seg(g,7.5,10);
- const sw=Math.min(seg(g,4,5),1-seg(g,8,9));   // 순환이 바뀌는 동안: 약해진 무역풍과 동쪽으로 흐르는 해수
- return {...NORMAL,W:.3*sw,showW:sw,V:.8*sw,E:e,A:e,U:1-.75*e,wa:1,ea:1,loop:1,wn,climW:wn>.5?'비가 많고 습함':'가뭄·산불',climE:wn>.5?'비가 적고 건조함':'',clim:Math.max(wn,seg(g,12,13.5)),
+function ATM(g){const e=seg(g,2.5,6.5),wn=1-seg(g,2,3.5),we=seg(g,6,8.5);
+ const sw=Math.min(seg(g,2.5,3.5),1-seg(g,6.5,7.5));   // 순환이 바뀌는 동안: 약해진 무역풍과 동쪽으로 흐르는 해수
+ return {...NORMAL,W:.3*sw,showW:sw,V:.8*sw,E:e,A:e,U:1-.75*e,wa:1,ea:1,loop:1,wn,climW:wn>.5?'비가 많고 습함':'가뭄·산불',climE:wn>.5?'비가 적고 건조함':'',clim:Math.max(wn,seg(g,10.5,12)),
   // 엘니뇨 때: 중앙 태평양(약 150°W)에서 상승해 서쪽은 서태평양에서 하강하는 순환, 동쪽은 남아메리카 대륙 쪽으로 이어지는 흐름(바다 위에서 닫지 않음)
   walkE:{al:we,rx:.53,dx:.11,wa:1,ea:1,loop:1,rT:'구름이 많고 비가 많이 내림',dT:'맑고 건조함',topT:'높은 곳: 동 → 서',botT:'지표 부근: 서 → 동',loopT:'엘니뇨 때의 대기 순환',loopX:.32,loopDY:30},
   openE:we}}
@@ -737,11 +739,11 @@ ESCENES.push({draw:sceneAnom,steps:[{t:'평년의 수온',x:'먼저 <em>평년�
      [11,'수온 편차 지도','모든 곳의 편차를 색으로 나타내면, <em>동태평양 적도 부근의 편차가 크게 (+)</em>인 것이 한눈에 보입니다. 이것이 엘니뇨입니다.'],
      [16,'엘니뇨 감시 구역의 수온 편차','엘니뇨 감시 구역의 편차를 1970년부터 이어 보면, 편차가 <em>+0.5 °C 이상</em>인 시기(엘니뇨)가 몇 년마다 되풀이되며, <em>2026년은 매우 큽니다</em>.']],
  s:k=>{const g=k*22;return {m2:seg(g,2.5,4),pt:seg(g,6.5,7.5),calc:seg(g,7,8.5),m3:seg(g,11,12.5),box:seg(g,13,14),ts:seg(g,16,17),tsk:seg(g,16.5,21)}}}]});
-ESCENES.push({draw:sceneWalk,steps:[{t:'평상시의 대기 순환',x:'평상시에는 서태평양에서 공기가 <em>상승</em>하고 동태평양에서 <em>하강</em>하는 <em>워커 순환</em>이 나타납니다.',d:18,
- xs:[[3.5,'따뜻한 해수의 이동','엘니뇨가 일어나 무역풍이 약해지고 따뜻한 해수가 동쪽으로 이동하면, <em>공기가 상승하는 곳도 동쪽으로 옮겨 갑니다</em>.'],
-     [8,'엘니뇨 때의 대기 순환','<em>중앙 태평양에서 상승 기류(저기압)</em>가 생기고, 높은 곳의 공기는 서쪽(서태평양에서 <em>하강</em>, 고기압)과 동쪽(남아메리카 대륙 쪽으로 이동해 하강)으로 갈라집니다.'],
-     [12,'이상 기후','서태평양은 비가 줄어 <em>가뭄·산불</em>이 생기기 쉽고, 남아메리카 앞바다는 수온이 높아져 구름이 잘 생기므로 <em>강수량이 늘어 폭우·홍수</em>가 생기기 쉽습니다.']],
- s:k=>ATM(k*18)}]});
+ESCENES.push({draw:sceneWalk,steps:[{t:'평상시의 대기 순환',x:'평상시에는 서태평양에서 공기가 <em>상승</em>하고 동태평양에서 <em>하강</em>하는 <em>워커 순환</em>이 나타납니다.',d:16.5,
+ xs:[[2,'따뜻한 해수의 이동','엘니뇨가 일어나 무역풍이 약해지고 따뜻한 해수가 동쪽으로 이동하면, <em>공기가 상승하는 곳도 동쪽으로 옮겨 갑니다</em>.'],
+     [6.5,'엘니뇨 때의 대기 순환','<em>중앙 태평양에서 상승 기류(저기압)</em>가 생기고, 높은 곳의 공기는 서쪽(서태평양에서 <em>하강</em>, 고기압)과 동쪽(남아메리카 대륙 쪽으로 이동해 하강)으로 갈라집니다.'],
+     [10.5,'이상 기후','서태평양은 비가 줄어 <em>가뭄·산불</em>이 생기기 쉽고, 남아메리카 앞바다는 수온이 높아져 구름이 잘 생기므로 <em>강수량이 늘어 폭우·홍수</em>가 생기기 쉽습니다.']],
+ s:k=>ATM(k*16.5)}]});
 const ELNINO=ESCENES[0];
 
 let tab=0,sub=0,si=0,ph=0,playing=true,last=performance.now()/1000,quizOK=false,quizT=0;
