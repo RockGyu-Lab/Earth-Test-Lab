@@ -890,10 +890,11 @@ function cmpPanel(R,nm,c,st,t,last){field(st);const x0=R.x+34,x1=R.x+R.w-34,X=xf
  // 대기: 순환과 구름·비, 기압
  const yt=R.y+14,yb=SY-14,ym=(yt+yb)/2,big=st.L?1:0,lw=2+1.2*big,sp=1+.8*big;
  const cloudAt=(x,s)=>{cloud(x,R.y+30,1,s);rain(x+2,R.y+46,SY-4,t,.9)};
- if(st.E){const r=X(.53),w=X(.11);flow(roundPath([[r,yb],[r,yt],[w,yt],[w,yb],[r,yb]],12),t,1,lw,sp);   // 서쪽: 닫힌 순환(중앙에서 상승, 서태평양에서 하강)
+ const WX=X(.05),EX=X(.93);   // 서쪽 기압 자리(약 137°E)·동쪽 기압 자리(약 90°W): 세 단면이 같은 세로줄
+ if(st.E){const r=X(.53),w=WX;flow(roundPath([[r,yb],[r,yt],[w,yt],[w,yb],[r,yb]],12),t,1,lw,sp);   // 서쪽: 닫힌 순환(중앙에서 상승, 서태평양에서 하강)
   flow(roundPath([[X(.97),yb],[r+8,yb],[r+8,yt],[R.x+R.w+4,yt]],12),t,1,lw,sp);                        // 동쪽: 열린 흐름(남아메리카 쪽으로)
   cloudAt(r+36,.62);cloudAt(X(.93),.42);pill('저기압',r+4,ym,'#ff9b7a',1,11.5);pill('고기압',w,ym,'#e6e9f2',1,11.5)}
- else{const w=X(.15),e=X(.86);flow(roundPath([[w,yb],[w,yt],[e,yt],[e,yb],[w,yb]],12),t,1,lw,sp);cloudAt(w+40,.62+.15*big);pill('저기압',w,ym,'#ff9b7a',1,11.5);pill('고기압',e,ym,'#e6e9f2',1,11.5)}
+ else{const w=WX,e=EX;flow(roundPath([[w,yb],[w,yt],[e,yt],[e,yb],[w,yb]],12),t,1,lw,sp);cloudAt(w+40,.62+.15*big);pill('저기압',w,ym,'#ff9b7a',1,11.5);pill('고기압',e,ym,'#e6e9f2',1,11.5)}
  T('서태평양',R.x+6,BT-6,{size:11,al:'left',c:'#cfd6ee',w:700,halo:1});T('동태평양',R.x+R.w-6,BT-6,{size:11,al:'right',c:'#cfd6ee',w:700,halo:1});
  ctx.restore();ctx.strokeStyle='rgba(255,255,255,.18)';ctx.lineWidth=1;rr(R.x,R.y,R.w,R.h,10);ctx.stroke()}
 function sceneCmpW(st,t){setSR(WR,.6);CMPST.forEach(([nm,c,s2],i)=>{const R={x:166,y:8+i*128,w:608,h:122};cmpPanel(R,nm,c,s2,t);pill(nm,(14+R.x-10)/2,R.y+R.h/2,c,1,15)});   // 이름은 단면 왼쪽 바깥(수온 편차 화면과 같게)
