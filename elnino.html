@@ -497,7 +497,7 @@ function drawWalker(st,t,a){const xw=sxp(st.rx??.15),xe=sxp(st.dx??.86),s=Math.s
   ctx.save();ctx.setLineDash([8,7]);ctx.lineDashOffset=(t*30)%15;ctx.globalAlpha=A;ctx.strokeStyle='#ff9b7a';ctx.lineWidth=3+1.5*bg;[-34,40].forEach(dx=>{ctx.beginPath();ctx.moveTo(xw+dx,SEA-14);ctx.lineTo(xw+dx,yt+80);ctx.stroke()});ctx.restore();
   [-34,40].forEach(dx=>arrow(xw+dx,yt+92,xw+dx,yt+74,'#ff9b7a',3,10,A));
   T('상승 기류',xw+48*s,yb-70,{c:'#ff9b7a',size:14,w:800,halo:1,a:A,al:s>0?'left':'right'});
-  pill('저기압',xw+3,SEA-12,'#ff9b7a',A,14);T(st.rT??'구름이 많고 비가 많이 내림',xw+4,yt-8,{c:'#e8ecff',size:12.5,w:800,halo:1,a:A})}
+  pill('저기압',xw+3,SEA-12,'#ff9b7a',A,14);T(st.rT??'구름이 많고 비가 많이 내림',xw+4+(st.rTdx||0),yt-8+(st.rTdy||0),{c:'#e8ecff',size:12.5,w:800,halo:1,a:A})}
  // 동쪽: 하강 기류, 고기압, 맑음
  if(st.ea>0){const A=a*st.ea;sun(xe-6,yt+6,A);
   ctx.save();ctx.setLineDash([8,7]);ctx.lineDashOffset=-(t*30)%15;ctx.globalAlpha=A;ctx.strokeStyle='#e6e9f2';ctx.lineWidth=3+1.5*bg;[-40,34].forEach(dx=>{ctx.beginPath();ctx.moveTo(xe+dx,yt+40);ctx.lineTo(xe+dx,SEA-40);ctx.stroke()});ctx.restore();
@@ -867,7 +867,10 @@ function sceneCmpA(st,t){
  T('자료: NOAA ERSST v5',14,H-18,{size:10.5,al:'left',c:'#8d96b3',w:500,bl:'bottom'});T('평년값 = 1991~2020년의 10월 평균',14,H-3,{size:10.5,al:'left',c:'#8d96b3',w:500,bl:'bottom'})}
 // 대기 순환: 평상시 · 엘니뇨 · 라니냐 탭의 '대기의 순환'·'대기 순환의 변화' 마지막 모습을 그대로 위아래로 쌓음(한 화면에 맞추지 않음, 그림판 940×1200)
 // 순환 화살촉(PW)은 단면마다 제 빠르기로(라니냐는 빠르게): 시간으로 자리를 정함
-function sceneCmpW(st,t){const S=[{...SCENES[2].steps[0].s(1),tagL:'평상시',tagC:'#cfe0ff'},ESCENES[2].steps[0].s(1),LSCENES[2].steps[0].s(1)];
+// 기압 자리: 실제에 가깝게 대륙 쪽으로 당기고 세 단면이 같은 세로줄(서쪽 rx·dx = .08 약 142°E, 동쪽 dx = .92 약 92°W). 이 비교 화면에만 적용
+const CW=.08,CE=.92;
+function sceneCmpW(st,t){const E=ESCENES[2].steps[0].s(1);
+ const S=[{...SCENES[2].steps[0].s(1),tagL:'평상시',tagC:'#cfe0ff',rx:CW,dx:CE,rTdx:56,rTdy:4},{...E,walkE:{...E.walkE,dx:CW}},{...LSCENES[2].steps[0].s(1),rx:CW,dx:CE,rTdx:56,rTdy:4}];
  S.forEach((s2,i)=>{const sp=1+.8*(s2.big||0);PW.forEach((p,n)=>{p.u=(n/PW.length+t*.06*sp)%1});ctx.save();ctx.translate(0,i*400);sceneWalk(s2,t);ctx.restore()})}
 const CSCENES=[
  {draw:sceneCmpA,steps:[{t:'수온 편차 비교',x:'위는 <em>엘니뇨 시기</em>(2026년 10월), 아래는 <em>라니냐 시기</em>(2010년 10월)의 해수면 온도 편차(그때의 수온 − 평년 수온)입니다.',d:1,s:k=>({})}]},
