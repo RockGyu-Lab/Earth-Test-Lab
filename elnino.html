@@ -11,9 +11,9 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14161d;--fg:#e8eaf2;--card:#1f222c;--bd:#3a3f50;--bline:#3a3a38;--bcard:#262625;--bfg:#eee;--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--frame:#2c3247}}
 :root[data-theme="dark"]{--bg:#14161d;--fg:#e8eaf2;--card:#1f222c;--bd:#3a3f50;--bline:#3a3a38;--bcard:#262625;--bfg:#eee;--acc:#8f9cf0;--acc-bg:#1e2340;--acc-bd:#3d4680;--on-acc:#10142b;--frame:#2c3247}
 /* 기억하기 꼬리표: 생각해 보기(남색)와 구분되는 주황색 */
-:root{--mem:#c2620a;--on-mem:#fff}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--mem:#ffb357;--on-mem:#2a1600}}
-:root[data-theme="dark"]{--mem:#ffb357;--on-mem:#2a1600}
+:root{--mem:#c2620a;--on-mem:#fff;--self:#0f7a5c;--on-self:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--mem:#ffb357;--on-mem:#2a1600;--self:#5fd3a8;--on-self:#062a1d}}
+:root[data-theme="dark"]{--mem:#ffb357;--on-mem:#2a1600;--self:#5fd3a8;--on-self:#062a1d}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:"Pretendard Variable",Pretendard,system-ui,-apple-system,"Noto Sans KR",sans-serif;line-height:1.5;word-break:keep-all}
 button{font-family:inherit}
@@ -61,6 +61,7 @@ canvas{width:100%;height:auto;aspect-ratio:940/400;display:block;border-radius:1
 .note+.note{margin-top:6px}
 .tag{display:inline-block;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.02em;white-space:nowrap}
 .tag.mem{background:var(--mem);color:var(--on-mem)}
+.tag.self{background:var(--self);color:var(--on-self)}   /* 스스로 해보기: 답 없이 관찰·생각하는 활동 */
 .memo p{color:var(--mem);font-weight:700}
 .open-think{padding:4px 12px;font-size:.85rem;font-weight:700;border:1px solid var(--acc);border-radius:10px;background:var(--bg);color:var(--acc);cursor:pointer;flex:none}
 .open-think:hover{background:var(--card)}
@@ -120,6 +121,7 @@ section[hidden]{display:none}
  <button role="tab" id="tab0" aria-selected="true">평상시</button>
  <button role="tab" id="tab1" aria-selected="false" tabindex="-1">엘니뇨</button>
  <button role="tab" id="tab2" aria-selected="false" tabindex="-1">라니냐</button>
+ <button role="tab" id="tab3" aria-selected="false" tabindex="-1">엘니뇨 vs. 라니냐</button>
 </div>
 <!-- 평상시의 작은 메뉴(연보라): 누를 때마다 그 메뉴의 처음부터 -->
 <div class="subtabs" id="subs1" role="tablist" aria-label="엘니뇨" hidden>
@@ -131,6 +133,10 @@ section[hidden]{display:none}
  <button type="button" role="tab" class="on" aria-selected="true">태평양 수온 분포의 변화</button>
  <button type="button" role="tab" aria-selected="false">수온 편차로 본 라니냐</button>
  <button type="button" role="tab" aria-selected="false">대기 순환의 변화</button>
+</div>
+<div class="subtabs" id="subs3" role="tablist" aria-label="엘니뇨 vs. 라니냐" hidden>
+ <button type="button" role="tab" class="on" aria-selected="true">수온 편차</button>
+ <button type="button" role="tab" aria-selected="false">대기 대순환</button>
 </div>
 <div class="subtabs" id="subs" role="tablist" aria-label="평상시">
  <button type="button" role="tab" class="on" aria-selected="true">태평양의 수온 분포</button>
@@ -211,6 +217,11 @@ section[hidden]{display:none}
   <p class="exp">라니냐 때는 무역풍이 강해져 용승이 평상시보다 <b>강해집니다</b>. 영양염류가 많은 찬 해수가 더 많이 올라오므로 식물성 플랑크톤이 늘어나고, 이를 먹는 앤초비(멸치류) 같은 물고기가 잘 잡히는 경우가 많습니다. 엘니뇨 때와 반대입니다.</p>
   <p class="exp">다만 실제 어획량은 수온과 용승뿐 아니라 지나친 어획(남획), 나라에서 정한 어업 규제 같은 여러 요인의 영향도 함께 받습니다.</p>
  </div></div>
+</section>
+<!-- 엘니뇨 vs. 라니냐: 답 없이 자료만 보고 스스로 비교하는 활동 -->
+<section id="p3" role="tabpanel" aria-labelledby="tab3" hidden>
+ <div id="n30"><div class="note"><span class="tag self">스스로 해보기</span><p style="flex:1 1 0;min-width:12em">엘니뇨와 라니냐 시기에 중앙 태평양과 동태평양의 수온 편차는 어떻게 나타나는지 관찰해 보세요.</p></div></div>
+ <div id="n31" hidden><div class="note"><span class="tag self">스스로 해보기</span><p style="flex:1 1 0;min-width:12em">평상시와 비교하여 엘니뇨와 라니냐 시기에 서태평양과 동태평양의 기압 변화, 해수면 높이 변화, 따뜻한 해수층의 두께 변화, 구름량의 변화, 강수량의 변화를 생각해 보세요.</p></div></div>
 </section>
 
 <script>
@@ -839,9 +850,62 @@ const LSCENES=[
       [10.5,'이상 기후','서태평양(인도네시아·오스트레일리아)은 비가 더 많이 내려 <em>폭우·홍수</em>가 생기기 쉽고, 동태평양 연안(페루)은 더 건조해져 <em>가뭄</em>이 생기기 쉽습니다.']],
   s:k=>LAT(k*16.5)}]}];
 
+// ================= 엘니뇨 vs. 라니냐 (답 없이 비교 자료만) =================
+// 수온 편차: 위 = 엘니뇨(2026년 10월), 아래 = 라니냐(2010년 10월). 같은 색 막대(±3 °C)
+const CM1={x:215,y:16,w:510,h:180},CM2={x:215,y:212,w:510,h:180};
+function sceneCmpA(st,t){
+ [[CM1,'E','엘니뇨 시기','#ff8a7a'],[CM2,'L','라니냐 시기','#8fc8ff']].forEach(([R,K,nm,c])=>{const cs=CASES[K],v=gridMap(R,k=>cs.A[k],dlut,1);
+  [[150,'150°E'],[180,'180°'],[210,'150°W'],[240,'120°W'],[270,'90°W']].forEach(([lo,s2])=>T(s2,v.X(lo),R.y+R.h-6,{size:11,w:700,c:'#ffffff',halo:1}));
+  T('적도',R.x+6,v.Y(0)-5,{size:11,al:'left',c:'#ffffff',halo:1});
+  const cx=(14+R.x-10)/2;pill(nm,cx,R.y+R.h/2-16,c,1,16);T(cs.yr,cx,R.y+R.h/2+18,{size:13,w:700,c:'#cfd6ee'});T('해수면 온도 편차',cx,R.y+R.h/2+38,{size:12,c:'#a9b1cc'})});
+ // 세로 색 막대(오른쪽)
+ const bx=790,by=72,bh=268,bw=16;T('수온 편차',bx+bw/2,by-44,{size:13,w:800,c:'#e8ecff'});T('(°C)',bx+bw/2,by-28,{size:11.5,c:'#cfd6ee'});
+ for(let q=0;q<120;q++){const x=DMAX-2*DMAX*q/119;ctx.fillStyle=rgb(dlut(x));ctx.fillRect(bx,by+bh*q/120,bw,bh/120+.6)}
+ ctx.strokeStyle='rgba(255,255,255,.3)';ctx.lineWidth=1;ctx.strokeRect(bx+.5,by+.5,bw-1,bh-1);
+ [-3,-2,-1,0,1,2,3].forEach(x=>T((x>0?'+':x<0?'−':'')+Math.abs(x),bx+bw+8,by+(DMAX-x)/(2*DMAX)*bh+4,{size:11.5,al:'left',c:'#e8ecff'}));
+ T('평년보다 따뜻함',bx+bw/2,by-8,{size:11.5,c:'#ff9b8a',w:700});T('평년보다 차가움',bx+bw/2,by+bh+18,{size:11.5,c:'#8fc8ff',w:700});
+ T('자료: NOAA ERSST v5',14,H-18,{size:10.5,al:'left',c:'#8d96b3',w:500,bl:'bottom'});T('평년값 = 1991~2020년의 10월 평균',14,H-3,{size:10.5,al:'left',c:'#8d96b3',w:500,bl:'bottom'})}
+// 대기 대순환: 평상시 · 엘니뇨 · 라니냐의 마지막 모습을 같은 크기의 작은 단면 3줄로(비교할 것만: 기압, 해수면, 해수층, 구름·비, 순환)
+const CMPST=[['평상시','#cfe0ff',{...NORMAL,oct:1}],['엘니뇨 시기','#ff8a7a',{...NORMAL,oct:1,E:1,A:1,U:.25}],['라니냐 시기','#8fc8ff',{...NORMAL,oct:1,nina:1,L:1,A:1,U:1.4}]];
+function roundPath(P,r){const o=[P[0]];for(let i=1;i<P.length-1;i++){const a=P[i-1],b=P[i],c=P[i+1],d1=Math.hypot(b[0]-a[0],b[1]-a[1]),d2=Math.hypot(c[0]-b[0],c[1]-b[1]),rr2=Math.min(r,d1/2,d2/2);
+  const p1=[b[0]+(a[0]-b[0])/d1*rr2,b[1]+(a[1]-b[1])/d1*rr2],p2=[b[0]+(c[0]-b[0])/d2*rr2,b[1]+(c[1]-b[1])/d2*rr2];for(let k=0;k<=8;k++){const u=k/8;o.push(qb(p1,b,p2,u))}}o.push(P[P.length-1]);return o}
+function flow(P,t,a,lw,sp){const L=[0];for(let i=1;i<P.length;i++)L.push(L[i-1]+Math.hypot(P[i][0]-P[i-1][0],P[i][1]-P[i-1][1]));const tot=L[L.length-1];
+ ctx.save();ctx.globalAlpha=a*.6;ctx.strokeStyle='#fff';ctx.lineWidth=lw;ctx.setLineDash([2,5]);ctx.beginPath();P.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();ctx.restore();
+ const n=Math.max(2,Math.round(tot/42)),ph=(t*sp*30/tot)%1,z=lw/2;for(let q=0;q<n;q++){const d=((q/n)+ph)%1*tot;let i=1;while(i<L.length-1&&L[i]<d)i++;const f=(d-L[i-1])/((L[i]-L[i-1])||1),p=P[i-1],qq=P[i],x=lerp(p[0],qq[0],f),y=lerp(p[1],qq[1],f),m=Math.hypot(qq[0]-p[0],qq[1]-p[1])||1,ux=(qq[0]-p[0])/m,uy=(qq[1]-p[1])/m;
+  ctx.globalAlpha=a;ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(x+ux*5*z,y+uy*5*z);ctx.lineTo(x-ux*3*z-uy*3.5*z,y-uy*3*z+ux*3.5*z);ctx.lineTo(x-ux*3*z+uy*3.5*z,y-uy*3*z-ux*3.5*z);ctx.closePath();ctx.fill()}ctx.globalAlpha=1}
+function cmpPanel(R,nm,c,st,t,last){field(st);const x0=R.x+34,x1=R.x+R.w-34,X=xf=>x0+xf*(x1-x0),SY=R.y+76,BT=R.y+R.h,KS=.36,LS=.5;
+ ctx.save();ctx.beginPath();rr(R.x,R.y,R.w,R.h,10);ctx.clip();
+ const sky=ctx.createLinearGradient(0,R.y,0,SY);sky.addColorStop(0,'#3d73b3');sky.addColorStop(1,'#8cbde6');ctx.fillStyle=sky;ctx.fillRect(R.x,R.y,R.w,SY-R.y);
+ const dp=ctx.createLinearGradient(0,SY,0,BT);dp.addColorStop(0,'#2b3a8f');dp.addColorStop(1,'#141a52');ctx.fillStyle=dp;ctx.fillRect(R.x,SY-20,R.w,BT-SY+20);
+ const top=xf=>SY-level(xf,st)*LS,th=xf=>thick(xf,st)/KH*KS;
+ for(let n=0;n<90;n++){const a0=n/90,a1=(n+1)/90,m=(a0+a1)/2;ctx.fillStyle=rgb(lut(eqT(slon(m)),22,30));ctx.fillRect(X(a0)-.5,top(m),X(a1)-X(a0)+1,th(m))}
+ ctx.beginPath();ctx.moveTo(x0,R.y);for(let n=0;n<=40;n++)ctx.lineTo(X(n/40),top(n/40));ctx.lineTo(x1,R.y);ctx.closePath();ctx.fillStyle=sky;ctx.fill();
+ ctx.strokeStyle='#bfe6ff';ctx.lineWidth=1.6;ctx.beginPath();for(let n=0;n<=40;n++){const y=top(n/40);n?ctx.lineTo(X(n/40),y):ctx.moveTo(X(n/40),y)}ctx.stroke();
+ ctx.setLineDash([4,4]);ctx.strokeStyle='rgba(255,255,255,.5)';ctx.lineWidth=1;ctx.beginPath();for(let n=0;n<=40;n++){const y=top(n/40)+th(n/40);n?ctx.lineTo(X(n/40),y):ctx.moveTo(X(n/40),y)}ctx.stroke();ctx.setLineDash([]);
+ // 용승(동쪽 끝): 세기에 따라 선의 수
+ const nu=st.U>1.15?4:st.U>.6?3:2;for(let m=0;m<nu;m++){const bx=X(nu>3?.84+m*.04:.86+m*.045),y1=top(.92)+6;ctx.strokeStyle='#8fe3ff';ctx.lineWidth=1.8;ctx.setLineDash([5,4]);ctx.lineDashOffset=-(t*6)%9;
+  ctx.beginPath();ctx.moveTo(bx-14,BT-4);ctx.quadraticCurveTo(bx+2,BT-20,bx+1,y1+6);ctx.stroke();ctx.setLineDash([]);arrow(bx+1,y1+10,bx+1,y1,'#8fe3ff',1.8,6,1)}
+ // 땅
+ const LT=SY-24;ctx.fillStyle='#6d5b43';ctx.strokeStyle='#9b845f';ctx.lineWidth=1;ctx.fillRect(R.x,LT,x0-R.x,BT-LT);ctx.fillRect(x1,LT,R.x+R.w-x1,BT-LT);
+ // 대기: 순환과 구름·비, 기압
+ const yt=R.y+14,yb=SY-14,ym=(yt+yb)/2,big=st.L?1:0,lw=2+1.2*big,sp=1+.8*big;
+ const cloudAt=(x,s)=>{cloud(x,R.y+30,1,s);rain(x+2,R.y+46,SY-4,t,.9)};
+ if(st.E){const r=X(.53),w=X(.11);flow(roundPath([[r,yb],[r,yt],[w,yt],[w,yb],[r,yb]],12),t,1,lw,sp);   // 서쪽: 닫힌 순환(중앙에서 상승, 서태평양에서 하강)
+  flow(roundPath([[X(.97),yb],[r+8,yb],[r+8,yt],[R.x+R.w+4,yt]],12),t,1,lw,sp);                        // 동쪽: 열린 흐름(남아메리카 쪽으로)
+  cloudAt(r+36,.62);cloudAt(X(.93),.42);pill('저기압',r+4,ym,'#ff9b7a',1,11.5);pill('고기압',w,ym,'#e6e9f2',1,11.5)}
+ else{const w=X(.15),e=X(.86);flow(roundPath([[w,yb],[w,yt],[e,yt],[e,yb],[w,yb]],12),t,1,lw,sp);cloudAt(w+40,.62+.15*big);pill('저기압',w,ym,'#ff9b7a',1,11.5);pill('고기압',e,ym,'#e6e9f2',1,11.5)}
+ ctx.font=font(13,800);const tw=ctx.measureText(nm).width+20;pill(nm,R.x+8+tw/2,R.y+13,c,1,13);
+ T('서태평양',R.x+6,BT-6,{size:11,al:'left',c:'#cfd6ee',w:700,halo:1});T('동태평양',R.x+R.w-6,BT-6,{size:11,al:'right',c:'#cfd6ee',w:700,halo:1});
+ ctx.restore();ctx.strokeStyle='rgba(255,255,255,.18)';ctx.lineWidth=1;rr(R.x,R.y,R.w,R.h,10);ctx.stroke()}
+function sceneCmpW(st,t){setSR(WR,.6);CMPST.forEach(([nm,c,s2],i)=>cmpPanel({x:14,y:8+i*128,w:912,h:122},nm,c,s2,t));
+ T('개념도 (해수면 높이·해수층 두께는 과장, 세 단면은 같은 크기)',W-14,H-1,{size:10.5,al:'right',c:'#8d96b3',w:500,bl:'bottom'})}
+const CSCENES=[
+ {draw:sceneCmpA,steps:[{t:'수온 편차 비교',x:'위는 <em>엘니뇨 시기</em>(2026년 10월), 아래는 <em>라니냐 시기</em>(2010년 10월)의 해수면 온도 편차(그때의 수온 − 평년 수온)입니다. 두 지도는 같은 색 막대를 씁니다.',d:1,s:k=>({})}]},
+ {draw:sceneCmpW,steps:[{t:'대기 대순환 비교',x:'<em>평상시</em>, <em>엘니뇨 시기</em>, <em>라니냐 시기</em>의 적도 단면을 같은 크기로 나란히 놓았습니다. 같은 자리끼리 비교해 보세요.',d:1,s:k=>({})}]}];
+
 let tab=0,sub=0,si=0,ph=0,playing=true,last=performance.now()/1000,quizOK=false,quizT=0;
 const $=id=>document.getElementById(id);
-let sub1=0,sub2=0;const ESUB=[0,1,2];const scene=()=>tab==0?SCENES[sub]:tab==1?ESCENES[ESUB[sub1]]:LSCENES[sub2];   // 엘니뇨 작은 메뉴 → 장면(수온 편차는 만드는 중)
+let sub1=0,sub2=0,sub3=0;const ESUB=[0,1,2];const scene=()=>tab==0?SCENES[sub]:tab==1?ESCENES[ESUB[sub1]]:tab==2?LSCENES[sub2]:CSCENES[sub3];   // 엘니뇨 작은 메뉴 → 장면(수온 편차는 만드는 중)
 function stepHTML(tt,tx){return `<b>${tt}</b><span>${tx.replace(/ ([:=→]) /g,' $1 ').replace(/(\d) (°C)/g,'$1 $2')}</span>`}
 // 진행 막대: 칸을 누르거나 끌면 그 단계의 그 때로 이동
 function buildProg(){const P=$('prog');P.innerHTML='';scene().steps.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-label',s.t);b.innerHTML='<i></i>';
@@ -860,17 +924,20 @@ function openSub(i){sub=i;[...$('subs').children].forEach((b,j)=>{b.classList.to
  $('quiz').hidden=!(tab==0&&i==0);resetQuiz();$('n0').hidden=i!=1;$('n2').hidden=i!=2;
  cv.setAttribute('aria-label',['전 세계 연평균 해수면 온도 지도에서 적도 부근의 태평양을 잘라 확대한 지도','적도 태평양의 해수면 온도 지도와 적도를 따라 자른 단면에서 무역풍, 해수의 이동, 용승, 가열로 수온 분포가 만들어지는 모습','적도를 따라 자른 단면 위에서 서태평양의 상승 기류와 동태평양의 하강 기류가 이어지는 워커 순환'][i]);
  seed();buildProg();go(0)}
-function openTab(i){tab=i;[0,1,2].forEach(j=>{const b=$('tab'+j),on=j==i;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1;$('p'+j).hidden=!on});
- $('subs').hidden=i!=0;$('subs1').hidden=i!=1;$('subs2').hidden=i!=2;const p=$('p'+i);p.classList.remove('enter');void p.offsetWidth;p.classList.add('enter');
- if(i==0)openSub(0);else if(i==1)openSub1(0);else openSub2(0)}
+function openTab(i){tab=i;[0,1,2,3].forEach(j=>{const b=$('tab'+j),on=j==i;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1;$('p'+j).hidden=!on});
+ $('subs').hidden=i!=0;$('subs1').hidden=i!=1;$('subs2').hidden=i!=2;$('subs3').hidden=i!=3;document.querySelector('.ctl').style.display=i==3?'none':'';   // 비교 탭은 정지 자료(재생 단추 없음)const p=$('p'+i);p.classList.remove('enter');void p.offsetWidth;p.classList.add('enter');
+ if(i==0)openSub(0);else if(i==1)openSub1(0);else if(i==2)openSub2(0);else openSub3(0)}
 function openSub1(i){sub1=i;[...$('subs1').children].forEach((b,j)=>{b.classList.toggle('on',j==i);b.setAttribute('aria-selected',j==i)});$('quiz').hidden=true;
  cv.setAttribute('aria-label','적도 태평양의 해수면 온도 지도와 적도를 따라 자른 단면에서 무역풍이 약해지며 엘니뇨가 일어나는 과정');seed();buildProg();go(0)}
 [...$('subs1').children].forEach((b,i)=>b.onclick=()=>{if(!b.disabled)openSub1(i)});
 function openSub2(i){sub2=i;[...$('subs2').children].forEach((b,j)=>{b.classList.toggle('on',j==i);b.setAttribute('aria-selected',j==i)});$('quiz').hidden=true;
  cv.setAttribute('aria-label',['적도 태평양의 해수면 온도 지도와 적도를 따라 자른 단면에서 무역풍이 강해지며 라니냐가 일어나는 과정','평년과 2010년 10월의 해수면 온도 지도, 수온 편차 지도, 엘니뇨 감시 구역의 월별 수온 편차 그래프','적도를 따라 자른 단면에서 라니냐 때 워커 순환이 강해지는 모습'][i]);seed();buildProg();go(0)}
 [...$('subs2').children].forEach((b,i)=>b.onclick=()=>openSub2(i));
+function openSub3(i){sub3=i;[...$('subs3').children].forEach((b,j)=>{b.classList.toggle('on',j==i);b.setAttribute('aria-selected',j==i)});$('quiz').hidden=true;$('n30').hidden=i!=0;$('n31').hidden=i!=1;
+ cv.setAttribute('aria-label',['위는 엘니뇨 시기(2026년 10월), 아래는 라니냐 시기(2010년 10월)의 적도 태평양 해수면 온도 편차 지도','평상시, 엘니뇨 시기, 라니냐 시기의 적도 단면(대기 순환, 기압, 구름과 비, 해수면, 따뜻한 해수층, 용승)을 위아래로 나란히 놓은 그림'][i]);seed();buildProg();go(0)}
+[...$('subs3').children].forEach((b,i)=>b.onclick=()=>openSub3(i));
 [...$('subs').children].forEach((b,i)=>b.onclick=()=>openSub(i));
-[0,1,2].forEach(i=>{const b=$('tab'+i);b.onclick=()=>openTab(i);b.onkeydown=e=>{if(e.key=='ArrowRight'||e.key=='ArrowLeft'){const j=(i+(e.key=='ArrowRight'?1:2))%3;$('tab'+j).focus();openTab(j)}}});
+[0,1,2,3].forEach(i=>{const b=$('tab'+i);b.onclick=()=>openTab(i);b.onkeydown=e=>{if(e.key=='ArrowRight'||e.key=='ArrowLeft'){const j=(i+(e.key=='ArrowRight'?1:3))%4;$('tab'+j).focus();openTab(j)}}});
 $('prev').onclick=()=>go(si-1);$('next').onclick=()=>go(si+1);$('again').onclick=()=>{seed();resetQuiz();go(0)};
 $('play').onclick=()=>{playing=!playing;updPlay()};
 // 태평양의 수온 분포: 생각해 보기 답을 열면 지도에도 서·동 수온을 표시(확대가 끝난 화면으로)
