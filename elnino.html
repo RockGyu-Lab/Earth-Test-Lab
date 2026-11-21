@@ -360,7 +360,7 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
  ctx.fillRect(SR.x,LT,SX0-SR.x,BOT-LT);ctx.strokeRect(SR.x+.5,LT+.5,SX0-SR.x-1,BOT-LT);ctx.fillRect(SX1,LT,SR.x+SR.w-SX1,BOT-LT);ctx.strokeRect(SX1+.5,LT+.5,SR.x+SR.w-SX1-1,BOT-LT);
  // 땅 위에 해수면 높이 변화 화살표: 기준선(바람이 없을 때의 해수면, 점선)에서 바닷가 해수면 높이까지. 높아지면 위로, 낮아지면 아래로, 차이가 클수록 길게
  if(st.F>0&&st.ref!==0&&tab!==1){ctx.setLineDash([3,3]);ctx.strokeStyle='rgba(255,255,255,.75)';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(SR.x+4,SEA);ctx.lineTo(SX0,SEA);ctx.moveTo(SX1,SEA);ctx.lineTo(SR.x+SR.w-4,SEA);ctx.stroke();ctx.setLineDash([]);
-  [[0,(SR.x+SX0)/2],[1,(SX1+SR.x+SR.w)/2]].forEach(([xf,x])=>{const h=level(xf,st);if(Math.abs(h)<2.5)return;ctx.save();ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=3;arrow(x,SEA,x,SEA-h,'#ffffff',3.4,Math.min(10,Math.abs(h)*.5+5),a);ctx.restore()})}
+  [[0,(SR.x+SX0)/2],[1,(SX1+SR.x+SR.w)/2]].forEach(([xf,x])=>{const h=level(xf,st);if(Math.abs(h)<2.5)return;ctx.save();ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=3;arrow(x,SEA,x,SEA-h,'#ffffff',2.4,Math.min(9,Math.max(5.5,Math.abs(h)*.4)),a);ctx.restore()})}
  T('인도네시아',SR.x+4,LT-6,{size:11.5,c:'#e9dcc4',al:'left',halo:1});T('남아메리카',SR.x+SR.w-4,LT-6,{size:11.5,c:'#e9dcc4',al:'right',halo:1});
  // 해 · 가열
  if(st.sunA!==0){const sunx=sxp(.38),suny=SR.y+26;sun(sunx,suny,a);
