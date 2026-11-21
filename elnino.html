@@ -278,7 +278,8 @@ function dartA(x,y,ux,uy,a){ctx.save();ctx.shadowColor='rgba(0,0,0,.55)';ctx.sha
  ctx.beginPath();ctx.moveTo(x-ux*2,y-uy*2);ctx.lineTo(x-ux*9,y-uy*9);ctx.stroke();ctx.restore()}
 function dart(x,y,dir,a,c){ctx.globalAlpha=a;ctx.fillStyle=c||'#fff';ctx.beginPath();ctx.moveTo(x+dir*5,y);ctx.lineTo(x-dir*2,y-3);ctx.lineTo(x-dir*2,y+3);ctx.closePath();ctx.fill();
  ctx.strokeStyle=c||'rgba(255,255,255,.8)';ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(x-dir*2,y);ctx.lineTo(x-dir*9,y);ctx.stroke();ctx.globalAlpha=1}
-function cloud(x,y,a,s){s=s||1;ctx.globalAlpha=a;ctx.fillStyle='#d9deea';[[-22,4,17],[0,-4,22],[24,3,17],[-8,8,16],[12,8,16]].forEach(([dx,dy,r])=>{ctx.beginPath();ctx.arc(x+dx*s,y+dy*s,r*s,0,7);ctx.fill()});ctx.globalAlpha=1}
+// 구름: 원 여러 개를 한 도형으로 합쳐 한 번에 칠함(연할 때 원이 겹쳐 보이지 않게)
+function cloud(x,y,a,s){s=s||1;ctx.globalAlpha=a;ctx.fillStyle='#d9deea';ctx.beginPath();[[-22,4,17],[0,-4,22],[24,3,17],[-8,8,16],[12,8,16]].forEach(([dx,dy,r])=>{ctx.moveTo(x+(dx+r)*s,y+dy*s);ctx.arc(x+dx*s,y+dy*s,r*s,0,7)});ctx.fill('nonzero');ctx.globalAlpha=1}
 function rain(x,y0,y1,t,a){ctx.globalAlpha=a;ctx.strokeStyle='#8fc8ff';ctx.lineWidth=1.6;for(let q=0;q<9;q++){const xx=x-30+q*7.5,ph=((t*1.6+q*.37)%1),y=y0+ph*(y1-y0);ctx.beginPath();ctx.moveTo(xx,y);ctx.lineTo(xx-2,y+8);ctx.stroke()}ctx.globalAlpha=1}
 function sun(x,y,a){ctx.globalAlpha=a;ctx.fillStyle='#ffd34d';ctx.beginPath();ctx.arc(x,y,13,0,7);ctx.fill();ctx.strokeStyle='#ffd34d';ctx.lineWidth=2;
  for(let q=0;q<8;q++){const an=q*Math.PI/4;ctx.beginPath();ctx.moveTo(x+Math.cos(an)*17,y+Math.sin(an)*17);ctx.lineTo(x+Math.cos(an)*22,y+Math.sin(an)*22);ctx.stroke()}ctx.globalAlpha=1}
@@ -294,7 +295,7 @@ function seed(){PQ.length=0;PS.length=PM.length=PW.length=PP.length=PN.length=PF
  for(let n=0;n<16;n++)PS.push({x:n/16,d:0});                       // 적도 단면의 표층 흐름(d: 해수면에서 깊이 0~1)
  for(let n=0;n<36;n++)PQ.push({s:(Math.floor(n/2)+(n%2)*.5)/18,n:n%2});   // 지도의 서쪽 흐름: 반구마다 한 줄, 적도를 따라 서쪽 → 서태평양에서 북쪽·남쪽으로 빠져나감
  for(let n=0;n<30;n++)PM.push({lo:160+R()*112,la:(R()*2-1)*4.5});  // 적도 지도의 표층 흐름
- for(let n=0;n<34;n++)PW.push({u:R()});                             // 워커 순환의 공기
+ for(let n=0;n<18;n++)PW.push({u:n/18});                             // 워커 순환의 공기(같은 간격)
  for(let n=0;n<22;n++)PP.push({x:R(),d:.1+R()*.8});                 // 페루 단면의 먼바다 쪽 흐름
  for(let n=0;n<40;n++)PN.push({u:R(),o:R()});                       // 영양염류
  for(let n=0;n<3;n++)PF.push({x:.6+n*.12,y:.1+R()*.5,ph:R()*6})}  // 앤초비 떼
@@ -437,7 +438,6 @@ function drawWalker(st,t,a){const xw=sxp(.15),xe=sxp(.86),yt=SR.y+44,yb=SEA-26,r
  if(st.loop>0){const A=a*st.loop;ctx.save();ctx.globalAlpha=A*.55;ctx.strokeStyle='#ffffff';ctx.lineWidth=2;ctx.setLineDash([2,6]);ctx.stroke(path);ctx.restore();
   PW.forEach(p=>{const [x,y,dx,dy]=at(p.u),n=Math.hypot(dx,dy)||1;ctx.globalAlpha=A;ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(x+dx/n*6,y+dy/n*6);ctx.lineTo(x-dx/n*3-dy/n*4,y-dy/n*3+dx/n*4);ctx.lineTo(x-dx/n*3+dy/n*4,y-dy/n*3-dx/n*4);ctx.closePath();ctx.fill()});
   ctx.globalAlpha=1;
-  arrow(sxp(.62),yt,sxp(.68),yt,'#fff',3,12,A);arrow(sxp(.4),yb,sxp(.34),yb,'#fff',3,12,A);
   T('높은 곳: 서 → 동으로 이동',sxp(.5),yt-10,{size:13.5,w:800,halo:1,a:A});
   T('지표 부근: 동 → 서로 부는 무역풍',sxp(.5),yb-12,{size:13.5,w:800,halo:1,a:A});
   pill('워커 순환',sxp(.5),yt+64,'#ffd76b',A,16)}
