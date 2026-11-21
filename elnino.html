@@ -261,9 +261,9 @@ for(let i=0;i<NR;i++){const la=LATc(i),vals=[];
 
 // ================= 그림판 =================
 const cv=document.getElementById('cv');let ctx=cv.getContext('2d');   // let: 생각해 보기 답 그림(fcv)을 그릴 때 잠시 바꿔 씀
-const W=940,H=400;
+const W=940;let H=400;   // 그림판 높이: 보통 400, 비교 탭 '대기 순환'은 단면 셋을 그대로 쌓아 1200(scene().h)
 let SC=1;
-function fit(){const r=Math.max(1,window.devicePixelRatio||1),w=Math.round(cv.clientWidth*r)||W;if(cv.width!==w){cv.width=w;cv.height=Math.round(w*H/W)}SC=cv.width/W}
+function fit(){const r=Math.max(1,window.devicePixelRatio||1),w=Math.round(cv.clientWidth*r)||W;const hh=Math.round(w*H/W);if(cv.width!==w||cv.height!==hh){cv.width=w;cv.height=hh}SC=cv.width/W}
 addEventListener('resize',fit);
 const FONT='"Pretendard Variable",Pretendard,system-ui,"Noto Sans KR",sans-serif';
 const font=(s,w)=>`${w||700} ${s}px ${FONT}`;
@@ -865,43 +865,13 @@ function sceneCmpA(st,t){
  [-3,-2,-1,0,1,2,3].forEach(x=>T((x>0?'+':x<0?'−':'')+Math.abs(x),bx+bw+8,by+(DMAX-x)/(2*DMAX)*bh+4,{size:11.5,al:'left',c:'#e8ecff'}));
  T('평년보다 따뜻함',bx+bw/2,by-8,{size:11.5,c:'#ff9b8a',w:700});T('평년보다 차가움',bx+bw/2,by+bh+18,{size:11.5,c:'#8fc8ff',w:700});
  T('자료: NOAA ERSST v5',14,H-18,{size:10.5,al:'left',c:'#8d96b3',w:500,bl:'bottom'});T('평년값 = 1991~2020년의 10월 평균',14,H-3,{size:10.5,al:'left',c:'#8d96b3',w:500,bl:'bottom'})}
-// 대기 순환: 평상시 · 엘니뇨 · 라니냐의 마지막 모습을 같은 크기의 작은 단면 3줄로(비교할 것만: 기압, 해수면, 해수층, 구름·비, 순환)
-const CMPST=[['평상시','#cfe0ff',{...NORMAL,oct:1}],['엘니뇨 시기','#ff8a7a',{...NORMAL,oct:1,E:1,A:1,U:.25}],['라니냐 시기','#8fc8ff',{...NORMAL,oct:1,nina:1,L:1,A:1,U:1.4}]];
-function roundPath(P,r){const o=[P[0]];for(let i=1;i<P.length-1;i++){const a=P[i-1],b=P[i],c=P[i+1],d1=Math.hypot(b[0]-a[0],b[1]-a[1]),d2=Math.hypot(c[0]-b[0],c[1]-b[1]),rr2=Math.min(r,d1/2,d2/2);
-  const p1=[b[0]+(a[0]-b[0])/d1*rr2,b[1]+(a[1]-b[1])/d1*rr2],p2=[b[0]+(c[0]-b[0])/d2*rr2,b[1]+(c[1]-b[1])/d2*rr2];for(let k=0;k<=8;k++){const u=k/8;o.push(qb(p1,b,p2,u))}}o.push(P[P.length-1]);return o}
-function flow(P,t,a,lw,sp){const L=[0];for(let i=1;i<P.length;i++)L.push(L[i-1]+Math.hypot(P[i][0]-P[i-1][0],P[i][1]-P[i-1][1]));const tot=L[L.length-1];
- ctx.save();ctx.globalAlpha=a*.6;ctx.strokeStyle='#fff';ctx.lineWidth=lw;ctx.setLineDash([2,5]);ctx.beginPath();P.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();ctx.restore();
- const n=Math.max(2,Math.round(tot/42)),ph=(t*sp*30/tot)%1,z=lw/2;for(let q=0;q<n;q++){const d=((q/n)+ph)%1*tot;let i=1;while(i<L.length-1&&L[i]<d)i++;const f=(d-L[i-1])/((L[i]-L[i-1])||1),p=P[i-1],qq=P[i],x=lerp(p[0],qq[0],f),y=lerp(p[1],qq[1],f),m=Math.hypot(qq[0]-p[0],qq[1]-p[1])||1,ux=(qq[0]-p[0])/m,uy=(qq[1]-p[1])/m;
-  ctx.globalAlpha=a;ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(x+ux*5*z,y+uy*5*z);ctx.lineTo(x-ux*3*z-uy*3.5*z,y-uy*3*z+ux*3.5*z);ctx.lineTo(x-ux*3*z+uy*3.5*z,y-uy*3*z-ux*3.5*z);ctx.closePath();ctx.fill()}ctx.globalAlpha=1}
-function cmpPanel(R,nm,c,st,t,last){field(st);const x0=R.x+34,x1=R.x+R.w-34,X=xf=>x0+xf*(x1-x0),SY=R.y+76,BT=R.y+R.h,KS=.36,LS=.5;
- ctx.save();ctx.beginPath();rr(R.x,R.y,R.w,R.h,10);ctx.clip();
- const sky=ctx.createLinearGradient(0,R.y,0,SY);sky.addColorStop(0,'#3d73b3');sky.addColorStop(1,'#8cbde6');ctx.fillStyle=sky;ctx.fillRect(R.x,R.y,R.w,SY-R.y);
- const dp=ctx.createLinearGradient(0,SY,0,BT);dp.addColorStop(0,'#2b3a8f');dp.addColorStop(1,'#141a52');ctx.fillStyle=dp;ctx.fillRect(R.x,SY-20,R.w,BT-SY+20);
- const top=xf=>SY-level(xf,st)*LS,th=xf=>thick(xf,st)/KH*KS;
- for(let n=0;n<90;n++){const a0=n/90,a1=(n+1)/90,m=(a0+a1)/2;ctx.fillStyle=rgb(lut(eqT(slon(m)),22,30));ctx.fillRect(X(a0)-.5,top(m),X(a1)-X(a0)+1,th(m))}
- ctx.beginPath();ctx.moveTo(x0,R.y);for(let n=0;n<=40;n++)ctx.lineTo(X(n/40),top(n/40));ctx.lineTo(x1,R.y);ctx.closePath();ctx.fillStyle=sky;ctx.fill();
- ctx.strokeStyle='#bfe6ff';ctx.lineWidth=1.6;ctx.beginPath();for(let n=0;n<=40;n++){const y=top(n/40);n?ctx.lineTo(X(n/40),y):ctx.moveTo(X(n/40),y)}ctx.stroke();
- ctx.setLineDash([4,4]);ctx.strokeStyle='rgba(255,255,255,.5)';ctx.lineWidth=1;ctx.beginPath();for(let n=0;n<=40;n++){const y=top(n/40)+th(n/40);n?ctx.lineTo(X(n/40),y):ctx.moveTo(X(n/40),y)}ctx.stroke();ctx.setLineDash([]);
- // 용승(동쪽 끝): 세기에 따라 선의 수
- const nu=st.U>1.15?4:st.U>.6?3:2;for(let m=0;m<nu;m++){const bx=X(nu>3?.84+m*.04:.86+m*.045),y1=top(.92)+6;ctx.strokeStyle='#8fe3ff';ctx.lineWidth=1.8;ctx.setLineDash([5,4]);ctx.lineDashOffset=-(t*6)%9;
-  ctx.beginPath();ctx.moveTo(bx-14,BT-4);ctx.quadraticCurveTo(bx+2,BT-20,bx+1,y1+6);ctx.stroke();ctx.setLineDash([]);arrow(bx+1,y1+10,bx+1,y1,'#8fe3ff',1.8,6,1)}
- // 땅
- const LT=SY-24;ctx.fillStyle='#6d5b43';ctx.strokeStyle='#9b845f';ctx.lineWidth=1;ctx.fillRect(R.x,LT,x0-R.x,BT-LT);ctx.fillRect(x1,LT,R.x+R.w-x1,BT-LT);
- // 대기: 순환과 구름·비, 기압
- const yt=R.y+14,yb=SY-14,ym=(yt+yb)/2,big=st.L?1:0,lw=2+1.2*big,sp=1+.8*big;
- const cloudAt=(x,s)=>{cloud(x,R.y+30,1,s);rain(x+2,R.y+46,SY-4,t,.9)};
- const WX=X(.05),EX=X(.93);   // 서쪽 기압 자리(약 137°E)·동쪽 기압 자리(약 90°W): 세 단면이 같은 세로줄
- if(st.E){const r=X(.53),w=WX;flow(roundPath([[r,yb],[r,yt],[w,yt],[w,yb],[r,yb]],12),t,1,lw,sp);   // 서쪽: 닫힌 순환(중앙에서 상승, 서태평양에서 하강)
-  flow(roundPath([[X(.97),yb],[r+8,yb],[r+8,yt],[R.x+R.w+4,yt]],12),t,1,lw,sp);                        // 동쪽: 열린 흐름(남아메리카 쪽으로)
-  cloudAt(r+36,.62);cloudAt(X(.93),.42);pill('저기압',r+4,ym,'#ff9b7a',1,11.5);pill('고기압',w,ym,'#e6e9f2',1,11.5)}
- else{const w=WX,e=EX;flow(roundPath([[w,yb],[w,yt],[e,yt],[e,yb],[w,yb]],12),t,1,lw,sp);cloudAt(w+40,.62+.15*big);pill('저기압',w,ym,'#ff9b7a',1,11.5);pill('고기압',e,ym,'#e6e9f2',1,11.5)}
- T('서태평양',R.x+6,BT-6,{size:11,al:'left',c:'#cfd6ee',w:700,halo:1});T('동태평양',R.x+R.w-6,BT-6,{size:11,al:'right',c:'#cfd6ee',w:700,halo:1});
- ctx.restore();ctx.strokeStyle='rgba(255,255,255,.18)';ctx.lineWidth=1;rr(R.x,R.y,R.w,R.h,10);ctx.stroke()}
-function sceneCmpW(st,t){setSR(WR,.6);CMPST.forEach(([nm,c,s2],i)=>{const R={x:166,y:8+i*128,w:608,h:122};cmpPanel(R,nm,c,s2,t);pill(nm,(14+R.x-10)/2,R.y+R.h/2,c,1,15)});   // 이름은 단면 왼쪽 바깥(수온 편차 화면과 같게)
- T('개념도 (해수면 높이·해수층 두께는 과장, 세 단면은 같은 크기)',W-14,H-1,{size:10.5,al:'right',c:'#8d96b3',w:500,bl:'bottom'})}
+// 대기 순환: 평상시 · 엘니뇨 · 라니냐 탭의 '대기의 순환'·'대기 순환의 변화' 마지막 모습을 그대로 위아래로 쌓음(한 화면에 맞추지 않음, 그림판 940×1200)
+// 순환 화살촉(PW)은 단면마다 제 빠르기로(라니냐는 빠르게): 시간으로 자리를 정함
+function sceneCmpW(st,t){const S=[{...SCENES[2].steps[0].s(1),tagL:'평상시',tagC:'#cfe0ff'},ESCENES[2].steps[0].s(1),LSCENES[2].steps[0].s(1)];
+ S.forEach((s2,i)=>{const sp=1+.8*(s2.big||0);PW.forEach((p,n)=>{p.u=(n/PW.length+t*.06*sp)%1});ctx.save();ctx.translate(0,i*400);sceneWalk(s2,t);ctx.restore()})}
 const CSCENES=[
  {draw:sceneCmpA,steps:[{t:'수온 편차 비교',x:'위는 <em>엘니뇨 시기</em>(2026년 10월), 아래는 <em>라니냐 시기</em>(2010년 10월)의 해수면 온도 편차(그때의 수온 − 평년 수온)입니다.',d:1,s:k=>({})}]},
- {draw:sceneCmpW,steps:[{t:'대기 순환 비교',x:'<em>평상시</em>, <em>엘니뇨 시기</em>, <em>라니냐 시기</em>의 적도 단면을 같은 크기로 나란히 놓았습니다. 같은 자리끼리 비교해 보세요.',d:1,s:k=>({})}]}];
+ {draw:sceneCmpW,h:1200,steps:[{t:'대기 순환 비교',x:'위부터 <em>평상시</em>, <em>엘니뇨 시기</em>, <em>라니냐 시기</em>의 대기 순환입니다(앞 탭 대기 순환의 마지막 모습). 같은 자리끼리 비교해 보세요.',d:1,s:k=>({V:-1,loop:1})}]}];
 
 let tab=0,sub=0,si=0,ph=0,playing=true,last=performance.now()/1000,quizOK=false,quizT=0;
 const $=id=>document.getElementById(id);
@@ -950,7 +920,7 @@ document.querySelector('[data-ov="ovf"]').addEventListener('click',()=>{FT=perfo
 function drawFish(now,dt){if($('ovf').hidden)return;const g=now-FT,r=Math.max(1,window.devicePixelRatio||1),w=Math.round(fcv.clientWidth*r)||418;if(fcv.width!==w){fcv.width=w;fcv.height=Math.round(w*368/418)}
  const k=fcv.width/418,st={...NORMAL,wind:0,off:seg(g,.3,2.3),up:seg(g,1.5,4.5),nut:seg(g,4,7),plank:seg(g,7,9.5),fish:seg(g,9.5,12)};
  moveParticles(st,dt);const keep=ctx;ctx=fctx;ctx.setTransform(k,0,0,k,-SRE.x*k,-SRE.y*k);ctx.clearRect(SRE.x,SRE.y,SRE.w,SRE.h);drawPeru(st,now);ctx=keep}
-function frame(nowMs){const now=nowMs/1000,dt=Math.min(.1,now-last);last=now;fit();
+function frame(nowMs){const now=nowMs/1000,dt=Math.min(.1,now-last);last=now;{const h=scene().h||400;if(h!==H){H=h;cv.style.aspectRatio=W+'/'+H}}fit();
  const S=scene().steps,s=S[si];
  if(playing){ph+=dt;if(ph>=s.d){if(si<S.length-1){if(ph>=s.d+(scene().cont?0:1.2)){const r=ph-s.d;go(si+1);if(scene().cont)ph=r}}else ph=s.d}}   // 끝나도 멈추지 않음: 마지막 모습에서 바람·해류·용승이 계속 움직임
  setText();
