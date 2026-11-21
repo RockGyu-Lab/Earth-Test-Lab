@@ -596,21 +596,25 @@ function scenePeru(st,t){const v=drawMap(st,{box:PEB,R:PR,z:1,lo:16,hi:28});
 //  A(엘니뇨 수온 편차), C(구름), cx(구름 위치), lab(정리 이름표), wa·ea·loop(워커 순환), wind·off·up·nut·plank·fish(페루 연안)
 const NORMAL={zoom:1,box:1,sec:1,hyp:0,W:1,V:-1,F:1,E:0,U:1,U0:1,mU:1,Hh:1,heat:0,A:0,C:0,cx:0,lab:0,wa:0,ea:0,loop:0,wind:0,off:0,up:0,nut:0,plank:0,fish:0};
 const HYP={...NORMAL,hyp:1,W:0,V:0,F:0,U:0,U0:0,mU:0,Hh:0};
+// 태평양 수온 분포의 원인: 세 단계가 하나의 시계(g초, 0~30)로 이어짐. 이동·해수면 기울기·용승·가열이 거의 동시에 시작해 함께 커짐
+//  단계는 '무엇을 볼지'만 나눔(3단계에서 햇빛 표현과 정리 이름표를 보여 줌). 해수면 기울기(F)와 용승(U)은 같은 빠르기로 함께 커짐
+function CAUSE(g){const F=ease((g-1)/16),U=c01((g-1.3)/15.7);
+ return {...NORMAL,hyp:1-seg(g,1,3),W:seg(g,0,1.2),V:-seg(g,.4,2),F,U,U0:ease((g-1.5)/16),mU:c01((g-2)/3),Hh:ease((g-3)/23),
+  heat:g>=18?Math.min(seg(g,18,19.5),1-seg(g,28,29.5)):0,tint:g>=18?1:0,lab:seg(g,25,28)}}
 const SCENES=[
  {draw:scenePac,steps:[ // 태평양의 수온 분포
   {t:'전 세계의 해수면 온도',x:'전 세계 바다의 <em>연평균 해수면 온도</em>입니다. 적도 부근은 따뜻하고 고위도로 갈수록 차가워집니다. 이 가운데 <em>적도 부근의 태평양</em>을 잘라 확대해 봅시다.',d:6,
    s:k=>({...NORMAL,zoom:0,box:seg(k,.45,.9)})},
   {t:'적도 부근의 태평양',x:'적도를 따라 <em>서태평양</em>(왼쪽)과 <em>동태평양</em>(오른쪽)의 색을 비교해 보세요. 빨간색일수록 수온이 높습니다. 아래 생각해 보기에 답해 보세요.',d:4,
    s:k=>({...NORMAL,zoom:ease(k),box:1})}]},
- {draw:sceneEq,steps:[ // 태평양 수온 분포의 원인
-  {t:'1단계(무역풍과 따뜻한 해수의 이동)',x:'무역풍이 없다면 수온은 위도에 따라서만 달라질 것입니다(처음 모습, 생각 실험). 여기에 <em>무역풍</em>이 동쪽에서 서쪽으로 불면 따뜻한 표층 해수가 <em>서쪽으로 이동</em>하여 서태평양에 쌓이고, 서태평양은 <em>따뜻한 해수층이 두꺼워지고 해수면이 높아집니다</em>.',d:10,
-   s:k=>({...HYP,W:seg(k,0,.12),hyp:1-seg(k,.75,1),V:-seg(k,.06,.25),F:seg(k,.15,1)})},
-  {t:'2단계(찬 해수의 용승)',x:'표층 해수가 빠져나간 동태평양에서는 깊은 곳의 <em>찬 해수가 올라옵니다(용승)</em>. 그래서 동태평양은 <em>따뜻한 해수층이 얇고 수온이 낮습니다</em>.',d:9,
-   s:k=>({...NORMAL,U:ease(k),U0:seg(k,.15,1),mU:seg(k,0,.3),Hh:0})},
-  {t:'3단계(햇빛에 의한 가열)',x:'서쪽으로 이동하는 동안 해수는 <em>햇빛을 받아 계속 데워지므로</em>, 따뜻한 해수가 쌓이는 <em>서태평양의 수온이 가장 높아집니다</em>.',d:7,
-   s:k=>({...NORMAL,Hh:seg(k,.1,1),heat:Math.min(seg(k,0,.15),1-seg(k,.85,1)),tint:1})},
-  {t:'4단계(평상시의 모습)',x:'서태평양은 <em>따뜻한 해수층이 두껍고 수온과 해수면이 높으며</em>, 동태평양은 <em>용승으로 따뜻한 해수층이 얇고 수온이 낮습니다</em>. 실제로는 1~3단계가 동시에 함께 일어나며, 지도는 실제 해수면 온도의 평년값과 같아졌습니다.',d:6,
-   s:k=>({...NORMAL,lab:seg(k,.1,.6)})}]},
+ {draw:sceneEq,cont:1,steps:[ // 태평양 수온 분포의 원인 (cont: 단계 사이에 멈추지 않고 이어짐)
+  {t:'1단계(무역풍과 따뜻한 해수의 이동)',x:'무역풍이 없다면 수온은 위도에 따라서만 달라질 것입니다(생각 실험). 여기에 <em>무역풍</em>이 동쪽에서 서쪽으로 불면 따뜻한 표층 해수가 <em>서쪽으로 이동</em>해 쌓이며 <em>해수면이 기울기 시작</em>합니다. 이어지는 과정들은 사실 거의 동시에 일어납니다.',d:9,
+   s:k=>CAUSE(k*9)},
+  {t:'2단계(찬 해수의 용승)',x:'서쪽에 물이 쌓여 해수면이 기울수록, 동태평양에서는 빠져나간 표층 해수를 채우려고 깊은 곳의 <em>찬 해수가 올라옵니다(용승)</em>. 기울기가 커질수록 용승도 강해져 동태평양은 <em>따뜻한 해수층이 얇고 수온이 낮아집니다</em>.',d:9,
+   s:k=>CAUSE(9+k*9)},
+  {t:'3단계(햇빛에 의한 가열과 평상시의 모습)',x:'서쪽으로 흐르는 동안 해수는 <em>햇빛을 받아 계속 데워져</em> 서태평양의 수온이 가장 높아집니다. 그 결과 서태평양은 <em>따뜻한 해수층이 두껍고 수온과 해수면이 높으며</em>, 동태평양은 <em>따뜻한 해수층이 얇고 수온이 낮은</em> 평상시의 모습이 됩니다.',d:12,
+   s:k=>CAUSE(18+k*12)}
+ ]},
  {draw:sceneWalk,steps:[ // 대기의 순환
   {t:'서태평양의 상승 기류',x:'수온이 높은 서태평양에서는 바다가 공기를 데워 <em>상승 기류</em>가 생기고 <em>저기압</em>이 됩니다. 올라간 공기 속 수증기가 응결하여 <em>구름이 많고 비가 많이 내립니다</em>.',d:6,
    s:k=>({...NORMAL,W:0,wa:ease(k)})},
@@ -668,7 +672,7 @@ document.querySelector('[data-ov="ovq"]').addEventListener('click',()=>{if(!quiz
 
 function frame(nowMs){const now=nowMs/1000,dt=Math.min(.1,now-last);last=now;fit();
  const S=scene().steps,s=S[si];
- if(playing){ph+=dt;if(ph>=s.d){if(si<S.length-1){if(ph>=s.d+1.2)go(si+1)}else{ph=s.d;playing=false;updPlay();$('again').classList.add('glow')}}}
+ if(playing){ph+=dt;if(ph>=s.d){if(si<S.length-1){if(ph>=s.d+(scene().cont?0:1.2)){const r=ph-s.d;go(si+1);if(scene().cont)ph=r}}else{ph=s.d;playing=false;updPlay();$('again').classList.add('glow')}}}
  const st=s.s(c01(ph/s.d));
  moveParticles(st,playing?dt:0);
  [...$('prog').children].forEach((b,i)=>{b.firstChild.style.width=(i<si?100:i>si?0:c01(ph/s.d)*100)+'%'});
