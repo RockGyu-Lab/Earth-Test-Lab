@@ -405,18 +405,18 @@ function qb(P0,C,P2,u){return [(1-u)*(1-u)*P0[0]+2*(1-u)*u*C[0]+u*u*P2[0],(1-u)*
 // 용승: 아래가 열린 속 빈 곡선 화살표(꼬리 쪽은 가늘고 흐리게 사라짐) + 그 안에서 천천히 떠오르는 작은 물 입자
 //  깊은 곳(P0)에서 휘어 바닷가 쪽(P2)까지. 화살촉 끝은 해수면보다 조금 아래에서 멈춤. str: 세기(약해지면 가늘고 흐리게, 입자도 적게)
 function qOff(P0,C,P2,u,off){const p=qb(P0,C,P2,u),q=qb(P0,C,P2,Math.min(1,u+.01)),r=qb(P0,C,P2,Math.max(0,u-.01)),dx=q[0]-r[0],dy=q[1]-r[1],n=Math.hypot(dx,dy)||1;return [p[0]-dy/n*off,p[1]+dx/n*off,dx/n,dy/n]}
-function upDraw(P0,C,P2,str,t,a){if(str<=.02)return;const A=a*Math.min(1,.3+str),W=5+8*str,E=.78,N=36,wd=u=>W*(.35+.65*u/E);
+function upDraw(P0,C,P2,str,t,a){if(str<=.02)return;const A=a*Math.min(1,.3+str),W=5+8*str,E=.88,N=36,wd=u=>W*(.35+.65*u/E);
  const L=[],R=[];for(let i=0;i<=N;i++){const u=i/N*E;L.push(qOff(P0,C,P2,u,wd(u)));R.push(qOff(P0,C,P2,u,-wd(u)))}
- const b=qOff(P0,C,P2,E,0),hw=W*1.9,tip=qb(P0,C,P2,1),hl=[b[0]-b[3]*hw,b[1]+b[2]*hw],hr=[b[0]+b[3]*hw,b[1]-b[2]*hw];
+ const b=qOff(P0,C,P2,E,0),hw=W*1.65,tip=qb(P0,C,P2,1),hl=[b[0]-b[3]*hw,b[1]+b[2]*hw],hr=[b[0]+b[3]*hw,b[1]-b[2]*hw];
  const path=new Path2D();L.forEach((p,i)=>i?path.lineTo(p[0],p[1]):path.moveTo(p[0],p[1]));
  path.lineTo(hl[0],hl[1]);path.quadraticCurveTo(lerp(hl[0],tip[0],.55)-b[3]*W*.3,lerp(hl[1],tip[1],.55)+b[2]*W*.3,tip[0],tip[1]);
  path.quadraticCurveTo(lerp(hr[0],tip[0],.55)+b[3]*W*.3,lerp(hr[1],tip[1],.55)-b[2]*W*.3,hr[0],hr[1]);for(let i=R.length-1;i>=0;i--)path.lineTo(R[i][0],R[i][1]);   // 아래(꼬리)는 닫지 않음
  ctx.save();ctx.lineJoin='round';ctx.lineCap='round';
- const gf=ctx.createLinearGradient(P0[0],P0[1],tip[0],tip[1]);gf.addColorStop(0,'rgba(143,227,255,0)');gf.addColorStop(1,'rgba(143,227,255,.22)');ctx.globalAlpha=A;ctx.fillStyle=gf;ctx.fill(path);
- const gs=ctx.createLinearGradient(P0[0],P0[1],tip[0],tip[1]);gs.addColorStop(0,'rgba(232,247,255,0)');gs.addColorStop(.35,'rgba(232,247,255,.75)');gs.addColorStop(1,'rgba(240,250,255,1)');
+ const gf=ctx.createLinearGradient(P0[0],P0[1],tip[0],tip[1]);gf.addColorStop(0,'rgba(70,130,210,0)');gf.addColorStop(1,'rgba(70,130,210,.3)');   // 찬 물: 차분한 파랑ctx.globalAlpha=A;ctx.fillStyle=gf;ctx.fill(path);
+ const gs=ctx.createLinearGradient(P0[0],P0[1],tip[0],tip[1]);gs.addColorStop(0,'rgba(120,175,235,0)');gs.addColorStop(.35,'rgba(120,175,235,.75)');gs.addColorStop(1,'rgba(150,195,245,1)');
  ctx.globalAlpha=A*(.8+.2*Math.sin(t*1.6));ctx.strokeStyle=gs;ctx.lineWidth=2.2;ctx.shadowColor='rgba(0,0,0,.45)';ctx.shadowBlur=3;ctx.stroke(path);ctx.shadowBlur=0;
- // 물 입자
- const n=Math.round(6+12*str);ctx.fillStyle='#aeeaff';for(let i=0;i<n;i++){const u=((i/n)+t*.03)%1*E,off=Math.sin(i*2.7)*wd(u)*.55,p=qOff(P0,C,P2,u,off);ctx.globalAlpha=A*Math.sin(Math.PI*u/E);ctx.beginPath();ctx.arc(p[0],p[1],2.2,0,7);ctx.fill()}
+ // 물 입자(화살촉 끝까지 올라옴)
+ const n=Math.round(6+12*str);ctx.fillStyle='#7fb6ee';for(let i=0;i<n;i++){const v=((i/n)+t*.03)%1,u=v*.97,hwid=u<E?wd(u)*.55:W*1.65*(1-(u-E)/(1-E))*.45,off=Math.sin(i*2.7)*hwid,p=qOff(P0,C,P2,u,off);ctx.globalAlpha=A*Math.min(1,Math.sin(Math.PI*v)*2.2);ctx.beginPath();ctx.arc(p[0],p[1],2.2,0,7);ctx.fill()}
  ctx.restore()}
 
 // ---- 워커 순환 (대기의 순환: 그림판 전체 폭 단면 위에) ----
