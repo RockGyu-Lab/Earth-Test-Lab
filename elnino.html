@@ -317,10 +317,11 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
  // 따뜻한 해수층(색 = 지도의 적도 수온과 같은 색)
  const N=84;for(let n=0;n<N;n++){const x0=n/N,x1=(n+1)/N,xm=(x0+x1)/2,c=lut(eqT(slon(xm)),22,30);
   const top=SEA-level(xm,st),hh=thick(xm,st);ctx.fillStyle=rgb(c);ctx.fillRect(sxp(x0)-.5,top,sxp(x1)-sxp(x0)+1,hh);
-  // 점선(수온 약층이 시작되는 깊이) 아래: 혼합층과 같은 색에서 출발해 짧은 거리 안에 빠르게 차가운 색으로 바뀜(수온 약층 = 수온이 급격히 낮아지는 층)
-  //  바뀌는 구간의 두께는 동서로 같게 둠(수온 약층의 두께 변화는 다루지 않음). 불투명한 작은 칸으로 칠해 세로 줄무늬가 생기지 않게 함
-  const yb=top+hh,band=44*KH+8,NS=14;for(let q=0;q<NS;q++){const f=(q+.5)/NS,y=yb+q*band/NS,dc=deepC(yb+band),m=f*f*(3-2*f);
-   ctx.fillStyle=`rgb(${Math.round(lerp(c[0],dc[0],m))},${Math.round(lerp(c[1],dc[1],m))},${Math.round(lerp(c[2],dc[2],m))})`;ctx.fillRect(sxp(x0)-.5,y-.5,sxp(x1)-sxp(x0)+1,band/NS+1)}}
+  // 점선(수온 약층이 시작되는 깊이) 바로 아래 짧은 구간만 경계를 부드럽게: 수온 색 막대를 따라(빨강 → 주황 → 하늘 → 파랑) 바뀐 뒤 깊은 바다 색으로
+  //  (남색으로 바로 섞으면 탁한 보라·갈색이 생기므로 색 막대를 따라감). 구간 두께는 동서로 같게. 불투명한 작은 칸으로 칠해 세로 줄무늬가 없게
+  const yb=top+hh,band=15*KH+4,NS=8,T0=eqT(slon(xm)),c22=lut(22,22,30);for(let q=0;q<NS;q++){const f=(q+.5)/NS,y=yb+q*band/NS,m=f*f*(3-2*f);
+   let col;if(m<.75)col=lut(lerp(T0,22,m/.75),22,30);else{const dc=deepC(yb+band),w=(m-.75)/.25;col=[0,1,2].map(k=>lerp(c22[k],dc[k],w))}
+   ctx.fillStyle=`rgb(${Math.round(col[0])},${Math.round(col[1])},${Math.round(col[2])})`;ctx.fillRect(sxp(x0)-.5,y-.5,sxp(x1)-sxp(x0)+1,band/NS+1)}}
  ctx.setLineDash([5,4]);ctx.strokeStyle='rgba(255,255,255,.55)';ctx.lineWidth=1.3;ctx.beginPath();for(let n=0;n<=40;n++){const xf=n/40,y=SEA-level(xf,st)+thick(xf,st);n?ctx.lineTo(sxp(xf),y):ctx.moveTo(sxp(xf),y)}ctx.stroke();ctx.setLineDash([]);
  // 해수면 위쪽은 하늘로 덮음 — 해수면 선
  ctx.beginPath();ctx.moveTo(SX0,SR.y);for(let n=0;n<=40;n++){const xf=n/40;ctx.lineTo(sxp(xf),SEA-level(xf,st))}ctx.lineTo(SX1,SR.y);ctx.closePath();
