@@ -387,7 +387,7 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
  if(st.W>0.02&&(!st.walk||st.showW>0)){const L=56*st.W,aw=a*Math.min(1,st.W*1.6);   // 동 → 서로 계속 흘러가는 바람 줄기(노란색, 한 줄)
   PA.forEach(p=>{const x=sxp(p.x),y=SEA-30,f=Math.sin(Math.PI*p.x);arrow(x+L/2,y,x-L/2,y,'#ffd84a',3,10,aw*Math.max(0,Math.min(1,f*2.2)))});
   T(st.W<.6?'약해진 무역풍':'무역풍',sxp(.86),SEA-48,{size:13.5,w:800,halo:1,c:'#ffd84a',a:a*Math.min(1,st.W*2+.3)})}
- if(st.walk&&(st.wn??1)>0)drawWalker(st,t,a*(st.wn??1));if(st.walkE&&st.walkE.al>0)drawWalker({...st,...st.walkE},t,a*st.walkE.al);
+ if(st.walk&&(st.wn??1)>0)drawWalker(st,t,a*(st.wn??1));if(st.walkE&&st.walkE.al>0)drawWalker({...st,...st.walkE},t,a*st.walkE.al);if(st.walkE2&&st.walkE2.al>0)drawWalker({...st,...st.walkE2},t,a*st.walkE2.al);
  // 이름표
  T('따뜻한 해수층(혼합층)',sxp(.24),SEA-level(.24,st)+Math.min(thick(.24,st)*.5+5,thick(.24,st)-6),{size:13,w:800,c:'#1b1200',a:a*.9});
  // 점선 = 수온 약층이 시작되는 깊이 (수온 약층은 두께가 있는 층이지만, 이 단원에서는 시작 깊이만 나타냄)
@@ -429,20 +429,20 @@ function drawWalker(st,t,a){const xw=sxp(st.rx??.15),xe=sxp(st.dx??.86),s=Math.s
   ctx.save();ctx.setLineDash([8,7]);ctx.lineDashOffset=(t*30)%15;ctx.globalAlpha=A;ctx.strokeStyle='#ff9b7a';ctx.lineWidth=3;[-34,40].forEach(dx=>{ctx.beginPath();ctx.moveTo(xw+dx,SEA-14);ctx.lineTo(xw+dx,yt+80);ctx.stroke()});ctx.restore();
   [-34,40].forEach(dx=>arrow(xw+dx,yt+92,xw+dx,yt+74,'#ff9b7a',3,10,A));
   T('상승 기류',xw+48*s,yb-70,{c:'#ff9b7a',size:14,w:800,halo:1,a:A,al:s>0?'left':'right'});
-  pill('저기압',xw+3,SEA-12,'#ff9b7a',A,14);T(st.rT||'구름이 많고 비가 많이 내림',xw+4,yt-8,{c:'#e8ecff',size:12.5,w:800,halo:1,a:A})}
+  pill('저기압',xw+3,SEA-12,'#ff9b7a',A,14);T(st.rT??'구름이 많고 비가 많이 내림',xw+4,yt-8,{c:'#e8ecff',size:12.5,w:800,halo:1,a:A})}
  // 동쪽: 하강 기류, 고기압, 맑음
  if(st.ea>0){const A=a*st.ea;sun(xe-6,yt+6,A);
   ctx.save();ctx.setLineDash([8,7]);ctx.lineDashOffset=-(t*30)%15;ctx.globalAlpha=A;ctx.strokeStyle='#e6e9f2';ctx.lineWidth=3;[-40,34].forEach(dx=>{ctx.beginPath();ctx.moveTo(xe+dx,yt+40);ctx.lineTo(xe+dx,SEA-40);ctx.stroke()});ctx.restore();
   [-40,34].forEach(dx=>arrow(xe+dx,SEA-52,xe+dx,SEA-34,'#e6e9f2',3,10,A));
   T('하강 기류',xe-50*s,yb-70,{c:'#e6e9f2',size:14,w:800,halo:1,a:A,al:s>0?'right':'left'});
-  pill('고기압',xe-3,SEA-12,'#e6e9f2',A,14);T(st.dT||'맑고 건조함',xe-6,yt-12,{c:'#e8ecff',size:12.5,w:800,halo:1,a:A})}
+  pill('고기압',xe-3,SEA-12,'#e6e9f2',A,14);T(st.dT??'맑고 건조함',xe-6,yt-12,{c:'#e8ecff',size:12.5,w:800,halo:1,a:A})}
  // 순환 전체
  if(st.loop>0){const A=a*st.loop;ctx.save();ctx.globalAlpha=A*.55;ctx.strokeStyle='#ffffff';ctx.lineWidth=2;ctx.setLineDash([2,6]);ctx.stroke(path);ctx.restore();
   PW.forEach(p=>{const [x,y,dx,dy]=at(p.u),n=Math.hypot(dx,dy)||1;ctx.globalAlpha=A;ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(x+dx/n*6,y+dy/n*6);ctx.lineTo(x-dx/n*3-dy/n*4,y-dy/n*3+dx/n*4);ctx.lineTo(x-dx/n*3+dy/n*4,y-dy/n*3-dx/n*4);ctx.closePath();ctx.fill()});
   ctx.globalAlpha=1;
-  T(st.topT||'높은 곳: 서 → 동으로 이동',mx,yt-10,{size:13.5,w:800,halo:1,a:A});
-  T(st.botT||'지표 부근: 동 → 서로 부는 무역풍',mx,yb-12,{size:13.5,w:800,halo:1,a:A});
-  pill(st.loopT||'워커 순환',mx,yt+64,'#ffd76b',A,16)}
+  T(st.topT??'높은 곳: 서 → 동으로 이동',mx,yt-10,{size:13.5,w:800,halo:1,a:A});
+  T(st.botT??'지표 부근: 동 → 서로 부는 무역풍',mx,yb-12,{size:13.5,w:800,halo:1,a:A});
+  if((st.loopT??'워커 순환'))pill(st.loopT??'워커 순환',st.loopX!=null?sxp(st.loopX):mx,yt+(st.loopDY??64),'#ffd76b',A,16)}
  // 기후 꼬리표(양쪽 땅 위): climW·climE
  if(st.clim>0){const LT=SEA-56,A=a*st.clim;ctx.font=font(12.5,800);[[st.climW,SR.x+4,'left','#7fd17f'],[st.climE,SR.x+SR.w-4,'right','#ffc36b']].forEach(([s2,x,al,c])=>{if(!s2)return;const w=ctx.measureText(s2).width+18;pill(s2,al=='left'?x+w/2:x-w/2,LT-30,c,A,12.5)})}
  ctx.globalAlpha=a}
@@ -704,7 +704,9 @@ const ESCENES=[
 function ATM(g){const e=seg(g,4,8),wn=1-seg(g,3.5,5.5),we=seg(g,7.5,10);
  const sw=Math.min(seg(g,4,5),1-seg(g,8,9));   // 순환이 바뀌는 동안: 약해진 무역풍과 동쪽으로 흐르는 해수
  return {...NORMAL,W:.3*sw,showW:sw,V:.8*sw,E:e,A:e,U:1-.75*e,wa:1,ea:1,loop:1,wn,climW:wn>.5?'비가 많고 습함':'가뭄·산불',climE:wn>.5?'비가 적고 건조함':'폭우·홍수',clim:Math.max(wn,seg(g,12,13.5)),
-  walkE:{al:we,rx:.6,dx:.1,wa:1,ea:1,loop:1,rT:'구름이 많고 비가 많이 내림',dT:'맑고 건조함',topT:'높은 곳: 동 → 서로 이동',botT:'지표 부근: 무역풍이 약해짐',loopT:'엘니뇨 때의 대기 순환'}}}
+  // 엘니뇨 때: 중앙 태평양(약 150°W)에서 상승해 위에서 서쪽(140°E)·동쪽(100°W)으로 갈라져 하강하는 두 순환
+  walkE:{al:we,rx:.53,dx:.11,wa:1,ea:1,loop:1,rT:'구름이 많고 비가 많이 내림',dT:'맑고 건조함',topT:'높은 곳: 동 → 서',botT:'지표 부근: 서 → 동',loopT:'엘니뇨 때의 대기 순환',loopX:.32,loopDY:30},
+  walkE2:{al:we,rx:.53,dx:.86,wa:0,ea:1,loop:1,dT:'맑고 건조함',topT:'높은 곳: 서 → 동',botT:'지표 부근: 동 → 서',loopT:''}}}
 ESCENES.push({draw:sceneAnom,steps:[{t:'평년의 수온',x:'먼저 <em>평년값</em>(1991~2020년의 10월 평균) 해수면 온도 지도를 봅니다.',d:22,
  xs:[[3,'2026년 10월의 수온','2026년 10월에 실제로 관측한 해수면 온도입니다. 평년과 비교해 동태평양 적도 부근이 더 따뜻합니다.'],
      [6.5,'수온 편차의 계산','<em>수온 편차 = 그때의 수온 − 평년 수온</em>입니다. 편차가 (+)이면 평년보다 따뜻하고, (−)이면 평년보다 차갑습니다.'],
