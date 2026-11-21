@@ -203,7 +203,7 @@ section[hidden]{display:none}
  </div></div>
 </section>
 <section id="p2" role="tabpanel" aria-labelledby="tab2" hidden>
- <div class="note"><span class="tag">생각해 보기</span><p>라니냐가 일어나면 페루 연안의 어획량은 어떻게 될까요?</p><button type="button" class="open-think" data-ov="ov2">답 보기</button><button type="button" class="story" id="openStory2">엘니뇨 이름에 숨은 이야기 ›</button></div>
+ <div class="note"><span class="tag">생각해 보기</span><p>라니냐가 일어나면 페루 연안의 어획량은 어떻게 될까요?</p><button type="button" class="open-think" data-ov="ov2">답 보기</button></div>
  <div class="note memo"><span class="tag mem">기억하기</span><p>라니냐: 무역풍 강화 → 따뜻한 해수가 서쪽에 더 쌓임, 용승 강화 → 동태평양 표층 수온이 평년보다 낮음</p></div>
  <div class="ov" id="ov2" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 라니냐가 일어나면 페루 연안의 어획량은 어떻게 될까요?">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>라니냐가 일어나면 페루 연안의 어획량은 어떻게 될까요?</b><button type="button" class="x" aria-label="닫기">닫기 ✕</button></div>
@@ -896,7 +896,7 @@ function frame(nowMs){const now=nowMs/1000,dt=Math.min(.1,now-last);last=now;fit
 // 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
 document.querySelectorAll('.open-think').forEach(btn=>{const ov=$(btn.dataset.ov),cl=ov.querySelector('.x');const close=()=>{ov.hidden=true;btn.focus()};
  btn.onclick=()=>{ov.hidden=false;cl.focus()};cl.onclick=close;ov.addEventListener('click',e=>{if(e.target===ov)close()});ov.addEventListener('keydown',e=>{if(e.key=='Escape')close()})});
-{const st=$('story');$('openStory').onclick=$('openStory2').onclick=()=>st.showModal();$('closeStory').onclick=()=>st.close();st.addEventListener('click',e=>{if(e.target==st)st.close()})}
+{const st=$('story');$('openStory').onclick=()=>st.showModal();$('closeStory').onclick=()=>st.close();st.addEventListener('click',e=>{if(e.target==st)st.close()})}
 openTab(0);requestAnimationFrame(frame);
 </script>
 <script src="./copyright.js"></script>
