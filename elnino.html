@@ -852,7 +852,7 @@ const LSCENES=[
 
 // ================= 엘니뇨 vs. 라니냐 (답 없이 비교 자료만) =================
 // 수온 편차: 위 = 엘니뇨(2026년 10월), 아래 = 라니냐(2010년 10월). 같은 색 막대(±3 °C)
-const CM1={x:215,y:16,w:510,h:180},CM2={x:215,y:212,w:510,h:180};
+const CM1={x:192,y:6,w:538,h:190},CM2={x:192,y:204,w:538,h:190};   // 가로세로 비율 = 지도 범위(170° × 60°)
 function sceneCmpA(st,t){
  [[CM1,'E','엘니뇨 시기','#ff8a7a'],[CM2,'L','라니냐 시기','#8fc8ff']].forEach(([R,K,nm,c])=>{const cs=CASES[K],v=gridMap(R,k=>cs.A[k],dlut,1);
   [[150,'150°E'],[180,'180°'],[210,'150°W'],[240,'120°W'],[270,'90°W']].forEach(([lo,s2])=>T(s2,v.X(lo),R.y+R.h-6,{size:11,w:700,c:'#ffffff',halo:1}));
@@ -900,7 +900,7 @@ function cmpPanel(R,nm,c,st,t,last){field(st);const x0=R.x+34,x1=R.x+R.w-34,X=xf
 function sceneCmpW(st,t){setSR(WR,.6);CMPST.forEach(([nm,c,s2],i)=>cmpPanel({x:14,y:8+i*128,w:912,h:122},nm,c,s2,t));
  T('개념도 (해수면 높이·해수층 두께는 과장, 세 단면은 같은 크기)',W-14,H-1,{size:10.5,al:'right',c:'#8d96b3',w:500,bl:'bottom'})}
 const CSCENES=[
- {draw:sceneCmpA,steps:[{t:'수온 편차 비교',x:'위는 <em>엘니뇨 시기</em>(2026년 10월), 아래는 <em>라니냐 시기</em>(2010년 10월)의 해수면 온도 편차(그때의 수온 − 평년 수온)입니다. 두 지도는 같은 색 막대를 씁니다.',d:1,s:k=>({})}]},
+ {draw:sceneCmpA,steps:[{t:'수온 편차 비교',x:'위는 <em>엘니뇨 시기</em>(2026년 10월), 아래는 <em>라니냐 시기</em>(2010년 10월)의 해수면 온도 편차(그때의 수온 − 평년 수온)입니다.',d:1,s:k=>({})}]},
  {draw:sceneCmpW,steps:[{t:'대기 순환 비교',x:'<em>평상시</em>, <em>엘니뇨 시기</em>, <em>라니냐 시기</em>의 적도 단면을 같은 크기로 나란히 놓았습니다. 같은 자리끼리 비교해 보세요.',d:1,s:k=>({})}]}];
 
 let tab=0,sub=0,si=0,ph=0,playing=true,last=performance.now()/1000,quizOK=false,quizT=0;
