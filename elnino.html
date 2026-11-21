@@ -34,7 +34,7 @@ main{max-width:max(560px,min(960px,calc((100dvh - 380px) * 2.35 + 28px)))}
 /* 그림판 */
 canvas{width:100%;height:auto;aspect-ratio:940/400;display:block;border-radius:14px;background:#0b1026;box-shadow:0 0 0 1px var(--frame)}
 /* 단계 설명 */
-.stepbox{margin-top:8px;background:var(--card);border-radius:14px;padding:8px 14px;font-size:.92rem;line-height:1.55;min-height:calc(3 * 1.55em + 16px)}
+.stepbox{margin-top:8px;background:var(--card);border-radius:14px;padding:8px 14px;font-size:.92rem;line-height:1.55;min-height:calc(2 * 1.55em + 16px)}
 .stepbox b{color:var(--acc);flex:none;white-space:nowrap;margin-right:.45em}
 .stepbox.sx{display:flex;align-items:baseline}
 .stepbox.sx>span{flex:1;min-width:0}
@@ -91,10 +91,12 @@ canvas{width:100%;height:auto;aspect-ratio:940/400;display:block;border-radius:1
  .titlebar{margin-bottom:6px}.titlebar h1{font-size:1.2rem}.back{padding:5px 12px;font-size:.85rem}
  .tabs{margin-bottom:6px}.tabs button{padding:6px 8px;font-size:.92rem}
  .subtabs{margin-bottom:6px}.subtabs button{padding:3px 10px;font-size:.88rem}
- .stepbox{margin-top:6px;padding:5px 12px;font-size:.88rem;line-height:1.5;min-height:calc(3 * 1.5em + 10px)}
+ .stepbox{margin-top:6px;padding:5px 12px;font-size:.88rem;line-height:1.5;min-height:calc(2 * 1.5em + 10px)}
  .ctl{margin-top:6px;padding:4px 10px;min-height:40px}.pb{padding:4px 12px;font-size:.86rem}
  .note,.quiz{margin-top:6px}.note+.note{margin-top:4px}
 }
+/* 설명은 넓은 화면에서 모두 2줄 이내 → 2줄 높이만 확보. 폭이 좁은 화면(세로 태블릿 등)은 3줄이 되는 설명이 있어 3줄 높이 확보(글이 바뀔 때 아래가 움직이지 않게) */
+@media (max-width:900px){.stepbox{min-height:calc(3 * 1.55em + 16px)}}
 section[hidden]{display:none}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
@@ -637,13 +639,13 @@ const SCENES=[
    xs:[[3,'적도 부근의 태평양','적도를 따라 <em>서태평양</em>(왼쪽)과 <em>동태평양</em>(오른쪽)의 색을 비교해 보세요. 빨간색일수록 수온이 높습니다. 아래 생각해 보기에 답해 보세요.']],
    s:k=>{const g=k*5;return {...NORMAL,zoom:seg(g,2.2,4.4),box:seg(g,.8,2)}}}]},
  {draw:sceneEq,steps:[ // 태평양 수온 분포의 원인: 단계를 나누지 않은 하나의 흐름(진행 막대를 눌러·끌어 원하는 때로 이동)
-  {t:'무역풍이 불면',x:'무역풍이 없다면 수온은 위도에 따라서만 달라집니다(생각 실험). 무역풍이 불면 따뜻한 표층 해수가 <em>서쪽으로 이동</em>하면서 <em>해수면이 기울고</em> 수온 약층이 시작되는 깊이가 바뀌며, 동쪽에서는 <em>용승</em>이 일어나고 이동하는 해수는 <em>햇빛에 데워집니다</em>. 이 변화들은 함께 일어납니다.',d:20,
-   xs:[[14.5,'평상시의 모습','그 결과 서태평양은 <em>따뜻한 해수층이 두껍고 수온과 해수면이 높으며</em>, 동태평양은 용승으로 <em>따뜻한 해수층이 얇고 수온이 낮은</em> 평상시의 모습이 됩니다. 지도는 실제 해수면 온도의 평년값과 같아졌습니다.']],   // 14.5초부터 설명이 바뀜
+  {t:'무역풍이 불면',x:'무역풍이 없다면 수온은 위도에 따라서만 달라집니다. 무역풍이 불면 따뜻한 표층 해수가 <em>서쪽으로 이동</em>해 <em>해수면이 기울고</em>, 동쪽에서는 <em>용승</em>이 일어나며, 이동하는 해수는 <em>햇빛에 데워집니다</em>(모두 함께 일어남).',d:20,
+   xs:[[14.5,'평상시의 모습','그 결과 서태평양은 <em>따뜻한 해수층이 두껍고 수온과 해수면이 높으며</em>, 동태평양은 용승으로 <em>따뜻한 해수층이 얇고 수온이 낮은</em> 평상시의 모습이 됩니다.']],   // 14.5초부터 설명이 바뀜
    s:k=>CAUSE(k*26)}   // 26초 분량을 20초에 재생(정리 이름표가 나온 뒤 약 3초 더 보여 주고 끝)
  ]},
  {draw:sceneWalk,steps:[ // 대기의 순환: 단계 없이 하나의 흐름(16초, 설명은 때에 따라 바뀜)
   {t:'서태평양의 상승 기류',x:'수온이 높은 서태평양에서는 바다가 공기를 데워 <em>상승 기류</em>가 생기고 <em>저기압</em>이 됩니다. 올라간 공기 속 수증기가 응결하여 <em>구름이 많고 비가 많이 내립니다</em>.',d:16,
-   xs:[[4.5,'동태평양의 하강 기류','수온이 낮은 동태평양에서는 공기가 차가워져 <em>하강 기류</em>가 생기고 <em>고기압</em>이 됩니다. 구름이 잘 생기지 않아 <em>맑고 건조합니다</em>.'],[9,'워커 순환','지표 부근에서는 고기압인 동쪽에서 저기압인 서쪽으로 <em>무역풍</em>이 불고, 높은 곳에서는 공기가 서쪽에서 동쪽으로 이동합니다. 이처럼 적도 부근 태평양에서 동서 방향으로 일어나는 대기 순환을 <em>워커 순환</em>이라고 합니다.']],
+   xs:[[4.5,'동태평양의 하강 기류','수온이 낮은 동태평양에서는 공기가 차가워져 <em>하강 기류</em>가 생기고 <em>고기압</em>이 됩니다. 구름이 잘 생기지 않아 <em>맑고 건조합니다</em>.'],[9,'워커 순환','지표 부근에서는 동쪽(고기압)에서 서쪽(저기압)으로 <em>무역풍</em>이 불고, 높은 곳에서는 공기가 서쪽에서 동쪽으로 이동합니다. 이 동서 방향의 대기 순환을 <em>워커 순환</em>이라고 합니다.']],
    s:k=>{const g=k*16;return {...NORMAL,W:0,wa:seg(g,0,3),ea:seg(g,4.5,7.5),loop:seg(g,9,12)}}}]},
  {draw:scenePeru,steps:[ // 남아메리카 연안의 용승
   {t:'1단계(표층 해수의 이동)',x:'페루 연안에서는 해안을 따라 <em>남동 무역풍</em>이 붑니다. 이 바람의 영향으로 해안 부근의 <em>표층 해수가 먼바다 쪽으로 이동</em>합니다.',d:6,
@@ -662,7 +664,7 @@ const ELNINO={draw:sceneEq,steps:[
   s:k=>({...NORMAL,C:1,W:.3,V:-.2+1.1*seg(k,0,.2)-.7*seg(k,.75,1),E:ease(k),A:.35*seg(k,.2,1)})},
  {t:'3단계(용승의 약화)',x:'동태평양에서 <em>용승이 약해져</em> 찬 해수가 덜 올라오므로, <em>동태평양 적도 부근의 표층 수온이 평년보다 높아집니다</em>.',d:7,
   s:k=>({...NORMAL,C:1,W:.3,V:.2,E:1,U:1-.75*ease(k),A:.35+.65*seg(k,.1,1)})},
- {t:'4단계(엘니뇨와 그 영향)',x:'이처럼 동태평양 적도 부근의 표층 수온이 평년보다 높은 상태가 지속되는 현상을 <em>엘니뇨</em>라고 합니다. 비가 많이 내리는 곳이 동쪽으로 옮겨 가 <em>동태평양은 홍수, 서태평양은 가뭄</em>이 생기기 쉽고, 영양염류가 줄어 동태평양의 <em>어획량이 줄어듭니다</em>.',d:7,
+ {t:'4단계(엘니뇨와 그 영향)',x:'동태평양 적도 부근의 표층 수온이 평년보다 높은 상태가 지속되는 현상이 <em>엘니뇨</em>입니다. 비가 많이 오는 곳이 동쪽으로 옮겨 <em>동태평양은 홍수, 서태평양은 가뭄</em>이 생기기 쉽고 <em>어획량이 줄어듭니다</em>.',d:7,
   s:k=>({...NORMAL,C:1,W:.3,V:.2,E:1,U:.25,A:1,cx:seg(k,0,.55),lab:seg(k,.35,.85)})}]};
 
 let tab=0,sub=0,si=0,ph=0,playing=true,last=performance.now()/1000,quizOK=false,quizT=0;
