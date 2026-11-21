@@ -136,7 +136,7 @@ section[hidden]{display:none}
 </div>
 <div class="subtabs" id="subs3" role="tablist" aria-label="엘니뇨 vs. 라니냐" hidden>
  <button type="button" role="tab" class="on" aria-selected="true">수온 편차</button>
- <button type="button" role="tab" aria-selected="false">대기 대순환</button>
+ <button type="button" role="tab" aria-selected="false">대기 순환</button>
 </div>
 <div class="subtabs" id="subs" role="tablist" aria-label="평상시">
  <button type="button" role="tab" class="on" aria-selected="true">태평양의 수온 분포</button>
@@ -220,8 +220,8 @@ section[hidden]{display:none}
 </section>
 <!-- 엘니뇨 vs. 라니냐: 답 없이 자료만 보고 스스로 비교하는 활동 -->
 <section id="p3" role="tabpanel" aria-labelledby="tab3" hidden>
- <div id="n30"><div class="note"><span class="tag self">스스로 해보기</span><p style="flex:1 1 0;min-width:12em">엘니뇨와 라니냐 시기에 중앙 태평양과 동태평양의 수온 편차는 어떻게 나타나는지 관찰해 보세요.</p></div></div>
- <div id="n31" hidden><div class="note"><span class="tag self">스스로 해보기</span><p style="flex:1 1 0;min-width:12em">평상시와 비교하여 엘니뇨와 라니냐 시기에 서태평양과 동태평양의 기압 변화, 해수면 높이 변화, 따뜻한 해수층의 두께 변화, 구름량의 변화, 강수량의 변화를 생각해 보세요.</p></div></div>
+ <div id="n30"><div class="note"><span class="tag self">스스로 해보기</span><p style="flex:1 1 0;min-width:12em">엘니뇨와 라니냐 시기에 적도 부근의 중앙 태평양(180° 부근)과 동태평양에서 수온 편차가 어떻게 나타나는지 비교해 보세요.</p></div></div>
+ <div id="n31" hidden><div class="note"><span class="tag self">스스로 해보기</span><p style="flex:1 1 0;min-width:12em">평상시와 비교하여 엘니뇨와 라니냐 시기에 서태평양과 동태평양의 기압, 해수면 높이, 따뜻한 해수층의 두께, 구름의 양, 강수량이 어떻게 달라지는지 생각해 보세요.</p></div></div>
 </section>
 
 <script>
@@ -865,7 +865,7 @@ function sceneCmpA(st,t){
  [-3,-2,-1,0,1,2,3].forEach(x=>T((x>0?'+':x<0?'−':'')+Math.abs(x),bx+bw+8,by+(DMAX-x)/(2*DMAX)*bh+4,{size:11.5,al:'left',c:'#e8ecff'}));
  T('평년보다 따뜻함',bx+bw/2,by-8,{size:11.5,c:'#ff9b8a',w:700});T('평년보다 차가움',bx+bw/2,by+bh+18,{size:11.5,c:'#8fc8ff',w:700});
  T('자료: NOAA ERSST v5',14,H-18,{size:10.5,al:'left',c:'#8d96b3',w:500,bl:'bottom'});T('평년값 = 1991~2020년의 10월 평균',14,H-3,{size:10.5,al:'left',c:'#8d96b3',w:500,bl:'bottom'})}
-// 대기 대순환: 평상시 · 엘니뇨 · 라니냐의 마지막 모습을 같은 크기의 작은 단면 3줄로(비교할 것만: 기압, 해수면, 해수층, 구름·비, 순환)
+// 대기 순환: 평상시 · 엘니뇨 · 라니냐의 마지막 모습을 같은 크기의 작은 단면 3줄로(비교할 것만: 기압, 해수면, 해수층, 구름·비, 순환)
 const CMPST=[['평상시','#cfe0ff',{...NORMAL,oct:1}],['엘니뇨 시기','#ff8a7a',{...NORMAL,oct:1,E:1,A:1,U:.25}],['라니냐 시기','#8fc8ff',{...NORMAL,oct:1,nina:1,L:1,A:1,U:1.4}]];
 function roundPath(P,r){const o=[P[0]];for(let i=1;i<P.length-1;i++){const a=P[i-1],b=P[i],c=P[i+1],d1=Math.hypot(b[0]-a[0],b[1]-a[1]),d2=Math.hypot(c[0]-b[0],c[1]-b[1]),rr2=Math.min(r,d1/2,d2/2);
   const p1=[b[0]+(a[0]-b[0])/d1*rr2,b[1]+(a[1]-b[1])/d1*rr2],p2=[b[0]+(c[0]-b[0])/d2*rr2,b[1]+(c[1]-b[1])/d2*rr2];for(let k=0;k<=8;k++){const u=k/8;o.push(qb(p1,b,p2,u))}}o.push(P[P.length-1]);return o}
@@ -901,7 +901,7 @@ function sceneCmpW(st,t){setSR(WR,.6);CMPST.forEach(([nm,c,s2],i)=>cmpPanel({x:1
  T('개념도 (해수면 높이·해수층 두께는 과장, 세 단면은 같은 크기)',W-14,H-1,{size:10.5,al:'right',c:'#8d96b3',w:500,bl:'bottom'})}
 const CSCENES=[
  {draw:sceneCmpA,steps:[{t:'수온 편차 비교',x:'위는 <em>엘니뇨 시기</em>(2026년 10월), 아래는 <em>라니냐 시기</em>(2010년 10월)의 해수면 온도 편차(그때의 수온 − 평년 수온)입니다. 두 지도는 같은 색 막대를 씁니다.',d:1,s:k=>({})}]},
- {draw:sceneCmpW,steps:[{t:'대기 대순환 비교',x:'<em>평상시</em>, <em>엘니뇨 시기</em>, <em>라니냐 시기</em>의 적도 단면을 같은 크기로 나란히 놓았습니다. 같은 자리끼리 비교해 보세요.',d:1,s:k=>({})}]}];
+ {draw:sceneCmpW,steps:[{t:'대기 순환 비교',x:'<em>평상시</em>, <em>엘니뇨 시기</em>, <em>라니냐 시기</em>의 적도 단면을 같은 크기로 나란히 놓았습니다. 같은 자리끼리 비교해 보세요.',d:1,s:k=>({})}]}];
 
 let tab=0,sub=0,si=0,ph=0,playing=true,last=performance.now()/1000,quizOK=false,quizT=0;
 const $=id=>document.getElementById(id);
