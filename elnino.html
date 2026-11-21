@@ -330,9 +330,10 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
  // 바람이 일으키는 흐름은 해수면에서 가장 빠르고 깊을수록 약해지므로, 해수면 가까이에만 그리고 깊을수록 짧고 흐리게
  if(Math.abs(st.V)>.05)PS.forEach(p=>{const dep=Math.min(p.d*30,thick(p.x,st)-6);if(dep<0)return;const y=SEA-level(p.x,st)+4+dep,x=sxp(p.x),dir=Math.sign(st.V),L=1-p.d*.6;
   const edge=dir<0?c01(p.x*8)*c01((1-p.x)*8):c01(p.x*8)*c01((1-p.x)*8);
-  ctx.save();ctx.shadowColor='rgba(0,0,0,.45)';ctx.shadowBlur=2;ctx.globalAlpha=a*Math.min(1,Math.abs(st.V)*1.4)*(1-p.d*.55)*edge;ctx.strokeStyle='#ffffff';ctx.lineWidth=1.7*L+.4;
-  ctx.beginPath();ctx.moveTo(x-dir*9*L,y);ctx.lineTo(x+dir*3,y);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(x+dir*6,y);ctx.lineTo(x+dir*1,y-3);ctx.lineTo(x+dir*1,y+3);ctx.closePath();ctx.fillStyle='#fff';ctx.fill();ctx.restore()});
+  ctx.save();ctx.shadowColor='rgba(0,0,0,.45)';ctx.shadowBlur=2;ctx.globalAlpha=a*Math.min(1,Math.abs(st.V)*1.4)*(1-p.d*.55)*edge;const pc=st.tint?rgb(lut(eqT(slon(p.x)),22,30)):'#ffffff';ctx.strokeStyle=pc;ctx.lineWidth=1.7*L+.4+(st.tint?.8:0);
+  const shaft=()=>{ctx.beginPath();ctx.moveTo(x-dir*9*L,y);ctx.lineTo(x+dir*3,y)},head=()=>{ctx.beginPath();ctx.moveTo(x+dir*7,y);ctx.lineTo(x+dir*0,y-4);ctx.lineTo(x+dir*0,y+4);ctx.closePath()};
+  if(st.tint){ctx.shadowBlur=0;ctx.strokeStyle='rgba(12,16,40,.9)';ctx.lineWidth=1.7*L+3.4;ctx.lineCap='round';shaft();ctx.stroke();ctx.lineWidth=2.4;ctx.lineJoin='round';head();ctx.stroke();ctx.strokeStyle=pc;ctx.lineWidth=1.7*L+1.2}   // 물 색과 같은 색이므로 어두운 테두리로 구분
+  shaft();ctx.stroke();head();ctx.fillStyle=pc;ctx.fill();ctx.restore()});
  ctx.globalAlpha=a;
  // 용승(동쪽 끝)
  if(st.U>0.02){const ua=st.U;for(let m=0;m<3;m++){const bx=sxp(.83+m*.055),y0=BOT-22,y1=SEA-level(.9,st)+8;
@@ -348,9 +349,15 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
  T('인도네시아',SR.x+6,SEA-44,{size:11.5,c:'#e9dcc4',al:'left'});T('남아메리카',SR.x+SR.w-6,SEA-98,{size:11.5,c:'#e9dcc4',al:'right'});
  // 해 · 가열
  if(st.sunA!==0){const sunx=sxp(.38),suny=SR.y+26;sun(sunx,suny,a);
-  if(st.heat>0){const ha=st.heat;for(let q=0;q<4;q++){const xf=.12+q*.2,x=sxp(xf),y2=SEA-level(xf,st)-4;ctx.setLineDash([4,5]);ctx.lineDashOffset=-(t*22)%9;
-    ctx.globalAlpha=a*ha*.85;ctx.strokeStyle='#ffd34d';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(sunx+(x-sunx)*.18,suny+16);ctx.lineTo(x,y2);ctx.stroke()}
-   ctx.setLineDash([]);T('햇빛을 받아 데워짐',sxp(.62),SR.y+31,{c:'#ffd34d',size:13,w:800,halo:1,a:a*ha})}}
+  // ② 햇빛: 흐름이 지나가는 해수면 전체에 고르게 내리쬠
+  if(st.heat>0){const ha=st.heat;ctx.setLineDash([4,5]);ctx.lineDashOffset=-(t*22)%9;ctx.globalAlpha=a*ha*.7;ctx.strokeStyle='#ffd34d';ctx.lineWidth=1.4;
+   for(let q=0;q<10;q++){const xf=.05+q*.1,x=sxp(xf),y2=SEA-level(xf,st)-4,dx=x-sunx,dy=y2-suny,n=Math.hypot(dx,dy);ctx.beginPath();ctx.moveTo(sunx+dx/n*24,suny+dy/n*24);ctx.lineTo(x,y2);ctx.stroke()}
+   ctx.setLineDash([]);ctx.globalAlpha=1;
+   // ③ 동 → 서로 향하는 긴 화살표(색: 차가움 → 따뜻함)와 이름표
+   const ay=SEA-62,ax1=sxp(.74),ax2=sxp(.08),g=ctx.createLinearGradient(ax1,0,ax2,0);g.addColorStop(0,rgb(lut(24.5,22,30)));g.addColorStop(1,rgb(lut(29.8,22,30)));
+   ctx.save();ctx.globalAlpha=a*ha;ctx.shadowColor='rgba(0,0,0,.55)';ctx.shadowBlur=3;ctx.strokeStyle=g;ctx.lineWidth=5;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(ax1,ay);ctx.lineTo(ax2+10,ay);ctx.stroke();
+   ctx.fillStyle=rgb(lut(29.8,22,30));ctx.beginPath();ctx.moveTo(ax2,ay);ctx.lineTo(ax2+14,ay-8);ctx.lineTo(ax2+14,ay+8);ctx.closePath();ctx.fill();ctx.restore();
+   T('서쪽으로 흐르며 햇빛을 받아 데워짐',sxp(.55),ay-12,{c:'#ffd34d',size:13,w:800,halo:1,a:a*ha})}}
  ctx.globalAlpha=a;
  // 구름과 비 (C: 나타난 정도, cx: 0 서쪽 → 1 동쪽으로 옮겨 감) — 엘니뇨 탭
  if(st.C>0){const cxp=sxp(lerp(.15,.58,st.cx)),cy=SR.y+60;cloud(cxp,cy,a*st.C);rain(cxp,cy+22,SEA-8,t,a*st.C);T('비가 많이 내림',cxp+6,cy-30,{c:'#e8ecff',size:12.5,w:800,halo:1,a:a*st.C})}
@@ -601,7 +608,7 @@ const SCENES=[
   {t:'2단계(찬 해수의 용승)',x:'표층 해수가 빠져나간 동태평양에서는 깊은 곳의 <em>찬 해수가 올라옵니다(용승)</em>. 그래서 동태평양은 <em>따뜻한 해수층이 얇고 수온이 낮습니다</em>.',d:9,
    s:k=>({...NORMAL,U:ease(k),U0:seg(k,.15,1),mU:seg(k,0,.3),Hh:0})},
   {t:'3단계(햇빛에 의한 가열)',x:'서쪽으로 이동하는 동안 해수는 <em>햇빛을 받아 계속 데워지므로</em>, 따뜻한 해수가 쌓이는 <em>서태평양의 수온이 가장 높아집니다</em>.',d:7,
-   s:k=>({...NORMAL,Hh:seg(k,.1,1),heat:Math.min(seg(k,0,.15),1-seg(k,.85,1))})},
+   s:k=>({...NORMAL,Hh:seg(k,.1,1),heat:Math.min(seg(k,0,.15),1-seg(k,.85,1)),tint:1})},
   {t:'4단계(평상시의 모습)',x:'서태평양은 <em>따뜻한 해수층이 두껍고 수온과 해수면이 높으며</em>, 동태평양은 <em>용승으로 따뜻한 해수층이 얇고 수온이 낮습니다</em>. 실제로는 1~3단계가 동시에 함께 일어나며, 지도는 실제 해수면 온도의 평년값과 같아졌습니다.',d:6,
    s:k=>({...NORMAL,lab:seg(k,.1,.6)})}]},
  {draw:sceneWalk,steps:[ // 대기의 순환
