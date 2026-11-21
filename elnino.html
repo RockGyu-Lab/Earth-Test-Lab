@@ -250,9 +250,10 @@ function viewFor(box,R,z){const g=GR;
 //  U0: 동쪽 찬 해수(용승)가 나타난 정도, Hh: 서쪽이 햇빛에 데워진 정도 (0이면 무역풍이 없다고 가정한 고른 수온, 1이면 실제 연평균)
 //  A: 엘니뇨 편차를 더한 정도 (서쪽에서 동쪽으로 차례로 퍼짐)
 const TNOW=new Float32Array(NR*NC);
-function field(st){for(let i=0;i<NR;i++)for(let j=0;j<NC;j++){const k=i*NC+j,lo=LONc(j);let T=TANN[k];
+// oct: 엘니뇨 탭은 같은 달끼리 비교(시작 = 1991~2020년 10월 평년값, 엘니뇨 = 2026년 10월 실제 = 10월 평년값 + 2026년 10월 편차)
+function field(st){const B=st.oct?C10:TANN,AN=st.oct?A10:TA97;for(let i=0;i<NR;i++)for(let j=0;j<NC;j++){const k=i*NC+j,lo=LONc(j);let T=B[k];
   const w=PAC[k];if(w>0){const D=T-TZ[i];T=T-w*D*(1-(D<0?st.U0:st.Hh))}
-  if(st.A>0){const xf=c01((lo-150)/120);T+=TA97[k]*c01(st.A*1.5-.5*xf)}
+  if(st.A>0){const xf=c01((lo-150)/120);T+=AN[k]*c01(st.A*1.5-.5*xf)}
   TNOW[k]=T}}
 const oc=document.createElement('canvas');oc.width=NC;oc.height=NR;const octx=oc.getContext('2d');const img=octx.createImageData(NC,NR);
 function paintField(lo,hi){for(let i=0;i<NR;i++)for(let c=0;c<NC;c++){const j=(15+c)%NC,col=lut(TNOW[i*NC+j],lo,hi),p=(i*NC+c)*4;img.data[p]=col[0];img.data[p+1]=col[1];img.data[p+2]=col[2];img.data[p+3]=255}octx.putImageData(img,0,0)}
@@ -632,13 +633,13 @@ function sceneEq(st,t){setSR(SRE);const v=drawMap(st,{box:EQB,R:ZR,z:1,lo:22,hi:
  colorbar({x:ZR.x+40,y:ZR.y+ZR.h+12,w:ZR.w-80,h:11},22,30,2);
  // 범례
  const L=LG;ctx.fillStyle='rgba(255,255,255,.05)';ctx.strokeStyle='rgba(255,255,255,.16)';ctx.lineWidth=1;rr(L.x,L.y,L.w,L.h,10);ctx.fill();ctx.stroke();
- const nm=st.A>.5?['지도: 엘니뇨 때의 해수면 온도','#ff8a7a']:st.hyp>.5?['지도: 무역풍이 없다고 가정한 해수면 온도','#ffd76b']:(st.U0<.999||st.Hh<.999)?['지도: 무역풍의 영향으로 바뀌어 가는 해수면 온도','#ffd76b']:['지도: 해수면 온도 평년값(1991~2020년 평균)','#cfe0ff'];
+ const nm=st.A>.5?[st.oct?'지도: 엘니뇨 때의 해수면 온도(2026년 10월)':'지도: 엘니뇨 때의 해수면 온도','#ff8a7a']:st.oct?['지도: 해수면 온도 평년값(1991~2020년의 10월 평균)','#cfe0ff']:st.hyp>.5?['지도: 무역풍이 없다고 가정한 해수면 온도','#ffd76b']:(st.U0<.999||st.Hh<.999)?['지도: 무역풍의 영향으로 바뀌어 가는 해수면 온도','#ffd76b']:['지도: 해수면 온도 평년값(1991~2020년 평균)','#cfe0ff'];
  pill(nm[0],L.x+L.w/2,L.y+20,nm[1],1,13);
  const y=L.y+56,cs=[L.x+80,L.x+236,L.x+390];
  arrow(cs[0]-8,y,cs[0]-44,y,'#ffd84a',2.6,9,1);T('무역풍',cs[0],y+4,{al:'left',size:12.5,c:'#ffd84a'});
  [0,1].forEach(q=>dart(cs[1]-40+q*16,y,-1,1));T('표층 해수의 흐름',cs[1]-6,y+4,{al:'left',size:12.5});
  ctx.strokeStyle='#8fe3ff';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(cs[2]-26,y,10,12,0,0,7);ctx.stroke();T('용승',cs[2]-10,y+4,{al:'left',size:12.5});
- T(st.A>.5?'평년값 + 1997년 12월의 수온 편차 (NOAA ERSST v5)':(st.U0<.999||st.Hh<.999)?'가정한 수온에서 평년값(1991~2020년 연평균, NOAA ERSST v5)으로':'평년값 = 1991~2020년 연평균 해수면 온도 (NOAA ERSST v5)',L.x+L.w/2,L.y+L.h-12,{size:11,c:'#a9b1cc',w:500});
+ T(st.oct?(st.A>.5?'2026년 10월 = 10월 평년값 + 2026년 10월 수온 편차 (NOAA ERSST v5)':'10월 평년값 = 1991~2020년의 10월 평균 해수면 온도 (NOAA ERSST v5)'):st.A>.5?'평년값 + 1997년 12월의 수온 편차 (NOAA ERSST v5)':(st.U0<.999||st.Hh<.999)?'가정한 수온에서 평년값(1991~2020년 연평균, NOAA ERSST v5)으로':'평년값 = 1991~2020년 연평균 해수면 온도 (NOAA ERSST v5)',L.x+L.w/2,L.y+L.h-12,{size:11,c:'#a9b1cc',w:500});
  drawSection(st,t)}
 
 // ---- 장면: 대기의 순환 (그림판 전체 폭 단면) ----
@@ -728,7 +729,7 @@ const SCENES=[
 ];
 // 엘니뇨 > 태평양 수온 분포의 변화: 단계 없이 하나의 흐름(g초, 0~19). 기후의 변화(구름·비, 홍수·가뭄)는 '대기 순환의 변화'에서 다룸
 // 해류(V)는 늘 서쪽으로(약해질 뿐). 따뜻한 해수가 동쪽으로 퍼지는 것은 해류와 다른 모양(넓은 반투명 화살표, spread)으로 바뀌는 동안만
-function ELN(g){return {...NORMAL,C:0,W:1-.7*seg(g,0,3),V:-1+.7*seg(g,0,3),E:ease((g-3)/7),
+function ELN(g){return {...NORMAL,oct:1,C:0,W:1-.7*seg(g,0,3),V:-1+.7*seg(g,0,3),E:ease((g-3)/7),
   A:.35*seg(g,4,10)+.65*seg(g,9,14),U:1-.75*seg(g,9,14),lab:seg(g,15,17.5),spread:Math.min(seg(g,3,4),1-seg(g,8.5,10))}}
 const ESCENES=[
  {draw:sceneEq,steps:[{t:'무역풍의 약화',x:'어떤 해에는 무역풍이 평상시보다 <em>약해집니다</em>. 서쪽으로 해수를 밀어 보내던 힘도 약해집니다.',d:19,
@@ -739,7 +740,7 @@ const ESCENES=[
 // 엘니뇨 > 대기 순환의 변화: 평상시 워커 순환 → 사라짐·바다가 엘니뇨로 → 엘니뇨 때 순환(상승 동쪽, 하강 서쪽) → 이상 기후
 function ATM(g){const e=seg(g,2.5,6.5),wn=1-seg(g,2,3.5),we=seg(g,6,8.5);
  const sw=Math.min(seg(g,2.5,3.5),1-seg(g,6.5,7.5));   // 순환이 바뀌는 동안: 약해진 무역풍과 동쪽으로 흐르는 해수
- return {...NORMAL,W:.3*sw,showW:sw,V:-.3*seg(g,2,3),spread:sw,E:e,A:e,U:1-.75*e,wa:1,ea:1,loop:1,wn,climW:wn>.5?'비가 많고 습함':'가뭄·산불',climE:wn>.5?'비가 적고 건조함':'',clim:Math.max(wn,seg(g,10.5,12)),
+ return {...NORMAL,oct:1,W:.3*sw,showW:sw,V:-.3*seg(g,2,3),spread:sw,E:e,A:e,U:1-.75*e,wa:1,ea:1,loop:1,wn,climW:wn>.5?'비가 많고 습함':'가뭄·산불',climE:wn>.5?'비가 적고 건조함':'',clim:Math.max(wn,seg(g,10.5,12)),
   // 엘니뇨 때: 중앙 태평양(약 150°W)에서 상승해 서쪽은 서태평양에서 하강하는 순환, 동쪽은 남아메리카 대륙 쪽으로 이어지는 흐름(바다 위에서 닫지 않음)
   walkE:{al:we,rx:.53,dx:.11,wa:1,ea:1,loop:1,rT:'구름이 많고 비가 많이 내림',dT:'맑고 건조함',topT:'높은 곳: 동 → 서',botT:'지표 부근: 서 → 동',loopT:'엘니뇨 때의 대기 순환',loopX:.32,loopDY:30},
   openE:we}}
