@@ -83,6 +83,8 @@ canvas{width:100%;height:auto;aspect-ratio:940/400;display:block;border-radius:1
 .subtabs button{flex:1 1 9em;padding:6px 12px;text-align:center;border:1px solid var(--sub-bd);border-radius:999px;background:var(--sub-bg);color:var(--sub-tx);font-size:.92rem;font-weight:700;cursor:pointer}
 .subtabs button:disabled{opacity:.45;cursor:default}
 .subtabs button.on{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub)}
+/* 비교 탭 > 대기 순환: 비교할 두 시기를 고르는 단추(작은 메뉴보다 한 단계 아래라 작고 가운데에) */
+.subtabs.pairs{justify-content:center}.subtabs.pairs button{flex:0 1 11em;padding:3px 10px;font-size:.85rem}
 /* 태평양의 수온 분포의 생각해 보기: 답을 열면 지도에 서·동 수온도 표시 */
 .quiz>.note{margin-top:10px}
 .quiz[hidden]{display:none}
@@ -137,6 +139,11 @@ section[hidden]{display:none}
 <div class="subtabs" id="subs3" role="tablist" aria-label="엘니뇨 vs. 라니냐" hidden>
  <button type="button" role="tab" class="on" aria-selected="true">수온 편차</button>
  <button type="button" role="tab" aria-selected="false">대기 순환</button>
+</div>
+<div class="subtabs pairs" id="pairs" role="tablist" aria-label="비교할 두 시기" hidden>
+ <button type="button" role="tab" class="on" aria-selected="true">평상시 vs. 엘니뇨</button>
+ <button type="button" role="tab" aria-selected="false">평상시 vs. 라니냐</button>
+ <button type="button" role="tab" aria-selected="false">엘니뇨 vs. 라니냐</button>
 </div>
 <div class="subtabs" id="subs" role="tablist" aria-label="평상시">
  <button type="button" role="tab" class="on" aria-selected="true">태평양의 수온 분포</button>
@@ -869,11 +876,14 @@ function sceneCmpA(st,t){
  T('자료: NOAA ERSST v5',14,H-18,{size:10.5,al:'left',c:'#8d96b3',w:500,bl:'bottom'});T('평년값 = 1991~2020년의 10월 평균',14,H-3,{size:10.5,al:'left',c:'#8d96b3',w:500,bl:'bottom'})}
 // 대기 순환: 평상시 · 엘니뇨 · 라니냐 탭의 '대기의 순환'·'대기 순환의 변화' 마지막 모습을 그대로 위아래로 쌓음(한 화면에 맞추지 않음, 그림판 940×1200)
 // 순환 화살촉(PW)은 단면마다 제 빠르기로(라니냐는 빠르게): 시간으로 자리를 정함
+// 두 시기만 골라 위아래로(조금 줄여서: 0.78배, 그림판 940×628). PAIR: 0 평상시 vs. 엘니뇨, 1 평상시 vs. 라니냐, 2 엘니뇨 vs. 라니냐
+const PAIRS=[[0,1],[0,2],[1,2]],PNAME=['평상시','엘니뇨 시기','라니냐 시기'],CK=.78;let PAIR=0;
 function sceneCmpW(st,t){const S=[{...SCENES[2].steps[0].s(1),tagL:'평상시',tagC:'#cfe0ff'},ESCENES[2].steps[0].s(1),LSCENES[2].steps[0].s(1)];
- S.forEach((s2,i)=>{const sp=1+.8*(s2.big||0);PW.forEach((p,n)=>{p.u=(n/PW.length+t*.06*sp)%1});ctx.save();ctx.translate(0,i*400);sceneWalk(s2,t);ctx.restore()})}
+ PAIRS[PAIR].forEach((k,i)=>{const s2=S[k],sp=1+.8*(s2.big||0);PW.forEach((p,n)=>{p.u=(n/PW.length+t*.06*sp)%1});
+  ctx.save();ctx.translate((W-W*CK)/2,2+i*400*CK);ctx.scale(CK,CK);sceneWalk(s2,t);ctx.restore()})}
 const CSCENES=[
  {draw:sceneCmpA,steps:[{t:'수온 편차 비교',x:'위는 <em>엘니뇨 시기</em>(2026년 10월), 아래는 <em>라니냐 시기</em>(2010년 10월)의 해수면 온도 편차(그때의 수온 − 평년 수온)입니다.',d:1,s:k=>({})}]},
- {draw:sceneCmpW,h:1200,steps:[{t:'대기 순환 비교',x:'위부터 <em>평상시</em>, <em>엘니뇨 시기</em>, <em>라니냐 시기</em>의 대기 순환입니다(앞 탭 대기 순환의 마지막 모습). 같은 자리끼리 비교해 보세요.',d:1,s:k=>({V:-1,loop:1})}]}];
+ {draw:sceneCmpW,h:628,steps:[{t:'대기 순환 비교',x:'',d:1,s:k=>({V:-1,loop:1})}]}];
 
 let tab=0,sub=0,si=0,ph=0,playing=true,last=performance.now()/1000,quizOK=false,quizT=0;
 const $=id=>document.getElementById(id);
@@ -897,7 +907,7 @@ function openSub(i){sub=i;[...$('subs').children].forEach((b,j)=>{b.classList.to
  cv.setAttribute('aria-label',['전 세계 연평균 해수면 온도 지도에서 적도 부근의 태평양을 잘라 확대한 지도','적도 태평양의 해수면 온도 지도와 적도를 따라 자른 단면에서 무역풍, 해수의 이동, 용승, 가열로 수온 분포가 만들어지는 모습','적도를 따라 자른 단면 위에서 서태평양의 상승 기류와 동태평양의 하강 기류가 이어지는 워커 순환'][i]);
  seed();buildProg();go(0)}
 function openTab(i){tab=i;[0,1,2,3].forEach(j=>{const b=$('tab'+j),on=j==i;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1;$('p'+j).hidden=!on});
- $('subs').hidden=i!=0;$('subs1').hidden=i!=1;$('subs2').hidden=i!=2;$('subs3').hidden=i!=3;document.querySelector('.ctl').style.display=i==3?'none':'';   // 비교 탭은 정지 자료(재생 단추 없음)const p=$('p'+i);p.classList.remove('enter');void p.offsetWidth;p.classList.add('enter');
+ $('subs').hidden=i!=0;$('subs1').hidden=i!=1;$('subs2').hidden=i!=2;$('subs3').hidden=i!=3;if(i!=3)$('pairs').hidden=true;document.querySelector('.ctl').style.display=i==3?'none':'';   // 비교 탭은 정지 자료(재생 단추 없음)const p=$('p'+i);p.classList.remove('enter');void p.offsetWidth;p.classList.add('enter');
  if(i==0)openSub(0);else if(i==1)openSub1(0);else if(i==2)openSub2(0);else openSub3(0)}
 function openSub1(i){sub1=i;[...$('subs1').children].forEach((b,j)=>{b.classList.toggle('on',j==i);b.setAttribute('aria-selected',j==i)});$('quiz').hidden=true;
  cv.setAttribute('aria-label','적도 태평양의 해수면 온도 지도와 적도를 따라 자른 단면에서 무역풍이 약해지며 엘니뇨가 일어나는 과정');seed();buildProg();go(0)}
@@ -905,9 +915,14 @@ function openSub1(i){sub1=i;[...$('subs1').children].forEach((b,j)=>{b.classList
 function openSub2(i){sub2=i;[...$('subs2').children].forEach((b,j)=>{b.classList.toggle('on',j==i);b.setAttribute('aria-selected',j==i)});$('quiz').hidden=true;
  cv.setAttribute('aria-label',['적도 태평양의 해수면 온도 지도와 적도를 따라 자른 단면에서 무역풍이 강해지며 라니냐가 일어나는 과정','평년과 2010년 10월의 해수면 온도 지도, 수온 편차 지도, 엘니뇨 감시 구역의 월별 수온 편차 그래프','적도를 따라 자른 단면에서 라니냐 때 워커 순환이 강해지는 모습'][i]);seed();buildProg();go(0)}
 [...$('subs2').children].forEach((b,i)=>b.onclick=()=>openSub2(i));
-function openSub3(i){sub3=i;[...$('subs3').children].forEach((b,j)=>{b.classList.toggle('on',j==i);b.setAttribute('aria-selected',j==i)});$('quiz').hidden=true;$('n30').hidden=i!=0;$('n31').hidden=i!=1;
- cv.setAttribute('aria-label',['위는 엘니뇨 시기(2026년 10월), 아래는 라니냐 시기(2010년 10월)의 적도 태평양 해수면 온도 편차 지도','평상시, 엘니뇨 시기, 라니냐 시기의 적도 단면(대기 순환, 기압, 구름과 비, 해수면, 따뜻한 해수층, 용승)을 위아래로 나란히 놓은 그림'][i]);seed();buildProg();go(0)}
+function openSub3(i){sub3=i;[...$('subs3').children].forEach((b,j)=>{b.classList.toggle('on',j==i);b.setAttribute('aria-selected',j==i)});$('quiz').hidden=true;$('n30').hidden=i!=0;$('n31').hidden=i!=1;$('pairs').hidden=i!=1;
+ cv.setAttribute('aria-label',['위는 엘니뇨 시기(2026년 10월), 아래는 라니냐 시기(2010년 10월)의 적도 태평양 해수면 온도 편차 지도','평상시, 엘니뇨 시기, 라니냐 시기의 적도 단면(대기 순환, 기압, 구름과 비, 해수면, 따뜻한 해수층, 용승)을 위아래로 나란히 놓은 그림'][i]);seed();buildProg();if(i==1)openPair(0);else go(0)}
 [...$('subs3').children].forEach((b,i)=>b.onclick=()=>openSub3(i));
+// 대기 순환: 비교할 두 시기 고르기(처음은 평상시 vs. 엘니뇨)
+function openPair(i){PAIR=i;[...$('pairs').children].forEach((b,j)=>{b.classList.toggle('on',j==i);b.setAttribute('aria-selected',j==i)});const [a,b]=PAIRS[i];
+ CSCENES[1].steps[0].x=`위는 <em>${PNAME[a]}</em>, 아래는 <em>${PNAME[b]}</em>의 대기 순환입니다(앞 탭 대기 순환의 마지막 모습). 같은 자리끼리 비교해 보세요.`;
+ cv.setAttribute('aria-label',`위는 ${PNAME[a]}, 아래는 ${PNAME[b]}의 적도 단면 대기 순환`);go(0)}
+[...$('pairs').children].forEach((b,i)=>b.onclick=()=>openPair(i));
 [...$('subs').children].forEach((b,i)=>b.onclick=()=>openSub(i));
 [0,1,2,3].forEach(i=>{const b=$('tab'+i);b.onclick=()=>openTab(i);b.onkeydown=e=>{if(e.key=='ArrowRight'||e.key=='ArrowLeft'){const j=(i+(e.key=='ArrowRight'?1:3))%4;$('tab'+j).focus();openTab(j)}}});
 $('prev').onclick=()=>go(si-1);$('next').onclick=()=>go(si+1);$('again').onclick=()=>{seed();resetQuiz();go(0)};
