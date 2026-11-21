@@ -209,7 +209,7 @@ const FONT='"Pretendard Variable",Pretendard,system-ui,"Noto Sans KR",sans-serif
 const font=(s,w)=>`${w||700} ${s}px ${FONT}`;
 
 // 색: 교과서 수온 그림처럼 파랑(차가움) → 연노랑 → 빨강(따뜻함)
-const STOPS=[[0,78,104,168],[.15,112,152,204],[.3,166,203,228],[.45,221,236,238],[.55,248,243,204],[.7,249,213,152],[.85,238,160,112],[1,206,96,80]];   // 양 끝을 덜 진하게(대비 완화)
+const STOPS=[[0,78,104,168],[.15,112,152,204],[.3,166,203,228],[.45,221,236,238],[.55,248,243,204],[.7,250,206,142],[.85,241,142,96],[1,198,62,52]];   // 양 끝을 덜 진하게(대비 완화)
 const LUT=[];for(let q=0;q<256;q++){const v=q/255;let a=STOPS[0],b=STOPS[STOPS.length-1];for(let s=1;s<STOPS.length;s++)if(v<=STOPS[s][0]){a=STOPS[s-1];b=STOPS[s];break}
  const f=(v-a[0])/((b[0]-a[0])||1);LUT.push([0,1,2].map(c=>Math.round(a[c+1]+(b[c+1]-a[c+1])*f)))}
 const lut=(T,lo,hi)=>LUT[Math.max(0,Math.min(255,Math.round((T-lo)/(hi-lo)*255)))];
@@ -328,12 +328,14 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
  if(st.F>0&&st.ref!==0){ctx.setLineDash([3,4]);ctx.strokeStyle='rgba(191,230,255,.45)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(SX0,SEA);ctx.lineTo(SX1,SEA);ctx.stroke();ctx.setLineDash([])}
  // 표층 해수의 흐름(입자)
  // 바람이 일으키는 흐름은 해수면에서 가장 빠르고 깊을수록 약해지므로, 해수면 가까이에만 그리고 깊을수록 짧고 흐리게
- if(Math.abs(st.V)>.05)PS.forEach(p=>{const dep=Math.min(p.d*30,thick(p.x,st)-6);if(dep<0)return;const y=SEA-level(p.x,st)+4+dep,x=sxp(p.x),dir=Math.sign(st.V),L=1-p.d*.6;
-  const edge=dir<0?c01(p.x*8)*c01((1-p.x)*8):c01(p.x*8)*c01((1-p.x)*8);
-  ctx.save();ctx.shadowColor='rgba(0,0,0,.45)';ctx.shadowBlur=2;ctx.globalAlpha=a*Math.min(1,Math.abs(st.V)*1.4)*(1-p.d*.55)*edge;const pc=st.tint?rgb(lut(eqT(slon(p.x)),22,30)):'#ffffff';ctx.strokeStyle=pc;ctx.lineWidth=1.7*L+.4+(st.tint?.8:0);
-  const shaft=()=>{ctx.beginPath();ctx.moveTo(x-dir*9*L,y);ctx.lineTo(x+dir*3,y)},head=()=>{ctx.beginPath();ctx.moveTo(x+dir*7,y);ctx.lineTo(x+dir*0,y-4);ctx.lineTo(x+dir*0,y+4);ctx.closePath()};
-  if(st.tint){ctx.shadowBlur=0;ctx.strokeStyle='rgba(12,16,40,.9)';ctx.lineWidth=1.7*L+3.4;ctx.lineCap='round';shaft();ctx.stroke();ctx.lineWidth=2.4;ctx.lineJoin='round';head();ctx.stroke();ctx.strokeStyle=pc;ctx.lineWidth=1.7*L+1.2}   // 물 색과 같은 색이므로 어두운 테두리로 구분
-  shaft();ctx.stroke();head();ctx.fillStyle=pc;ctx.fill();ctx.restore()});
+ if(Math.abs(st.V)>.05)PS.forEach(p=>{const dep=Math.min(p.d*12,thick(p.x,st)-6);if(dep<0)return;   // 해수면 바로 아래(약 12px 안)만
+  const y=SEA-level(p.x,st)+5+dep,x=sxp(p.x),dir=Math.sign(st.V),edge=c01(p.x*8)*c01((1-p.x)*8);
+  // 화살표 모양·두께는 늘 같게 하고, 3단계에서는 색만 흰색 → 그 자리 수온 색으로 천천히 바뀜(어두운 테두리로 물과 구분)
+  const tc=lut(eqT(slon(p.x)),22,30),tn=st.tint||0,pc=`rgb(${Math.round(lerp(255,tc[0],tn))},${Math.round(lerp(255,tc[1],tn))},${Math.round(lerp(255,tc[2],tn))})`;
+  ctx.save();ctx.globalAlpha=a*Math.min(1,Math.abs(st.V)*1.4)*(1-p.d*.35)*edge;ctx.lineCap='round';ctx.lineJoin='round';
+  const shaft=()=>{ctx.beginPath();ctx.moveTo(x-dir*9,y);ctx.lineTo(x+dir*2,y)},head=()=>{ctx.beginPath();ctx.moveTo(x+dir*7,y);ctx.lineTo(x,y-4);ctx.lineTo(x,y+4);ctx.closePath()};
+  ctx.strokeStyle='rgba(12,16,40,.85)';ctx.lineWidth=4.2;shaft();ctx.stroke();ctx.lineWidth=2.2;head();ctx.stroke();
+  ctx.strokeStyle=pc;ctx.lineWidth=2;shaft();ctx.stroke();head();ctx.fillStyle=pc;ctx.fill();ctx.restore()});
  ctx.globalAlpha=a;
  // 용승(동쪽 끝)
  if(st.U>0.02){const ua=st.U;for(let m=0;m<3;m++){const bx=sxp(.83+m*.055),y0=BOT-22,y1=SEA-level(.9,st)+8;
@@ -600,7 +602,7 @@ const HYP={...NORMAL,hyp:1,W:0,V:0,F:0,U:0,U0:0,mU:0,Hh:0};
 //  단계는 '무엇을 볼지'만 나눔(3단계에서 햇빛 표현과 정리 이름표를 보여 줌). 해수면 기울기(F)와 용승(U)은 같은 빠르기로 함께 커짐
 function CAUSE(g){const F=ease((g-1)/16),U=c01((g-1.3)/15.7);
  return {...NORMAL,hyp:1-seg(g,1,3),W:seg(g,0,1.2),V:-seg(g,.4,2),F,U,U0:ease((g-1.5)/16),mU:c01((g-2)/3),Hh:ease((g-3)/23),
-  heat:g>=18?Math.min(seg(g,18,19.5),1-seg(g,28,29.5)):0,tint:g>=18?1:0,lab:seg(g,25,28)}}
+  heat:g>=18?Math.min(seg(g,18,19.5),1-seg(g,28,29.5)):0,tint:seg(g,18,20),lab:seg(g,25,28)}}
 const SCENES=[
  {draw:scenePac,steps:[ // 태평양의 수온 분포
   {t:'전 세계의 해수면 온도',x:'전 세계 바다의 <em>연평균 해수면 온도</em>입니다. 적도 부근은 따뜻하고 고위도로 갈수록 차가워집니다. 이 가운데 <em>적도 부근의 태평양</em>을 잘라 확대해 봅시다.',d:6,
