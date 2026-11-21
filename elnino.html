@@ -624,11 +624,10 @@ function CAUSE(g){const F=ease((g-1)/15),U=c01((g-1.3)/14.7);
  return {...NORMAL,hyp:1-seg(g,1,3),W:seg(g,0,1.2),V:-seg(g,.4,2),F,U,U0:ease((g-1.5)/15),mU:c01((g-2)/3),Hh:ease((g-2)/15),
   heat:seg(g,4,6),tint:seg(g,4,6),lab:seg(g,19,22)}}
 const SCENES=[
- {draw:scenePac,steps:[ // 태평양의 수온 분포
-  {t:'전 세계의 해수면 온도',x:'전 세계 바다의 <em>연평균 해수면 온도</em>입니다. 적도 부근은 따뜻하고 고위도로 갈수록 차가워집니다. 이 가운데 <em>적도 부근의 태평양</em>을 잘라 확대해 봅시다.',d:6,
-   s:k=>({...NORMAL,zoom:0,box:seg(k,.45,.9)})},
-  {t:'적도 부근의 태평양',x:'적도를 따라 <em>서태평양</em>(왼쪽)과 <em>동태평양</em>(오른쪽)의 색을 비교해 보세요. 빨간색일수록 수온이 높습니다. 아래 생각해 보기에 답해 보세요.',d:4,
-   s:k=>({...NORMAL,zoom:ease(k),box:1})}]},
+ {draw:scenePac,steps:[ // 태평양의 수온 분포: 단계 없이 하나의 흐름(5초)
+  {t:'전 세계의 해수면 온도',x:'전 세계 바다의 <em>연평균 해수면 온도</em>입니다. 적도 부근은 따뜻하고 고위도로 갈수록 차가워집니다. 이 가운데 <em>적도 부근의 태평양</em>을 잘라 확대해 봅시다.',d:5,
+   xs:[[3,'적도 부근의 태평양','적도를 따라 <em>서태평양</em>(왼쪽)과 <em>동태평양</em>(오른쪽)의 색을 비교해 보세요. 빨간색일수록 수온이 높습니다. 아래 생각해 보기에 답해 보세요.']],
+   s:k=>{const g=k*5;return {...NORMAL,zoom:seg(g,2.2,4.4),box:seg(g,.8,2)}}}]},
  {draw:sceneEq,steps:[ // 태평양 수온 분포의 원인: 단계를 나누지 않은 하나의 흐름(진행 막대를 눌러·끌어 원하는 때로 이동)
   {t:'무역풍이 불면',x:'무역풍이 없다면 수온은 위도에 따라서만 달라집니다(생각 실험). 무역풍이 불면 따뜻한 표층 해수가 <em>서쪽으로 이동</em>하면서 <em>해수면이 기울고</em> 수온 약층이 시작되는 깊이가 바뀌며, 동쪽에서는 <em>용승</em>이 일어나고 이동하는 해수는 <em>햇빛에 데워집니다</em>. 이 변화들은 함께 일어납니다.',d:20,
    xs:[[14.5,'평상시의 모습','그 결과 서태평양은 <em>따뜻한 해수층이 두껍고 수온과 해수면이 높으며</em>, 동태평양은 용승으로 <em>따뜻한 해수층이 얇고 수온이 낮은</em> 평상시의 모습이 됩니다. 지도는 실제 해수면 온도의 평년값과 같아졌습니다.']],   // 14.5초부터 설명이 바뀜
@@ -688,7 +687,7 @@ $('prev').onclick=()=>go(si-1);$('next').onclick=()=>go(si+1);$('again').onclick
 $('play').onclick=()=>{playing=!playing;updPlay()};
 // 태평양의 수온 분포: 생각해 보기 답을 열면 지도에도 서·동 수온을 표시(확대가 끝난 화면으로)
 function resetQuiz(){quizOK=false}
-document.querySelector('[data-ov="ovq"]').addEventListener('click',()=>{if(!quizOK){quizOK=true;quizT=performance.now()/1000}const S=scene().steps;if(si<S.length-1){go(S.length-1)}ph=S[si].d});
+document.querySelector('[data-ov="ovq"]').addEventListener('click',()=>{if(!quizOK){quizOK=true;quizT=performance.now()/1000}const S=scene().steps;if(si<S.length-1){go(S.length-1)}ph=S[si].d;setText()});
 
 function frame(nowMs){const now=nowMs/1000,dt=Math.min(.1,now-last);last=now;fit();
  const S=scene().steps,s=S[si];
