@@ -19,8 +19,8 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:"Pretendard Varia
 button{font-family:inherit}
 /* 패드처럼 세로가 짧은 화면: 그림이 한 화면에 들어오도록 글·단추를 포함한 전체 폭을 화면 높이에 맞춰 줄임 (그림 940×400) */
 main{max-width:960px;margin:0 auto;padding:14px}
-main{max-width:max(560px,min(960px,calc((100vh - 330px) * 2.35 + 28px)))}
-main{max-width:max(560px,min(960px,calc((100dvh - 330px) * 2.35 + 28px)))}
+main{max-width:max(560px,min(960px,calc((100vh - 380px) * 2.35 + 28px)))}
+main{max-width:max(560px,min(960px,calc((100dvh - 380px) * 2.35 + 28px)))}
 .titlebar{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:0 0 8px}
 .titlebar h1{font-size:1.35rem;font-weight:800;line-height:1.35;margin:0;text-wrap:balance}
 .back{margin:0 0 0 auto;flex:none;display:inline-block;padding:8px 14px;border:1px solid var(--bline);border-radius:999px;background:var(--bcard);color:var(--bfg);font-size:.9rem;font-weight:700;text-decoration:none}
@@ -57,7 +57,7 @@ canvas{width:100%;height:auto;aspect-ratio:940/400;display:block;border-radius:1
 .prog button i{position:absolute;inset:0 auto 0 0;width:0;background:var(--acc);border-radius:999px}
 /* 생각해 보기 · 기억하기 */
 .note{margin:10px 0 0;display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;font-size:.95rem}
-.note p{margin:0;font-weight:600}
+.note p{margin:0;font-weight:600;flex:0 1 auto}
 .note+.note{margin-top:6px}
 .tag{display:inline-block;flex:none;padding:2px 10px;border-radius:999px;background:var(--acc);color:var(--on-acc);font-size:.8rem;font-weight:700;letter-spacing:.02em;white-space:nowrap}
 .tag.mem{background:var(--mem);color:var(--on-mem)}
@@ -72,6 +72,26 @@ canvas{width:100%;height:auto;aspect-ratio:940/400;display:block;border-radius:1
 .think .x{flex:none;font-size:.85rem;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:3px 10px;cursor:pointer;color:var(--fg)}
 .think .ans{margin:0 0 8px;font-size:1rem;font-weight:700}
 .think .exp{margin:0;font-size:.93rem;line-height:1.6}
+/* 탭 안에서 고르는 단추는 라벤더(연보라) (위쪽 큰 탭의 남색과 구분) */
+:root{--sub:#7c5cd6;--on-sub:#fff;--sub-bg:#efeafd;--sub-bd:#cdbff3;--sub-tx:#5b3fbf;--ok:#13894a;--no:#d0353b}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff;--ok:#6fe08f;--no:#ff7b7b}}
+:root[data-theme="dark"]{--sub:#b9a6ff;--on-sub:#1e1640;--sub-bg:#221c3a;--sub-bd:#4a3f80;--sub-tx:#cbbcff;--ok:#6fe08f;--no:#ff7b7b}
+.subtabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px}
+.subtabs[hidden]{display:none}
+.subtabs button{flex:1 1 9em;padding:6px 12px;text-align:center;border:1px solid var(--sub-bd);border-radius:999px;background:var(--sub-bg);color:var(--sub-tx);font-size:.92rem;font-weight:700;cursor:pointer}
+.subtabs button.on{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub)}
+/* 질문(태평양의 수온 분포): [질문] 글 [서태평양|동태평양] → 맞음·틀림 */
+.quiz{margin:10px 0 0}
+.quiz[hidden]{display:none}
+.qrow{display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;font-size:.95rem}
+.qrow p{margin:0;font-weight:600}
+.bs{display:flex;border:1px solid var(--sub-bd);border-radius:10px;overflow:hidden}
+.bs button{padding:5px 16px;border:0;background:var(--sub-bg);color:var(--sub-tx);font-size:.93rem;font-weight:700;cursor:pointer}
+.bs button+button{border-left:1px solid var(--sub-bd)}
+.bs button.on{background:var(--sub);color:var(--on-sub)}
+.qmk{margin:6px 0 0;min-height:1.5em;font-size:.93rem;font-weight:700}
+.qmk.ok{color:var(--ok)}.qmk.no{color:var(--no)}
+#n0[hidden],#n2[hidden],#n3[hidden]{display:none}
 .src{margin:8px 2px 0;font-size:.8rem;opacity:.7}
 section[hidden]{display:none}
 </style>
@@ -84,9 +104,16 @@ section[hidden]{display:none}
  <button role="tab" id="tab0" aria-selected="true">평상시</button>
  <button role="tab" id="tab1" aria-selected="false" tabindex="-1">엘니뇨</button>
 </div>
+<!-- 평상시의 작은 메뉴(연보라): 누를 때마다 그 메뉴의 처음부터 -->
+<div class="subtabs" id="subs" role="tablist" aria-label="평상시">
+ <button type="button" role="tab" class="on" aria-selected="true">태평양의 수온 분포</button>
+ <button type="button" role="tab" aria-selected="false">온도 분포의 원인</button>
+ <button type="button" role="tab" aria-selected="false">대기의 순환</button>
+ <button type="button" role="tab" aria-selected="false">남아메리카 연안의 용승</button>
+</div>
 
-<!-- 그림판 하나를 두 탭이 함께 씀: 왼쪽 = 적도 태평양 해수면 온도 지도(실제 자료), 오른쪽 = 적도를 따라 자른 단면(개념도) -->
-<canvas id="cv" width="940" height="400" aria-label="적도 태평양의 해수면 온도 지도와 적도를 따라 자른 단면에서 무역풍, 해수의 이동, 용승, 따뜻한 해수층의 두께가 변하는 모습"></canvas>
+<!-- 그림판 하나를 모든 메뉴가 함께 씀 (메뉴마다 지도·단면의 배치가 다름) -->
+<canvas id="cv" width="940" height="400" aria-label="적도 태평양의 해수면 온도 지도와 단면 그림"></canvas>
 <div class="stepbox sx" id="step" aria-live="polite"></div>
 <div class="ctl">
  <button class="pb" id="prev">◀ 이전 단계</button><button class="pb" id="play">⏸ 멈춤</button><button class="pb" id="next">다음 단계 ▶</button>
@@ -95,13 +122,34 @@ section[hidden]{display:none}
  <button class="pb rp" id="again">↺ 처음부터</button>
 </div>
 
+<!-- 태평양의 수온 분포: 지도를 보고 어느 쪽이 따뜻한지 고르기 -->
+<div class="quiz" id="quiz" hidden>
+ <div class="qrow"><span class="tag">질문</span><p>적도 부근에서 해수면 온도가 더 높은 곳은 어디일까요?</p>
+  <div class="bs" id="qbs"><button type="button" data-a="w">서태평양</button><button type="button" data-a="e">동태평양</button></div></div>
+ <p class="qmk" id="qmk"></p>
+</div>
+
 <section id="p0" role="tabpanel" aria-labelledby="tab0">
+ <div id="n0">
  <div class="note"><span class="tag">생각해 보기</span><p>평상시 서태평양과 동태평양 중 해수면이 더 높은 곳은 어디일까요?</p><button type="button" class="open-think" data-ov="ov0">답 보기</button></div>
  <div class="note memo"><span class="tag mem">기억하기</span><p>평상시: 무역풍 → 따뜻한 해수가 서쪽으로 이동 → 서태평양은 따뜻한 해수층이 두껍고 수온이 높음, 동태평양은 용승으로 수온이 낮음</p></div>
+ </div>
+ <div id="n2" hidden>
+ <div class="note memo"><span class="tag mem">기억하기</span><p>워커 순환: 서태평양 상승 기류(저기압, 비) → 상층 서 → 동 → 동태평양 하강 기류(고기압, 건조) → 지표 동 → 서(무역풍)</p></div>
+ </div>
+ <div id="n3" hidden>
+ <div class="note"><span class="tag">생각해 보기</span><p>페루 연안이 같은 위도의 먼바다보다 수온이 낮은 까닭은 무엇일까요?</p><button type="button" class="open-think" data-ov="ov3">답 보기</button></div>
+ <div class="note memo"><span class="tag mem">기억하기</span><p>페루 연안: 표층 해수가 먼바다로 이동 → 찬 해수의 용승 → 영양염류 공급 → 플랑크톤 번성 → 좋은 어장(앤초비)</p></div>
+ </div>
  <div class="ov" id="ov0" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 평상시 서태평양과 동태평양 중 해수면이 더 높은 곳은 어디일까요?">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>평상시 서태평양과 동태평양 중 해수면이 더 높은 곳은 어디일까요?</b><button type="button" class="x" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">서태평양의 해수면이 더 높습니다.</p>
   <p class="exp">무역풍이 표층 해수를 서쪽으로 계속 밀어 보내므로, 따뜻한 해수가 서태평양에 쌓여 해수면이 높아지고 따뜻한 해수층도 두꺼워집니다. 실제 높이 차이는 수십 cm 정도로 아주 작아서, 그림에서는 과장하여 나타냈습니다.</p>
+ </div></div>
+ <div class="ov" id="ov3" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 페루 연안이 같은 위도의 먼바다보다 수온이 낮은 까닭은 무엇일까요?">
+  <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>페루 연안이 같은 위도의 먼바다보다 수온이 낮은 까닭은 무엇일까요?</b><button type="button" class="x" aria-label="닫기">닫기 ✕</button></div>
+  <p class="ans">용승으로 깊은 곳의 찬 해수가 올라오기 때문입니다.</p>
+  <p class="exp">해안을 따라 부는 남동 무역풍의 영향으로 해안 부근의 표층 해수가 먼바다로 이동하면, 그 자리를 채우려고 깊은 곳의 찬 해수가 올라옵니다. 지도에서도 페루 연안을 따라 수온이 낮은 띠가 보입니다.</p>
  </div></div>
 </section>
 <section id="p1" role="tabpanel" aria-labelledby="tab1" hidden>
@@ -113,7 +161,7 @@ section[hidden]{display:none}
   <p class="exp">평상시에는 용승으로 깊은 곳의 영양염류가 많은 찬 해수가 올라와 플랑크톤이 많고 좋은 어장이 됩니다. 엘니뇨 때는 용승이 약해져 영양염류가 적게 공급되므로 플랑크톤이 줄고, 물고기도 줄어듭니다.</p>
  </div></div>
 </section>
-<p class="src">해수면 온도 지도: NOAA ERSST v5(2° 격자) 자료로 그림. 평상시 = 1991~2020년 연평균, 엘니뇨 = 연평균에 1997년 12월(강한 엘니뇨)의 수온 편차를 더한 값. 오른쪽 단면은 개념도이며, 해수면 높이와 따뜻한 해수층의 두께는 과장하여 나타냄.</p>
+<p class="src">해수면 온도 지도: NOAA ERSST v5(2° 격자) 자료로 그림. 평상시 = 1991~2020년 연평균, 엘니뇨 = 연평균에 1997년 12월(강한 엘니뇨)의 수온 편차를 더한 값. 단면과 대기의 순환은 개념도이며, 해수면 높이와 따뜻한 해수층의 두께는 과장하여 나타냄.</p>
 
 <script>
 "use strict";
@@ -164,24 +212,28 @@ const clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),c01=x=>clamp(x,0,1),lerp=(a,b,t)=
 const ease=t=>{t=c01(t);return t<.5?2*t*t:1-2*(1-t)*(1-t)};
 const seg=(k,a,b)=>ease((k-a)/(b-a));
 
-// 지도 영역: 전체(태평양 가운데, 30°E~390°E, 70°N~70°S) → 확대(120°E~290°E, 30°N~30°S)
+// ---- 지도 영역 ----
+// 전체 지도(태평양 가운데, 30°E~390°E, 70°N~70°S)에서 상자(box)를 잘라 목표 자리(rect)로 확대. z: 0 전체 → 1 확대
 const GR={x:14,y:14,w:912,h:354.7,lo0:30,lo1:390,la0:70,la1:-70};
-const ZR={x:14,y:16,w:476,h:212,lo0:120,lo1:290,la0:30,la1:-30};
-const SR={x:508,y:16,w:418,h:368};
-const LG={x:14,y:282,w:476,h:102};   // 지도 아래 범례   // 단면
-const BOX={lo0:120,lo1:290,la0:30,la1:-30};
-function viewAt(z){const g=GR,r=ZR;
- // 확대 정도 z에 따라 '자를 상자'가 전체 지도의 제자리에서 확대 영역까지 옮겨 가도록 변환을 보간
- const gb={x:g.x+(BOX.lo0-g.lo0)/(g.lo1-g.lo0)*g.w,y:g.y+(g.la0-BOX.la0)/(g.la0-g.la1)*g.h};
- gb.w=(BOX.lo1-BOX.lo0)/(g.lo1-g.lo0)*g.w;gb.h=(BOX.la0-BOX.la1)/(g.la0-g.la1)*g.h;
- const bx={x:lerp(gb.x,r.x,z),y:lerp(gb.y,r.y,z),w:lerp(gb.w,r.w,z),h:lerp(gb.h,r.h,z)};
- const sx=bx.w/(BOX.lo1-BOX.lo0),sy=bx.h/(BOX.la0-BOX.la1);
- const clip={x:lerp(g.x,r.x,z),y:lerp(g.y,r.y,z),w:lerp(g.w,r.w,z),h:lerp(g.h,r.h,z)};
- return {bx,clip,sx,sy,X:lo=>bx.x+(lo-BOX.lo0)*sx,Y:la=>bx.y+(BOX.la0-la)*sy}}
+const EQB={lo0:120,lo1:290,la0:30,la1:-30};            // 적도 부근의 태평양
+const PEB={lo0:255,lo1:295,la0:2,la1:-23};             // 페루 앞바다
+const FR={x:14,y:16,w:912,h:321.9};                      // 태평양의 수온 분포: 그림판 전체 폭(가로세로 비율 그대로)
+const ZR={x:14,y:16,w:476,h:212};                        // 지도 + 단면 (왼쪽 지도)
+const PR={x:14,y:16,w:476,h:297.5};                      // 페루 앞바다 (가로세로 비율 그대로)
+const SRE={x:508,y:16,w:418,h:368};                      // 오른쪽 단면
+const WR={x:14,y:16,w:912,h:368};                        // 대기의 순환: 그림판 전체 폭 단면
+const LG={x:14,y:282,w:476,h:102};                       // 지도 아래 범례
+function viewFor(box,R,z){const g=GR;
+ const gb={x:g.x+(box.lo0-g.lo0)/(g.lo1-g.lo0)*g.w,y:g.y+(g.la0-box.la0)/(g.la0-g.la1)*g.h};
+ gb.w=(box.lo1-box.lo0)/(g.lo1-g.lo0)*g.w;gb.h=(box.la0-box.la1)/(g.la0-g.la1)*g.h;
+ const bx={x:lerp(gb.x,R.x,z),y:lerp(gb.y,R.y,z),w:lerp(gb.w,R.w,z),h:lerp(gb.h,R.h,z)};
+ const sx=bx.w/(box.lo1-box.lo0),sy=bx.h/(box.la0-box.la1);
+ const clip={x:lerp(g.x,R.x,z),y:lerp(g.y,R.y,z),w:lerp(g.w,R.w,z),h:lerp(g.h,R.h,z)};
+ return {bx,clip,sx,sy,X:lo=>bx.x+(lo-box.lo0)*sx,Y:la=>bx.y+(box.la0-la)*sy}}
 
 // 칸마다 지금 보여 줄 수온
-//  u: 동쪽 찬 해수(용승)가 나타난 정도, h: 서쪽이 햇빛에 데워진 정도 (0이면 무역풍이 없다고 가정한 고른 수온, 1이면 실제 연평균)
-//  a: 엘니뇨 편차를 더한 정도 (서쪽에서 동쪽으로 차례로 퍼짐)
+//  U0: 동쪽 찬 해수(용승)가 나타난 정도, Hh: 서쪽이 햇빛에 데워진 정도 (0이면 무역풍이 없다고 가정한 고른 수온, 1이면 실제 연평균)
+//  A: 엘니뇨 편차를 더한 정도 (서쪽에서 동쪽으로 차례로 퍼짐)
 const TNOW=new Float32Array(NR*NC);
 function field(st){for(let i=0;i<NR;i++)for(let j=0;j<NC;j++){const k=i*NC+j,lo=LONc(j);let T=TANN[k];
   const w=PAC[k];if(w>0){const D=T-TZ[i];T=T-w*D*(1-(D<0?st.U0:st.Hh))}
@@ -193,7 +245,7 @@ const LANDP=new Path2D();LAND.forEach(r=>{for(let k=0;k<r.length;k+=2){const x=r
 // 적도 부근(2°S~2°N) 평균 수온 (단면의 해수면 색)
 function eqT(lo){const j0=Math.floor(lo/2)%NC,f=lo/2-Math.floor(lo/2),j1=(j0+1)%NC;let s=0;for(const i of [34,35,36])s+=lerp(TNOW[i*NC+j0],TNOW[i*NC+j1],f);return s/3}
 
-// 글·도형 도우미
+// ---- 글·도형 도우미 ----
 function T(s,x,y,o){o=o||{};ctx.font=font(o.size||13,o.w);ctx.fillStyle=o.c||'#e8ecff';ctx.textAlign=o.al||'center';ctx.textBaseline=o.bl||'alphabetic';ctx.globalAlpha=o.a==null?1:o.a;
  if(o.halo){ctx.lineWidth=3.5;ctx.strokeStyle='rgba(8,12,30,.85)';ctx.lineJoin='round';ctx.strokeText(s,x,y)}ctx.fillText(s,x,y);ctx.globalAlpha=1}
 function pill(s,x,y,c,a,size){size=size||12.5;ctx.font=font(size,800);const w=ctx.measureText(s).width+18,h=size+9;ctx.globalAlpha=a==null?1:a;
@@ -202,46 +254,62 @@ function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h
 function arrow(x1,y1,x2,y2,c,lw,hs,a){const ang=Math.atan2(y2-y1,x2-x1);hs=hs||7;ctx.globalAlpha=a==null?1:a;ctx.strokeStyle=c;ctx.fillStyle=c;ctx.lineWidth=lw||2;ctx.lineCap='round';
  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2-Math.cos(ang)*hs*.6,y2-Math.sin(ang)*hs*.6);ctx.stroke();
  ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-Math.cos(ang-.45)*hs,y2-Math.sin(ang-.45)*hs);ctx.lineTo(x2-Math.cos(ang+.45)*hs,y2-Math.sin(ang+.45)*hs);ctx.closePath();ctx.fill();ctx.globalAlpha=1}
+function dart(x,y,dir,a,c){ctx.globalAlpha=a;ctx.fillStyle=c||'#fff';ctx.beginPath();ctx.moveTo(x+dir*5,y);ctx.lineTo(x-dir*2,y-3);ctx.lineTo(x-dir*2,y+3);ctx.closePath();ctx.fill();
+ ctx.strokeStyle=c||'rgba(255,255,255,.8)';ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(x-dir*2,y);ctx.lineTo(x-dir*9,y);ctx.stroke();ctx.globalAlpha=1}
+function cloud(x,y,a,s){s=s||1;ctx.globalAlpha=a;ctx.fillStyle='#d9deea';[[-22,4,17],[0,-4,22],[24,3,17],[-8,8,16],[12,8,16]].forEach(([dx,dy,r])=>{ctx.beginPath();ctx.arc(x+dx*s,y+dy*s,r*s,0,7);ctx.fill()});ctx.globalAlpha=1}
+function rain(x,y0,y1,t,a){ctx.globalAlpha=a;ctx.strokeStyle='#8fc8ff';ctx.lineWidth=1.6;for(let q=0;q<9;q++){const xx=x-30+q*7.5,ph=((t*1.6+q*.37)%1),y=y0+ph*(y1-y0);ctx.beginPath();ctx.moveTo(xx,y);ctx.lineTo(xx-2,y+8);ctx.stroke()}ctx.globalAlpha=1}
+function sun(x,y,a){ctx.globalAlpha=a;ctx.fillStyle='#ffd34d';ctx.beginPath();ctx.arc(x,y,13,0,7);ctx.fill();ctx.strokeStyle='#ffd34d';ctx.lineWidth=2;
+ for(let q=0;q<8;q++){const an=q*Math.PI/4;ctx.beginPath();ctx.moveTo(x+Math.cos(an)*17,y+Math.sin(an)*17);ctx.lineTo(x+Math.cos(an)*22,y+Math.sin(an)*22);ctx.stroke()}ctx.globalAlpha=1}
+function colorbar(cb,lo,hi,step,title){for(let q=0;q<120;q++){const T2=lo+(hi-lo)*q/119;ctx.fillStyle=rgb(lut(T2,lo,hi));ctx.fillRect(cb.x+cb.w*q/120,cb.y,cb.w/120+.6,cb.h)}
+ ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=1;ctx.strokeRect(cb.x,cb.y,cb.w,cb.h);
+ for(let v2=Math.ceil(lo/step)*step;v2<=hi+.01;v2+=step){const x=cb.x+(v2-lo)/(hi-lo)*cb.w;T(String(v2),x,cb.y+cb.h+12,{size:11,c:'#cfd6ee',w:600})}
+ if(title)T(title,cb.x-8,cb.y+cb.h-1,{size:11.5,al:'right',c:'#cfd6ee',w:700});else T('°C',cb.x+cb.w+8,cb.y+cb.h-1,{size:11.5,al:'left',c:'#cfd6ee',w:700})}
 
-// ================= 움직이는 입자 (표층 해수의 흐름) =================
-const PS=[],PM=[];
-function seed(){PS.length=PM.length=0;for(let n=0;n<26;n++)PS.push({x:Math.random(),d:.15+Math.random()*.7});
- for(let n=0;n<30;n++)PM.push({lo:160+Math.random()*112,la:(Math.random()*2-1)*4.5})}
+// ================= 움직이는 입자 =================
+const PS=[],PM=[],PW=[],PP=[],PN=[],PF=[];
+function seed(){PS.length=PM.length=PW.length=PP.length=PN.length=PF.length=0;const R=Math.random;
+ for(let n=0;n<26;n++)PS.push({x:R(),d:.15+R()*.7});               // 적도 단면의 표층 흐름
+ for(let n=0;n<30;n++)PM.push({lo:160+R()*112,la:(R()*2-1)*4.5});  // 적도 지도의 표층 흐름
+ for(let n=0;n<34;n++)PW.push({u:R()});                             // 워커 순환의 공기
+ for(let n=0;n<22;n++)PP.push({x:R(),d:.1+R()*.8});                 // 페루 단면의 먼바다 쪽 흐름
+ for(let n=0;n<40;n++)PN.push({u:R(),o:R()});                       // 영양염류
+ for(let n=0;n<3;n++)PF.push({x:.6+n*.12,y:.1+R()*.5,ph:R()*6})}  // 앤초비 떼
 seed();
-function moveParticles(st,dt){const v=st.V;
+function moveParticles(st,dt){const v=st.V||0;
  PS.forEach(p=>{p.x+=v*dt*.07;if(p.x<0)p.x+=1;if(p.x>1)p.x-=1});
- PM.forEach(p=>{p.lo+=v*dt*9;if(p.lo<160)p.lo+=112;if(p.lo>272)p.lo-=112})}
+ PM.forEach(p=>{p.lo+=v*dt*9;if(p.lo<160)p.lo+=112;if(p.lo>272)p.lo-=112});
+ PW.forEach(p=>{p.u=(p.u+dt*.06*(st.loop||0))%1});
+ PP.forEach(p=>{p.x-=dt*.08*(st.off||0);if(p.x<0)p.x+=1});
+ PN.forEach(p=>{p.u+=dt*.12*(st.up||0);if(p.u>1)p.u-=1})}
 
-// ================= 단면 =================
+// ================= 적도 단면 (오른쪽 또는 그림판 전체) =================
 // xf: 0(서쪽 끝, 130°E) → 1(동쪽 끝, 80°W)
-const SX0=SR.x+38,SX1=SR.x+SR.w-46,SEA=150,BOT=SR.y+SR.h;
+let SR=SRE,SX0,SX1,SEA,BOT,KH;
+function setSR(r,skyFrac){SR=r;SX0=r.x+38;SX1=r.x+r.w-46;SEA=r.y+Math.round(r.h*(skyFrac||.364));BOT=r.y+r.h;KH=(BOT-SEA)/234}
+setSR(SRE);
 const sxp=xf=>SX0+xf*(SX1-SX0),slon=xf=>130+xf*150;
 // 따뜻한 해수층 두께(px)와 해수면 높이(px, 위로 +): 가정(바람 없음) → 평상시 → 엘니뇨
-const thick=(xf,st)=>{const h0=70,hN=24+108*Math.pow(1-xf,1.3),hE=60+20*(1-xf);return lerp(lerp(h0,hN,st.F),hE,st.E)};
+const thick=(xf,st)=>{const h0=70,hN=24+108*Math.pow(1-xf,1.3),hE=60+20*(1-xf);return KH*lerp(lerp(h0,hN,st.F),hE,st.E)};
 const level=(xf,st)=>{const sN=12*(1-xf)-5*xf,sE=3*(1-xf)-1*xf;return lerp(lerp(0,sN,st.F),sE,st.E)};
 function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAlpha=a;
  ctx.beginPath();rr(SR.x,SR.y,SR.w,SR.h,12);ctx.clip();
- // 하늘
  const sky=ctx.createLinearGradient(0,SR.y,0,SEA);sky.addColorStop(0,'#0e1638');sky.addColorStop(1,'#1d2c5c');ctx.fillStyle=sky;ctx.fillRect(SR.x,SR.y,SR.w,SEA-SR.y+20);
- // 깊은 곳의 찬 해수
  const deep=ctx.createLinearGradient(0,SEA,0,BOT);deep.addColorStop(0,'#2a4fae');deep.addColorStop(1,'#0f2163');ctx.fillStyle=deep;ctx.fillRect(SR.x,SEA-20,SR.w,BOT-SEA+20);
  // 따뜻한 해수층(색 = 지도의 적도 수온과 같은 색)
  const N=84;for(let n=0;n<N;n++){const x0=n/N,x1=(n+1)/N,xm=(x0+x1)/2,c=lut(eqT(slon(xm)),22,30);
   const top=SEA-level(xm,st),hh=thick(xm,st);ctx.fillStyle=rgb(c);ctx.fillRect(sxp(x0)-.5,top,sxp(x1)-sxp(x0)+1,hh)}
- // 따뜻한 해수층 아래 경계(점선)
  ctx.setLineDash([5,4]);ctx.strokeStyle='rgba(255,255,255,.55)';ctx.lineWidth=1.3;ctx.beginPath();for(let n=0;n<=40;n++){const xf=n/40,y=SEA-level(xf,st)+thick(xf,st);n?ctx.lineTo(sxp(xf),y):ctx.moveTo(sxp(xf),y)}ctx.stroke();ctx.setLineDash([]);
- // 하늘 덮기(해수면 위쪽) — 해수면 선
- ctx.fillStyle='#1d2c5c';ctx.beginPath();ctx.moveTo(SX0,SR.y);for(let n=0;n<=40;n++){const xf=n/40;ctx.lineTo(sxp(xf),SEA-level(xf,st))}ctx.lineTo(SX1,SR.y);ctx.closePath();
+ // 해수면 위쪽은 하늘로 덮음 — 해수면 선
+ ctx.beginPath();ctx.moveTo(SX0,SR.y);for(let n=0;n<=40;n++){const xf=n/40;ctx.lineTo(sxp(xf),SEA-level(xf,st))}ctx.lineTo(SX1,SR.y);ctx.closePath();
  ctx.save();ctx.clip();ctx.fillStyle=sky;ctx.fillRect(SR.x,SR.y,SR.w,SEA);ctx.restore();
  ctx.strokeStyle='#bfe6ff';ctx.lineWidth=2;ctx.beginPath();for(let n=0;n<=40;n++){const xf=n/40,y=SEA-level(xf,st);n?ctx.lineTo(sxp(xf),y):ctx.moveTo(sxp(xf),y)}ctx.stroke();
- // 기울기를 알아보게 하는 기준선(바람이 없을 때의 해수면)
- if(st.F>0){ctx.setLineDash([3,4]);ctx.strokeStyle='rgba(191,230,255,.45)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(SX0,SEA);ctx.lineTo(SX1,SEA);ctx.stroke();ctx.setLineDash([])}
+ if(st.F>0&&st.ref!==0){ctx.setLineDash([3,4]);ctx.strokeStyle='rgba(191,230,255,.45)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(SX0,SEA);ctx.lineTo(SX1,SEA);ctx.stroke();ctx.setLineDash([])}
  // 표층 해수의 흐름(입자)
- PS.forEach(p=>{const y=SEA-level(p.x,st)+thick(p.x,st)*p.d*.8+3,x=sxp(p.x);const dir=Math.sign(st.V);if(Math.abs(st.V)<.05)return;
+ if(Math.abs(st.V)>.05)PS.forEach(p=>{const y=SEA-level(p.x,st)+thick(p.x,st)*p.d*.8+3,x=sxp(p.x),dir=Math.sign(st.V);
   ctx.globalAlpha=a*Math.min(1,Math.abs(st.V)*1.4)*.9;ctx.strokeStyle='#ffffff';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(x-dir*7,y);ctx.lineTo(x+dir*3,y);ctx.stroke();
   ctx.beginPath();ctx.moveTo(x+dir*6,y);ctx.lineTo(x+dir*1,y-3);ctx.lineTo(x+dir*1,y+3);ctx.closePath();ctx.fillStyle='#fff';ctx.fill()});
  ctx.globalAlpha=a;
- // 용승(동쪽 끝): 깊은 곳의 찬 해수가 올라오는 화살표
+ // 용승(동쪽 끝)
  if(st.U>0.02){const ua=st.U;for(let m=0;m<3;m++){const bx=sxp(.83+m*.055),y0=BOT-22,y1=SEA-level(.9,st)+8;
    ctx.globalAlpha=a*Math.min(1,ua*1.2);ctx.strokeStyle='#8fe3ff';ctx.lineWidth=2.4;ctx.setLineDash([7,6]);ctx.lineDashOffset=-(t*28*ua)%13;
    ctx.beginPath();ctx.moveTo(bx-26+m*6,y0);ctx.quadraticCurveTo(bx+4,y0-30,bx+2,y1+10);ctx.stroke();ctx.setLineDash([]);
@@ -254,25 +322,20 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
  ctx.beginPath();ctx.moveTo(SR.x+SR.w,BOT);ctx.lineTo(SR.x+SR.w,SEA-70);ctx.lineTo(SX1+30,SEA-88);ctx.lineTo(SX1+16,SEA-40);ctx.lineTo(SX1-2,SEA-8);ctx.lineTo(SX1+6,BOT);ctx.closePath();ctx.fill();ctx.stroke();
  T('인도네시아',SR.x+6,SEA-44,{size:11.5,c:'#e9dcc4',al:'left'});T('남아메리카',SR.x+SR.w-6,SEA-98,{size:11.5,c:'#e9dcc4',al:'right'});
  // 해 · 가열
- const sunx=sxp(.38),suny=SR.y+26;ctx.fillStyle='#ffd34d';ctx.beginPath();ctx.arc(sunx,suny,13,0,7);ctx.fill();
- ctx.strokeStyle='#ffd34d';ctx.lineWidth=2;for(let q=0;q<8;q++){const an=q*Math.PI/4;ctx.beginPath();ctx.moveTo(sunx+Math.cos(an)*17,suny+Math.sin(an)*17);ctx.lineTo(sunx+Math.cos(an)*22,suny+Math.sin(an)*22);ctx.stroke()}
- if(st.heat>0){const ha=st.heat;for(let q=0;q<4;q++){const xf=.12+q*.2,x=sxp(xf),y2=SEA-level(xf,st)-4;ctx.setLineDash([4,5]);ctx.lineDashOffset=-(t*22)%9;
-   ctx.globalAlpha=a*ha*.85;ctx.strokeStyle='#ffd34d';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(sunx+(x-sunx)*.18,suny+16);ctx.lineTo(x,y2);ctx.stroke()}
-  ctx.setLineDash([]);T('햇빛을 받아 데워짐',sxp(.62),SR.y+31,{c:'#ffd34d',size:13,w:800,halo:1,a:a*ha})}
+ if(st.sunA!==0){const sunx=sxp(.38),suny=SR.y+26;sun(sunx,suny,a);
+  if(st.heat>0){const ha=st.heat;for(let q=0;q<4;q++){const xf=.12+q*.2,x=sxp(xf),y2=SEA-level(xf,st)-4;ctx.setLineDash([4,5]);ctx.lineDashOffset=-(t*22)%9;
+    ctx.globalAlpha=a*ha*.85;ctx.strokeStyle='#ffd34d';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(sunx+(x-sunx)*.18,suny+16);ctx.lineTo(x,y2);ctx.stroke()}
+   ctx.setLineDash([]);T('햇빛을 받아 데워짐',sxp(.62),SR.y+31,{c:'#ffd34d',size:13,w:800,halo:1,a:a*ha})}}
  ctx.globalAlpha=a;
- // 구름과 비 (C: 나타난 정도, cx: 0 서쪽 → 1 동쪽으로 옮겨 감)
- if(st.C>0){const cxp=sxp(lerp(.15,.58,st.cx)),cy=SR.y+60;ctx.globalAlpha=a*st.C;
-  [[-22,4,17],[0,-4,22],[24,3,17],[-8,8,16],[12,8,16]].forEach(([dx,dy,r])=>{ctx.fillStyle='#d9deea';ctx.beginPath();ctx.arc(cxp+dx,cy+dy,r,0,7);ctx.fill()});
-  ctx.strokeStyle='#8fc8ff';ctx.lineWidth=1.6;for(let q=0;q<9;q++){const x=cxp-30+q*7.5,ph=((t*1.6+q*.37)%1),y=cy+22+ph*(SEA-cy-30);ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-2,y+8);ctx.stroke()}
-  T('비가 많이 내림',cxp,cy-30,{c:'#e8ecff',size:12.5,w:800,halo:1,a:a*st.C})}
- ctx.globalAlpha=a;
+ // 구름과 비 (C: 나타난 정도, cx: 0 서쪽 → 1 동쪽으로 옮겨 감) — 엘니뇨 탭
+ if(st.C>0){const cxp=sxp(lerp(.15,.58,st.cx)),cy=SR.y+60;cloud(cxp,cy,a*st.C);rain(cxp,cy+22,SEA-8,t,a*st.C);T('비가 많이 내림',cxp+44,cy+6,{c:'#e8ecff',size:12.5,w:800,halo:1,a:a*st.C,al:'left'})}
  // 무역풍(해수면 위, 동 → 서)
- if(st.W>0.02){const L=58*st.W;[.82,.56,.3].forEach((xf,q)=>{const x=sxp(xf),y=SEA-26-q%2*6;arrow(x+L/2,y,x-L/2,y,'#ffffff',3,10,a*Math.min(1,st.W*1.6))});
+ if(st.W>0.02&&!st.walk){const L=58*st.W;[.82,.56,.3].forEach((xf,q)=>{const x=sxp(xf),y=SEA-26-q%2*6;arrow(x+L/2,y,x-L/2,y,'#ffffff',3,10,a*Math.min(1,st.W*1.6))});
   T(st.W<.6?'약해진 무역풍':'무역풍',sxp(.86),SEA-44,{size:13.5,w:800,halo:1,a:a*Math.min(1,st.W*2+.3)})}
+ if(st.walk)drawWalker(st,t,a);
  // 이름표
  T('따뜻한 해수층',sxp(.22),SEA-level(.22,st)+Math.min(thick(.22,st)*.5+5,thick(.22,st)-6),{size:13,w:800,c:'#1b1200',a:a*.9});
  T('찬 해수',sxp(.42),BOT-34,{size:13,w:800,c:'#cfe0ff'});
- // 정리(두께·해수면): lab
  if(st.lab>0){const la=st.lab,el=st.E>.5;const yb=x=>SEA-level(x,st);
   [[.07,el?'얇아짐':'두꺼움'],[.93,el?'두꺼워짐':'얇음']].forEach(([xf,s])=>{const x=sxp(xf)+(xf<.5?6:-6),y1=yb(xf)+2,y2=yb(xf)+thick(xf,st)-2;
    ctx.globalAlpha=a*la;ctx.strokeStyle='#fff';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(x,y1);ctx.lineTo(x,y2);ctx.stroke();
@@ -280,125 +343,260 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
    T(s,x+(xf<.5?8:-8),Math.max(y2+16,yb(xf)+thick(xf,st)/2+5),{size:12.5,w:800,al:xf<.5?'left':'right',halo:1,a:a*la})});
   T(el?'해수면 낮아짐':'해수면 높음',sxp(.12),yb(.12)-8,{size:12,w:800,c:'#bfe6ff',halo:1,a:a*la,al:'left'});
   T(el?'해수면 높아짐':'해수면 낮음',sxp(.93),yb(.93)-8,{size:12,w:800,c:'#bfe6ff',halo:1,a:a*la,al:'right'})}
- // 방향
  T('◀ 서태평양',SR.x+10,BOT-8,{size:12,al:'left',c:'#cfd6ee',w:700});T('동태평양 ▶',SR.x+SR.w-10,BOT-8,{size:12,al:'right',c:'#cfd6ee',w:700});
  T('적도를 따라 자른 단면',SR.x+SR.w/2,BOT-8,{size:12,c:'#a9b1cc',w:700});
  ctx.restore();
  ctx.globalAlpha=a;ctx.strokeStyle='rgba(255,255,255,.18)';ctx.lineWidth=1;rr(SR.x,SR.y,SR.w,SR.h,12);ctx.stroke();ctx.globalAlpha=1}
 
+// ---- 워커 순환 (대기의 순환: 그림판 전체 폭 단면 위에) ----
+// wa: 서태평양 상승 기류, ea: 동태평양 하강 기류, loop: 위·아래 흐름까지 이어진 순환
+function drawWalker(st,t,a){const xw=sxp(.15),xe=sxp(.86),yt=SR.y+44,yb=SEA-26,r=26;
+ // 순환 경로(시계 반대 방향으로 그림: 서쪽 위로 → 위쪽 동쪽으로 → 동쪽 아래로 → 아래쪽 서쪽으로)
+ const P=[[xw,yb-r],[xw,yt+r],[xw+r,yt],[xe-r,yt],[xe,yt+r],[xe,yb-r],[xe-r,yb],[xw+r,yb]];
+ const path=new Path2D();path.moveTo(xw,yb-r);path.lineTo(xw,yt+r);path.arcTo(xw,yt,xw+r,yt,r);path.lineTo(xe-r,yt);path.arcTo(xe,yt,xe,yt+r,r);path.lineTo(xe,yb-r);path.arcTo(xe,yb,xe-r,yb,r);path.lineTo(xw+r,yb);path.arcTo(xw,yb,xw,yb-r,r);
+ // 구간 길이로 위치 찾기(모서리는 직선으로 근사)
+ const L=[];let tot=0;for(let i=0;i<8;i++){const p=P[i],q=P[(i+1)%8],d=Math.hypot(q[0]-p[0],q[1]-p[1]);L.push(d);tot+=d}
+ const at=u=>{let d=u*tot;for(let i=0;i<8;i++){if(d<=L[i]){const p=P[i],q=P[(i+1)%8],f=d/L[i];return [lerp(p[0],q[0],f),lerp(p[1],q[1],f),q[0]-p[0],q[1]-p[1],i]}d-=L[i]}return [P[0][0],P[0][1],0,-1,0]};
+ // 서쪽: 상승 기류, 저기압, 구름과 비
+ if(st.wa>0){const A=a*st.wa;cloud(xw+6,yt+40,A,1.25);rain(xw+6,yt+66,SEA-6,t,A);
+  ctx.save();ctx.setLineDash([8,7]);ctx.lineDashOffset=(t*30)%15;ctx.globalAlpha=A;ctx.strokeStyle='#ff9b7a';ctx.lineWidth=3;[-34,40].forEach(dx=>{ctx.beginPath();ctx.moveTo(xw+dx,SEA-14);ctx.lineTo(xw+dx,yt+80);ctx.stroke()});ctx.restore();
+  [-34,40].forEach(dx=>arrow(xw+dx,yt+92,xw+dx,yt+74,'#ff9b7a',3,10,A));
+  T('상승 기류',xw+48,yb-70,{c:'#ff9b7a',size:14,w:800,halo:1,a:A,al:'left'});
+  pill('저기압',xw+3,SEA-12,'#ff9b7a',A,14);T('구름이 많고 비가 많이 내림',xw+4,yt-8+0,{c:'#e8ecff',size:12.5,w:800,halo:1,a:A})}
+ // 동쪽: 하강 기류, 고기압, 맑음
+ if(st.ea>0){const A=a*st.ea;sun(xe-6,yt+6,A);
+  ctx.save();ctx.setLineDash([8,7]);ctx.lineDashOffset=-(t*30)%15;ctx.globalAlpha=A;ctx.strokeStyle='#8fc8ff';ctx.lineWidth=3;[-40,34].forEach(dx=>{ctx.beginPath();ctx.moveTo(xe+dx,yt+40);ctx.lineTo(xe+dx,SEA-40);ctx.stroke()});ctx.restore();
+  [-40,34].forEach(dx=>arrow(xe+dx,SEA-52,xe+dx,SEA-34,'#8fc8ff',3,10,A));
+  T('하강 기류',xe-50,yb-70,{c:'#8fc8ff',size:14,w:800,halo:1,a:A,al:'right'});
+  pill('고기압',xe-3,SEA-12,'#8fc8ff',A,14);T('맑고 건조함',xe-6,yt-12,{c:'#e8ecff',size:12.5,w:800,halo:1,a:A})}
+ // 순환 전체
+ if(st.loop>0){const A=a*st.loop;ctx.save();ctx.globalAlpha=A*.55;ctx.strokeStyle='#ffffff';ctx.lineWidth=2;ctx.setLineDash([2,6]);ctx.stroke(path);ctx.restore();
+  PW.forEach(p=>{const [x,y,dx,dy]=at(p.u),n=Math.hypot(dx,dy)||1;ctx.globalAlpha=A;ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(x+dx/n*6,y+dy/n*6);ctx.lineTo(x-dx/n*3-dy/n*4,y-dy/n*3+dx/n*4);ctx.lineTo(x-dx/n*3+dy/n*4,y-dy/n*3-dx/n*4);ctx.closePath();ctx.fill()});
+  ctx.globalAlpha=1;
+  arrow(sxp(.62),yt,sxp(.68),yt,'#fff',3,12,A);arrow(sxp(.4),yb,sxp(.34),yb,'#fff',3,12,A);
+  T('높은 곳: 서 → 동으로 이동',sxp(.5),yt-10,{size:13.5,w:800,halo:1,a:A});
+  T('지표 부근: 동 → 서로 부는 무역풍',sxp(.5),yb-12,{size:13.5,w:800,halo:1,a:A});
+  pill('워커 순환',sxp(.5),yt+64,'#ffd76b',A,16)}
+ ctx.globalAlpha=a}
+
+// ---- 페루 연안 단면 (해안에 수직으로 자른 단면: 왼쪽 먼바다 → 오른쪽 페루 해안) ----
+function drawPeru(st,t){const R=SRE,a=1,sea=R.y+150,bot=R.y+R.h,x0=R.x,x1=R.x+R.w,coast=x1-74;
+ const px=f=>x0+f*(coast-x0);   // 0 먼바다 ~ 1 해안
+ const floorY=f=>f<.45?bot:lerp(bot,sea+44,Math.pow((f-.45)/.55,1.6));   // 대륙붕으로 얕아지는 바다 밑
+ const warmT=f=>lerp(24,lerp(24,18.5,Math.pow(f,2.2)),st.up);          // 해수면 온도: 해안 쪽이 용승으로 차가워짐
+ const thk=f=>lerp(62,lerp(62,6,Math.pow(f,1.8)),st.up);                // 따뜻한 해수층 두께
+ ctx.save();ctx.beginPath();rr(R.x,R.y,R.w,R.h,12);ctx.clip();
+ const sky=ctx.createLinearGradient(0,R.y,0,sea);sky.addColorStop(0,'#0e1638');sky.addColorStop(1,'#1d2c5c');ctx.fillStyle=sky;ctx.fillRect(R.x,R.y,R.w,sea-R.y);
+ const deep=ctx.createLinearGradient(0,sea,0,bot);deep.addColorStop(0,'#2a4fae');deep.addColorStop(1,'#0f2163');ctx.fillStyle=deep;ctx.fillRect(R.x,sea,R.w,bot-sea);
+ const N=60;for(let n=0;n<N;n++){const f0=n/N,f1=(n+1)/N,fm=(f0+f1)/2;ctx.fillStyle=rgb(lut(warmT(fm),16,28));ctx.fillRect(px(f0)-.5,sea,px(f1)-px(f0)+1,Math.min(thk(fm),floorY(fm)-sea))}
+ // 식물성 플랑크톤(초록빛)
+ if(st.plank>0){const g=ctx.createLinearGradient(px(.45),0,px(1),0);g.addColorStop(0,'rgba(60,200,90,0)');g.addColorStop(1,'rgba(60,200,90,.55)');ctx.globalAlpha=st.plank;ctx.fillStyle=g;ctx.fillRect(px(.45),sea,px(1)-px(.45),40);
+  ctx.fillStyle='#7dff9a';for(let q=0;q<36;q++){const f=.5+((q*.137)%1)*.5,y=sea+6+((q*.29)%1)*30+Math.sin(t*1.3+q)*2;ctx.beginPath();ctx.arc(px(f)+Math.cos(t+q)*2,y,1.6,0,7);ctx.fill()}ctx.globalAlpha=1;
+  T('식물성 플랑크톤',px(.5),sea+68,{c:'#7dff9a',size:12.5,w:800,halo:1,a:st.plank})}
+ // 바다 밑과 땅(대륙붕, 해안, 안데스산맥)
+ ctx.fillStyle='#6d5b43';ctx.strokeStyle='#9b845f';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(x0,bot+2);for(let n=0;n<=30;n++){const f=n/30;ctx.lineTo(px(f),floorY(f))}
+ ctx.lineTo(coast+4,sea-6);ctx.lineTo(coast+30,sea-30);ctx.lineTo(x1-28,R.y+40);ctx.lineTo(x1-14,R.y+56);ctx.lineTo(x1,R.y+50);ctx.lineTo(x1,bot+2);ctx.closePath();ctx.fill();ctx.stroke();
+ T('안데스산맥',x1-30,R.y+30,{size:11.5,c:'#e9dcc4'});T('페루',coast+30,sea+30,{size:13,w:800,c:'#e9dcc4'});
+ ctx.strokeStyle='#bfe6ff';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x0,sea);ctx.lineTo(coast+2,sea);ctx.stroke();
+ // 바람(해안을 따라 부는 남동 무역풍: 단면과 거의 수직이라 지도에서 보기)
+ if(st.wind>0)pill('해안을 따라 남동 무역풍이 붊 (왼쪽 지도)',R.x+R.w/2-30,R.y+22,'#ffffff',st.wind,12);
+ // 먼바다 쪽으로 이동하는 표층 해수
+ if(st.off>0){PP.forEach(p=>{const f=p.x,y=sea+Math.min(thk(f),40)*p.d*.8+4;dart(px(f),y,-1,st.off*.95)});
+  arrow(px(.62),sea-14,px(.3),sea-14,'#ffffff',2.6,10,st.off);T('표층 해수가 먼바다 쪽으로 이동',px(.42),sea-26,{size:12.5,w:800,halo:1,a:st.off})}
+ // 용승
+ if(st.up>0){for(let m=0;m<3;m++){const xs=px(.5+m*.08),xe2=px(.82+m*.06);ctx.save();ctx.globalAlpha=Math.min(1,st.up*1.3);ctx.strokeStyle='#8fe3ff';ctx.lineWidth=2.4;ctx.setLineDash([7,6]);ctx.lineDashOffset=-(t*28)%13;
+   ctx.beginPath();ctx.moveTo(xs,bot-20+m*-6);ctx.quadraticCurveTo(xe2-10,bot-40,xe2,sea+16);ctx.stroke();ctx.restore();arrow(xe2,sea+24,xe2,sea+8,'#8fe3ff',2.4,8,Math.min(1,st.up*1.3))}
+  T('찬 해수의 용승',px(.36),bot-112,{c:'#8fe3ff',size:13.5,w:800,halo:1,a:Math.min(1,st.up*1.5)})}
+ // 영양염류(노란 점: 깊은 곳에서 용승을 따라 올라옴)
+ if(st.nut>0){ctx.fillStyle='#ffd76b';PN.forEach(p=>{const m=Math.floor(p.o*3),xs=px(.5+m*.08),xe2=px(.82+m*.06),u=p.u,
+   x=(1-u)*(1-u)*xs+2*(1-u)*u*(xe2-10)+u*u*xe2,y=(1-u)*(1-u)*(bot-20-m*6)+2*(1-u)*u*(bot-40)+u*u*(sea+16);ctx.globalAlpha=st.nut*(u<.9?1:(1-u)*10);ctx.beginPath();ctx.arc(x+Math.sin(p.o*20)*6,y,2.3,0,7);ctx.fill()});
+  ctx.globalAlpha=1;T('영양염류',px(.2),bot-80,{c:'#ffd76b',size:13,w:800,halo:1,a:st.nut});
+  ctx.fillStyle='#ffd76b';for(let q=0;q<26;q++){ctx.globalAlpha=st.nut*.8;ctx.beginPath();ctx.arc(px(.05+((q*.173)%1)*.6),bot-14-((q*.41)%1)*60,2,0,7);ctx.fill()}ctx.globalAlpha=1}
+ // 앤초비 떼와 고깃배
+ if(st.fish>0){PF.forEach((s,i)=>{const cx=px(s.x)+Math.sin(t*.6+s.ph)*14,cy=sea+16+s.y*30;for(let q=0;q<7;q++){const fx=cx+((q*37)%23)-11,fy=cy+((q*53)%15)-7,dir=Math.cos(t*.6+s.ph)>0?1:-1;
+   ctx.globalAlpha=st.fish;ctx.fillStyle='#dfe8f2';ctx.beginPath();ctx.ellipse(fx,fy,6,2.2,0,0,7);ctx.fill();ctx.beginPath();ctx.moveTo(fx-dir*5,fy);ctx.lineTo(fx-dir*9,fy-3);ctx.lineTo(fx-dir*9,fy+3);ctx.closePath();ctx.fill()}});
+  ctx.globalAlpha=st.fish;const bx=px(.84),by=sea-2;ctx.fillStyle='#e9e2d0';ctx.beginPath();ctx.moveTo(bx-20,by-8);ctx.lineTo(bx+20,by-8);ctx.lineTo(bx+14,by+2);ctx.lineTo(bx-14,by+2);ctx.closePath();ctx.fill();
+  ctx.fillRect(bx-3,by-22,3,14);ctx.strokeStyle='#e9e2d0';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(bx+18,by-8);ctx.lineTo(bx+32,by+40);ctx.stroke();ctx.globalAlpha=1;
+  pill('앤초비(멸치류) 어장',px(.78),sea-62,'#ffd76b',st.fish,13)}
+ T('◀ 먼바다',R.x+10,bot-8,{size:12,al:'left',c:'#cfd6ee',w:700});T('해안에 수직으로 자른 단면',R.x+R.w/2-30,bot-8,{size:12,c:'#a9b1cc',w:700});
+ ctx.restore();ctx.strokeStyle='rgba(255,255,255,.18)';ctx.lineWidth=1;rr(R.x,R.y,R.w,R.h,12);ctx.stroke()}
+
 // ================= 지도 =================
-function drawMap(st,t){const z=st.zoom,v=viewAt(z);
- const lo=lerp(-2,22,z),hi=lerp(30,30,z);
- field(st);paintField(lo,hi);
- ctx.save();ctx.beginPath();rr(v.clip.x,v.clip.y,v.clip.w,v.clip.h,lerp(10,12,z));ctx.clip();
- // 이미지 칸 가장자리: 경도 29°~389°, 위도 71°~−71°
+// opt: {box, R(목표 자리), z(확대 정도), lo, hi(색 범위)} / 지도 위 표시는 장면마다 따로
+function drawMap(st,opt){const v=viewFor(opt.box,opt.R,opt.z);
+ field(st);paintField(opt.lo,opt.hi);
+ ctx.save();ctx.beginPath();rr(v.clip.x,v.clip.y,v.clip.w,v.clip.h,lerp(10,12,opt.z));ctx.clip();
  ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
- ctx.drawImage(oc,v.X(29),v.Y(71),v.X(389)-v.X(29),v.Y(-71)-v.Y(71));
- // 육지
- ctx.fillStyle='#4a5162';ctx.strokeStyle='#6b7385';ctx.lineWidth=.8;
+ ctx.drawImage(oc,v.X(29),v.Y(71),v.X(389)-v.X(29),v.Y(-71)-v.Y(71));   // 칸 가장자리: 경도 29°~389°, 위도 71°~−71°
+ ctx.fillStyle='#4a5162';ctx.strokeStyle='#6b7385';
  for(const off of [0,360]){ctx.save();ctx.translate(v.X(off),v.Y(0));ctx.scale(v.sx,v.sy);ctx.lineWidth=.8/Math.min(v.sx,v.sy);ctx.fill(LANDP);ctx.stroke(LANDP);ctx.restore()}
- // 자를 곳 강조: 바깥은 어둡게, 상자는 노란 점선
- if(st.box>0){const b=v.bx;ctx.fillStyle=`rgba(11,16,38,${.65*st.box+.35*z})`;ctx.beginPath();ctx.rect(v.clip.x,v.clip.y,v.clip.w,v.clip.h);ctx.rect(b.x+b.w,b.y,-b.w,b.h);ctx.fill('evenodd');
+ return v}
+function endMap(){ctx.restore()}
+
+// ---- 장면: 태평양의 수온 분포 ----
+function scenePac(st,t){const z=st.zoom,v=drawMap(st,{box:EQB,R:FR,z,lo:lerp(-2,22,z),hi:30});
+ if(st.box>0){const b=v.bx;ctx.fillStyle=`rgba(11,16,38,${.6*st.box*(1-z)})`;ctx.beginPath();ctx.rect(v.clip.x,v.clip.y,v.clip.w,v.clip.h);ctx.rect(b.x+b.w,b.y,-b.w,b.h);ctx.fill('evenodd');
   if(z<.98){ctx.globalAlpha=st.box*(1-z);ctx.setLineDash([6,4]);ctx.strokeStyle='#ffd76b';ctx.lineWidth=2.2;ctx.strokeRect(b.x,b.y,b.w,b.h);ctx.setLineDash([]);ctx.globalAlpha=1;
    T('적도 부근의 태평양',b.x+b.w/2,b.y-8,{c:'#ffd76b',size:15,w:800,halo:1,a:st.box*(1-z)})}}
- if(z<.5){const a=1-z*2;[[0,'적도']].forEach(([la,s])=>{ctx.globalAlpha=a*.5;ctx.setLineDash([4,4]);ctx.strokeStyle='#fff';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(v.clip.x,v.Y(la));ctx.lineTo(v.clip.x+v.clip.w,v.Y(la));ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;T(s,v.clip.x+8,v.Y(la)-5,{al:'left',size:12,halo:1,a})});
-  T('태평양',v.X(200),v.Y(18),{size:15,w:800,halo:1,a:a*.95});T('대서양',v.X(330),v.Y(18),{size:14,w:800,halo:1,a:a*.8});T('인도양',v.X(78),v.Y(-18),{size:14,w:800,halo:1,a:a*.8})}
+ const eqA=1;ctx.globalAlpha=.55;ctx.setLineDash([4,4]);ctx.strokeStyle='#fff';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(v.clip.x,v.Y(0));ctx.lineTo(v.clip.x+v.clip.w,v.Y(0));ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
+ T('적도',v.clip.x+8,v.Y(0)-5,{al:'left',size:12,halo:1});
+ if(z<.5){const a=1-z*2;T('태평양',v.X(200),v.Y(18),{size:15,w:800,halo:1,a:a*.95});T('대서양',v.X(330),v.Y(18),{size:14,w:800,halo:1,a:a*.8});T('인도양',v.X(78),v.Y(-18),{size:14,w:800,halo:1,a:a*.8})}
  if(z>.6){const a=c01((z-.6)/.4);
-  // 단면 위치(적도)
-  ctx.globalAlpha=a*st.sec;ctx.setLineDash([6,5]);ctx.strokeStyle='#ffffff';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(v.X(130),v.Y(0));ctx.lineTo(v.X(280),v.Y(0));ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
-  T('적도(단면 위치)',v.X(122),v.Y(0)-6,{al:'left',size:11.5,halo:1,a:a*st.sec});
-  T('오스트레일리아',v.X(134),v.Y(-23),{size:12,w:800,c:'#e7eaf4',halo:1,a});T('남아메리카',v.X(289),v.Y(-20),{size:12,w:800,c:'#e7eaf4',halo:1,a,al:'right'});
-  T('아시아',v.X(121),v.Y(25),{size:12,w:800,c:'#e7eaf4',halo:1,a,al:'left'});T('북아메리카',v.X(270),v.Y(26),{size:12,w:800,c:'#e7eaf4',halo:1,a});
-  T('서태평양',v.X(158),v.Y(23),{size:13.5,w:800,halo:1,a});T('동태평양',v.X(232),v.Y(23),{size:13.5,w:800,halo:1,a});
-  // 무역풍(북반구는 북동풍, 남반구는 남동풍)
-  if(st.W>.02){const L=40*st.W,aw=a*Math.min(1,st.W*1.6);[160,195,230,262].forEach(lo=>{[[11,1],[-11,-1]].forEach(([la,s])=>{const x=v.X(lo),y=v.Y(la);arrow(x+L*.5,y-s*L*.08,x-L*.5,y+s*L*.08,'#ffffff',2.6,9,aw)})});
-   T(st.W<.6?'약해진 무역풍':'무역풍',v.X(262),v.Y(16),{size:12.5,w:800,halo:1,a:a*Math.min(1,st.W*2+.3)})}
-  // 표층 해수의 흐름(적도 부근)
-  if(Math.abs(st.V)>.05){const dir=Math.sign(st.V);ctx.globalAlpha=a*Math.min(1,Math.abs(st.V)*1.4);PM.forEach(p=>{const x=v.X(p.lo),y=v.Y(p.la);ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(x+dir*5,y);ctx.lineTo(x-dir*2,y-3);ctx.lineTo(x-dir*2,y+3);ctx.closePath();ctx.fill();
-    ctx.strokeStyle='rgba(255,255,255,.8)';ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(x-dir*2,y);ctx.lineTo(x-dir*9,y);ctx.stroke()});ctx.globalAlpha=1}
-  // 용승 표시(페루 · 에콰도르 앞바다)
-  if(st.U>.05&&st.mU>0){const x=v.X(272),y=v.Y(-6),pa=a*st.mU;ctx.globalAlpha=pa;ctx.strokeStyle='#8fe3ff';ctx.lineWidth=2.2;ctx.beginPath();ctx.ellipse(x,y,22,26,0,0,7);ctx.stroke();ctx.globalAlpha=1;
-   T(st.E>.5?'용승 약화':'용승',x,y+5,{c:'#8fe3ff',size:13,w:800,halo:1,a:pa})}
-  // 정리 이름표
-  if(st.lab>0){const la=a*st.lab;if(st.E<.5){pill('따뜻한 해수',v.X(150),v.Y(-8),'#ffb36b',la);pill('찬 해수',v.X(240),v.Y(-9),'#8fe3ff',la)}
-   else{pill('평년보다 수온 높음',v.X(232),v.Y(-9),'#ff8a7a',la);pill('가뭄',v.X(140),v.Y(-14),'#ffd76b',la,12);pill('홍수',v.X(268),v.Y(4),'#8fc8ff',la,12);pill('어획량 감소',v.X(262),v.Y(-20),'#8fe3ff',la,11.5)}}
- }
- ctx.restore();
- // 범례(지도 아래): 지도 이름 + 기호
- {const L=LG,a=c01((z-.6)/.4);if(a>0){ctx.globalAlpha=a;ctx.fillStyle='rgba(255,255,255,.05)';ctx.strokeStyle='rgba(255,255,255,.16)';ctx.lineWidth=1;rr(L.x,L.y,L.w,L.h,10);ctx.fill();ctx.stroke();ctx.globalAlpha=1;
-  const nm=st.A>.5?['지도: 엘니뇨 때의 해수면 온도','#ff8a7a']:st.hyp>.5?['지도: 무역풍이 없다고 가정한 해수면 온도','#ffd76b']:['지도: 연평균 해수면 온도(평상시)','#cfe0ff'];
-  pill(nm[0],L.x+L.w/2,L.y+20,nm[1],a,13);
-  const y=L.y+56,cs=[L.x+80,L.x+236,L.x+390];
-  arrow(cs[0]-8,y,cs[0]-44,y,'#fff',2.6,9,a);T('무역풍',cs[0],y+4,{al:'left',size:12.5,a});
-  ctx.globalAlpha=a;[0,1].forEach(q=>{const x=cs[1]-40+q*16;ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(x-5,y);ctx.lineTo(x+2,y-3);ctx.lineTo(x+2,y+3);ctx.closePath();ctx.fill();ctx.strokeStyle='rgba(255,255,255,.8)';ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(x+2,y);ctx.lineTo(x+9,y);ctx.stroke()});
-  T('표층 해수의 흐름',cs[1]-6,y+4,{al:'left',size:12.5,a});
-  ctx.globalAlpha=a;ctx.strokeStyle='#8fe3ff';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(cs[2]-26,y,10,12,0,0,7);ctx.stroke();ctx.globalAlpha=1;T('용승',cs[2]-10,y+4,{al:'left',size:12.5,a});
-  T(st.A>.5?'연평균 해수면 온도 + 1997년 12월의 수온 편차 (NOAA ERSST v5)':'1991~2020년 연평균 해수면 온도 (NOAA ERSST v5)',L.x+L.w/2,L.y+L.h-12,{size:11,c:'#a9b1cc',w:500,a})}}
- // 색 막대(°C)
- const cb={x:lerp(GR.x+GR.w*.25,ZR.x+40,z),y:lerp(374,ZR.y+ZR.h+12,z),w:lerp(GR.w*.5,ZR.w-80,z),h:11};
- for(let q=0;q<120;q++){const T2=lo+(hi-lo)*q/119;ctx.fillStyle=rgb(lut(T2,lo,hi));ctx.fillRect(cb.x+cb.w*q/120,cb.y,cb.w/120+.6,cb.h)}
- ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=1;ctx.strokeRect(cb.x,cb.y,cb.w,cb.h);
- const step=hi-lo>14?5:2;for(let v2=Math.ceil(lo/step)*step;v2<=hi+.01;v2+=step){const x=cb.x+(v2-lo)/(hi-lo)*cb.w;T(String(v2),x,cb.y+cb.h+12,{size:11,c:'#cfd6ee',w:600})}
- T('해수면 온도(°C)',cb.x-8,cb.y+cb.h-1,{size:11.5,al:'right',c:'#cfd6ee',w:700,a:z>.5?0:1});
- if(z>.5)T('°C',cb.x+cb.w+8,cb.y+cb.h-1,{size:11.5,al:'left',c:'#cfd6ee',w:700})}
+  T('아시아',v.X(121),v.Y(25),{size:13,w:800,c:'#e7eaf4',halo:1,a,al:'left'});T('오스트레일리아',v.X(134),v.Y(-24),{size:13,w:800,c:'#e7eaf4',halo:1,a});
+  T('북아메리카',v.X(268),v.Y(26),{size:13,w:800,c:'#e7eaf4',halo:1,a});T('남아메리카',v.X(288),v.Y(-16),{size:13,w:800,c:'#e7eaf4',halo:1,a,al:'right'});
+  T('서태평양',v.X(155),v.Y(14),{size:16,w:800,halo:1,a});T('동태평양',v.X(245),v.Y(14),{size:16,w:800,halo:1,a});
+  if(quizOK){const qa=c01((t-quizT)/.6);pill('약 29~30 °C',v.X(155),v.Y(-4),'#ff8a7a',qa,15);pill('약 25 °C',v.X(255),v.Y(-4),'#8fe3ff',qa,15)}}
+ endMap();
+ colorbar({x:lerp(GR.x+GR.w*.25,FR.x+FR.w*.25,z),y:lerp(374,FR.y+FR.h+16,z),w:GR.w*.5,h:11},lerp(-2,22,z),30,z>.5?2:5,'해수면 온도(°C)');
+ T(z>.5?'적도 부근 태평양의 연평균 해수면 온도 (1991~2020년, NOAA ERSST v5)':'전 세계의 연평균 해수면 온도 (1991~2020년, NOAA ERSST v5)',W-14,H-2.5,{size:10.5,al:'right',c:'#8d96b3',w:500,bl:'bottom'})}
 
-// ================= 탭과 단계 =================
+// ---- 장면: 적도 지도 + 단면 (온도 분포의 원인, 엘니뇨) ----
+function sceneEq(st,t){setSR(SRE);const v=drawMap(st,{box:EQB,R:ZR,z:1,lo:22,hi:30}),a=1;
+ ctx.globalAlpha=.9;ctx.setLineDash([6,5]);ctx.strokeStyle='#ffffff';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(v.X(130),v.Y(0));ctx.lineTo(v.X(280),v.Y(0));ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
+ T('적도(단면 위치)',v.X(122),v.Y(0)-6,{al:'left',size:11.5,halo:1});
+ T('오스트레일리아',v.X(134),v.Y(-23),{size:12,w:800,c:'#e7eaf4',halo:1});T('남아메리카',v.X(289),v.Y(-20),{size:12,w:800,c:'#e7eaf4',halo:1,al:'right'});
+ T('아시아',v.X(121),v.Y(25),{size:12,w:800,c:'#e7eaf4',halo:1,al:'left'});T('북아메리카',v.X(270),v.Y(26),{size:12,w:800,c:'#e7eaf4',halo:1});
+ T('서태평양',v.X(158),v.Y(23),{size:13.5,w:800,halo:1});T('동태평양',v.X(232),v.Y(23),{size:13.5,w:800,halo:1});
+ if(st.W>.02){const L=40*st.W,aw=Math.min(1,st.W*1.6);[160,195,230,262].forEach(lo=>{[[11,1],[-11,-1]].forEach(([la,s])=>{const x=v.X(lo),y=v.Y(la);arrow(x+L*.5,y-s*L*.08,x-L*.5,y+s*L*.08,'#ffffff',2.6,9,aw)})});
+  T(st.W<.6?'약해진 무역풍':'무역풍',v.X(262),v.Y(16),{size:12.5,w:800,halo:1,a:Math.min(1,st.W*2+.3)})}
+ if(Math.abs(st.V)>.05){const dir=Math.sign(st.V),aa=Math.min(1,Math.abs(st.V)*1.4);PM.forEach(p=>dart(v.X(p.lo),v.Y(p.la),dir,aa))}
+ if(st.U>.05&&st.mU>0){const x=v.X(272),y=v.Y(-6);ctx.globalAlpha=st.mU;ctx.strokeStyle='#8fe3ff';ctx.lineWidth=2.2;ctx.beginPath();ctx.ellipse(x,y,22,26,0,0,7);ctx.stroke();ctx.globalAlpha=1;
+  T(st.E>.5?'용승 약화':'용승',x,y+5,{c:'#8fe3ff',size:13,w:800,halo:1,a:st.mU})}
+ if(st.lab>0){const la=st.lab;if(st.E<.5){pill('따뜻한 해수',v.X(150),v.Y(-8),'#ffb36b',la);pill('찬 해수',v.X(240),v.Y(-9),'#8fe3ff',la)}
+  else{pill('평년보다 수온 높음',v.X(232),v.Y(-9),'#ff8a7a',la);pill('가뭄',v.X(140),v.Y(-14),'#ffd76b',la,12);pill('홍수',v.X(268),v.Y(4),'#8fc8ff',la,12);pill('어획량 감소',v.X(256),v.Y(-21),'#8fe3ff',la,11.5)}}
+ endMap();
+ colorbar({x:ZR.x+40,y:ZR.y+ZR.h+12,w:ZR.w-80,h:11},22,30,2);
+ // 범례
+ const L=LG;ctx.fillStyle='rgba(255,255,255,.05)';ctx.strokeStyle='rgba(255,255,255,.16)';ctx.lineWidth=1;rr(L.x,L.y,L.w,L.h,10);ctx.fill();ctx.stroke();
+ const nm=st.A>.5?['지도: 엘니뇨 때의 해수면 온도','#ff8a7a']:st.hyp>.5?['지도: 무역풍이 없다고 가정한 해수면 온도','#ffd76b']:['지도: 연평균 해수면 온도(평상시)','#cfe0ff'];
+ pill(nm[0],L.x+L.w/2,L.y+20,nm[1],1,13);
+ const y=L.y+56,cs=[L.x+80,L.x+236,L.x+390];
+ arrow(cs[0]-8,y,cs[0]-44,y,'#fff',2.6,9,1);T('무역풍',cs[0],y+4,{al:'left',size:12.5});
+ [0,1].forEach(q=>dart(cs[1]-40+q*16,y,-1,1));T('표층 해수의 흐름',cs[1]-6,y+4,{al:'left',size:12.5});
+ ctx.strokeStyle='#8fe3ff';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(cs[2]-26,y,10,12,0,0,7);ctx.stroke();T('용승',cs[2]-10,y+4,{al:'left',size:12.5});
+ T(st.A>.5?'연평균 해수면 온도 + 1997년 12월의 수온 편차 (NOAA ERSST v5)':'1991~2020년 연평균 해수면 온도 (NOAA ERSST v5)',L.x+L.w/2,L.y+L.h-12,{size:11,c:'#a9b1cc',w:500});
+ drawSection(st,t)}
+
+// ---- 장면: 대기의 순환 (그림판 전체 폭 단면) ----
+function sceneWalk(st,t){field(st);setSR(WR,.6);drawSection({...st,walk:1,sunA:0,ref:0},t)}
+
+// ---- 장면: 남아메리카 연안의 용승 (왼쪽 페루 앞바다 지도 + 오른쪽 해안에 수직인 단면) ----
+function scenePeru(st,t){const v=drawMap(st,{box:PEB,R:PR,z:1,lo:16,hi:28});
+ // 단면 위치(12°S, 해안에 수직)
+ ctx.globalAlpha=.9;ctx.setLineDash([6,5]);ctx.strokeStyle='#fff';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(v.X(266),v.Y(-12));ctx.lineTo(v.X(283),v.Y(-12));ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
+ T('단면 위치',v.X(266),v.Y(-12)-6,{al:'left',size:11.5,halo:1});
+ T('페루',v.X(286.5),v.Y(-9),{size:14,w:800,c:'#e7eaf4',halo:1});T('남아메리카',v.X(291),v.Y(-1.5),{size:12.5,w:800,c:'#e7eaf4',halo:1});
+ T('적도',v.X(256),v.Y(0)-4,{al:'left',size:11.5,halo:1,a:.9});ctx.globalAlpha=.5;ctx.setLineDash([4,4]);ctx.strokeStyle='#fff';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(PR.x,v.Y(0));ctx.lineTo(PR.x+PR.w,v.Y(0));ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
+ // 해안을 따라 부는 남동 무역풍
+ if(st.wind>0){[[284,-20],[279,-14],[276,-7]].forEach(([lo,la])=>{const x=v.X(lo),y=v.Y(la);arrow(x+14,y+20,x-14,y-20,'#ffffff',3,10,st.wind)});
+  T('남동 무역풍',v.X(279),v.Y(-21.5),{size:13,w:800,halo:1,a:st.wind})}
+ // 먼바다 쪽으로 이동하는 표층 해수
+ if(st.off>0){[-6,-12,-18].forEach((la,q)=>{for(let m=0;m<3;m++){const ph=((t*.35+m/3+q*.2)%1),lo=lerp(280-q*.5,264,ph);dart(v.X(lo)+(q==1?0:0),v.Y(la)+(q==1?10:0),-1,st.off*Math.sin(ph*Math.PI))}})}
+ // 용승: 해안을 따라 찬 해수 띠
+ if(st.up>0){ctx.globalAlpha=st.up;ctx.strokeStyle='#8fe3ff';ctx.lineWidth=2.2;ctx.setLineDash([5,4]);ctx.beginPath();[[279,-2],[280,-6],[281.5,-10],[284,-14],[287,-18],[289,-22]].forEach(([lo,la],i)=>{const x=v.X(lo)-16,y=v.Y(la);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
+  pill('찬 해수(용승)',v.X(268),v.Y(-20),'#8fe3ff',st.up,13)}
+ if(st.fish>0)pill('앤초비 어장',v.X(271),v.Y(-9),'#ffd76b',st.fish,13);
+ endMap();
+ colorbar({x:PR.x+40,y:PR.y+PR.h+16,w:PR.w-80,h:11},16,28,2);
+ T('연평균 해수면 온도 (1991~2020년, NOAA ERSST v5)',PR.x+PR.w/2,PR.y+PR.h+56,{size:11,c:'#a9b1cc',w:500});
+ drawPeru(st,t)}
+
+// ================= 탭 · 작은 메뉴 · 단계 =================
 // 상태: zoom(확대), box(자를 곳), sec(단면), hyp(가정 이름표), W(무역풍 세기), V(표층 흐름: −서쪽, +동쪽), F(서쪽에 쌓인 정도),
 //  E(엘니뇨로 바뀐 정도), U(용승 세기), U0(지도에서 동쪽 찬 해수가 나타난 정도), mU(지도의 용승 표시), Hh(서쪽 가열), heat(햇빛 화살표),
-//  A(엘니뇨 수온 편차), C(구름), cx(구름 위치), lab(정리 이름표)
-const NORMAL={zoom:1,box:1,sec:1,hyp:0,W:1,V:-1,F:1,E:0,U:1,U0:1,mU:1,Hh:1,heat:0,A:0,C:1,cx:0,lab:0};
-const S0=[ // 평상시
- {t:'적도 태평양',x:'연평균 해수면 온도 지도에서 <em>적도 부근의 태평양</em>을 잘라 확대하고, 오른쪽에 적도를 따라 자른 <em>단면</em>을 함께 봅니다. 먼저 무역풍이 불지 않는다고 가정해 봅시다.',d:9,
-  s:k=>{const z=seg(k,.28,.62),m=seg(k,.7,.95);return{...NORMAL,zoom:z,box:seg(k,.04,.26),sec:seg(k,.62,.8),hyp:m,W:0,V:0,F:0,U:1-m,U0:1-m,mU:0,Hh:1-m,C:0}}},
- {t:'1단계(무역풍)',x:'적도 부근에서는 <em>무역풍</em>이 동쪽에서 서쪽으로 붑니다. (무역풍이 없다고 가정하여 수온과 따뜻한 해수층의 두께가 동서로 고른 상태에서 시작합니다.)',d:5,
-  s:k=>({...NORMAL,hyp:1,W:ease(k),V:0,F:0,U:0,U0:0,mU:0,Hh:0,C:0})},
- {t:'2단계(따뜻한 해수의 이동)',x:'무역풍에 밀려 따뜻한 표층 해수가 <em>서쪽으로 이동</em>하여 서태평양에 쌓입니다. 서태평양은 <em>따뜻한 해수층이 두꺼워지고 해수면이 높아집니다</em>.',d:7,
-  s:k=>({...NORMAL,hyp:1-seg(k,.6,1),V:-seg(k,0,.25),F:ease(k),U:0,U0:0,mU:0,Hh:0,C:0})},
- {t:'3단계(찬 해수의 용승)',x:'표층 해수가 빠져나간 동태평양에서는 깊은 곳의 <em>찬 해수가 올라옵니다(용승)</em>. 그래서 동태평양은 <em>따뜻한 해수층이 얇고 수온이 낮습니다</em>.',d:7,
-  s:k=>({...NORMAL,U:ease(k),U0:seg(k,.15,1),mU:seg(k,0,.3),Hh:0,C:0})},
- {t:'4단계(햇빛에 의한 가열)',x:'서쪽으로 이동하는 동안 해수는 <em>햇빛을 받아 계속 데워지므로</em>, 따뜻한 해수가 쌓이는 <em>서태평양의 수온이 가장 높아집니다</em>.',d:7,
-  s:k=>({...NORMAL,Hh:seg(k,.1,1),heat:Math.min(seg(k,0,.15),1-seg(k,.85,1)),C:0})},
- {t:'5단계(평상시의 모습)',x:'서태평양은 <em>따뜻한 해수층이 두껍고 수온이 높아</em> 상승 기류가 생겨 비가 많이 내리고, 동태평양은 <em>용승으로 수온이 낮습니다</em>. 실제로는 1~4단계가 동시에 함께 일어나며, 지도는 실제 연평균 해수면 온도와 같아졌습니다.',d:6,
-  s:k=>({...NORMAL,C:seg(k,0,.5),lab:seg(k,.3,.8)})}];
-const S1=[ // 엘니뇨
+//  A(엘니뇨 수온 편차), C(구름), cx(구름 위치), lab(정리 이름표), wa·ea·loop(워커 순환), wind·off·up·nut·plank·fish(페루 연안)
+const NORMAL={zoom:1,box:1,sec:1,hyp:0,W:1,V:-1,F:1,E:0,U:1,U0:1,mU:1,Hh:1,heat:0,A:0,C:0,cx:0,lab:0,wa:0,ea:0,loop:0,wind:0,off:0,up:0,nut:0,plank:0,fish:0};
+const HYP={...NORMAL,hyp:1,W:0,V:0,F:0,U:0,U0:0,mU:0,Hh:0};
+const SCENES=[
+ {draw:scenePac,steps:[ // 태평양의 수온 분포
+  {t:'전 세계의 해수면 온도',x:'전 세계 바다의 <em>연평균 해수면 온도</em>입니다. 적도 부근은 따뜻하고 고위도로 갈수록 차가워집니다. 이 가운데 <em>적도 부근의 태평양</em>을 잘라 확대해 봅시다.',d:6,
+   s:k=>({...NORMAL,zoom:0,box:seg(k,.45,.9)})},
+  {t:'적도 부근의 태평양',x:'적도를 따라 <em>서태평양</em>(왼쪽)과 <em>동태평양</em>(오른쪽)의 색을 비교해 보세요. 빨간색일수록 수온이 높습니다. 아래 질문에 답해 보세요.',d:4,
+   s:k=>({...NORMAL,zoom:ease(k),box:1})}]},
+ {draw:sceneEq,steps:[ // 온도 분포의 원인
+  {t:'무역풍이 없다면',x:'왼쪽은 적도 부근 태평양의 지도, 오른쪽은 적도를 따라 자른 <em>단면</em>입니다. 먼저 무역풍이 불지 않는다고 가정하면, 해수면 온도와 따뜻한 해수층의 두께가 <em>동서로 거의 같을 것</em>입니다.',d:5,
+   s:k=>{const m=seg(k,.1,.6);return{...HYP,hyp:m,U0:1-m,Hh:1-m}}},
+  {t:'1단계(무역풍)',x:'적도 부근에서는 <em>무역풍</em>이 동쪽에서 서쪽으로 붑니다.',d:5,
+   s:k=>({...HYP,W:ease(k)})},
+  {t:'2단계(따뜻한 해수의 이동)',x:'무역풍에 밀려 따뜻한 표층 해수가 <em>서쪽으로 이동</em>하여 서태평양에 쌓입니다. 서태평양은 <em>따뜻한 해수층이 두꺼워지고 해수면이 높아집니다</em>.',d:7,
+   s:k=>({...HYP,W:1,hyp:1-seg(k,.6,1),V:-seg(k,0,.25),F:ease(k)})},
+  {t:'3단계(찬 해수의 용승)',x:'표층 해수가 빠져나간 동태평양에서는 깊은 곳의 <em>찬 해수가 올라옵니다(용승)</em>. 그래서 동태평양은 <em>따뜻한 해수층이 얇고 수온이 낮습니다</em>.',d:7,
+   s:k=>({...NORMAL,U:ease(k),U0:seg(k,.15,1),mU:seg(k,0,.3),Hh:0})},
+  {t:'4단계(햇빛에 의한 가열)',x:'서쪽으로 이동하는 동안 해수는 <em>햇빛을 받아 계속 데워지므로</em>, 따뜻한 해수가 쌓이는 <em>서태평양의 수온이 가장 높아집니다</em>.',d:7,
+   s:k=>({...NORMAL,Hh:seg(k,.1,1),heat:Math.min(seg(k,0,.15),1-seg(k,.85,1))})},
+  {t:'5단계(평상시의 모습)',x:'서태평양은 <em>따뜻한 해수층이 두껍고 수온과 해수면이 높으며</em>, 동태평양은 <em>용승으로 따뜻한 해수층이 얇고 수온이 낮습니다</em>. 실제로는 1~4단계가 동시에 함께 일어나며, 지도는 실제 연평균 해수면 온도와 같아졌습니다.',d:6,
+   s:k=>({...NORMAL,lab:seg(k,.1,.6)})}]},
+ {draw:sceneWalk,steps:[ // 대기의 순환
+  {t:'서태평양의 상승 기류',x:'수온이 높은 서태평양에서는 바다가 공기를 데워 <em>상승 기류</em>가 생기고 <em>저기압</em>이 됩니다. 올라간 공기 속 수증기가 응결하여 <em>구름이 많고 비가 많이 내립니다</em>.',d:6,
+   s:k=>({...NORMAL,W:0,wa:ease(k)})},
+  {t:'동태평양의 하강 기류',x:'수온이 낮은 동태평양에서는 공기가 차가워져 <em>하강 기류</em>가 생기고 <em>고기압</em>이 됩니다. 구름이 잘 생기지 않아 <em>맑고 건조합니다</em>.',d:6,
+   s:k=>({...NORMAL,W:0,wa:1,ea:ease(k)})},
+  {t:'워커 순환',x:'지표 부근에서는 고기압인 동쪽에서 저기압인 서쪽으로 <em>무역풍</em>이 불고, 높은 곳에서는 공기가 서쪽에서 동쪽으로 이동합니다. 이처럼 적도 부근 태평양에서 동서 방향으로 일어나는 대기 순환을 <em>워커 순환</em>이라고 합니다.',d:7,
+   s:k=>({...NORMAL,W:0,wa:1,ea:1,loop:ease(k)})}]},
+ {draw:scenePeru,steps:[ // 남아메리카 연안의 용승
+  {t:'1단계(표층 해수의 이동)',x:'페루 연안에서는 해안을 따라 <em>남동 무역풍</em>이 붑니다. 이 바람의 영향으로 해안 부근의 <em>표층 해수가 먼바다 쪽으로 이동</em>합니다.',d:6,
+   s:k=>({...NORMAL,wind:seg(k,0,.4),off:seg(k,.35,.9)})},
+  {t:'2단계(찬 해수의 용승)',x:'빠져나간 표층 해수를 채우려고 깊은 곳의 <em>찬 해수가 올라옵니다(용승)</em>. 그래서 페루 연안은 같은 위도의 먼바다보다 <em>수온이 낮습니다</em>(지도의 해안을 따라 있는 파란 띠).',d:6,
+   s:k=>({...NORMAL,wind:1,off:1,up:ease(k)})},
+  {t:'3단계(영양염류의 공급)',x:'깊은 곳의 해수에는 <em>영양염류</em>가 많습니다. 용승으로 영양염류가 표층으로 공급되면 이를 이용하는 <em>식물성 플랑크톤</em>이 많이 번성합니다.',d:7,
+   s:k=>({...NORMAL,wind:1,off:1,up:1,nut:seg(k,0,.4),plank:seg(k,.45,1)})},
+  {t:'4단계(좋은 어장의 형성)',x:'플랑크톤이 풍부하여 이를 먹는 <em>앤초비(멸치류)</em>가 많이 모이므로, 페루 연안은 <em>세계적인 어장</em>이 됩니다.',d:6,
+   s:k=>({...NORMAL,wind:1,off:1,up:1,nut:1,plank:1,fish:seg(k,0,.6)})}]}
+];
+const ELNINO={draw:sceneEq,steps:[
  {t:'1단계(무역풍의 약화)',x:'어떤 해에는 무역풍이 평상시보다 <em>약해집니다</em>. 서쪽으로 해수를 밀어 보내던 힘도 약해집니다.',d:5,
-  s:k=>({...NORMAL,W:1-.7*ease(k),V:-1+.8*ease(k)})},
+  s:k=>({...NORMAL,C:1,W:1-.7*ease(k),V:-1+.8*ease(k)})},
  {t:'2단계(따뜻한 해수의 동쪽 이동)',x:'서태평양에 쌓여 있던 <em>따뜻한 해수가 동쪽으로 이동</em>합니다. 서태평양은 해수면이 낮아지고, 동태평양은 <em>따뜻한 해수층이 두꺼워집니다</em>.',d:8,
-  s:k=>({...NORMAL,W:.3,V:-.2+1.1*seg(k,0,.2)-.7*seg(k,.75,1),E:ease(k),A:.35*seg(k,.2,1)})},
+  s:k=>({...NORMAL,C:1,W:.3,V:-.2+1.1*seg(k,0,.2)-.7*seg(k,.75,1),E:ease(k),A:.35*seg(k,.2,1)})},
  {t:'3단계(용승의 약화)',x:'동태평양에서 <em>용승이 약해져</em> 찬 해수가 덜 올라오므로, <em>동태평양 적도 부근의 표층 수온이 평년보다 높아집니다</em>.',d:7,
-  s:k=>({...NORMAL,W:.3,V:.2,E:1,U:1-.75*ease(k),A:.35+.65*seg(k,.1,1)})},
+  s:k=>({...NORMAL,C:1,W:.3,V:.2,E:1,U:1-.75*ease(k),A:.35+.65*seg(k,.1,1)})},
  {t:'4단계(엘니뇨와 그 영향)',x:'이처럼 동태평양 적도 부근의 표층 수온이 평년보다 높은 상태가 지속되는 현상을 <em>엘니뇨</em>라고 합니다. 비가 많이 내리는 곳이 동쪽으로 옮겨 가 <em>동태평양은 홍수, 서태평양은 가뭄</em>이 생기기 쉽고, 영양염류가 줄어 동태평양의 <em>어획량이 줄어듭니다</em>.',d:7,
-  s:k=>({...NORMAL,W:.3,V:.2,E:1,U:.25,A:1,cx:seg(k,0,.55),lab:seg(k,.35,.85)})}];
-const TABS=[S0,S1];
-let tab=0,si=0,ph=0,playing=true,last=performance.now()/1000,doneAt=-1;
+  s:k=>({...NORMAL,C:1,W:.3,V:.2,E:1,U:.25,A:1,cx:seg(k,0,.55),lab:seg(k,.35,.85)})}]};
+
+let tab=0,sub=0,si=0,ph=0,playing=true,last=performance.now()/1000,quizOK=false,quizT=0;
 const $=id=>document.getElementById(id);
-function stepHTML(tt,tx){return `<b>${tt}</b><span>${tx}</span>`}
-function buildProg(){const P=$('prog');P.innerHTML='';TABS[tab].forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-label',s.t+'(으)로');b.innerHTML='<i></i>';b.onclick=()=>go(i);P.appendChild(b)})}
-function go(i){const S=TABS[tab];si=clamp(i,0,S.length-1);ph=0;playing=true;doneAt=-1;
+const scene=()=>tab==0?SCENES[sub]:ELNINO;
+function stepHTML(tt,tx){return `<b>${tt}</b><span>${tx.replace(/ ([:=→]) /g,' $1 ').replace(/(\d) (°C)/g,'$1 $2')}</span>`}
+function buildProg(){const P=$('prog');P.innerHTML='';scene().steps.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-label',s.t);b.innerHTML='<i></i>';b.onclick=()=>go(i);P.appendChild(b)})}
+function go(i){const S=scene().steps;si=clamp(i,0,S.length-1);ph=0;playing=true;
  $('step').innerHTML=stepHTML(S[si].t,S[si].x);$('prev').disabled=si==0;$('next').disabled=si==S.length-1;
- const m=S[si].t.match(/^(\d+)단계/),n=S.filter(s=>/^\d+단계/.test(s.t)).length;$('num').textContent=m?`${m[1]} / ${n} 단계`:'시작';
+ const ST=S.some(s=>/^\d+단계/.test(s.t)),m=S[si].t.match(/^(\d+)단계/),n=S.filter(s=>/^\d+단계/.test(s.t)).length;
+ $('prev').textContent=ST?'◀ 이전 단계':'◀ 이전';$('next').textContent=ST?'다음 단계 ▶':'다음 ▶';
+ $('num').textContent=ST?(m?`${m[1]} / ${n} 단계`:'시작'):`${si+1} / ${S.length}`;
  $('again').classList.remove('glow');updPlay()}
 function updPlay(){$('play').textContent=playing?'⏸ 멈춤':'▶ 재생'}
+// 작은 메뉴·탭을 누를 때마다 그 자료의 처음부터
+function openSub(i){sub=i;[...$('subs').children].forEach((b,j)=>{b.classList.toggle('on',j==i);b.setAttribute('aria-selected',j==i)});
+ $('quiz').hidden=!(tab==0&&i==0);resetQuiz();$('n0').hidden=i!=1;$('n2').hidden=i!=2;$('n3').hidden=i!=3;
+ cv.setAttribute('aria-label',['전 세계 연평균 해수면 온도 지도에서 적도 부근의 태평양을 잘라 확대한 지도','적도 태평양의 해수면 온도 지도와 적도를 따라 자른 단면에서 무역풍, 해수의 이동, 용승, 가열로 수온 분포가 만들어지는 모습','적도를 따라 자른 단면 위에서 서태평양의 상승 기류와 동태평양의 하강 기류가 이어지는 워커 순환','페루 앞바다의 해수면 온도 지도와 해안에 수직인 단면에서 용승, 영양염류, 플랑크톤, 앤초비 어장이 나타나는 모습'][i]);
+ seed();buildProg();go(0)}
 function openTab(i){tab=i;[0,1].forEach(j=>{const b=$('tab'+j),on=j==i;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1;$('p'+j).hidden=!on});
- const p=$('p'+i);p.classList.remove('enter');void p.offsetWidth;p.classList.add('enter');seed();buildProg();go(0)}   // 탭을 누를 때마다 처음부터
+ $('subs').hidden=i!=0;const p=$('p'+i);p.classList.remove('enter');void p.offsetWidth;p.classList.add('enter');
+ if(i==0)openSub(0);else{$('quiz').hidden=true;cv.setAttribute('aria-label','적도 태평양의 해수면 온도 지도와 적도를 따라 자른 단면에서 엘니뇨가 일어나는 과정');seed();buildProg();go(0)}}
+[...$('subs').children].forEach((b,i)=>b.onclick=()=>openSub(i));
 [0,1].forEach(i=>{const b=$('tab'+i);b.onclick=()=>openTab(i);b.onkeydown=e=>{if(e.key=='ArrowRight'||e.key=='ArrowLeft'){const j=(i+1)%2;$('tab'+j).focus();openTab(j)}}});
-$('prev').onclick=()=>go(si-1);$('next').onclick=()=>go(si+1);$('again').onclick=()=>{seed();go(0)};
-$('play').onclick=()=>{const S=TABS[tab];if(si==S.length-1&&ph>=S[si].d){go(0);return}playing=!playing;updPlay()};
+$('prev').onclick=()=>go(si-1);$('next').onclick=()=>go(si+1);$('again').onclick=()=>{seed();resetQuiz();go(0)};
+$('play').onclick=()=>{const S=scene().steps;if(si==S.length-1&&ph>=S[si].d){go(0);return}playing=!playing;updPlay()};
+// 질문: 서태평양 / 동태평양 고르기 (맞히면 지도에 수온 표시)
+function resetQuiz(){quizOK=false;[...$('qbs').children].forEach(b=>b.classList.remove('on'));$('qmk').textContent='';$('qmk').className='qmk'}
+[...$('qbs').children].forEach(b=>b.onclick=()=>{[...$('qbs').children].forEach(x=>x.classList.toggle('on',x==b));const ok=b.dataset.a=='w',mk=$('qmk');
+ if(ok){mk.className='qmk ok';mk.textContent='맞아요! 적도 부근에서는 서태평양(약 29~30 °C)이 동태평양(약 25 °C)보다 수온이 높습니다. 그 까닭은 [온도 분포의 원인]에서 알아봅시다.';if(!quizOK){quizOK=true;quizT=performance.now()/1000}
+  if(si<scene().steps.length-1)go(scene().steps.length-1),ph=scene().steps[si].d}
+ else{mk.className='qmk no';mk.textContent='다시 살펴보세요. 지도에서 빨간색에 가까울수록 수온이 높습니다.';quizOK=false}});
 
 function frame(nowMs){const now=nowMs/1000,dt=Math.min(.1,now-last);last=now;fit();
- const S=TABS[tab],s=S[si];
+ const S=scene().steps,s=S[si];
  if(playing){ph+=dt;if(ph>=s.d){if(si<S.length-1){if(ph>=s.d+1.2)go(si+1)}else{ph=s.d;playing=false;updPlay();$('again').classList.add('glow')}}}
- const st=S[si].s(c01(ph/S[si].d));
- if(playing||true)moveParticles(st,playing?dt:0);
- // 진행 막대
- [...$('prog').children].forEach((b,i)=>{b.firstChild.style.width=(i<si?100:i>si?0:c01(ph/S[si].d)*100)+'%'});
+ const st=s.s(c01(ph/s.d));
+ moveParticles(st,playing?dt:0);
+ [...$('prog').children].forEach((b,i)=>{b.firstChild.style.width=(i<si?100:i>si?0:c01(ph/s.d)*100)+'%'});
  ctx.setTransform(SC,0,0,SC,0,0);ctx.clearRect(0,0,W,H);ctx.fillStyle='#0b1026';ctx.fillRect(0,0,W,H);
- drawMap(st,now);drawSection(st,now);
+ scene().draw(st,now);
  requestAnimationFrame(frame)}
 // 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
 document.querySelectorAll('.open-think').forEach(btn=>{const ov=$(btn.dataset.ov),cl=ov.querySelector('.x');const close=()=>{ov.hidden=true;btn.focus()};
  btn.onclick=()=>{ov.hidden=false;cl.focus()};cl.onclick=close;ov.addEventListener('click',e=>{if(e.target===ov)close()});ov.addEventListener('keydown',e=>{if(e.key=='Escape')close()})});
-buildProg();go(0);requestAnimationFrame(frame);
+openTab(0);requestAnimationFrame(frame);
 </script>
 <script src="./copyright.js"></script>
 </body>
