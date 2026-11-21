@@ -109,7 +109,7 @@ section[hidden]{display:none}
 <!-- 평상시의 작은 메뉴(연보라): 누를 때마다 그 메뉴의 처음부터 -->
 <div class="subtabs" id="subs" role="tablist" aria-label="평상시">
  <button type="button" role="tab" class="on" aria-selected="true">태평양의 수온 분포</button>
- <button type="button" role="tab" aria-selected="false">온도 분포의 원인</button>
+ <button type="button" role="tab" aria-selected="false">태평양 수온 분포의 원인</button>
  <button type="button" role="tab" aria-selected="false">대기의 순환</button>
  <button type="button" role="tab" aria-selected="false">남아메리카 연안의 용승</button>
 </div>
@@ -130,7 +130,7 @@ section[hidden]{display:none}
  <div class="ov" id="ovq" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 적도 부근에서 해수면 온도가 더 높은 곳은 서태평양과 동태평양 중 어디일까요?">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>적도 부근에서 해수면 온도가 더 높은 곳은 서태평양과 동태평양 중 어디일까요?</b><button type="button" class="x" aria-label="닫기">닫기 ✕</button></div>
   <p class="ans">서태평양의 수온이 더 높습니다.</p>
-  <p class="exp">적도를 따라 보면 서태평양은 약 29~30 °C, 동태평양은 약 25 °C입니다(지도에 표시). 같은 적도인데도 동서로 수온이 다른 까닭은 [온도 분포의 원인]에서 알아봅시다.</p>
+  <p class="exp">적도를 따라 보면 서태평양은 약 29~30 °C, 동태평양은 약 25 °C입니다(지도에 표시). 같은 적도인데도 동서로 수온이 다른 까닭은 [태평양 수온 분포의 원인]에서 알아봅시다.</p>
  </div></div>
 </div>
 
@@ -494,7 +494,7 @@ function scenePac(st,t){const z=st.zoom,za=c01((z-.6)/.4),v=drawMap(st,{box:EQB,
  colorbar({x:lerp(GR.x+GR.w*.25,FR.x+FR.w*.25,z),y:lerp(374,FR.y+FR.h+16,z),w:GR.w*.5,h:11},lerp(-2,22,z),30,z>.5?2:5,'해수면 온도(°C)');
  T(z>.5?'적도 부근 태평양의 연평균 해수면 온도 (1991~2020년, NOAA ERSST v5)':'전 세계의 연평균 해수면 온도 (1991~2020년, NOAA ERSST v5)',W-14,H-2.5,{size:10.5,al:'right',c:'#8d96b3',w:500,bl:'bottom'})}
 
-// ---- 장면: 적도 지도 + 단면 (온도 분포의 원인, 엘니뇨) ----
+// ---- 장면: 적도 지도 + 단면 (태평양 수온 분포의 원인, 엘니뇨) ----
 function sceneEq(st,t){setSR(SRE);const v=drawMap(st,{box:EQB,R:ZR,z:1,lo:22,hi:30}),a=1;
  ctx.globalAlpha=.9;ctx.setLineDash([6,5]);ctx.strokeStyle='#ffffff';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(v.X(130),v.Y(0));ctx.lineTo(v.X(280),v.Y(0));ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
  T('적도(단면 위치)',v.X(122),v.Y(0)-6,{al:'left',size:11.5,halo:1});
@@ -557,7 +557,7 @@ const SCENES=[
    s:k=>({...NORMAL,zoom:0,box:seg(k,.45,.9)})},
   {t:'적도 부근의 태평양',x:'적도를 따라 <em>서태평양</em>(왼쪽)과 <em>동태평양</em>(오른쪽)의 색을 비교해 보세요. 빨간색일수록 수온이 높습니다. 아래 생각해 보기에 답해 보세요.',d:4,
    s:k=>({...NORMAL,zoom:ease(k),box:1})}]},
- {draw:sceneEq,steps:[ // 온도 분포의 원인
+ {draw:sceneEq,steps:[ // 태평양 수온 분포의 원인
   {t:'무역풍이 없다면',x:'왼쪽은 적도 부근 태평양의 지도, 오른쪽은 적도를 따라 자른 <em>단면</em>입니다. 먼저 무역풍이 불지 않는다고 가정하면, 해수면 온도와 따뜻한 해수층의 두께가 <em>동서로 거의 같을 것</em>입니다.',d:5,
    s:k=>{const m=seg(k,.1,.6);return{...HYP,hyp:m,U0:1-m,Hh:1-m}}},
   {t:'1단계(무역풍)',x:'적도 부근에서는 <em>무역풍</em>이 동쪽에서 서쪽으로 붑니다.',d:5,
