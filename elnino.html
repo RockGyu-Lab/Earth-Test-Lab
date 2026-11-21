@@ -340,7 +340,9 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
   T(st.W<.6?'약해진 무역풍':'무역풍',sxp(.86),SEA-44,{size:13.5,w:800,halo:1,a:a*Math.min(1,st.W*2+.3)})}
  if(st.walk)drawWalker(st,t,a);
  // 이름표
- T('따뜻한 해수층',sxp(.22),SEA-level(.22,st)+Math.min(thick(.22,st)*.5+5,thick(.22,st)-6),{size:13,w:800,c:'#1b1200',a:a*.9});
+ T('따뜻한 해수층(혼합층)',sxp(.24),SEA-level(.24,st)+Math.min(thick(.24,st)*.5+5,thick(.24,st)-6),{size:13,w:800,c:'#1b1200',a:a*.9});
+ // 점선 = 수온 약층이 시작되는 깊이 (수온 약층은 두께가 있는 층이지만, 이 단원에서는 시작 깊이만 나타냄)
+ {const xf=.46,y=SEA-level(xf,st)+thick(xf,st);T('수온 약층이 시작되는 깊이',sxp(xf),y+16,{size:12,w:800,c:'#dfe9ff',halo:1,a:a*.95})}
  T('찬 해수',sxp(.42),BOT-34,{size:13,w:800,c:'#cfe0ff'});
  if(st.lab>0){const la=st.lab,el=st.E>.5;const yb=x=>SEA-level(x,st);
   [[.07,el?'얇아짐':'두꺼움'],[.93,el?'두꺼워짐':'얇음']].forEach(([xf,s])=>{const x=sxp(xf)+(xf<.5?6:-6),y1=yb(xf)+2,y2=yb(xf)+thick(xf,st)-2;
