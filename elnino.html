@@ -474,7 +474,7 @@ function drawWalker(st,t,a){const xw=sxp(st.rx??.15),xe=sxp(st.dx??.86),s=Math.s
   ctx.save();ctx.setLineDash([8,7]);ctx.lineDashOffset=-(t*30)%15;ctx.globalAlpha=A;ctx.strokeStyle='#e6e9f2';ctx.lineWidth=3;[-40,34].forEach(dx=>{ctx.beginPath();ctx.moveTo(xe+dx,yt+40);ctx.lineTo(xe+dx,SEA-40);ctx.stroke()});ctx.restore();
   [-40,34].forEach(dx=>arrow(xe+dx,SEA-52,xe+dx,SEA-34,'#e6e9f2',3,10,A));
   T('하강 기류',xe-50*s,yb-70,{c:'#e6e9f2',size:14,w:800,halo:1,a:A,al:s>0?'right':'left'});
-  pill('고기압',xe-3,SEA-12,'#e6e9f2',A,14);T(st.dT??'맑고 건조함',xe-6,yt-12,{c:'#e8ecff',size:12.5,w:800,halo:1,a:A})}
+  pill('고기압',xe-3,SEA-12,'#e6e9f2',A,14);T(st.dT??'맑고 건조함',xe-6+(st.dTdx||0),yt-12+(st.dTdy||0),{c:'#e8ecff',size:12.5,w:800,halo:1,a:A})}
  // 순환 전체
  if(st.loop>0){const A=a*st.loop;ctx.save();ctx.globalAlpha=A*.55;ctx.strokeStyle='#ffffff';ctx.lineWidth=2;ctx.setLineDash([2,6]);ctx.stroke(path);ctx.restore();
   PW.forEach(p=>{const [x,y,dx,dy]=at(p.u),n=Math.hypot(dx,dy)||1;ctx.globalAlpha=A;ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(x+dx/n*6,y+dy/n*6);ctx.lineTo(x-dx/n*3-dy/n*4,y-dy/n*3+dx/n*4);ctx.lineTo(x-dx/n*3+dy/n*4,y-dy/n*3-dx/n*4);ctx.closePath();ctx.fill()});
@@ -666,7 +666,8 @@ function sceneEq(st,t){setSR(SRE);const v=drawMap(st,{box:EQB,R:ZR,z:1,lo:22,hi:
  drawSection(st,t)}
 
 // ---- 장면: 대기의 순환 (그림판 전체 폭 단면) ----
-function sceneWalk(st,t){field(st);setSR(WR,.6);drawSection({...st,walk:1,sunA:0,ref:0},t)}
+function sceneWalk(st,t){field(st);setSR(WR,.6);drawSection({...st,walk:1,sunA:0,ref:0},t);
+ if(st.tagL){ctx.font=font(13,800);const w=ctx.measureText(st.tagL).width+20;pill(st.tagL,SR.x+10+w/2,SR.y+16,st.tagC||'#ffd76b',st.tagA??1,13)}}   // 왼쪽 위: 지금 보이는 것이 평상시인지 엘니뇨 시기인지
 
 // ================= 엘니뇨 > 수온 편차로 본 엘니뇨 =================
 const C10=new Float32Array(NR*NC),A10=new Float32Array(NR*NC);{const a=b64(SST26.clim10),b=b64(SST26.an10);for(let i=0;i<NR*NC;i++){C10[i]=a[i]/7.5-2;A10[i]=b[i]/25-5}}
@@ -764,9 +765,9 @@ const ESCENES=[
 // 엘니뇨 > 대기 순환의 변화: 평상시 워커 순환 → 사라짐·바다가 엘니뇨로 → 엘니뇨 때 순환(상승 동쪽, 하강 서쪽) → 이상 기후
 function ATM(g){const e=seg(g,2.5,6.5),wn=1-seg(g,2,3.5),we=seg(g,6,8.5);
  const sw=Math.min(seg(g,2.5,3.5),1-seg(g,6.5,7.5));   // 순환이 바뀌는 동안: 약해진 무역풍과 동쪽으로 흐르는 해수
- return {...NORMAL,oct:1,W:.3*sw,showW:sw,V:-.3*seg(g,2,3),spread:sw,E:e,A:e,U:1-.75*e,wa:1,ea:1,loop:1,wn,climW:wn>.5?'비가 많고 습함':'가뭄·산불',climE:wn>.5?'비가 적고 건조함':'',clim:Math.max(wn,seg(g,10.5,12)),
+ return {...NORMAL,oct:1,tagL:g<4.5?'평상시':'엘니뇨 시기',tagC:g<4.5?'#cfe0ff':'#ff8a7a',tagA:g<4.5?1-seg(g,3.5,4.5):seg(g,4.5,5.5),W:.3*sw,showW:sw,V:-.3*seg(g,2,3),spread:sw,E:e,A:e,U:1-.75*e,wa:1,ea:1,loop:1,wn,climW:wn>.5?'비가 많고 습함':'가뭄·산불',climE:wn>.5?'비가 적고 건조함':'',clim:Math.max(wn,seg(g,10.5,12)),
   // 엘니뇨 때: 중앙 태평양(약 150°W)에서 상승해 서쪽은 서태평양에서 하강하는 순환, 동쪽은 남아메리카 대륙 쪽으로 이어지는 흐름(바다 위에서 닫지 않음)
-  walkE:{al:we,rx:.53,dx:.11,wa:1,ea:1,loop:1,rT:'구름이 많고 비가 많이 내림',dT:'맑고 건조함',topT:'높은 곳: 동 → 서',botT:'지표 부근: 서 → 동',loopT:'엘니뇨 때의 대기 순환',loopX:.32,loopDY:30},
+  walkE:{al:we,rx:.53,dx:.11,wa:1,ea:1,loop:1,rT:'구름이 많고 비가 많이 내림',dT:'맑고 건조함',dTdx:0,dTdy:46,topT:'높은 곳: 동 → 서',botT:'지표 부근: 서 → 동',loopT:'엘니뇨 때의 대기 순환',loopX:.32,loopDY:30},
   openE:we}}
 ESCENES.push({draw:sceneAnom,steps:[{t:'평년의 수온',x:'먼저 <em>평년값</em>(1991~2020년의 10월 평균) 해수면 온도 지도를 봅니다.',d:22,
  xs:[[3,'2026년 10월의 수온','2026년 10월에 실제로 관측한 해수면 온도입니다. 평년과 비교해 동태평양 적도 부근이 더 따뜻합니다.'],
