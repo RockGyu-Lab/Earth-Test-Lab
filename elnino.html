@@ -693,9 +693,10 @@ function sceneWalk(st,t){field(st);setSR(WR,.6);drawSection({...st,walk:1,sunA:0
 // an10L: 2010년 10월(강한 라니냐) − 1991~2020년 10월 평균(편차). 한 칸 = (편차 + 5) × 25
 const C10=new Float32Array(NR*NC),A10=new Float32Array(NR*NC),A10L=new Float32Array(NR*NC);{const a=b64(SST26.clim10),b=b64(SST26.an10),c=b64(SST26.an10L);for(let i=0;i<NR*NC;i++){C10[i]=a[i]/7.5-2;A10[i]=b[i]/25-5;A10L[i]=c[i]/25-5}}
 // 편차 색: 파랑(−) → 흰색(0) → 빨강(+)
-const DSTOP=[[0,40,80,160],[.25,110,150,210],[.5,245,245,245],[.75,240,140,110],[1,175,35,45]];
+// 범위 ±3 °C(엘니뇨·라니냐 같게, 넘는 값은 끝 색). 중간 파랑·빨강은 양쪽 똑같이 조금 진하게
+const DMAX=3,DSTOP=[[0,40,80,160],[.25,95,140,212],[.5,245,245,245],[.75,240,128,98],[1,175,35,45]];
 const DLUT=[];for(let q=0;q<256;q++){const v=q/255;let a=DSTOP[0],b=DSTOP[4];for(let k=1;k<5;k++)if(v<=DSTOP[k][0]){a=DSTOP[k-1];b=DSTOP[k];break}const f=(v-a[0])/((b[0]-a[0])||1);DLUT.push([0,1,2].map(c=>Math.round(a[c+1]+(b[c+1]-a[c+1])*f)))}
-const dlut=(x)=>DLUT[Math.max(0,Math.min(255,Math.round((x+4)/8*255)))];
+const dlut=(x)=>DLUT[Math.max(0,Math.min(255,Math.round((x+DMAX)/(2*DMAX)*255)))];
 const ocG=document.createElement('canvas');ocG.width=NC;ocG.height=NR;const ocGx=ocG.getContext('2d'),imG=ocGx.createImageData(NC,NR);
 function gridMap(R,val,col,a,label,lc){const v=viewFor(EQB,R,1);for(let i=0;i<NR;i++)for(let c=0;c<NC;c++){const j=(15+c)%NC,k=i*NC+j,cc=col(val(k)),p=(i*NC+c)*4;imG.data[p]=cc[0];imG.data[p+1]=cc[1];imG.data[p+2]=cc[2];imG.data[p+3]=255}
  ocGx.putImageData(imG,0,0);ctx.save();ctx.globalAlpha=a;ctx.beginPath();rr(R.x,R.y,R.w,R.h,10);ctx.clip();ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
@@ -721,8 +722,8 @@ function sceneAnom(st,t){const cs=CASES[st.cs||'E'],AN=cs.A,PT=cs.PT,PD=cs.PD;
  // 편차 지도
  if(st.m3>0){const v3=gridMap(MR3,k=>AN[k],dlut,st.m3,'수온 편차 = '+cs.yr+' − 평년값',cs.c);
   {const bx=MR3.x+10,by=MR3.y+MR3.h-30,bw=200;ctx.globalAlpha=st.m3*.85;ctx.fillStyle='rgba(10,16,40,.8)';rr(bx-6,by-5,bw+40,28,8);ctx.fill();   // 편차 색 막대(지도 안 왼쪽 아래)
-  for(let q=0;q<120;q++){const x=-4+8*q/119;const c=dlut(x);ctx.globalAlpha=st.m3;ctx.fillStyle=rgb(c);ctx.fillRect(bx+bw*q/120,by,bw/120+.6,7)}
-  [-4,-2,0,2,4].forEach(x=>T((x>0?'+':'')+x,bx+(x+4)/8*bw,by+9,{size:10,c:'#e8ecff',a:st.m3,bl:'top'}));T('°C',bx+bw+8,by+8,{size:10,al:'left',c:'#e8ecff',a:st.m3})}
+  for(let q=0;q<120;q++){const x=-DMAX+2*DMAX*q/119;const c=dlut(x);ctx.globalAlpha=st.m3;ctx.fillStyle=rgb(c);ctx.fillRect(bx+bw*q/120,by,bw/120+.6,7)}
+  [-3,-2,-1,0,1,2,3].forEach(x=>T((x>0?'+':x<0?'−':'')+Math.abs(x),bx+(x+DMAX)/(2*DMAX)*bw,by+9,{size:10,c:'#e8ecff',a:st.m3,bl:'top'}));T('°C',bx+bw+8,by+8,{size:10,al:'left',c:'#e8ecff',a:st.m3})}
   // 엘니뇨 감시 구역(Niño 3.4) 상자
   if(st.box>0){ctx.globalAlpha=st.box*st.m3;ctx.setLineDash([5,3]);ctx.strokeStyle='#ffd76b';ctx.lineWidth=2;ctx.strokeRect(v3.X(190),v3.Y(5),v3.X(240)-v3.X(190),v3.Y(-5)-v3.Y(5));ctx.setLineDash([]);ctx.globalAlpha=1;
    T('엘니뇨 감시 구역',v3.X(215),v3.Y(5)-6,{size:11.5,w:800,c:'#ffd76b',halo:1,a:st.box*st.m3})}
