@@ -103,7 +103,7 @@ section[hidden]{display:none}
 <!-- 학습실과 탐구 번호가 정해지면 제목 앞에 <p class="pnum">탐구 NN</p>을 넣고, 돌아가기 링크를 그 학습실 메뉴로 바꿀 것 -->
 <div class="titlebar"><h1>엘니뇨와 라니냐(통합과학)</h1><a class="back" href="./index.html">← Earth Test Lab</a></div>
 <div class="tabs" role="tablist" aria-label="학습 메뉴">
- <button role="tab" id="tab0" aria-selected="true">평상시(평년값)</button>
+ <button role="tab" id="tab0" aria-selected="true">평상시</button>
  <button role="tab" id="tab1" aria-selected="false" tabindex="-1">엘니뇨</button>
 </div>
 <!-- 평상시의 작은 메뉴(연보라): 누를 때마다 그 메뉴의 처음부터 -->
@@ -492,7 +492,7 @@ function scenePac(st,t){const z=st.zoom,za=c01((z-.6)/.4),v=drawMap(st,{box:EQB,
  drawGridLabels(v,za);
  endMap();
  colorbar({x:lerp(GR.x+GR.w*.25,FR.x+FR.w*.25,z),y:lerp(374,FR.y+FR.h+16,z),w:GR.w*.5,h:11},lerp(-2,22,z),30,z>.5?2:5,'해수면 온도(°C)');
- T(z>.5?'적도 부근 태평양의 연평균 해수면 온도 (1991~2020년, NOAA ERSST v5)':'전 세계의 연평균 해수면 온도 (1991~2020년, NOAA ERSST v5)',W-14,H-2.5,{size:10.5,al:'right',c:'#8d96b3',w:500,bl:'bottom'})}
+ T(z>.5?'적도 부근 태평양의 해수면 온도 평년값 (1991~2020년 연평균, NOAA ERSST v5)':'전 세계의 연평균 해수면 온도 (1991~2020년, NOAA ERSST v5)',W-14,H-2.5,{size:10.5,al:'right',c:'#8d96b3',w:500,bl:'bottom'})}
 
 // ---- 장면: 적도 지도 + 단면 (태평양 수온 분포의 원인, 엘니뇨) ----
 function sceneEq(st,t){setSR(SRE);const v=drawMap(st,{box:EQB,R:ZR,z:1,lo:22,hi:30}),a=1;
@@ -512,13 +512,13 @@ function sceneEq(st,t){setSR(SRE);const v=drawMap(st,{box:EQB,R:ZR,z:1,lo:22,hi:
  colorbar({x:ZR.x+40,y:ZR.y+ZR.h+12,w:ZR.w-80,h:11},22,30,2);
  // 범례
  const L=LG;ctx.fillStyle='rgba(255,255,255,.05)';ctx.strokeStyle='rgba(255,255,255,.16)';ctx.lineWidth=1;rr(L.x,L.y,L.w,L.h,10);ctx.fill();ctx.stroke();
- const nm=st.A>.5?['지도: 엘니뇨 때의 해수면 온도','#ff8a7a']:st.hyp>.5?['지도: 무역풍이 없다고 가정한 해수면 온도','#ffd76b']:['지도: 연평균 해수면 온도(평상시)','#cfe0ff'];
+ const nm=st.A>.5?['지도: 엘니뇨 때의 해수면 온도','#ff8a7a']:st.hyp>.5?['지도: 무역풍이 없다고 가정한 해수면 온도','#ffd76b']:['지도: 해수면 온도 평년값(1991~2020년 평균)','#cfe0ff'];
  pill(nm[0],L.x+L.w/2,L.y+20,nm[1],1,13);
  const y=L.y+56,cs=[L.x+80,L.x+236,L.x+390];
  arrow(cs[0]-8,y,cs[0]-44,y,'#fff',2.6,9,1);T('무역풍',cs[0],y+4,{al:'left',size:12.5});
  [0,1].forEach(q=>dart(cs[1]-40+q*16,y,-1,1));T('표층 해수의 흐름',cs[1]-6,y+4,{al:'left',size:12.5});
  ctx.strokeStyle='#8fe3ff';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(cs[2]-26,y,10,12,0,0,7);ctx.stroke();T('용승',cs[2]-10,y+4,{al:'left',size:12.5});
- T(st.A>.5?'연평균 해수면 온도 + 1997년 12월의 수온 편차 (NOAA ERSST v5)':'1991~2020년 연평균 해수면 온도 (NOAA ERSST v5)',L.x+L.w/2,L.y+L.h-12,{size:11,c:'#a9b1cc',w:500});
+ T(st.A>.5?'평년값 + 1997년 12월의 수온 편차 (NOAA ERSST v5)':'평년값 = 1991~2020년 연평균 해수면 온도 (NOAA ERSST v5)',L.x+L.w/2,L.y+L.h-12,{size:11,c:'#a9b1cc',w:500});
  drawSection(st,t)}
 
 // ---- 장면: 대기의 순환 (그림판 전체 폭 단면) ----
@@ -542,7 +542,7 @@ function scenePeru(st,t){const v=drawMap(st,{box:PEB,R:PR,z:1,lo:16,hi:28});
  if(st.fish>0)pill('앤초비 어장',v.X(271),v.Y(-9),'#ffd76b',st.fish,13);
  endMap();
  colorbar({x:PR.x+40,y:PR.y+PR.h+16,w:PR.w-80,h:11},16,28,2);
- T('연평균 해수면 온도 (1991~2020년, NOAA ERSST v5)',PR.x+PR.w/2,PR.y+PR.h+56,{size:11,c:'#a9b1cc',w:500});
+ T('해수면 온도 평년값 (1991~2020년 연평균, NOAA ERSST v5)',PR.x+PR.w/2,PR.y+PR.h+56,{size:11,c:'#a9b1cc',w:500});
  drawPeru(st,t)}
 
 // ================= 탭 · 작은 메뉴 · 단계 =================
@@ -568,7 +568,7 @@ const SCENES=[
    s:k=>({...NORMAL,U:ease(k),U0:seg(k,.15,1),mU:seg(k,0,.3),Hh:0})},
   {t:'4단계(햇빛에 의한 가열)',x:'서쪽으로 이동하는 동안 해수는 <em>햇빛을 받아 계속 데워지므로</em>, 따뜻한 해수가 쌓이는 <em>서태평양의 수온이 가장 높아집니다</em>.',d:7,
    s:k=>({...NORMAL,Hh:seg(k,.1,1),heat:Math.min(seg(k,0,.15),1-seg(k,.85,1))})},
-  {t:'5단계(평상시의 모습)',x:'서태평양은 <em>따뜻한 해수층이 두껍고 수온과 해수면이 높으며</em>, 동태평양은 <em>용승으로 따뜻한 해수층이 얇고 수온이 낮습니다</em>. 실제로는 1~4단계가 동시에 함께 일어나며, 지도는 실제 연평균 해수면 온도와 같아졌습니다.',d:6,
+  {t:'5단계(평상시의 모습)',x:'서태평양은 <em>따뜻한 해수층이 두껍고 수온과 해수면이 높으며</em>, 동태평양은 <em>용승으로 따뜻한 해수층이 얇고 수온이 낮습니다</em>. 실제로는 1~4단계가 동시에 함께 일어나며, 지도는 실제 해수면 온도의 평년값과 같아졌습니다.',d:6,
    s:k=>({...NORMAL,lab:seg(k,.1,.6)})}]},
  {draw:sceneWalk,steps:[ // 대기의 순환
   {t:'서태평양의 상승 기류',x:'수온이 높은 서태평양에서는 바다가 공기를 데워 <em>상승 기류</em>가 생기고 <em>저기압</em>이 됩니다. 올라간 공기 속 수증기가 응결하여 <em>구름이 많고 비가 많이 내립니다</em>.',d:6,
