@@ -623,16 +623,13 @@ const SCENES=[
    s:k=>({...NORMAL,zoom:ease(k),box:1})}]},
  {draw:sceneEq,steps:[ // 태평양 수온 분포의 원인: 단계를 나누지 않은 하나의 흐름(진행 막대를 눌러·끌어 원하는 때로 이동)
   {t:'무역풍이 불면',x:'무역풍이 없다면 수온은 위도에 따라서만 달라집니다(생각 실험). 무역풍이 불면 따뜻한 표층 해수가 <em>서쪽으로 이동</em>하면서 <em>해수면이 기울고</em> 수온 약층이 시작되는 깊이가 바뀌며, 동쪽에서는 <em>용승</em>이 일어나고 이동하는 해수는 <em>햇빛에 데워집니다</em>. 이 변화들은 함께 일어납니다.',d:20,
-   x2:[14.5,'평상시의 모습','그 결과 서태평양은 <em>따뜻한 해수층이 두껍고 수온과 해수면이 높으며</em>, 동태평양은 용승으로 <em>따뜻한 해수층이 얇고 수온이 낮은</em> 평상시의 모습이 됩니다. 지도는 실제 해수면 온도의 평년값과 같아졌습니다.'],   // 18초부터 설명이 바뀜
+   xs:[[14.5,'평상시의 모습','그 결과 서태평양은 <em>따뜻한 해수층이 두껍고 수온과 해수면이 높으며</em>, 동태평양은 용승으로 <em>따뜻한 해수층이 얇고 수온이 낮은</em> 평상시의 모습이 됩니다. 지도는 실제 해수면 온도의 평년값과 같아졌습니다.']],   // 14.5초부터 설명이 바뀜
    s:k=>CAUSE(k*26)}   // 26초 분량을 20초에 재생(정리 이름표가 나온 뒤 약 3초 더 보여 주고 끝)
  ]},
- {draw:sceneWalk,steps:[ // 대기의 순환
-  {t:'서태평양의 상승 기류',x:'수온이 높은 서태평양에서는 바다가 공기를 데워 <em>상승 기류</em>가 생기고 <em>저기압</em>이 됩니다. 올라간 공기 속 수증기가 응결하여 <em>구름이 많고 비가 많이 내립니다</em>.',d:6,
-   s:k=>({...NORMAL,W:0,wa:ease(k)})},
-  {t:'동태평양의 하강 기류',x:'수온이 낮은 동태평양에서는 공기가 차가워져 <em>하강 기류</em>가 생기고 <em>고기압</em>이 됩니다. 구름이 잘 생기지 않아 <em>맑고 건조합니다</em>.',d:6,
-   s:k=>({...NORMAL,W:0,wa:1,ea:ease(k)})},
-  {t:'워커 순환',x:'지표 부근에서는 고기압인 동쪽에서 저기압인 서쪽으로 <em>무역풍</em>이 불고, 높은 곳에서는 공기가 서쪽에서 동쪽으로 이동합니다. 이처럼 적도 부근 태평양에서 동서 방향으로 일어나는 대기 순환을 <em>워커 순환</em>이라고 합니다.',d:7,
-   s:k=>({...NORMAL,W:0,wa:1,ea:1,loop:ease(k)})}]},
+ {draw:sceneWalk,steps:[ // 대기의 순환: 단계 없이 하나의 흐름(16초, 설명은 때에 따라 바뀜)
+  {t:'서태평양의 상승 기류',x:'수온이 높은 서태평양에서는 바다가 공기를 데워 <em>상승 기류</em>가 생기고 <em>저기압</em>이 됩니다. 올라간 공기 속 수증기가 응결하여 <em>구름이 많고 비가 많이 내립니다</em>.',d:16,
+   xs:[[4.5,'동태평양의 하강 기류','수온이 낮은 동태평양에서는 공기가 차가워져 <em>하강 기류</em>가 생기고 <em>고기압</em>이 됩니다. 구름이 잘 생기지 않아 <em>맑고 건조합니다</em>.'],[9,'워커 순환','지표 부근에서는 고기압인 동쪽에서 저기압인 서쪽으로 <em>무역풍</em>이 불고, 높은 곳에서는 공기가 서쪽에서 동쪽으로 이동합니다. 이처럼 적도 부근 태평양에서 동서 방향으로 일어나는 대기 순환을 <em>워커 순환</em>이라고 합니다.']],
+   s:k=>{const g=k*16;return {...NORMAL,W:0,wa:seg(g,0,3),ea:seg(g,4.5,7.5),loop:seg(g,9,12)}}}]},
  {draw:scenePeru,steps:[ // 남아메리카 연안의 용승
   {t:'1단계(표층 해수의 이동)',x:'페루 연안에서는 해안을 따라 <em>남동 무역풍</em>이 붑니다. 이 바람의 영향으로 해안 부근의 <em>표층 해수가 먼바다 쪽으로 이동</em>합니다.',d:6,
    s:k=>({...NORMAL,wind:seg(k,0,.4),off:seg(k,.35,.9)})},
@@ -667,7 +664,7 @@ function go(i){const S=scene().steps;si=clamp(i,0,S.length-1);ph=0;playing=true;
  $('prev').textContent=ST?'◀ 이전 단계':'◀ 이전';$('next').textContent=ST?'다음 단계 ▶':'다음 ▶';
  $('num').textContent=one?'':ST?(m?`${m[1]} / ${n} 단계`:'시작'):`${si+1} / ${S.length}`;updPlay()}
 // 설명 상자: 한 단계 안에서 때(x2)에 따라 설명이 바뀌는 자료도 있음
-let TXT=-1;function setText(){const st=scene().steps[si],k=st.x2&&ph>=st.x2[0]?1:0;if(k===TXT)return;TXT=k;$('step').innerHTML=k?stepHTML(st.x2[1],st.x2[2]):stepHTML(st.t,st.x)}
+let TXT=-1;function setText(){const st=scene().steps[si],X=[[0,st.t,st.x],...(st.xs||[])];let k=0;X.forEach((x,i)=>{if(ph>=x[0])k=i});if(k===TXT)return;TXT=k;$('step').innerHTML=stepHTML(X[k][1],X[k][2])}   // xs: [때(초), 제목, 설명] — 한 흐름 안에서 때에 따라 설명이 바뀜
 function updPlay(){$('play').textContent=playing?'⏸ 멈춤':'▶ 재생'}
 // 작은 메뉴·탭을 누를 때마다 그 자료의 처음부터
 function openSub(i){sub=i;[...$('subs').children].forEach((b,j)=>{b.classList.toggle('on',j==i);b.setAttribute('aria-selected',j==i)});
