@@ -428,24 +428,62 @@ function drawMap(st,opt){const v=viewFor(opt.box,opt.R,opt.z);
  ctx.save();ctx.beginPath();rr(v.clip.x,v.clip.y,v.clip.w,v.clip.h,lerp(10,12,opt.z));ctx.clip();
  ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
  ctx.drawImage(oc,v.X(29),v.Y(71),v.X(389)-v.X(29),v.Y(-71)-v.Y(71));   // 칸 가장자리: 경도 29°~389°, 위도 71°~−71°
+ if(opt.under)opt.under(v);   // 육지보다 아래에 그릴 것(등온선)
  ctx.fillStyle='#4a5162';ctx.strokeStyle='#6b7385';
  for(const off of [0,360]){ctx.save();ctx.translate(v.X(off),v.Y(0));ctx.scale(v.sx,v.sy);ctx.lineWidth=.8/Math.min(v.sx,v.sy);ctx.fill(LANDP);ctx.stroke(LANDP);ctx.restore()}
  return v}
 function endMap(){ctx.restore()}
 
+// ---- 등온선(연평균 해수면 온도, 1 °C 간격): 2° 격자를 4배로 촘촘히 보간한 뒤 마칭 스퀘어로 선을 구함 ----
+// 결과: 수온마다 [[경도, 위도], …] 꺾은선 목록 (처음 한 번만 계산)
+const ISO=(function(){const lo0=116,lo1=294,la0=34,la1=-34,F=4,j0=lo0/2,i0=(70-la0)/2,nj=(lo1-lo0)/2,ni=(la0-la1)/2,NX=nj*F+1,NY=ni*F+1,G=new Float32Array(NX*NY);
+ const g=(i,j)=>TANN[(i0+i)*NC+((j0+j)%NC)];
+ for(let y=0;y<NY;y++)for(let x=0;x<NX;x++){const fi=y/F,fj=x/F,i=Math.min(ni-1,Math.floor(fi)),j=Math.min(nj-1,Math.floor(fj)),u=fi-i,w=fj-j;
+  G[y*NX+x]=(g(i,j)*(1-w)+g(i,j+1)*w)*(1-u)+(g(i+1,j)*(1-w)+g(i+1,j+1)*w)*u}
+ const LON=x=>lo0+x*2/F,LAT=y=>la0-y*2/F,out={};
+ for(let lev=20;lev<=30;lev++){const segs=[];
+  for(let y=0;y<NY-1;y++)for(let x=0;x<NX-1;x++){const a=G[y*NX+x],b=G[y*NX+x+1],c=G[(y+1)*NX+x+1],d=G[(y+1)*NX+x];
+   const k=(a>=lev?8:0)|(b>=lev?4:0)|(c>=lev?2:0)|(d>=lev?1:0);if(k==0||k==15)continue;
+   const e=[[x+(lev-a)/(b-a),y],[x+1,y+(lev-b)/(c-b)],[x+(lev-d)/(c-d),y+1],[x,y+(lev-a)/(d-a)]];   // 위, 오른쪽, 아래, 왼쪽 변
+   const P={1:[[3,2]],2:[[2,1]],3:[[3,1]],4:[[0,1]],5:[[3,0],[2,1]],6:[[0,2]],7:[[3,0]],8:[[3,0]],9:[[0,2]],10:[[0,1],[3,2]],11:[[0,1]],12:[[3,1]],13:[[2,1]],14:[[3,2]]}[k];
+   P.forEach(([m,n])=>segs.push([e[m],e[n]]))}
+  // 조각을 이어 꺾은선으로
+  const key=p=>Math.round(p[0]*1000)+','+Math.round(p[1]*1000),ends=new Map();segs.forEach((sg,i)=>{[0,1].forEach(q=>{const kk=key(sg[q]);if(!ends.has(kk))ends.set(kk,[]);ends.get(kk).push(i)})});
+  const used=new Uint8Array(segs.length),lines=[];
+  for(let i=0;i<segs.length;i++){if(used[i])continue;used[i]=1;const L=[segs[i][0],segs[i][1]];
+   for(const dir of [1,0]){for(;;){const tip=dir?L[L.length-1]:L[0],nb=(ends.get(key(tip))||[]).find(n=>!used[n]);if(nb==null)break;used[nb]=1;const sg=segs[nb],nx=key(sg[0])==key(tip)?sg[1]:sg[0];dir?L.push(nx):L.unshift(nx)}}
+   lines.push(L.map(p=>[LON(p[0]),LAT(p[1])]))}
+  out[lev]=lines}
+ return out})();
+function drawIso(v,a){if(a<=0)return;ctx.save();ctx.globalAlpha=a;ctx.lineJoin='round';
+ for(const lev in ISO){const major=lev%2==0;ctx.strokeStyle=major?'rgba(15,18,40,.75)':'rgba(15,18,40,.45)';ctx.lineWidth=major?1.4:.9;
+  ISO[lev].forEach(L=>{ctx.beginPath();L.forEach((p,i)=>i?ctx.lineTo(v.X(p[0]),v.Y(p[1])):ctx.moveTo(v.X(p[0]),v.Y(p[1])));ctx.stroke()})}
+ // 수온 숫자: 짝수 °C 선 가운데에 (짧은 선은 빼고)
+ for(const lev in ISO){if(lev%2)continue;ISO[lev].forEach(L=>{let len=0;for(let i=1;i<L.length;i++)len+=Math.hypot(L[i][0]-L[i-1][0],L[i][1]-L[i-1][1]);if(len<20)return;
+  const p=L[Math.floor(L.length/2)];const x=v.X(p[0]),y=v.Y(p[1]);if(x<v.clip.x+30||x>v.clip.x+v.clip.w-20||y<v.clip.y+12||y>v.clip.y+v.clip.h-22)return;
+  T(lev,x,y+4,{size:11.5,w:800,c:'#10142b',a,halo:0});})}
+ ctx.restore()}
+// 위도·경도 눈금 글자(선은 긋지 않음): 왼쪽 가장자리에 위도, 아래 가장자리에 경도
+function drawGridLabels(v,a){if(a<=0)return;const o={size:11,w:700,c:'#ffffff',halo:1,a};
+ [20,10,0,-10,-20].forEach(la=>{const y=v.Y(la);ctx.globalAlpha=a;ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(v.clip.x,y);ctx.lineTo(v.clip.x+6,y);ctx.stroke();
+  T(la==0?'0°(적도)':Math.abs(la)+'°'+(la>0?'N':'S'),v.clip.x+9,y+4,{...o,al:'left'})});
+ [140,160,180,200,220,240,260,280].forEach(lo=>{const x=v.X(lo),yb=v.clip.y+v.clip.h;ctx.globalAlpha=a;ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x,yb);ctx.lineTo(x,yb-6);ctx.stroke();
+  T(lo==180?'180°':lo<180?lo+'°E':(360-lo)+'°W',x,yb-9,o)});ctx.globalAlpha=1}
+
 // ---- 장면: 태평양의 수온 분포 ----
-function scenePac(st,t){const z=st.zoom,v=drawMap(st,{box:EQB,R:FR,z,lo:lerp(-2,22,z),hi:30});
+function scenePac(st,t){const z=st.zoom,za=c01((z-.6)/.4),v=drawMap(st,{box:EQB,R:FR,z,lo:lerp(-2,22,z),hi:30,under:v=>drawIso(v,za)});
  if(st.box>0){const b=v.bx;ctx.fillStyle=`rgba(11,16,38,${.6*st.box*(1-z)})`;ctx.beginPath();ctx.rect(v.clip.x,v.clip.y,v.clip.w,v.clip.h);ctx.rect(b.x+b.w,b.y,-b.w,b.h);ctx.fill('evenodd');
   if(z<.98){ctx.globalAlpha=st.box*(1-z);ctx.setLineDash([6,4]);ctx.strokeStyle='#ffd76b';ctx.lineWidth=2.2;ctx.strokeRect(b.x,b.y,b.w,b.h);ctx.setLineDash([]);ctx.globalAlpha=1;
    T('적도 부근의 태평양',b.x+b.w/2,b.y-8,{c:'#ffd76b',size:15,w:800,halo:1,a:st.box*(1-z)})}}
  const eqA=1;ctx.globalAlpha=.55;ctx.setLineDash([4,4]);ctx.strokeStyle='#fff';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(v.clip.x,v.Y(0));ctx.lineTo(v.clip.x+v.clip.w,v.Y(0));ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
- T('적도',v.clip.x+8,v.Y(0)-5,{al:'left',size:12,halo:1});
+ T('적도',v.clip.x+8,v.Y(0)-5,{al:'left',size:12,halo:1,a:1-c01((z-.6)/.4)});
  if(z<.5){const a=1-z*2;T('태평양',v.X(200),v.Y(18),{size:15,w:800,halo:1,a:a*.95});T('대서양',v.X(330),v.Y(18),{size:14,w:800,halo:1,a:a*.8});T('인도양',v.X(78),v.Y(-18),{size:14,w:800,halo:1,a:a*.8})}
  if(z>.6){const a=c01((z-.6)/.4);
   T('아시아',v.X(121),v.Y(25),{size:13,w:800,c:'#e7eaf4',halo:1,a,al:'left'});T('오스트레일리아',v.X(134),v.Y(-24),{size:13,w:800,c:'#e7eaf4',halo:1,a});
   T('북아메리카',v.X(268),v.Y(26),{size:13,w:800,c:'#e7eaf4',halo:1,a});T('남아메리카',v.X(288),v.Y(-16),{size:13,w:800,c:'#e7eaf4',halo:1,a,al:'right'});
   T('서태평양',v.X(155),v.Y(14),{size:16,w:800,halo:1,a});T('동태평양',v.X(245),v.Y(14),{size:16,w:800,halo:1,a});
   if(quizOK){const qa=c01((t-quizT)/.6);pill('약 29~30 °C',v.X(155),v.Y(-4),'#ff8a7a',qa,15);pill('약 25 °C',v.X(255),v.Y(-4),'#8fe3ff',qa,15)}}
+ drawGridLabels(v,za);
  endMap();
  colorbar({x:lerp(GR.x+GR.w*.25,FR.x+FR.w*.25,z),y:lerp(374,FR.y+FR.h+16,z),w:GR.w*.5,h:11},lerp(-2,22,z),30,z>.5?2:5,'해수면 온도(°C)');
  T(z>.5?'적도 부근 태평양의 연평균 해수면 온도 (1991~2020년, NOAA ERSST v5)':'전 세계의 연평균 해수면 온도 (1991~2020년, NOAA ERSST v5)',W-14,H-2.5,{size:10.5,al:'right',c:'#8d96b3',w:500,bl:'bottom'})}
