@@ -348,11 +348,8 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
   ctx.strokeStyle=pc;ctx.lineWidth=2;shaft();ctx.stroke();head();ctx.fillStyle=pc;ctx.fill();ctx.restore()});
  ctx.globalAlpha=a;
  // 용승(동쪽 끝)
- if(st.U>0.02){const ua=st.U;for(let m=0;m<3;m++){const bx=sxp(.83+m*.055),y0=BOT-22,y1=SEA-level(.9,st)+8;
-   ctx.globalAlpha=a*Math.min(1,ua*1.2);ctx.strokeStyle='#8fe3ff';ctx.lineWidth=2.4;ctx.setLineDash([7,6]);ctx.lineDashOffset=-(t*6)%13;   // 용승은 아주 느린 흐름이므로 천천히
-   ctx.beginPath();ctx.moveTo(bx-26+m*6,y0);ctx.quadraticCurveTo(bx+4,y0-30,bx+2,y1+10);ctx.stroke();ctx.setLineDash([]);
-   arrow(bx+2,y1+16,bx+2,y1+2,'#8fe3ff',2.4,8,a*Math.min(1,ua*1.2))}
-  T(st.U<.6&&st.E>.5?'용승 약화':'용승',sxp(.84),BOT-34,{c:'#8fe3ff',size:13.5,w:800,halo:1,a:a*Math.min(1,ua*1.5+.3)})}
+ if(st.U>0.02){const ua=st.U,xt=sxp(.93);upBand([sxp(.66),BOT-18],[xt,BOT-26],[xt,SEA-level(.93,st)+10],ua,t,a);
+  T(st.U<.6&&st.E>.5?'용승 약화':'용승',sxp(.74),BOT-30,{c:'#8fe3ff',size:13.5,w:800,halo:1,a:a*Math.min(1,ua*1.5+.3)})}
  ctx.globalAlpha=a;
  // 땅: 지형은 의미가 없으므로 단순한 직사각형(해수면 변화를 비교하기 쉽게 해수면보다 충분히 높게)
  ctx.fillStyle='#6d5b43';ctx.strokeStyle='#9b845f';ctx.lineWidth=1.2;const LT=SEA-56;
@@ -397,6 +394,23 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
  T('개념도 (해수면 높이·해수층 두께는 과장)',SR.x+SR.w-8,SR.y+14,{size:10.5,al:'right',c:'#8d96b3',w:500});
  ctx.restore();
  ctx.globalAlpha=a;ctx.strokeStyle='rgba(255,255,255,.18)';ctx.lineWidth=1;rr(SR.x,SR.y,SR.w,SR.h,12);ctx.stroke();ctx.globalAlpha=1}
+
+// ---- 용승: 점선(대기 흐름)과 구분되도록 '물이 솟아오르는 넓은 띠'로 그림 ----
+// 깊은 곳(P0)에서 휘어 해수면(P2)까지 올라오는 반투명 띠 + 둥근 큰 화살촉 + 띠 안에서 천천히 떠오르는 물방울
+// 색은 아래(깊은 바다의 찬 물)에서 위(하늘색)로. str: 세기(0~1, 약해지면 가늘고 흐려짐)
+function qb(P0,C,P2,u){return [(1-u)*(1-u)*P0[0]+2*(1-u)*u*C[0]+u*u*P2[0],(1-u)*(1-u)*P0[1]+2*(1-u)*u*C[1]+u*u*P2[1]]}
+function upBand(P0,C,P2,str,t,a){if(str<=.02)return;const w=8+18*str,N=30,L=[],R=[],E=.86;
+ for(let i=0;i<=N;i++){const u=i/N*E,p=qb(P0,C,P2,u),q=qb(P0,C,P2,Math.min(1,u+.01)),dx=q[0]-p[0],dy=q[1]-p[1],n=Math.hypot(dx,dy)||1,hw=w/2*(.7+.3*u/E);L.push([p[0]-dy/n*hw,p[1]+dx/n*hw]);R.push([p[0]+dy/n*hw,p[1]-dx/n*hw])}
+ const g=ctx.createLinearGradient(P0[0],P0[1],P2[0],P2[1]);g.addColorStop(0,'rgba(70,120,210,.15)');g.addColorStop(1,'rgba(160,225,255,.55)');
+ ctx.save();ctx.globalAlpha=a*Math.min(1,.35+str);ctx.fillStyle=g;ctx.beginPath();L.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));for(let i=R.length-1;i>=0;i--)ctx.lineTo(R[i][0],R[i][1]);ctx.closePath();ctx.fill();
+ ctx.strokeStyle='rgba(190,235,255,.55)';ctx.lineWidth=1.2;ctx.stroke();
+ // 둥근 큰 화살촉
+ const b=qb(P0,C,P2,E),tip=P2,dx=tip[0]-b[0],dy=tip[1]-b[1],n=Math.hypot(dx,dy)||1,ux=dx/n,uy=dy/n,hw=w*.85;
+ ctx.fillStyle='rgba(170,230,255,.85)';ctx.beginPath();ctx.moveTo(b[0]-uy*hw,b[1]+ux*hw);ctx.quadraticCurveTo(tip[0]-uy*hw*.2,tip[1]+ux*hw*.2,tip[0],tip[1]);ctx.quadraticCurveTo(tip[0]+uy*hw*.2,tip[1]-ux*hw*.2,b[0]+uy*hw,b[1]-ux*hw);ctx.closePath();ctx.fill();
+ // 천천히 떠오르는 물방울(용승은 아주 느린 흐름)
+ const nb=Math.round(4+8*str);for(let i=0;i<nb;i++){const u=((i/nb)+t*.025)%1*E,p=qb(P0,C,P2,u),q=qb(P0,C,P2,Math.min(1,u+.01)),ddx=q[0]-p[0],ddy=q[1]-p[1],m=Math.hypot(ddx,ddy)||1,off=Math.sin(i*2.3)*w*.28;
+  ctx.globalAlpha=a*Math.min(1,.35+str)*Math.sin(Math.PI*u/E);ctx.strokeStyle='rgba(235,250,255,.95)';ctx.lineWidth=1.3;ctx.beginPath();ctx.arc(p[0]-ddy/m*off,p[1]+ddx/m*off,1.8+1.4*((i*7)%3)/2,0,7);ctx.stroke()}
+ ctx.restore()}
 
 // ---- 워커 순환 (대기의 순환: 그림판 전체 폭 단면 위에) ----
 // wa: 서태평양 상승 기류, ea: 동태평양 하강 기류, loop: 위·아래 흐름까지 이어진 순환
@@ -454,12 +468,12 @@ function drawPeru(st,t){const R=SRE,a=1,sea=R.y+150,bot=R.y+R.h,x0=R.x,x1=R.x+R.
  if(st.off>0){PP.forEach(p=>{const f=p.x,y=sea+Math.min(thk(f),40)*p.d*.8+4;dart(px(f),y,-1,st.off*.95)});
   arrow(px(.62),sea-14,px(.3),sea-14,'#ffffff',2.6,10,st.off);T('표층 해수가 먼바다 쪽으로 이동',px(.42),sea-26,{size:12.5,w:800,halo:1,a:st.off})}
  // 용승
- if(st.up>0){for(let m=0;m<3;m++){const xs=px(.5+m*.08),xe2=px(.82+m*.06);ctx.save();ctx.globalAlpha=Math.min(1,st.up*1.3);ctx.strokeStyle='#8fe3ff';ctx.lineWidth=2.4;ctx.setLineDash([7,6]);ctx.lineDashOffset=-(t*6)%13;
-   ctx.beginPath();ctx.moveTo(xs,bot-20+m*-6);ctx.quadraticCurveTo(xe2-10,bot-40,xe2,sea+16);ctx.stroke();ctx.restore();arrow(xe2,sea+24,xe2,sea+8,'#8fe3ff',2.4,8,Math.min(1,st.up*1.3))}
-  T('찬 해수의 용승',px(.36),bot-112,{c:'#8fe3ff',size:13.5,w:800,halo:1,a:Math.min(1,st.up*1.5)})}
+ const UP0=[px(.42),bot-22],UPC=[px(.86),bot-30],UP2=[px(.86),sea+12];
+ if(st.up>0){upBand(UP0,UPC,UP2,st.up,t,1);
+  T('찬 해수의 용승',px(.64),bot-96,{c:'#8fe3ff',size:13.5,w:800,halo:1,a:Math.min(1,st.up*1.5)})}
  // 영양염류(노란 점: 깊은 곳에서 용승을 따라 올라옴)
- if(st.nut>0){ctx.fillStyle='#ffd76b';PN.forEach(p=>{const m=Math.floor(p.o*3),xs=px(.5+m*.08),xe2=px(.82+m*.06),u=p.u,
-   x=(1-u)*(1-u)*xs+2*(1-u)*u*(xe2-10)+u*u*xe2,y=(1-u)*(1-u)*(bot-20-m*6)+2*(1-u)*u*(bot-40)+u*u*(sea+16);ctx.globalAlpha=st.nut*(u<.9?1:(1-u)*10);ctx.beginPath();ctx.arc(x+Math.sin(p.o*20)*6,y,2.3,0,7);ctx.fill()});
+ if(st.nut>0){ctx.fillStyle='#ffd76b';PN.forEach(p=>{const u=p.u*.86,q=qb(UP0,UPC,UP2,u),r=qb(UP0,UPC,UP2,Math.min(1,u+.01)),dx=r[0]-q[0],dy=r[1]-q[1],m=Math.hypot(dx,dy)||1,off=(p.o-.5)*20;
+   ctx.globalAlpha=st.nut*(p.u<.9?1:(1-p.u)*10);ctx.beginPath();ctx.arc(q[0]-dy/m*off,q[1]+dx/m*off,2.3,0,7);ctx.fill()});
   ctx.globalAlpha=1;T('영양염류',px(.2),bot-80,{c:'#ffd76b',size:13,w:800,halo:1,a:st.nut});
   ctx.fillStyle='#ffd76b';for(let q=0;q<26;q++){ctx.globalAlpha=st.nut*.8;ctx.beginPath();ctx.arc(px(.05+((q*.173)%1)*.6),bot-14-((q*.41)%1)*60,2,0,7);ctx.fill()}ctx.globalAlpha=1}
  // 앤초비 떼와 고깃배
