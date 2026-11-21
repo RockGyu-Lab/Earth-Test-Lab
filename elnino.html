@@ -80,6 +80,7 @@ canvas{width:100%;height:auto;aspect-ratio:940/400;display:block;border-radius:1
 .subtabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px}
 .subtabs[hidden]{display:none}
 .subtabs button{flex:1 1 9em;padding:6px 12px;text-align:center;border:1px solid var(--sub-bd);border-radius:999px;background:var(--sub-bg);color:var(--sub-tx);font-size:.92rem;font-weight:700;cursor:pointer}
+.subtabs button:disabled{opacity:.45;cursor:default}
 .subtabs button.on{background:var(--sub);border-color:var(--sub-tx);color:var(--on-sub)}
 /* 태평양의 수온 분포의 생각해 보기: 답을 열면 지도에 서·동 수온도 표시 */
 .quiz>.note{margin-top:10px}
@@ -111,6 +112,11 @@ section[hidden]{display:none}
  <button role="tab" id="tab1" aria-selected="false" tabindex="-1">엘니뇨</button>
 </div>
 <!-- 평상시의 작은 메뉴(연보라): 누를 때마다 그 메뉴의 처음부터 -->
+<div class="subtabs" id="subs1" role="tablist" aria-label="엘니뇨" hidden>
+ <button type="button" role="tab" class="on" aria-selected="true">태평양 수온 분포의 변화</button>
+ <button type="button" role="tab" aria-selected="false" disabled title="만드는 중">수온 편차로 본 엘니뇨</button>
+ <button type="button" role="tab" aria-selected="false" disabled title="만드는 중">대기 순환의 변화</button>
+</div>
 <div class="subtabs" id="subs" role="tablist" aria-label="평상시">
  <button type="button" role="tab" class="on" aria-selected="true">태평양의 수온 분포</button>
  <button type="button" role="tab" aria-selected="false">태평양 수온 분포의 원인</button>
@@ -580,7 +586,7 @@ function sceneEq(st,t){setSR(SRE);const v=drawMap(st,{box:EQB,R:ZR,z:1,lo:22,hi:
  if(st.U>.05&&st.mU>0){const x=v.X(272),y=v.Y(-6);ctx.globalAlpha=st.mU;ctx.strokeStyle='#8fe3ff';ctx.lineWidth=2.2;ctx.beginPath();ctx.ellipse(x,y,22,26,0,0,7);ctx.stroke();ctx.globalAlpha=1;
   T(st.E>.5?'용승 약화':'용승',x,y+5,{c:'#8fe3ff',size:13,w:800,halo:1,a:st.mU})}
  if(st.lab>0){const la=st.lab;if(st.E<.5){pill('따뜻한 해수',v.X(150),v.Y(-8),'#ffb36b',la);pill('찬 해수',v.X(240),v.Y(-9),'#8fe3ff',la)}
-  else{pill('평년보다 수온 높음',v.X(232),v.Y(-9),'#ff8a7a',la);pill('가뭄',v.X(140),v.Y(-14),'#ffd76b',la,12);pill('홍수',v.X(268),v.Y(4),'#8fc8ff',la,12);pill('어획량 감소',v.X(256),v.Y(-21),'#8fe3ff',la,11.5)}}
+  else{pill('평년보다 수온 높음',v.X(232),v.Y(-9),'#ff8a7a',la);if(st.clim){pill('가뭄',v.X(140),v.Y(-14),'#ffd76b',la,12);pill('홍수',v.X(268),v.Y(4),'#8fc8ff',la,12);pill('어획량 감소',v.X(256),v.Y(-21),'#8fe3ff',la,11.5)}}}
  endMap();
  colorbar({x:ZR.x+40,y:ZR.y+ZR.h+12,w:ZR.w-80,h:11},22,30,2);
  // 범례
@@ -624,19 +630,20 @@ const SCENES=[
    s:k=>{const g=k*16;return {...NORMAL,W:0,wa:seg(g,0,3),ea:seg(g,4.5,7.5),loop:seg(g,9,12)}}}]}
 
 ];
-const ELNINO={draw:sceneEq,steps:[
- {t:'1단계(무역풍의 약화)',x:'어떤 해에는 무역풍이 평상시보다 <em>약해집니다</em>. 서쪽으로 해수를 밀어 보내던 힘도 약해집니다.',d:5,
-  s:k=>({...NORMAL,C:1,W:1-.7*ease(k),V:-1+.8*ease(k)})},
- {t:'2단계(따뜻한 해수의 동쪽 이동)',x:'서태평양에 쌓여 있던 <em>따뜻한 해수가 동쪽으로 이동</em>합니다. 서태평양은 해수면이 낮아지고, 동태평양은 <em>따뜻한 해수층이 두꺼워집니다</em>.',d:8,
-  s:k=>({...NORMAL,C:1,W:.3,V:-.2+1.1*seg(k,0,.2)-.7*seg(k,.75,1),E:ease(k),A:.35*seg(k,.2,1)})},
- {t:'3단계(용승의 약화)',x:'동태평양에서 <em>용승이 약해져</em> 찬 해수가 덜 올라오므로, <em>동태평양 적도 부근의 표층 수온이 평년보다 높아집니다</em>.',d:7,
-  s:k=>({...NORMAL,C:1,W:.3,V:.2,E:1,U:1-.75*ease(k),A:.35+.65*seg(k,.1,1)})},
- {t:'4단계(엘니뇨와 그 영향)',x:'동태평양 적도 부근의 표층 수온이 평년보다 높은 상태가 지속되는 현상이 <em>엘니뇨</em>입니다. 비가 많이 오는 곳이 동쪽으로 옮겨 <em>동태평양은 홍수, 서태평양은 가뭄</em>이 생기기 쉽고 <em>어획량이 줄어듭니다</em>.',d:7,
-  s:k=>({...NORMAL,C:1,W:.3,V:.2,E:1,U:.25,A:1,cx:seg(k,0,.55),lab:seg(k,.35,.85)})}]};
+// 엘니뇨 > 태평양 수온 분포의 변화: 단계 없이 하나의 흐름(g초, 0~19). 기후의 변화(구름·비, 홍수·가뭄)는 '대기 순환의 변화'에서 다룸
+function ELN(g){return {...NORMAL,C:0,W:1-.7*seg(g,0,3),V:g<3?-1+.8*seg(g,0,3):g<5?-.2+1.1*seg(g,3,4.2):.9-.7*seg(g,8,10),E:ease((g-3)/7),
+  A:.35*seg(g,4,10)+.65*seg(g,9,14),U:1-.75*seg(g,9,14),lab:seg(g,15,17.5)}}
+const ESCENES=[
+ {draw:sceneEq,steps:[{t:'무역풍의 약화',x:'어떤 해에는 무역풍이 평상시보다 <em>약해집니다</em>. 서쪽으로 해수를 밀어 보내던 힘도 약해집니다.',d:19,
+   xs:[[3,'따뜻한 해수의 동쪽 이동','서태평양에 쌓여 있던 <em>따뜻한 해수가 동쪽으로 이동</em>합니다. 서태평양은 해수면이 낮아지고, 동태평양은 <em>따뜻한 해수층이 두꺼워집니다</em>.'],
+       [9,'용승의 약화','동태평양에서 <em>용승이 약해져</em> 찬 해수가 덜 올라오므로, <em>동태평양 적도 부근의 표층 수온이 평년보다 높아집니다</em>.'],
+       [15,'엘니뇨','이처럼 동태평양 적도 부근의 표층 수온이 <em>평년보다 높은 상태가 지속되는 현상</em>을 <em>엘니뇨</em>라고 합니다.']],
+   s:k=>ELN(k*19)}]}];
+const ELNINO=ESCENES[0];
 
 let tab=0,sub=0,si=0,ph=0,playing=true,last=performance.now()/1000,quizOK=false,quizT=0;
 const $=id=>document.getElementById(id);
-const scene=()=>tab==0?SCENES[sub]:ELNINO;
+let sub1=0;const scene=()=>tab==0?SCENES[sub]:ESCENES[sub1];
 function stepHTML(tt,tx){return `<b>${tt}</b><span>${tx.replace(/ ([:=→]) /g,' $1 ').replace(/(\d) (°C)/g,'$1 $2')}</span>`}
 // 진행 막대: 칸을 누르거나 끌면 그 단계의 그 때로 이동
 function buildProg(){const P=$('prog');P.innerHTML='';scene().steps.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-label',s.t);b.innerHTML='<i></i>';
@@ -656,8 +663,11 @@ function openSub(i){sub=i;[...$('subs').children].forEach((b,j)=>{b.classList.to
  cv.setAttribute('aria-label',['전 세계 연평균 해수면 온도 지도에서 적도 부근의 태평양을 잘라 확대한 지도','적도 태평양의 해수면 온도 지도와 적도를 따라 자른 단면에서 무역풍, 해수의 이동, 용승, 가열로 수온 분포가 만들어지는 모습','적도를 따라 자른 단면 위에서 서태평양의 상승 기류와 동태평양의 하강 기류가 이어지는 워커 순환'][i]);
  seed();buildProg();go(0)}
 function openTab(i){tab=i;[0,1].forEach(j=>{const b=$('tab'+j),on=j==i;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1;$('p'+j).hidden=!on});
- $('subs').hidden=i!=0;const p=$('p'+i);p.classList.remove('enter');void p.offsetWidth;p.classList.add('enter');
- if(i==0)openSub(0);else{$('quiz').hidden=true;cv.setAttribute('aria-label','적도 태평양의 해수면 온도 지도와 적도를 따라 자른 단면에서 엘니뇨가 일어나는 과정');seed();buildProg();go(0)}}
+ $('subs').hidden=i!=0;$('subs1').hidden=i!=1;const p=$('p'+i);p.classList.remove('enter');void p.offsetWidth;p.classList.add('enter');
+ if(i==0)openSub(0);else openSub1(0)}
+function openSub1(i){sub1=i;[...$('subs1').children].forEach((b,j)=>{b.classList.toggle('on',j==i);b.setAttribute('aria-selected',j==i)});$('quiz').hidden=true;
+ cv.setAttribute('aria-label','적도 태평양의 해수면 온도 지도와 적도를 따라 자른 단면에서 무역풍이 약해지며 엘니뇨가 일어나는 과정');seed();buildProg();go(0)}
+[...$('subs1').children].forEach((b,i)=>b.onclick=()=>{if(!b.disabled)openSub1(i)});
 [...$('subs').children].forEach((b,i)=>b.onclick=()=>openSub(i));
 [0,1].forEach(i=>{const b=$('tab'+i);b.onclick=()=>openTab(i);b.onkeydown=e=>{if(e.key=='ArrowRight'||e.key=='ArrowLeft'){const j=(i+1)%2;$('tab'+j).focus();openTab(j)}}});
 $('prev').onclick=()=>go(si-1);$('next').onclick=()=>go(si+1);$('again').onclick=()=>{seed();resetQuiz();go(0)};
