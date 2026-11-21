@@ -208,8 +208,8 @@ addEventListener('resize',fit);
 const FONT='"Pretendard Variable",Pretendard,system-ui,"Noto Sans KR",sans-serif';
 const font=(s,w)=>`${w||700} ${s}px ${FONT}`;
 
-// 색: turbo 비슷한 해수면 온도 색 (차가움 파랑 → 따뜻함 빨강)
-const STOPS=[[0,48,18,59],[.1,65,69,171],[.2,70,117,237],[.3,57,162,252],[.4,27,207,212],[.5,36,236,166],[.6,97,252,108],[.7,164,252,59],[.8,209,232,52],[.86,243,198,58],[.92,254,155,45],[.97,236,95,21],[1,200,40,8]];
+// 색: 교과서 수온 그림처럼 파랑(차가움) → 연노랑 → 빨강(따뜻함)
+const STOPS=[[0,49,54,149],[.1,69,117,180],[.2,116,173,209],[.3,171,217,233],[.4,224,243,248],[.5,255,255,191],[.6,254,224,144],[.7,253,174,97],[.8,244,109,67],[.9,215,48,39],[1,165,0,38]];
 const LUT=[];for(let q=0;q<256;q++){const v=q/255;let a=STOPS[0],b=STOPS[STOPS.length-1];for(let s=1;s<STOPS.length;s++)if(v<=STOPS[s][0]){a=STOPS[s-1];b=STOPS[s];break}
  const f=(v-a[0])/((b[0]-a[0])||1);LUT.push([0,1,2].map(c=>Math.round(a[c+1]+(b[c+1]-a[c+1])*f)))}
 const lut=(T,lo,hi)=>LUT[Math.max(0,Math.min(255,Math.round((T-lo)/(hi-lo)*255)))];
@@ -261,6 +261,13 @@ function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h
 function arrow(x1,y1,x2,y2,c,lw,hs,a){const ang=Math.atan2(y2-y1,x2-x1);hs=hs||7;ctx.globalAlpha=a==null?1:a;ctx.strokeStyle=c;ctx.fillStyle=c;ctx.lineWidth=lw||2;ctx.lineCap='round';
  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2-Math.cos(ang)*hs*.6,y2-Math.sin(ang)*hs*.6);ctx.stroke();
  ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-Math.cos(ang-.45)*hs,y2-Math.sin(ang-.45)*hs);ctx.lineTo(x2-Math.cos(ang+.45)*hs,y2-Math.sin(ang+.45)*hs);ctx.closePath();ctx.fill();ctx.globalAlpha=1}
+// 서쪽으로 흐른 표층 해수가 서태평양 가장자리를 따라 북쪽(쿠로시오 해류 쪽)과 남쪽(동오스트레일리아 해류 쪽)으로 빠져나가는 길
+const QPATH=[l=>[[272,l],[152,l],[143,l+2.5],[136,9],[131,17],[133,27]],l=>[[272,-l],[161,-l],[156.5,-7],[155.5,-15],[154.5,-27]]];
+function qPt(p){const P=QPATH[p.n](p.l),L=[];let tot=0;for(let i=1;i<P.length;i++){const d=Math.hypot(P[i][0]-P[i-1][0],P[i][1]-P[i-1][1]);L.push(d);tot+=d}
+ let d=p.s*tot;for(let i=0;i<L.length;i++){if(d<=L[i]||i==L.length-1){const f=Math.min(1,d/L[i]),a=P[i],b=P[i+1];return [a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f,b[0]-a[0],b[1]-a[1]]}d-=L[i]}}
+function dartA(x,y,ux,uy,a){ctx.save();ctx.shadowColor='rgba(0,0,0,.55)';ctx.shadowBlur=3;ctx.globalAlpha=a;ctx.fillStyle='#fff';ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=1.4;
+ ctx.beginPath();ctx.moveTo(x+ux*5,y+uy*5);ctx.lineTo(x-ux*2-uy*3,y-uy*2+ux*3);ctx.lineTo(x-ux*2+uy*3,y-uy*2-ux*3);ctx.closePath();ctx.fill();
+ ctx.beginPath();ctx.moveTo(x-ux*2,y-uy*2);ctx.lineTo(x-ux*9,y-uy*9);ctx.stroke();ctx.restore()}
 function dart(x,y,dir,a,c){ctx.globalAlpha=a;ctx.fillStyle=c||'#fff';ctx.beginPath();ctx.moveTo(x+dir*5,y);ctx.lineTo(x-dir*2,y-3);ctx.lineTo(x-dir*2,y+3);ctx.closePath();ctx.fill();
  ctx.strokeStyle=c||'rgba(255,255,255,.8)';ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(x-dir*2,y);ctx.lineTo(x-dir*9,y);ctx.stroke();ctx.globalAlpha=1}
 function cloud(x,y,a,s){s=s||1;ctx.globalAlpha=a;ctx.fillStyle='#d9deea';[[-22,4,17],[0,-4,22],[24,3,17],[-8,8,16],[12,8,16]].forEach(([dx,dy,r])=>{ctx.beginPath();ctx.arc(x+dx*s,y+dy*s,r*s,0,7);ctx.fill()});ctx.globalAlpha=1}
@@ -273,10 +280,11 @@ function colorbar(cb,lo,hi,step,title){for(let q=0;q<120;q++){const T2=lo+(hi-lo
  if(title)T(title,cb.x-8,cb.y+cb.h-1,{size:11.5,al:'right',c:'#cfd6ee',w:700});else T('°C',cb.x+cb.w+8,cb.y+cb.h-1,{size:11.5,al:'left',c:'#cfd6ee',w:700})}
 
 // ================= 움직이는 입자 =================
-const PS=[],PM=[],PW=[],PP=[],PN=[],PF=[],PA=[];let WPH=0;   // PA: 단면 위 바람 줄기, WPH: 지도 바람 화살표가 흐르는 위치
-function seed(){PS.length=PM.length=PW.length=PP.length=PN.length=PF.length=PA.length=0;WPH=0;const R=Math.random;
+const PS=[],PM=[],PQ=[],PW=[],PP=[],PN=[],PF=[],PA=[];let WPH=0;   // PA: 단면 위 바람 줄기, WPH: 지도 바람 화살표가 흐르는 위치
+function seed(){PQ.length=0;PS.length=PM.length=PW.length=PP.length=PN.length=PF.length=PA.length=0;WPH=0;const R=Math.random;
  for(let n=0;n<9;n++)PA.push({x:n/9+R()*.05,d:R()});                  // 단면 위 바람 줄기
- for(let n=0;n<26;n++)PS.push({x:R(),d:.15+R()*.7});               // 적도 단면의 표층 흐름
+ for(let n=0;n<26;n++)PS.push({x:R(),d:R()});                       // 적도 단면의 표층 흐름(d: 해수면에서 깊이 0~1)
+ for(let n=0;n<40;n++)PQ.push({s:R(),n:n%2,l:.8+R()*3.7});            // 지도의 서쪽 흐름: 적도를 따라 서쪽 → 서태평양에서 북쪽·남쪽으로 빠져나감
  for(let n=0;n<30;n++)PM.push({lo:160+R()*112,la:(R()*2-1)*4.5});  // 적도 지도의 표층 흐름
  for(let n=0;n<34;n++)PW.push({u:R()});                             // 워커 순환의 공기
  for(let n=0;n<22;n++)PP.push({x:R(),d:.1+R()*.8});                 // 페루 단면의 먼바다 쪽 흐름
@@ -286,6 +294,7 @@ seed();
 function moveParticles(st,dt){const v=st.V||0,w=st.W||0;
  WPH=(WPH+dt*.28*w)%1;PA.forEach(p=>{p.x-=dt*.12*w;if(p.x<0)p.x+=1});   // 바람은 쉬지 않고 붊(약해지면 느리게)
  PS.forEach(p=>{p.x+=v*dt*.07;if(p.x<0)p.x+=1;if(p.x>1)p.x-=1});
+ PQ.forEach(p=>{if(v<0){p.s+=-v*dt*.058;if(p.s>1)p.s-=1}});
  PM.forEach(p=>{p.lo+=v*dt*9;if(p.lo<160)p.lo+=112;if(p.lo>272)p.lo-=112});
  PW.forEach(p=>{p.u=(p.u+dt*.06*(st.loop||0))%1});
  PP.forEach(p=>{p.x-=dt*.08*(st.off||0);if(p.x<0)p.x+=1});
@@ -303,10 +312,14 @@ const level=(xf,st)=>{const sN=12*(1-xf)-5*xf,sE=3*(1-xf)-1*xf;return lerp(lerp(
 function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAlpha=a;
  ctx.beginPath();rr(SR.x,SR.y,SR.w,SR.h,12);ctx.clip();
  const sky=ctx.createLinearGradient(0,SR.y,0,SEA);sky.addColorStop(0,'#0e1638');sky.addColorStop(1,'#1d2c5c');ctx.fillStyle=sky;ctx.fillRect(SR.x,SR.y,SR.w,SEA-SR.y+20);
- const deep=ctx.createLinearGradient(0,SEA,0,BOT);deep.addColorStop(0,'#2a4fae');deep.addColorStop(1,'#0f2163');ctx.fillStyle=deep;ctx.fillRect(SR.x,SEA-20,SR.w,BOT-SEA+20);
+ const deep=ctx.createLinearGradient(0,SEA,0,BOT);deep.addColorStop(0,'#2b3a8f');deep.addColorStop(1,'#141a52');
+ const deepC=y=>{const f=c01((y-SEA)/(BOT-SEA));return [lerp(43,20,f),lerp(58,26,f),lerp(143,82,f)]};ctx.fillStyle=deep;ctx.fillRect(SR.x,SEA-20,SR.w,BOT-SEA+20);
  // 따뜻한 해수층(색 = 지도의 적도 수온과 같은 색)
  const N=84;for(let n=0;n<N;n++){const x0=n/N,x1=(n+1)/N,xm=(x0+x1)/2,c=lut(eqT(slon(xm)),22,30);
-  const top=SEA-level(xm,st),hh=thick(xm,st);ctx.fillStyle=rgb(c);ctx.fillRect(sxp(x0)-.5,top,sxp(x1)-sxp(x0)+1,hh)}
+  const top=SEA-level(xm,st),hh=thick(xm,st);ctx.fillStyle=rgb(c);ctx.fillRect(sxp(x0)-.5,top,sxp(x1)-sxp(x0)+1,hh);
+  // 점선(수온 약층이 시작되는 깊이) 아래는 깊어질수록 서서히 차가운 색으로 (투명도 대신 불투명한 작은 칸으로 칠해 세로 줄무늬가 생기지 않게)
+  const yb=top+hh,band=70*KH+10,c2=lut(eqT(slon(xm))-6,22,30);for(let q=0;q<10;q++){const f=q/10,y=yb+f*band,dc=deepC(y),m=Math.pow(f,.8);
+   ctx.fillStyle=`rgb(${Math.round(lerp(c2[0],dc[0],m))},${Math.round(lerp(c2[1],dc[1],m))},${Math.round(lerp(c2[2],dc[2],m))})`;ctx.fillRect(sxp(x0)-.5,y-.5,sxp(x1)-sxp(x0)+1,band/10+1)}}
  ctx.setLineDash([5,4]);ctx.strokeStyle='rgba(255,255,255,.55)';ctx.lineWidth=1.3;ctx.beginPath();for(let n=0;n<=40;n++){const xf=n/40,y=SEA-level(xf,st)+thick(xf,st);n?ctx.lineTo(sxp(xf),y):ctx.moveTo(sxp(xf),y)}ctx.stroke();ctx.setLineDash([]);
  // 해수면 위쪽은 하늘로 덮음 — 해수면 선
  ctx.beginPath();ctx.moveTo(SX0,SR.y);for(let n=0;n<=40;n++){const xf=n/40;ctx.lineTo(sxp(xf),SEA-level(xf,st))}ctx.lineTo(SX1,SR.y);ctx.closePath();
@@ -314,9 +327,12 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
  ctx.strokeStyle='#bfe6ff';ctx.lineWidth=2;ctx.beginPath();for(let n=0;n<=40;n++){const xf=n/40,y=SEA-level(xf,st);n?ctx.lineTo(sxp(xf),y):ctx.moveTo(sxp(xf),y)}ctx.stroke();
  if(st.F>0&&st.ref!==0){ctx.setLineDash([3,4]);ctx.strokeStyle='rgba(191,230,255,.45)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(SX0,SEA);ctx.lineTo(SX1,SEA);ctx.stroke();ctx.setLineDash([])}
  // 표층 해수의 흐름(입자)
- if(Math.abs(st.V)>.05)PS.forEach(p=>{const y=SEA-level(p.x,st)+thick(p.x,st)*p.d*.8+3,x=sxp(p.x),dir=Math.sign(st.V);
-  ctx.globalAlpha=a*Math.min(1,Math.abs(st.V)*1.4)*.9;ctx.strokeStyle='#ffffff';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(x-dir*7,y);ctx.lineTo(x+dir*3,y);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(x+dir*6,y);ctx.lineTo(x+dir*1,y-3);ctx.lineTo(x+dir*1,y+3);ctx.closePath();ctx.fillStyle='#fff';ctx.fill()});
+ // 바람이 일으키는 흐름은 해수면에서 가장 빠르고 깊을수록 약해지므로, 해수면 가까이에만 그리고 깊을수록 짧고 흐리게
+ if(Math.abs(st.V)>.05)PS.forEach(p=>{const dep=Math.min(p.d*30,thick(p.x,st)-6);if(dep<0)return;const y=SEA-level(p.x,st)+4+dep,x=sxp(p.x),dir=Math.sign(st.V),L=1-p.d*.6;
+  const edge=dir<0?c01(p.x*8)*c01((1-p.x)*8):c01(p.x*8)*c01((1-p.x)*8);
+  ctx.save();ctx.shadowColor='rgba(0,0,0,.45)';ctx.shadowBlur=2;ctx.globalAlpha=a*Math.min(1,Math.abs(st.V)*1.4)*(1-p.d*.55)*edge;ctx.strokeStyle='#ffffff';ctx.lineWidth=1.7*L+.4;
+  ctx.beginPath();ctx.moveTo(x-dir*9*L,y);ctx.lineTo(x+dir*3,y);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x+dir*6,y);ctx.lineTo(x+dir*1,y-3);ctx.lineTo(x+dir*1,y+3);ctx.closePath();ctx.fillStyle='#fff';ctx.fill();ctx.restore()});
  ctx.globalAlpha=a;
  // 용승(동쪽 끝)
  if(st.U>0.02){const ua=st.U;for(let m=0;m<3;m++){const bx=sxp(.83+m*.055),y0=BOT-22,y1=SEA-level(.9,st)+8;
@@ -507,10 +523,10 @@ function scenePac(st,t){const z=st.zoom,za=c01((z-.6)/.4),v=drawMap(st,{box:EQB,
 function windCurve(v,lo,h,aw){const P0=[lo+13,h*21],C=[lo+3,h*9],P2=[lo-17,h*5];
  const B=u=>[(1-u)*(1-u)*P0[0]+2*(1-u)*u*C[0]+u*u*P2[0],(1-u)*(1-u)*P0[1]+2*(1-u)*u*C[1]+u*u*P2[1]];
  const D=u=>[2*(1-u)*(C[0]-P0[0])+2*u*(P2[0]-C[0]),2*(1-u)*(C[1]-P0[1])+2*u*(P2[1]-C[1])];
- ctx.save();ctx.globalAlpha=aw*.55;ctx.strokeStyle='#ffffff';ctx.lineWidth=2.4;ctx.lineCap='round';ctx.beginPath();
+ ctx.save();ctx.shadowColor='rgba(0,0,0,.5)';ctx.shadowBlur=3;ctx.globalAlpha=aw*.6;ctx.strokeStyle='#ffffff';ctx.lineWidth=2.4;ctx.lineCap='round';ctx.beginPath();
  for(let q=0;q<=20;q++){const p=B(q/20);q?ctx.lineTo(v.X(p[0]),v.Y(p[1])):ctx.moveTo(v.X(p[0]),v.Y(p[1]))}ctx.stroke();ctx.restore();
  const head=(u,al,sz)=>{const p=B(u),d=D(u),x=v.X(p[0]),y=v.Y(p[1]),dx=d[0]*v.sx,dy=-d[1]*v.sy,n=Math.hypot(dx,dy)||1,ux=dx/n,uy=dy/n;
-  ctx.globalAlpha=al;ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(x+ux*sz,y+uy*sz);ctx.lineTo(x-ux*sz*.6-uy*sz*.6,y-uy*sz*.6+ux*sz*.6);ctx.lineTo(x-ux*sz*.6+uy*sz*.6,y-uy*sz*.6-ux*sz*.6);ctx.closePath();ctx.fill();ctx.globalAlpha=1};
+  ctx.save();ctx.shadowColor='rgba(0,0,0,.55)';ctx.shadowBlur=3;ctx.globalAlpha=al;ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(x+ux*sz,y+uy*sz);ctx.lineTo(x-ux*sz*.6-uy*sz*.6,y-uy*sz*.6+ux*sz*.6);ctx.lineTo(x-ux*sz*.6+uy*sz*.6,y-uy*sz*.6-ux*sz*.6);ctx.closePath();ctx.fill();ctx.restore()};
  for(let q=0;q<3;q++){const u=(WPH+q/3)%1;head(u,aw*Math.sin(Math.PI*u),6)}   // 흘러가는 화살촉
  head(1,aw,8)}                                                                  // 끝 화살촉
 
@@ -523,7 +539,9 @@ function sceneEq(st,t){setSR(SRE);const v=drawMap(st,{box:EQB,R:ZR,z:1,lo:22,hi:
  T('서태평양',v.X(158),v.Y(23),{size:13.5,w:800,halo:1});T('동태평양',v.X(232),v.Y(23),{size:13.5,w:800,halo:1});
  if(st.W>.02){const aw=Math.min(1,st.W*1.6);[168,203,238,270].forEach(lo=>[1,-1].forEach(h=>windCurve(v,lo,h,aw)));
   T(st.W<.6?'약해진 무역풍':'무역풍',v.X(262),v.Y(16),{size:12.5,w:800,halo:1,a:Math.min(1,st.W*2+.3)})}
- if(Math.abs(st.V)>.05){const dir=Math.sign(st.V),aa=Math.min(1,Math.abs(st.V)*1.4);PM.forEach(p=>dart(v.X(p.lo),v.Y(p.la),dir,aa))}
+ if(st.V<-.05){const aa=Math.min(1,-st.V*1.4);PQ.forEach(p=>{const q=qPt(p),dx=q[2]*v.sx,dy=-q[3]*v.sy,n=Math.hypot(dx,dy)||1;
+  dartA(v.X(q[0]),v.Y(q[1]),dx/n,dy/n,aa*c01(p.s*12)*c01((1-p.s)*10))})}   // 서쪽으로 흐른 뒤 북·남으로 빠져나감
+ else if(st.V>.05){const aa=Math.min(1,st.V*1.4);PM.forEach(p=>dart(v.X(p.lo),v.Y(p.la),1,aa))}
  if(st.U>.05&&st.mU>0){const x=v.X(272),y=v.Y(-6);ctx.globalAlpha=st.mU;ctx.strokeStyle='#8fe3ff';ctx.lineWidth=2.2;ctx.beginPath();ctx.ellipse(x,y,22,26,0,0,7);ctx.stroke();ctx.globalAlpha=1;
   T(st.E>.5?'용승 약화':'용승',x,y+5,{c:'#8fe3ff',size:13,w:800,halo:1,a:st.mU})}
  if(st.lab>0){const la=st.lab;if(st.E<.5){pill('따뜻한 해수',v.X(150),v.Y(-8),'#ffb36b',la);pill('찬 해수',v.X(240),v.Y(-9),'#8fe3ff',la)}
