@@ -93,6 +93,16 @@ canvas{width:100%;height:auto;aspect-ratio:940/400;display:block;border-radius:1
 .qmk.ok{color:var(--ok)}.qmk.no{color:var(--no)}
 #n0[hidden],#n2[hidden],#n3[hidden]{display:none}
 .src{margin:8px 2px 0;font-size:.8rem;opacity:.7}
+/* 세로가 짧은 화면(가로로 놓은 태블릿 등): 글·단추 줄의 여백을 줄여 한 화면에 들어가게 함 */
+@media (max-height:860px){
+ main{padding:8px 14px;max-width:max(520px,min(960px,calc((100vh - 324px) * 2.35 + 28px)));max-width:max(520px,min(960px,calc((100dvh - 324px) * 2.35 + 28px)))}
+ .titlebar{margin-bottom:6px}.titlebar h1{font-size:1.2rem}.back{padding:5px 12px;font-size:.85rem}
+ .tabs{margin-bottom:6px}.tabs button{padding:6px 8px;font-size:.92rem}
+ .subtabs{margin-bottom:6px}.subtabs button{padding:3px 10px;font-size:.88rem}
+ .stepbox{margin-top:6px;padding:5px 12px;font-size:.88rem;line-height:1.5;min-height:calc(3 * 1.5em + 10px)}
+ .ctl{margin-top:6px;padding:4px 10px;min-height:40px}.pb{padding:4px 12px;font-size:.86rem}
+ .note,.quiz{margin-top:6px}.note+.note{margin-top:4px}.qmk{margin-top:3px}
+}
 section[hidden]{display:none}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
@@ -132,14 +142,14 @@ section[hidden]{display:none}
 <section id="p0" role="tabpanel" aria-labelledby="tab0">
  <div id="n0">
  <div class="note"><span class="tag">생각해 보기</span><p>평상시 서태평양과 동태평양 중 해수면이 더 높은 곳은 어디일까요?</p><button type="button" class="open-think" data-ov="ov0">답 보기</button></div>
- <div class="note memo"><span class="tag mem">기억하기</span><p>평상시: 무역풍 → 따뜻한 해수가 서쪽으로 이동 → 서태평양은 따뜻한 해수층이 두껍고 수온이 높음, 동태평양은 용승으로 수온이 낮음</p></div>
+ <div class="note memo"><span class="tag mem">기억하기</span><p>평상시: 서태평양은 따뜻한 해수층이 두껍고 수온이 높음, 동태평양은 용승으로 수온이 낮음</p></div>
  </div>
  <div id="n2" hidden>
- <div class="note memo"><span class="tag mem">기억하기</span><p>워커 순환: 서태평양 상승 기류(저기압, 비) → 상층 서 → 동 → 동태평양 하강 기류(고기압, 건조) → 지표 동 → 서(무역풍)</p></div>
+ <div class="note memo"><span class="tag mem">기억하기</span><p>워커 순환: 서태평양 상승 → 상층 서→동 → 동태평양 하강 → 지표 동→서(무역풍)</p></div>
  </div>
  <div id="n3" hidden>
  <div class="note"><span class="tag">생각해 보기</span><p>페루 연안이 같은 위도의 먼바다보다 수온이 낮은 까닭은 무엇일까요?</p><button type="button" class="open-think" data-ov="ov3">답 보기</button></div>
- <div class="note memo"><span class="tag mem">기억하기</span><p>페루 연안: 표층 해수가 먼바다로 이동 → 찬 해수의 용승 → 영양염류 공급 → 플랑크톤 번성 → 좋은 어장(앤초비)</p></div>
+ <div class="note memo"><span class="tag mem">기억하기</span><p>페루 연안: 용승 → 영양염류 공급 → 플랑크톤 번성 → 좋은 어장(앤초비)</p></div>
  </div>
  <div class="ov" id="ov0" hidden><div class="think" role="dialog" aria-modal="true" aria-label="생각해 보기: 평상시 서태평양과 동태평양 중 해수면이 더 높은 곳은 어디일까요?">
   <div class="think-h"><b class="think-t"><span class="tag">생각해 보기</span>평상시 서태평양과 동태평양 중 해수면이 더 높은 곳은 어디일까요?</b><button type="button" class="x" aria-label="닫기">닫기 ✕</button></div>
@@ -161,7 +171,6 @@ section[hidden]{display:none}
   <p class="exp">평상시에는 용승으로 깊은 곳의 영양염류가 많은 찬 해수가 올라와 플랑크톤이 많고 좋은 어장이 됩니다. 엘니뇨 때는 용승이 약해져 영양염류가 적게 공급되므로 플랑크톤이 줄고, 물고기도 줄어듭니다.</p>
  </div></div>
 </section>
-<p class="src">해수면 온도 지도: NOAA ERSST v5(2° 격자) 자료로 그림. 평상시 = 1991~2020년 연평균, 엘니뇨 = 연평균에 1997년 12월(강한 엘니뇨)의 수온 편차를 더한 값. 단면과 대기의 순환은 개념도이며, 해수면 높이와 따뜻한 해수층의 두께는 과장하여 나타냄.</p>
 
 <script>
 "use strict";
@@ -345,6 +354,7 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
   T(el?'해수면 높아짐':'해수면 낮음',sxp(.93),yb(.93)-8,{size:12,w:800,c:'#bfe6ff',halo:1,a:a*la,al:'right'})}
  T('◀ 서태평양',SR.x+10,BOT-8,{size:12,al:'left',c:'#cfd6ee',w:700});T('동태평양 ▶',SR.x+SR.w-10,BOT-8,{size:12,al:'right',c:'#cfd6ee',w:700});
  T('적도를 따라 자른 단면',SR.x+SR.w/2,BOT-8,{size:12,c:'#a9b1cc',w:700});
+ T('개념도 (해수면 높이·해수층 두께는 과장)',SR.x+SR.w-8,SR.y+14,{size:10.5,al:'right',c:'#8d96b3',w:500});
  ctx.restore();
  ctx.globalAlpha=a;ctx.strokeStyle='rgba(255,255,255,.18)';ctx.lineWidth=1;rr(SR.x,SR.y,SR.w,SR.h,12);ctx.stroke();ctx.globalAlpha=1}
 
@@ -418,6 +428,7 @@ function drawPeru(st,t){const R=SRE,a=1,sea=R.y+150,bot=R.y+R.h,x0=R.x,x1=R.x+R.
   ctx.globalAlpha=st.fish;const bx=px(.84),by=sea-2;ctx.fillStyle='#e9e2d0';ctx.beginPath();ctx.moveTo(bx-20,by-8);ctx.lineTo(bx+20,by-8);ctx.lineTo(bx+14,by+2);ctx.lineTo(bx-14,by+2);ctx.closePath();ctx.fill();
   ctx.fillRect(bx-3,by-22,3,14);ctx.strokeStyle='#e9e2d0';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(bx+18,by-8);ctx.lineTo(bx+32,by+40);ctx.stroke();ctx.globalAlpha=1;
   pill('앤초비(멸치류) 어장',px(.78),sea-62,'#ffd76b',st.fish,13)}
+ T('개념도',R.x+10,R.y+14,{size:10.5,al:'left',c:'#8d96b3',w:500});
  T('◀ 먼바다',R.x+10,bot-8,{size:12,al:'left',c:'#cfd6ee',w:700});T('해안에 수직으로 자른 단면',R.x+R.w/2-30,bot-8,{size:12,c:'#a9b1cc',w:700});
  ctx.restore();ctx.strokeStyle='rgba(255,255,255,.18)';ctx.lineWidth=1;rr(R.x,R.y,R.w,R.h,12);ctx.stroke()}
 
@@ -618,7 +629,7 @@ $('play').onclick=()=>{const S=scene().steps;if(si==S.length-1&&ph>=S[si].d){go(
 // 질문: 서태평양 / 동태평양 고르기 (맞히면 지도에 수온 표시)
 function resetQuiz(){quizOK=false;[...$('qbs').children].forEach(b=>b.classList.remove('on'));$('qmk').textContent='';$('qmk').className='qmk'}
 [...$('qbs').children].forEach(b=>b.onclick=()=>{[...$('qbs').children].forEach(x=>x.classList.toggle('on',x==b));const ok=b.dataset.a=='w',mk=$('qmk');
- if(ok){mk.className='qmk ok';mk.textContent='맞아요! 적도 부근에서는 서태평양(약 29~30 °C)이 동태평양(약 25 °C)보다 수온이 높습니다. 그 까닭은 [온도 분포의 원인]에서 알아봅시다.';if(!quizOK){quizOK=true;quizT=performance.now()/1000}
+ if(ok){mk.className='qmk ok';mk.textContent='맞아요! 서태평양(약 29~30 °C)이 동태평양(약 25 °C)보다 수온이 높습니다. 까닭은 [온도 분포의 원인]에서!';if(!quizOK){quizOK=true;quizT=performance.now()/1000}
   if(si<scene().steps.length-1)go(scene().steps.length-1),ph=scene().steps[si].d}
  else{mk.className='qmk no';mk.textContent='다시 살펴보세요. 지도에서 빨간색에 가까울수록 수온이 높습니다.';quizOK=false}});
 
