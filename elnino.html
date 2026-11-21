@@ -262,9 +262,14 @@ function arrow(x1,y1,x2,y2,c,lw,hs,a){const ang=Math.atan2(y2-y1,x2-x1);hs=hs||7
  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2-Math.cos(ang)*hs*.6,y2-Math.sin(ang)*hs*.6);ctx.stroke();
  ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-Math.cos(ang-.45)*hs,y2-Math.sin(ang-.45)*hs);ctx.lineTo(x2-Math.cos(ang+.45)*hs,y2-Math.sin(ang+.45)*hs);ctx.closePath();ctx.fill();ctx.globalAlpha=1}
 // 서쪽으로 흐른 표층 해수가 서태평양 가장자리를 따라 북쪽(쿠로시오 해류 쪽)과 남쪽(동오스트레일리아 해류 쪽)으로 빠져나가는 길
-const QPATH=[l=>[[272,l],[152,l],[143,l+2.5],[136,9],[131,17],[133,27]],l=>[[272,-l],[161,-l],[156.5,-7],[155.5,-15],[154.5,-27]]];
-function qPt(p){const P=QPATH[p.n](p.l),L=[];let tot=0;for(let i=1;i<P.length;i++){const d=Math.hypot(P[i][0]-P[i-1][0],P[i][1]-P[i-1][1]);L.push(d);tot+=d}
- let d=p.s*tot;for(let i=0;i<L.length;i++){if(d<=L[i]||i==L.length-1){const f=Math.min(1,d/L[i]),a=P[i],b=P[i+1];return [a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f,b[0]-a[0],b[1]-a[1]]}d-=L[i]}}
+// 북쪽: 필리핀 동쪽을 따라 북상(쿠로시오 해류 쪽) / 남쪽: 산호해를 지나 오스트레일리아 동해안과 나란히 남하(동오스트레일리아 해류 쪽, 육지로 향하지 않게)
+const QCTRL=[[[272,2.5],[162,2.5],[147,3.5],[138,8],[132,15],[128.5,22],[132,29.5]],[[272,-2.5],[174,-2.5],[163,-5],[158,-11],[156,-18],[156.3,-24],[158.5,-29.5]]];
+// 점들을 부드러운 곡선(캐트멀-롬)으로 이어 촘촘히 표본을 만든 뒤 길이를 따라 위치를 찾음
+const QPTS=QCTRL.map(P=>{const out=[];for(let i=0;i<P.length-1;i++){const p0=P[Math.max(0,i-1)],p1=P[i],p2=P[i+1],p3=P[Math.min(P.length-1,i+2)];
+ for(let k=0;k<12;k++){const t=k/12,t2=t*t,t3=t2*t;out.push([0,1].map(c=>.5*(2*p1[c]+(-p0[c]+p2[c])*t+(2*p0[c]-5*p1[c]+4*p2[c]-p3[c])*t2+(-p0[c]+3*p1[c]-3*p2[c]+p3[c])*t3)))}}
+ out.push(P[P.length-1]);const L=[0];for(let i=1;i<out.length;i++)L.push(L[i-1]+Math.hypot(out[i][0]-out[i-1][0],out[i][1]-out[i-1][1]));return {out,L}});
+function qPt(p){const {out,L}=QPTS[p.n],d=p.s*L[L.length-1];let i=1;while(i<L.length-1&&L[i]<d)i++;const f=(d-L[i-1])/((L[i]-L[i-1])||1),a=out[i-1],b=out[i];
+ return [a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f,b[0]-a[0],b[1]-a[1]]}
 function dartA(x,y,ux,uy,a){ctx.save();ctx.shadowColor='rgba(0,0,0,.55)';ctx.shadowBlur=3;ctx.globalAlpha=a;ctx.fillStyle='#fff';ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=1.4;
  ctx.beginPath();ctx.moveTo(x+ux*5,y+uy*5);ctx.lineTo(x-ux*2-uy*3,y-uy*2+ux*3);ctx.lineTo(x-ux*2+uy*3,y-uy*2-ux*3);ctx.closePath();ctx.fill();
  ctx.beginPath();ctx.moveTo(x-ux*2,y-uy*2);ctx.lineTo(x-ux*9,y-uy*9);ctx.stroke();ctx.restore()}
@@ -283,8 +288,8 @@ function colorbar(cb,lo,hi,step,title){for(let q=0;q<120;q++){const T2=lo+(hi-lo
 const PS=[],PM=[],PQ=[],PW=[],PP=[],PN=[],PF=[],PA=[];let WPH=0;   // PA: 단면 위 바람 줄기, WPH: 지도 바람 화살표가 흐르는 위치
 function seed(){PQ.length=0;PS.length=PM.length=PW.length=PP.length=PN.length=PF.length=PA.length=0;WPH=0;const R=Math.random;
  for(let n=0;n<4;n++)PA.push({x:n/4,d:0});                            // 단면 위 바람 줄기(한 줄)
- for(let n=0;n<26;n++)PS.push({x:R(),d:R()});                       // 적도 단면의 표층 흐름(d: 해수면에서 깊이 0~1)
- for(let n=0;n<40;n++)PQ.push({s:R(),n:n%2,l:.8+R()*3.7});            // 지도의 서쪽 흐름: 적도를 따라 서쪽 → 서태평양에서 북쪽·남쪽으로 빠져나감
+ for(let n=0;n<16;n++)PS.push({x:n/16,d:0});                       // 적도 단면의 표층 흐름(d: 해수면에서 깊이 0~1)
+ for(let n=0;n<36;n++)PQ.push({s:(Math.floor(n/2)+(n%2)*.5)/18,n:n%2});   // 지도의 서쪽 흐름: 반구마다 한 줄, 적도를 따라 서쪽 → 서태평양에서 북쪽·남쪽으로 빠져나감
  for(let n=0;n<30;n++)PM.push({lo:160+R()*112,la:(R()*2-1)*4.5});  // 적도 지도의 표층 흐름
  for(let n=0;n<34;n++)PW.push({u:R()});                             // 워커 순환의 공기
  for(let n=0;n<22;n++)PP.push({x:R(),d:.1+R()*.8});                 // 페루 단면의 먼바다 쪽 흐름
@@ -330,7 +335,7 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
  if(st.F>0&&st.ref!==0){ctx.setLineDash([3,4]);ctx.strokeStyle='rgba(191,230,255,.45)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(SX0,SEA);ctx.lineTo(SX1,SEA);ctx.stroke();ctx.setLineDash([])}
  // 표층 해수의 흐름(입자)
  // 바람이 일으키는 흐름은 해수면에서 가장 빠르고 깊을수록 약해지므로, 해수면 가까이에만 그리고 깊을수록 짧고 흐리게
- if(Math.abs(st.V)>.05)PS.forEach(p=>{const dep=Math.min(p.d*12,thick(p.x,st)-6);if(dep<0)return;   // 해수면 바로 아래(약 12px 안)만
+ if(Math.abs(st.V)>.05)PS.forEach(p=>{const dep=0;   // 해수면을 따라 한 줄로
   const y=SEA-level(p.x,st)+5+dep,x=sxp(p.x),dir=Math.sign(st.V),edge=c01(p.x*8)*c01((1-p.x)*8);
   // 화살표 모양·두께는 늘 같게 하고, 3단계에서는 색만 흰색 → 그 자리 수온 색으로 천천히 바뀜(어두운 테두리로 물과 구분)
   const tc=lut(eqT(slon(p.x)),22,30),tn=st.tint||0,pc=`rgb(${Math.round(lerp(255,tc[0],tn))},${Math.round(lerp(255,tc[1],tn))},${Math.round(lerp(255,tc[2],tn))})`;
@@ -600,11 +605,11 @@ function scenePeru(st,t){const v=drawMap(st,{box:PEB,R:PR,z:1,lo:16,hi:28});
 //  A(엘니뇨 수온 편차), C(구름), cx(구름 위치), lab(정리 이름표), wa·ea·loop(워커 순환), wind·off·up·nut·plank·fish(페루 연안)
 const NORMAL={zoom:1,box:1,sec:1,hyp:0,W:1,V:-1,F:1,E:0,U:1,U0:1,mU:1,Hh:1,heat:0,A:0,C:0,cx:0,lab:0,wa:0,ea:0,loop:0,wind:0,off:0,up:0,nut:0,plank:0,fish:0};
 const HYP={...NORMAL,hyp:1,W:0,V:0,F:0,U:0,U0:0,mU:0,Hh:0};
-// 태평양 수온 분포의 원인: 세 단계가 하나의 시계(g초, 0~30)로 이어짐. 이동·해수면 기울기·용승·가열이 거의 동시에 시작해 함께 커짐
-//  단계는 '무엇을 볼지'만 나눔(3단계에서 햇빛 표현과 정리 이름표를 보여 줌). 해수면 기울기(F)와 용승(U)은 같은 빠르기로 함께 커짐
-function CAUSE(g){const F=ease((g-1)/16),U=c01((g-1.3)/15.7);
- return {...NORMAL,hyp:1-seg(g,1,3),W:seg(g,0,1.2),V:-seg(g,.4,2),F,U,U0:ease((g-1.5)/16),mU:c01((g-2)/3),Hh:ease((g-3)/23),
-  heat:g>=18?Math.min(seg(g,18,19.5),1-seg(g,28,29.5)):0,tint:seg(g,18,20),lab:seg(g,25,28)}}
+// 태평양 수온 분포의 원인: 두 단계가 하나의 시계(g초, 0~26)로 이어짐. 이동·해수면 기울기·용승·가열이 거의 동시에 시작해 함께 커짐
+//  1단계: 이동·기울기·용승·가열이 함께 진행(햇빛 표현은 4초부터), 2단계: 정리 이름표. 해수면 기울기(F)와 용승(U)은 같은 빠르기로 함께 커짐
+function CAUSE(g){const F=ease((g-1)/15),U=c01((g-1.3)/14.7);
+ return {...NORMAL,hyp:1-seg(g,1,3),W:seg(g,0,1.2),V:-seg(g,.4,2),F,U,U0:ease((g-1.5)/15),mU:c01((g-2)/3),Hh:ease((g-2)/15),
+  heat:Math.min(seg(g,4,6),1-seg(g,20,22)),tint:seg(g,4,6),lab:seg(g,19,22)}}
 const SCENES=[
  {draw:scenePac,steps:[ // 태평양의 수온 분포
   {t:'전 세계의 해수면 온도',x:'전 세계 바다의 <em>연평균 해수면 온도</em>입니다. 적도 부근은 따뜻하고 고위도로 갈수록 차가워집니다. 이 가운데 <em>적도 부근의 태평양</em>을 잘라 확대해 봅시다.',d:6,
@@ -612,12 +617,10 @@ const SCENES=[
   {t:'적도 부근의 태평양',x:'적도를 따라 <em>서태평양</em>(왼쪽)과 <em>동태평양</em>(오른쪽)의 색을 비교해 보세요. 빨간색일수록 수온이 높습니다. 아래 생각해 보기에 답해 보세요.',d:4,
    s:k=>({...NORMAL,zoom:ease(k),box:1})}]},
  {draw:sceneEq,cont:1,steps:[ // 태평양 수온 분포의 원인 (cont: 단계 사이에 멈추지 않고 이어짐)
-  {t:'1단계(무역풍과 따뜻한 해수의 이동)',x:'무역풍이 없다면 수온은 위도에 따라서만 달라질 것입니다(생각 실험). 여기에 <em>무역풍</em>이 동쪽에서 서쪽으로 불면 따뜻한 표층 해수가 <em>서쪽으로 이동</em>해 쌓이며 <em>해수면이 기울기 시작</em>합니다. 이어지는 과정들은 사실 거의 동시에 일어납니다.',d:9,
-   s:k=>CAUSE(k*9)},
-  {t:'2단계(찬 해수의 용승)',x:'서쪽에 물이 쌓여 해수면이 기울수록, 동태평양에서는 빠져나간 표층 해수를 채우려고 깊은 곳의 <em>찬 해수가 올라옵니다(용승)</em>. 기울기가 커질수록 용승도 강해져 동태평양은 <em>따뜻한 해수층이 얇고 수온이 낮아집니다</em>.',d:9,
-   s:k=>CAUSE(9+k*9)},
-  {t:'3단계(햇빛에 의한 가열과 평상시의 모습)',x:'서쪽으로 흐르는 동안 해수는 <em>햇빛을 받아 계속 데워져</em> 서태평양의 수온이 가장 높아집니다. 그 결과 서태평양은 <em>따뜻한 해수층이 두껍고 수온과 해수면이 높으며</em>, 동태평양은 <em>따뜻한 해수층이 얇고 수온이 낮은</em> 평상시의 모습이 됩니다.',d:12,
-   s:k=>CAUSE(18+k*12)}
+  {t:'1단계(무역풍이 불면 일어나는 변화)',x:'무역풍이 없다면 수온은 위도에 따라서만 달라집니다(생각 실험). 무역풍이 불면 따뜻한 표층 해수가 <em>서쪽으로 이동</em>하면서 <em>해수면이 기울고</em> 수온 약층이 시작되는 깊이가 바뀌며, 동쪽에서는 <em>용승</em>이 일어나고 이동하는 해수는 <em>햇빛에 데워집니다</em>. 이 변화들은 함께 일어납니다.',d:18,
+   s:k=>CAUSE(k*18)},
+  {t:'2단계(평상시의 모습)',x:'그 결과 서태평양은 <em>따뜻한 해수층이 두껍고 수온과 해수면이 높으며</em>, 동태평양은 용승으로 <em>따뜻한 해수층이 얇고 수온이 낮은</em> 평상시의 모습이 됩니다. 지도는 실제 해수면 온도의 평년값과 같아졌습니다.',d:8,
+   s:k=>CAUSE(18+k*8)}
  ]},
  {draw:sceneWalk,steps:[ // 대기의 순환
   {t:'서태평양의 상승 기류',x:'수온이 높은 서태평양에서는 바다가 공기를 데워 <em>상승 기류</em>가 생기고 <em>저기압</em>이 됩니다. 올라간 공기 속 수증기가 응결하여 <em>구름이 많고 비가 많이 내립니다</em>.',d:6,
