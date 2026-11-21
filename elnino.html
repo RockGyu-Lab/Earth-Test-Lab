@@ -387,7 +387,7 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
  if(st.W>0.02&&(!st.walk||st.showW>0)){const L=56*st.W,aw=a*Math.min(1,st.W*1.6);   // 동 → 서로 계속 흘러가는 바람 줄기(노란색, 한 줄)
   PA.forEach(p=>{const x=sxp(p.x),y=SEA-30,f=Math.sin(Math.PI*p.x);arrow(x+L/2,y,x-L/2,y,'#ffd84a',3,10,aw*Math.max(0,Math.min(1,f*2.2)))});
   T(st.W<.6?'약해진 무역풍':'무역풍',sxp(.86),SEA-48,{size:13.5,w:800,halo:1,c:'#ffd84a',a:a*Math.min(1,st.W*2+.3)})}
- if(st.walk&&(st.wn??1)>0)drawWalker(st,t,a*(st.wn??1));if(st.walkE&&st.walkE.al>0)drawWalker({...st,...st.walkE},t,a*st.walkE.al);if(st.walkE2&&st.walkE2.al>0)drawWalker({...st,...st.walkE2},t,a*st.walkE2.al);
+ if(st.walk&&(st.wn??1)>0)drawWalker(st,t,a*(st.wn??1));if(st.walkE&&st.walkE.al>0)drawWalker({...st,...st.walkE},t,a*st.walkE.al);if(st.openE>0)drawOpenEast(st,t,a*st.openE);
  // 이름표
  T('따뜻한 해수층(혼합층)',sxp(.24),SEA-level(.24,st)+Math.min(thick(.24,st)*.5+5,thick(.24,st)-6),{size:13,w:800,c:'#1b1200',a:a*.9});
  // 점선 = 수온 약층이 시작되는 깊이 (수온 약층은 두께가 있는 층이지만, 이 단원에서는 시작 깊이만 나타냄)
@@ -446,6 +446,16 @@ function drawWalker(st,t,a){const xw=sxp(st.rx??.15),xe=sxp(st.dx??.86),s=Math.s
  // 기후 꼬리표(양쪽 땅 위): climW·climE
  if(st.clim>0){const LT=SEA-56,A=a*st.clim;ctx.font=font(12.5,800);[[st.climW,SR.x+4,'left','#7fd17f'],[st.climE,SR.x+SR.w-4,'right','#ffc36b']].forEach(([s2,x,al,c])=>{if(!s2)return;const w=ctx.measureText(s2).width+18;pill(s2,al=='left'?x+w/2:x-w/2,LT-30,c,A,12.5)})}
  ctx.globalAlpha=a}
+
+// 엘니뇨 때 동쪽: 순환을 바다 위에서 닫지 않음. 상승 구역이 동태평양까지 넓어져(비구름) 높은 곳의 흐름은 남아메리카 대륙 쪽으로 이어짐(대륙 위에서 하강)
+function drawOpenEast(st,t,a){const xr=sxp(.53),yt=SR.y+44,xe=SR.x+SR.w-20,yb=yt+62;   // 대륙 위로 내려가는 흐름은 꼬리표 위에서 멈춤(그 아래는 그림 밖의 일)
+ cloud(sxp(.8),yt+46,a,1.05);rain(sxp(.8),yt+68,SEA-6,t,a);
+ ctx.save();ctx.globalAlpha=a*.55;ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.setLineDash([2,6]);ctx.beginPath();ctx.moveTo(xr+26,yt);ctx.lineTo(xe-26,yt);ctx.arcTo(xe,yt,xe,yt+26,26);ctx.lineTo(xe,yb);ctx.stroke();ctx.restore();
+ const L1=xe-26-(xr+26),L2=yb-yt,tot=L1+L2;for(let q=0;q<7;q++){const d=((q/7)+WPH*.5)%1*tot;let x,y,dx,dy;if(d<L1){x=xr+26+d;y=yt;dx=1;dy=0}else{x=xe;y=yt+(d-L1);dx=0;dy=1}
+  ctx.globalAlpha=a;ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(x+dx*6,y+dy*6);ctx.lineTo(x-dx*3-dy*4,y-dy*3+dx*4);ctx.lineTo(x-dx*3+dy*4,y-dy*3-dx*4);ctx.closePath();ctx.fill()}
+ ctx.globalAlpha=1;T('높은 곳: 서 → 동',(xr+xe)/2,yt-10,{size:13.5,w:800,halo:1,a});
+ T('남아메리카 대륙 쪽으로 이어져 하강',xe-12,yt+26,{size:12,w:800,halo:1,a,al:'right'});
+ pill('비가 많아짐',sxp(.8),SEA-14,'#8fc8ff',a,13)}
 
 // ---- 페루 연안 단면 (해안에 수직으로 자른 단면: 왼쪽 먼바다 → 오른쪽 페루 해안) ----
 function drawPeru(st,t){const R=SRE,a=1,sea=R.y+150,bot=R.y+R.h,x0=R.x,x1=R.x+R.w,coast=x1-74;
@@ -703,10 +713,10 @@ const ESCENES=[
 // 엘니뇨 > 대기 순환의 변화: 평상시 워커 순환 → 사라짐·바다가 엘니뇨로 → 엘니뇨 때 순환(상승 동쪽, 하강 서쪽) → 이상 기후
 function ATM(g){const e=seg(g,4,8),wn=1-seg(g,3.5,5.5),we=seg(g,7.5,10);
  const sw=Math.min(seg(g,4,5),1-seg(g,8,9));   // 순환이 바뀌는 동안: 약해진 무역풍과 동쪽으로 흐르는 해수
- return {...NORMAL,W:.3*sw,showW:sw,V:.8*sw,E:e,A:e,U:1-.75*e,wa:1,ea:1,loop:1,wn,climW:wn>.5?'비가 많고 습함':'가뭄·산불',climE:wn>.5?'비가 적고 건조함':'폭우·홍수',clim:Math.max(wn,seg(g,12,13.5)),
-  // 엘니뇨 때: 중앙 태평양(약 150°W)에서 상승해 위에서 서쪽(140°E)·동쪽(100°W)으로 갈라져 하강하는 두 순환
+ return {...NORMAL,W:.3*sw,showW:sw,V:.8*sw,E:e,A:e,U:1-.75*e,wa:1,ea:1,loop:1,wn,climW:wn>.5?'비가 많고 습함':'가뭄·산불',climE:wn>.5?'비가 적고 건조함':'폭우·홍수(해안)',clim:Math.max(wn,seg(g,12,13.5)),
+  // 엘니뇨 때: 중앙 태평양(약 150°W)에서 상승해 서쪽은 서태평양에서 하강하는 순환, 동쪽은 남아메리카 대륙 쪽으로 이어지는 흐름(바다 위에서 닫지 않음)
   walkE:{al:we,rx:.53,dx:.11,wa:1,ea:1,loop:1,rT:'구름이 많고 비가 많이 내림',dT:'맑고 건조함',topT:'높은 곳: 동 → 서',botT:'지표 부근: 서 → 동',loopT:'엘니뇨 때의 대기 순환',loopX:.32,loopDY:30},
-  walkE2:{al:we,rx:.53,dx:.86,wa:0,ea:1,loop:1,dT:'맑고 건조함',topT:'높은 곳: 서 → 동',botT:'지표 부근: 동 → 서',loopT:''}}}
+  openE:we}}
 ESCENES.push({draw:sceneAnom,steps:[{t:'평년의 수온',x:'먼저 <em>평년값</em>(1991~2020년의 10월 평균) 해수면 온도 지도를 봅니다.',d:22,
  xs:[[3,'2026년 10월의 수온','2026년 10월에 실제로 관측한 해수면 온도입니다. 평년과 비교해 동태평양 적도 부근이 더 따뜻합니다.'],
      [6.5,'수온 편차의 계산','<em>수온 편차 = 그때의 수온 − 평년 수온</em>입니다. 편차가 (+)이면 평년보다 따뜻하고, (−)이면 평년보다 차갑습니다.'],
