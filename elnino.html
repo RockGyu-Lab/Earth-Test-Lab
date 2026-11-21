@@ -424,10 +424,10 @@ function drawWalker(st,t,a){const xw=sxp(.15),xe=sxp(.86),yt=SR.y+44,yb=SEA-26,r
   pill('저기압',xw+3,SEA-12,'#ff9b7a',A,14);T('구름이 많고 비가 많이 내림',xw+4,yt-8+0,{c:'#e8ecff',size:12.5,w:800,halo:1,a:A})}
  // 동쪽: 하강 기류, 고기압, 맑음
  if(st.ea>0){const A=a*st.ea;sun(xe-6,yt+6,A);
-  ctx.save();ctx.setLineDash([8,7]);ctx.lineDashOffset=-(t*30)%15;ctx.globalAlpha=A;ctx.strokeStyle='#8fc8ff';ctx.lineWidth=3;[-40,34].forEach(dx=>{ctx.beginPath();ctx.moveTo(xe+dx,yt+40);ctx.lineTo(xe+dx,SEA-40);ctx.stroke()});ctx.restore();
-  [-40,34].forEach(dx=>arrow(xe+dx,SEA-52,xe+dx,SEA-34,'#8fc8ff',3,10,A));
-  T('하강 기류',xe-50,yb-70,{c:'#8fc8ff',size:14,w:800,halo:1,a:A,al:'right'});
-  pill('고기압',xe-3,SEA-12,'#8fc8ff',A,14);T('맑고 건조함',xe-6,yt-12,{c:'#e8ecff',size:12.5,w:800,halo:1,a:A})}
+  ctx.save();ctx.setLineDash([8,7]);ctx.lineDashOffset=-(t*30)%15;ctx.globalAlpha=A;ctx.strokeStyle='#e6e9f2';ctx.lineWidth=3;[-40,34].forEach(dx=>{ctx.beginPath();ctx.moveTo(xe+dx,yt+40);ctx.lineTo(xe+dx,SEA-40);ctx.stroke()});ctx.restore();
+  [-40,34].forEach(dx=>arrow(xe+dx,SEA-52,xe+dx,SEA-34,'#e6e9f2',3,10,A));
+  T('하강 기류',xe-50,yb-70,{c:'#e6e9f2',size:14,w:800,halo:1,a:A,al:'right'});
+  pill('고기압',xe-3,SEA-12,'#e6e9f2',A,14);T('맑고 건조함',xe-6,yt-12,{c:'#e8ecff',size:12.5,w:800,halo:1,a:A})}
  // 순환 전체
  if(st.loop>0){const A=a*st.loop;ctx.save();ctx.globalAlpha=A*.55;ctx.strokeStyle='#ffffff';ctx.lineWidth=2;ctx.setLineDash([2,6]);ctx.stroke(path);ctx.restore();
   PW.forEach(p=>{const [x,y,dx,dy]=at(p.u),n=Math.hypot(dx,dy)||1;ctx.globalAlpha=A;ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(x+dx/n*6,y+dy/n*6);ctx.lineTo(x-dx/n*3-dy/n*4,y-dy/n*3+dx/n*4);ctx.lineTo(x-dx/n*3+dy/n*4,y-dy/n*3-dx/n*4);ctx.closePath();ctx.fill()});
