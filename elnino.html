@@ -53,7 +53,7 @@ canvas{width:100%;height:auto;aspect-ratio:940/400;display:block;border-radius:1
 .sn{font-size:.9rem;font-weight:700;opacity:.8;min-width:5.2em}
 /* 진행 막대: 단계마다 한 칸, 지금 단계는 남색으로 차오름 (누르면 그 단계로) */
 .prog{display:flex;gap:4px;flex:1 1 160px;min-width:120px}
-.prog button{flex:1 1 0;height:10px;padding:0;border:0;border-radius:999px;background:var(--bd);cursor:pointer;position:relative;overflow:hidden}
+.prog button{flex:1 1 0;height:12px;touch-action:none;padding:0;border:0;border-radius:999px;background:var(--bd);cursor:pointer;position:relative;overflow:hidden}
 .prog button i{position:absolute;inset:0 auto 0 0;width:0;background:var(--acc);border-radius:999px}
 /* 생각해 보기 · 기억하기 */
 .note{margin:10px 0 0;display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;font-size:.95rem}
@@ -95,12 +95,6 @@ canvas{width:100%;height:auto;aspect-ratio:940/400;display:block;border-radius:1
  .ctl{margin-top:6px;padding:4px 10px;min-height:40px}.pb{padding:4px 12px;font-size:.86rem}
  .note,.quiz{margin-top:6px}.note+.note{margin-top:4px}
 }
-/* 시험용: 무역풍 표현 비교 단추 */
-.wcmp{display:flex;align-items:center;gap:4px;margin-left:auto;font-size:.8rem}
-.wcmp span{opacity:.7;font-weight:700;margin-right:2px}
-.wcmp button{padding:3px 9px;border:1px solid var(--sub-bd);border-radius:999px;background:var(--sub-bg);color:var(--sub-tx);font-size:.8rem;font-weight:700;cursor:pointer}
-.wcmp button.on{background:var(--sub);color:var(--on-sub);border-color:var(--sub-tx)}
-.wcmp+.back{margin-left:0}
 section[hidden]{display:none}
 </style>
 <!-- 글꼴(Pretendard): 인터넷이 없으면 시스템 글꼴로 대신 표시되며 기능에는 영향 없음 -->
@@ -108,8 +102,6 @@ section[hidden]{display:none}
 </head><body><main>
 <!-- 학습실과 탐구 번호가 정해지면 제목 앞에 <p class="pnum">탐구 NN</p>을 넣고, 돌아가기 링크를 그 학습실 메뉴로 바꿀 것 -->
 <div class="titlebar"><h1>엘니뇨와 라니냐(통합과학)</h1>
- <!-- 시험용: 무역풍 표현 비교(하나로 정하면 지울 것) -->
- <div class="wcmp" id="wcmp" role="group" aria-label="무역풍 표현 비교"><span>무역풍 표현 비교</span><button type="button" data-m="A" class="on">A 흐르는 점선</button><button type="button" data-m="C">C 바람 결 입자</button><button type="button" data-m="D">D 화살촉</button></div>
  <a class="back" href="./index.html">← Earth Test Lab</a></div>
 <div class="tabs" role="tablist" aria-label="학습 메뉴">
  <button role="tab" id="tab0" aria-selected="true">평상시</button>
@@ -277,8 +269,9 @@ const QCTRL=[[[272,2.5],[162,2.5],[147,3.5],[138,8],[132,15],[128.5,22],[132,29.
 const QPTS=QCTRL.map(P=>{const out=[];for(let i=0;i<P.length-1;i++){const p0=P[Math.max(0,i-1)],p1=P[i],p2=P[i+1],p3=P[Math.min(P.length-1,i+2)];
  for(let k=0;k<12;k++){const t=k/12,t2=t*t,t3=t2*t;out.push([0,1].map(c=>.5*(2*p1[c]+(-p0[c]+p2[c])*t+(2*p0[c]-5*p1[c]+4*p2[c]-p3[c])*t2+(-p0[c]+3*p1[c]-3*p2[c]+p3[c])*t3)))}}
  out.push(P[P.length-1]);const L=[0];for(let i=1;i<out.length;i++)L.push(L[i-1]+Math.hypot(out[i][0]-out[i-1][0],out[i][1]-out[i-1][1]));return {out,L}});
-function qPt(p){const {out,L}=QPTS[p.n],d=p.s*L[L.length-1];let i=1;while(i<L.length-1&&L[i]<d)i++;const f=(d-L[i-1])/((L[i]-L[i-1])||1),a=out[i-1],b=out[i];
- return [a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f,b[0]-a[0],b[1]-a[1]]}
+function qAt(n,d){const {out,L}=QPTS[n];d=clamp(d,0,L[L.length-1]);let i=1;while(i<L.length-1&&L[i]<d)i++;const f=(d-L[i-1])/((L[i]-L[i-1])||1),a=out[i-1],b=out[i];return [a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f]}
+// 방향은 앞뒤로 조금 떨어진 두 점으로 구해 꼬리가 흔들리지 않게 함(곡선 표본의 이음매에서 방향이 튀던 문제)
+function qPt(p){const L=QPTS[p.n].L,d=p.s*L[L.length-1],c=qAt(p.n,d),f=qAt(p.n,d+1.5),b=qAt(p.n,d-1.5);return [c[0],c[1],f[0]-b[0],f[1]-b[1]]}
 function dartA(x,y,ux,uy,a){ctx.save();ctx.shadowColor='rgba(0,0,0,.55)';ctx.shadowBlur=3;ctx.globalAlpha=a;ctx.fillStyle='#fff';ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=1.4;
  ctx.beginPath();ctx.moveTo(x+ux*5,y+uy*5);ctx.lineTo(x-ux*2-uy*3,y-uy*2+ux*3);ctx.lineTo(x-ux*2+uy*3,y-uy*2-ux*3);ctx.closePath();ctx.fill();
  ctx.beginPath();ctx.moveTo(x-ux*2,y-uy*2);ctx.lineTo(x-ux*9,y-uy*9);ctx.stroke();ctx.restore()}
@@ -294,8 +287,6 @@ function colorbar(cb,lo,hi,step,title){for(let q=0;q<120;q++){const T2=lo+(hi-lo
  if(title)T(title,cb.x-8,cb.y+cb.h-1,{size:11.5,al:'right',c:'#cfd6ee',w:700});else T('°C',cb.x+cb.w+8,cb.y+cb.h-1,{size:11.5,al:'left',c:'#cfd6ee',w:700})}
 
 // ================= 움직이는 입자 =================
-let WMODE='A',WD=0;   // 시험용 무역풍 표현(A 흐르는 점선 / C 바람 결 입자 / D 화살촉), WD: 점선이 흘러간 거리(px)
-const PC=[],PSK=[];   // C: 지도 바람 결 입자, 단면 바람 결 입자
 const PS=[],PM=[],PQ=[],PW=[],PP=[],PN=[],PF=[],PA=[];let WPH=0;   // PA: 단면 위 바람 줄기, WPH: 지도 바람 화살표가 흐르는 위치
 function seed(){PQ.length=0;PS.length=PM.length=PW.length=PP.length=PN.length=PF.length=PA.length=0;WPH=0;const R=Math.random;
  for(let n=0;n<4;n++)PA.push({x:n/4,d:0});                            // 단면 위 바람 줄기(한 줄)
@@ -308,7 +299,7 @@ function seed(){PQ.length=0;PS.length=PM.length=PW.length=PP.length=PN.length=PF
  for(let n=0;n<3;n++)PF.push({x:.6+n*.12,y:.1+R()*.5,ph:R()*6})}  // 앤초비 떼
 seed();
 function moveParticles(st,dt){const v=st.V||0,w=st.W||0;
- WPH=(WPH+dt*.28*w)%1;WD+=dt*22*w;moveWindC(dt,w);PA.forEach(p=>{p.x-=dt*.12*w;if(p.x<0)p.x+=1});   // 바람은 쉬지 않고 붊(약해지면 느리게)
+ WPH=(WPH+dt*.28*w)%1;PA.forEach(p=>{p.x-=dt*.12*w;if(p.x<0)p.x+=1});   // 바람은 쉬지 않고 붊(약해지면 느리게)
  PS.forEach(p=>{p.x+=v*dt*.07;if(p.x<0)p.x+=1;if(p.x>1)p.x-=1});
  PQ.forEach(p=>{if(v<0){p.s+=-v*dt*.058;if(p.s>1)p.s-=1}});
  PM.forEach(p=>{p.lo+=v*dt*9;if(p.lo<160)p.lo+=112;if(p.lo>272)p.lo-=112});
@@ -383,10 +374,7 @@ function drawSection(st,t){const a=st.sec;if(a<=0)return;ctx.save();ctx.globalAl
  if(st.C>0){const cxp=sxp(lerp(.15,.58,st.cx)),cy=SR.y+60;cloud(cxp,cy,a*st.C);rain(cxp,cy+22,SEA-8,t,a*st.C);T('비가 많이 내림',cxp+6,cy-30,{c:'#e8ecff',size:12.5,w:800,halo:1,a:a*st.C})}
  // 무역풍(해수면 위, 동 → 서)
  if(st.W>0.02&&!st.walk){const L=56*st.W,aw=a*Math.min(1,st.W*1.6);   // 동 → 서로 계속 흘러가는 바람 줄기(노란색, 한 줄)
-  if(WMODE=='A'){const y=SEA-30;ctx.save();ctx.globalAlpha=aw;ctx.shadowColor='rgba(0,0,0,.5)';ctx.shadowBlur=3;ctx.strokeStyle='#ffd84a';ctx.lineWidth=3;ctx.lineCap='round';ctx.setLineDash([10,8]);ctx.lineDashOffset=-WD%18;
-    ctx.beginPath();ctx.moveTo(sxp(.95),y);ctx.lineTo(sxp(.06)+8,y);ctx.stroke();ctx.restore();arrow(sxp(.06)+14,y,sxp(.06),y,'#ffd84a',3,12,aw)}   // A: 한 줄 점선이 흐름
-  else if(WMODE=='C'){ctx.save();ctx.strokeStyle='#ffd84a';ctx.lineWidth=2;ctx.lineCap='round';PSK.forEach(p=>{const x=sxp(p.x),y=SEA-18-p.y*34,fa=Math.sin(Math.PI*c01(p.age/p.life));ctx.globalAlpha=aw*fa;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+26,y);ctx.stroke()});ctx.restore()}   // C: 바람 결
-  else PA.forEach(p=>{const x=sxp(p.x),y=SEA-30,f=Math.sin(Math.PI*p.x);arrow(x+L/2,y,x-L/2,y,'#ffd84a',3,10,aw*Math.max(0,Math.min(1,f*2.2)))});
+  PA.forEach(p=>{const x=sxp(p.x),y=SEA-30,f=Math.sin(Math.PI*p.x);arrow(x+L/2,y,x-L/2,y,'#ffd84a',3,10,aw*Math.max(0,Math.min(1,f*2.2)))});
   T(st.W<.6?'약해진 무역풍':'무역풍',sxp(.86),SEA-48,{size:13.5,w:800,halo:1,c:'#ffd84a',a:a*Math.min(1,st.W*2+.3)})}
  if(st.walk)drawWalker(st,t,a);
  // 이름표
@@ -553,22 +541,12 @@ function scenePac(st,t){const z=st.zoom,za=c01((z-.6)/.4),v=drawMap(st,{box:EQB,
 function windCurve(v,lo,h,aw){const P0=[lo+8,h*15],C=[lo+2,h*8],P2=[lo-9,h*5];   // 짧고 간결하게
  const B=u=>[(1-u)*(1-u)*P0[0]+2*(1-u)*u*C[0]+u*u*P2[0],(1-u)*(1-u)*P0[1]+2*(1-u)*u*C[1]+u*u*P2[1]];
  const D=u=>[2*(1-u)*(C[0]-P0[0])+2*u*(P2[0]-C[0]),2*(1-u)*(C[1]-P0[1])+2*u*(P2[1]-C[1])];
- ctx.save();ctx.shadowColor='rgba(0,0,0,.5)';ctx.shadowBlur=3;ctx.globalAlpha=aw*.85;ctx.strokeStyle='#ffd84a';ctx.lineWidth=WMODE=='A'?2.6:2.2;ctx.lineCap='round';if(WMODE=='A'){ctx.setLineDash([7,6]);ctx.lineDashOffset=-WD%13}ctx.beginPath();
+ ctx.save();ctx.shadowColor='rgba(0,0,0,.5)';ctx.shadowBlur=3;ctx.globalAlpha=aw*.85;ctx.strokeStyle='#ffd84a';ctx.lineWidth=2.2;ctx.lineCap='round';ctx.beginPath();
  for(let q=0;q<=20;q++){const p=B(q/20);q?ctx.lineTo(v.X(p[0]),v.Y(p[1])):ctx.moveTo(v.X(p[0]),v.Y(p[1]))}ctx.stroke();ctx.restore();
  const head=(u,al,sz)=>{const p=B(u),d=D(u),x=v.X(p[0]),y=v.Y(p[1]),dx=d[0]*v.sx,dy=-d[1]*v.sy,n=Math.hypot(dx,dy)||1,ux=dx/n,uy=dy/n;
   ctx.save();ctx.shadowColor='rgba(0,0,0,.55)';ctx.shadowBlur=3;ctx.globalAlpha=al;ctx.fillStyle='#ffd84a';ctx.beginPath();ctx.moveTo(x+ux*sz,y+uy*sz);ctx.lineTo(x-ux*sz*.6-uy*sz*.6,y-uy*sz*.6+ux*sz*.6);ctx.lineTo(x-ux*sz*.6+uy*sz*.6,y-uy*sz*.6-ux*sz*.6);ctx.closePath();ctx.fill();ctx.restore()};
- if(WMODE=='D'){const u=WPH%1;head(u,aw*Math.sin(Math.PI*u),5)}   // D: 흘러가는 화살촉 하나
+ for(let q=0;q<2;q++){const u=(WPH+q/2)%1;head(u,aw*Math.sin(Math.PI*u),5)}   // 흘러가는 화살촉 두 개
  head(1,aw,8)}                                                                  // 끝 화살촉
-
-// ---- C: 바람 결 입자(지도·단면) ----
-function spawnC(p){const h=Math.random()<.5?1:-1;p.lo=150+Math.random()*130;p.la=h*(4+Math.random()*16);p.age=0;p.life=1.4+Math.random()*1.4}
-function moveWindC(dt,w){if(WMODE!='C')return;while(PC.length<70){const p={};spawnC(p);p.age=Math.random()*p.life;PC.push(p)}
- while(PSK.length<12)PSK.push({x:Math.random(),y:Math.random(),age:Math.random()*2,life:1.5+Math.random()});
- PC.forEach(p=>{const h=Math.sign(p.la),f=Math.min(1,(Math.abs(p.la)-3)/6);p.lo-=dt*12*w;p.la-=dt*h*5*w*f;p.age+=dt;if(p.age>p.life||p.lo<140||Math.abs(p.la)<3)spawnC(p)});
- PSK.forEach(p=>{p.x-=dt*.16*w;p.age+=dt;if(p.age>p.life||p.x<0){p.x=.15+Math.random()*.85;p.y=Math.random();p.age=0;p.life=1.5+Math.random()}})}
-function windC_map(v,aw){ctx.save();ctx.strokeStyle='#ffd84a';ctx.lineWidth=2;ctx.lineCap='round';ctx.shadowColor='rgba(0,0,0,.5)';ctx.shadowBlur=2;
- PC.forEach(p=>{const h=Math.sign(p.la),f=Math.min(1,(Math.abs(p.la)-3)/6),fa=Math.sin(Math.PI*c01(p.age/p.life));ctx.globalAlpha=aw*fa*.9;
-  ctx.beginPath();ctx.moveTo(v.X(p.lo),v.Y(p.la));ctx.lineTo(v.X(p.lo+2.4),v.Y(p.la+h*1*f));ctx.stroke()});ctx.restore()}
 
 // ---- 장면: 적도 지도 + 단면 (태평양 수온 분포의 원인, 엘니뇨) ----
 function sceneEq(st,t){setSR(SRE);const v=drawMap(st,{box:EQB,R:ZR,z:1,lo:22,hi:30}),a=1;
@@ -577,7 +555,7 @@ function sceneEq(st,t){setSR(SRE);const v=drawMap(st,{box:EQB,R:ZR,z:1,lo:22,hi:
  T('오스트레일리아',v.X(134),v.Y(-23),{size:12,w:800,c:'#e7eaf4',halo:1});T('남아메리카',v.X(289),v.Y(-20),{size:12,w:800,c:'#e7eaf4',halo:1,al:'right'});
  T('아시아',v.X(121),v.Y(25),{size:12,w:800,c:'#e7eaf4',halo:1,al:'left'});T('북아메리카',v.X(270),v.Y(26),{size:12,w:800,c:'#e7eaf4',halo:1});
  T('서태평양',v.X(158),v.Y(23),{size:13.5,w:800,halo:1});T('동태평양',v.X(232),v.Y(23),{size:13.5,w:800,halo:1});
- if(st.W>.02){const aw=Math.min(1,st.W*1.6);if(WMODE=='C')windC_map(v,aw);else [180,222,262].forEach(lo=>[1,-1].forEach(h=>windCurve(v,lo,h,aw)));
+ if(st.W>.02){const aw=Math.min(1,st.W*1.6);[180,222,262].forEach(lo=>[1,-1].forEach(h=>windCurve(v,lo,h,aw)));
   T(st.W<.6?'약해진 무역풍':'무역풍',v.X(262),v.Y(18),{size:12.5,w:800,halo:1,c:'#ffd84a',a:Math.min(1,st.W*2+.3)})}
  if(st.V<-.05){const aa=Math.min(1,-st.V*1.4);PQ.forEach(p=>{const q=qPt(p),dx=q[2]*v.sx,dy=-q[3]*v.sy,n=Math.hypot(dx,dy)||1;
   dartA(v.X(q[0]),v.Y(q[1]),dx/n,dy/n,aa*c01(p.s*12)*c01((1-p.s)*10))})}   // 서쪽으로 흐른 뒤 북·남으로 빠져나감
@@ -640,11 +618,10 @@ const SCENES=[
    s:k=>({...NORMAL,zoom:0,box:seg(k,.45,.9)})},
   {t:'적도 부근의 태평양',x:'적도를 따라 <em>서태평양</em>(왼쪽)과 <em>동태평양</em>(오른쪽)의 색을 비교해 보세요. 빨간색일수록 수온이 높습니다. 아래 생각해 보기에 답해 보세요.',d:4,
    s:k=>({...NORMAL,zoom:ease(k),box:1})}]},
- {draw:sceneEq,cont:1,steps:[ // 태평양 수온 분포의 원인 (cont: 단계 사이에 멈추지 않고 이어짐)
-  {t:'1단계(무역풍이 불면 일어나는 변화)',x:'무역풍이 없다면 수온은 위도에 따라서만 달라집니다(생각 실험). 무역풍이 불면 따뜻한 표층 해수가 <em>서쪽으로 이동</em>하면서 <em>해수면이 기울고</em> 수온 약층이 시작되는 깊이가 바뀌며, 동쪽에서는 <em>용승</em>이 일어나고 이동하는 해수는 <em>햇빛에 데워집니다</em>. 이 변화들은 함께 일어납니다.',d:18,
-   s:k=>CAUSE(k*18)},
-  {t:'2단계(평상시의 모습)',x:'그 결과 서태평양은 <em>따뜻한 해수층이 두껍고 수온과 해수면이 높으며</em>, 동태평양은 용승으로 <em>따뜻한 해수층이 얇고 수온이 낮은</em> 평상시의 모습이 됩니다. 지도는 실제 해수면 온도의 평년값과 같아졌습니다.',d:8,
-   s:k=>CAUSE(18+k*8)}
+ {draw:sceneEq,steps:[ // 태평양 수온 분포의 원인: 단계를 나누지 않은 하나의 흐름(진행 막대를 눌러·끌어 원하는 때로 이동)
+  {t:'무역풍이 불면',x:'무역풍이 없다면 수온은 위도에 따라서만 달라집니다(생각 실험). 무역풍이 불면 따뜻한 표층 해수가 <em>서쪽으로 이동</em>하면서 <em>해수면이 기울고</em> 수온 약층이 시작되는 깊이가 바뀌며, 동쪽에서는 <em>용승</em>이 일어나고 이동하는 해수는 <em>햇빛에 데워집니다</em>. 이 변화들은 함께 일어납니다.',d:26,
+   x2:[18,'평상시의 모습','그 결과 서태평양은 <em>따뜻한 해수층이 두껍고 수온과 해수면이 높으며</em>, 동태평양은 용승으로 <em>따뜻한 해수층이 얇고 수온이 낮은</em> 평상시의 모습이 됩니다. 지도는 실제 해수면 온도의 평년값과 같아졌습니다.'],   // 18초부터 설명이 바뀜
+   s:k=>CAUSE(k*26)}
  ]},
  {draw:sceneWalk,steps:[ // 대기의 순환
   {t:'서태평양의 상승 기류',x:'수온이 높은 서태평양에서는 바다가 공기를 데워 <em>상승 기류</em>가 생기고 <em>저기압</em>이 됩니다. 올라간 공기 속 수증기가 응결하여 <em>구름이 많고 비가 많이 내립니다</em>.',d:6,
@@ -677,13 +654,17 @@ let tab=0,sub=0,si=0,ph=0,playing=true,last=performance.now()/1000,quizOK=false,
 const $=id=>document.getElementById(id);
 const scene=()=>tab==0?SCENES[sub]:ELNINO;
 function stepHTML(tt,tx){return `<b>${tt}</b><span>${tx.replace(/ ([:=→]) /g,' $1 ').replace(/(\d) (°C)/g,'$1 $2')}</span>`}
-function buildProg(){const P=$('prog');P.innerHTML='';scene().steps.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-label',s.t);b.innerHTML='<i></i>';b.onclick=()=>go(i);P.appendChild(b)})}
+// 진행 막대: 칸을 누르거나 끌면 그 단계의 그 때로 이동
+function buildProg(){const P=$('prog');P.innerHTML='';scene().steps.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-label',s.t);b.innerHTML='<i></i>';
+ const seek=e=>{const r=b.getBoundingClientRect(),f=c01((e.clientX-r.left)/r.width);if(si!==i)go(i);ph=f*scene().steps[i].d;setText()};
+ b.onpointerdown=e=>{b.setPointerCapture(e.pointerId);seek(e)};b.onpointermove=e=>{if(b.hasPointerCapture(e.pointerId))seek(e)};P.appendChild(b)})}
 function go(i){const S=scene().steps;si=clamp(i,0,S.length-1);ph=0;playing=true;
- $('step').innerHTML=stepHTML(S[si].t,S[si].x);$('prev').disabled=si==0;$('next').disabled=si==S.length-1;
+ TXT=-1;setText();const one=S.length==1;$('prev').hidden=$('next').hidden=one;$('prev').disabled=si==0;$('next').disabled=si==S.length-1;
  const ST=S.some(s=>/^\d+단계/.test(s.t)),m=S[si].t.match(/^(\d+)단계/),n=S.filter(s=>/^\d+단계/.test(s.t)).length;
  $('prev').textContent=ST?'◀ 이전 단계':'◀ 이전';$('next').textContent=ST?'다음 단계 ▶':'다음 ▶';
- $('num').textContent=ST?(m?`${m[1]} / ${n} 단계`:'시작'):`${si+1} / ${S.length}`;
- $('again').classList.remove('glow');updPlay()}
+ $('num').textContent=one?'':ST?(m?`${m[1]} / ${n} 단계`:'시작'):`${si+1} / ${S.length}`;updPlay()}
+// 설명 상자: 한 단계 안에서 때(x2)에 따라 설명이 바뀌는 자료도 있음
+let TXT=-1;function setText(){const st=scene().steps[si],k=st.x2&&ph>=st.x2[0]?1:0;if(k===TXT)return;TXT=k;$('step').innerHTML=k?stepHTML(st.x2[1],st.x2[2]):stepHTML(st.t,st.x)}
 function updPlay(){$('play').textContent=playing?'⏸ 멈춤':'▶ 재생'}
 // 작은 메뉴·탭을 누를 때마다 그 자료의 처음부터
 function openSub(i){sub=i;[...$('subs').children].forEach((b,j)=>{b.classList.toggle('on',j==i);b.setAttribute('aria-selected',j==i)});
@@ -696,14 +677,15 @@ function openTab(i){tab=i;[0,1].forEach(j=>{const b=$('tab'+j),on=j==i;b.setAttr
 [...$('subs').children].forEach((b,i)=>b.onclick=()=>openSub(i));
 [0,1].forEach(i=>{const b=$('tab'+i);b.onclick=()=>openTab(i);b.onkeydown=e=>{if(e.key=='ArrowRight'||e.key=='ArrowLeft'){const j=(i+1)%2;$('tab'+j).focus();openTab(j)}}});
 $('prev').onclick=()=>go(si-1);$('next').onclick=()=>go(si+1);$('again').onclick=()=>{seed();resetQuiz();go(0)};
-$('play').onclick=()=>{const S=scene().steps;if(si==S.length-1&&ph>=S[si].d){go(0);return}playing=!playing;updPlay()};
+$('play').onclick=()=>{playing=!playing;updPlay()};
 // 태평양의 수온 분포: 생각해 보기 답을 열면 지도에도 서·동 수온을 표시(확대가 끝난 화면으로)
 function resetQuiz(){quizOK=false}
 document.querySelector('[data-ov="ovq"]').addEventListener('click',()=>{if(!quizOK){quizOK=true;quizT=performance.now()/1000}const S=scene().steps;if(si<S.length-1){go(S.length-1)}ph=S[si].d});
 
 function frame(nowMs){const now=nowMs/1000,dt=Math.min(.1,now-last);last=now;fit();
  const S=scene().steps,s=S[si];
- if(playing){ph+=dt;if(ph>=s.d){if(si<S.length-1){if(ph>=s.d+(scene().cont?0:1.2)){const r=ph-s.d;go(si+1);if(scene().cont)ph=r}}else{ph=s.d;playing=false;updPlay();$('again').classList.add('glow')}}}
+ if(playing){ph+=dt;if(ph>=s.d){if(si<S.length-1){if(ph>=s.d+(scene().cont?0:1.2)){const r=ph-s.d;go(si+1);if(scene().cont)ph=r}}else ph=s.d}}   // 끝나도 멈추지 않음: 마지막 모습에서 바람·해류·용승이 계속 움직임
+ setText();
  const st=s.s(c01(ph/s.d));
  moveParticles(st,playing?dt:0);
  [...$('prog').children].forEach((b,i)=>{b.firstChild.style.width=(i<si?100:i>si?0:c01(ph/s.d)*100)+'%'});
@@ -713,7 +695,6 @@ function frame(nowMs){const now=nowMs/1000,dt=Math.min(.1,now-last);last=now;fit
 // 생각해 보기 답 팝업: 단추를 누르면 열리고, 닫기·바깥 누르기·Esc로 닫힘
 document.querySelectorAll('.open-think').forEach(btn=>{const ov=$(btn.dataset.ov),cl=ov.querySelector('.x');const close=()=>{ov.hidden=true;btn.focus()};
  btn.onclick=()=>{ov.hidden=false;cl.focus()};cl.onclick=close;ov.addEventListener('click',e=>{if(e.target===ov)close()});ov.addEventListener('keydown',e=>{if(e.key=='Escape')close()})});
-[...document.querySelectorAll('#wcmp button')].forEach(b=>b.onclick=()=>{WMODE=b.dataset.m;document.querySelectorAll('#wcmp button').forEach(x=>x.classList.toggle('on',x==b))});
 openTab(0);requestAnimationFrame(frame);
 </script>
 <script src="./copyright.js"></script>
