@@ -34,8 +34,6 @@ elnino.html                엘니뇨와 라니냐(통합과학) (통합과학 Wo
 README.md                  사용자용 설명서 (게시 방법, 정식 사이트로 옮기는 방법)
 작업기록.md                날짜별 작업 기록과 남은 일 (작업을 시작할 때 읽고, 마칠 때 적음)
 .claude/skills/modern-html/SKILL.md   코드 작성법 스킬 (최신 HTML·CSS·JS 작성법과 지원 범위, 세 사이트 공통)
-ENSO/elnino.html           미리보기 복사본: 통합과학 World의 ENSO/elnino.html에서 팝업을 <dialog>로 바꾼 것을 확인하는 용도.
-                           확인이 끝나 통합과학 World에 반영하면 지웁니다(정식 사이트 수정을 미리 보는 임시 파일).
 CLAUDE.md                  이 파일
 ```
 - 빌드 도구나 패키지 없이, 각 자료는 CSS와 JS가 들어 있는 HTML 파일 하나입니다.
